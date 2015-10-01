@@ -1,0 +1,15 @@
+{
+  "title": "FaunaDB",
+
+  "source": "./src",
+  "excludes": ["_.*"],
+  "destination": "./esdoc",
+  "plugins": [
+    {"name": "esdoc-es7-plugin"}
+  ],
+
+  "test": {
+    "type": "mocha",
+    "source": "./test"
+  }
+}
