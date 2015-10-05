@@ -1,4 +1,6 @@
 import {InvalidQuery, InvalidValue} from './errors'
+import * as query from './query'
+import {applyDefaults} from './_util'
 
 /**
  * FaunaDB ref.
@@ -56,6 +58,15 @@ export class Ref {
   valueOf() {
     return this.value
   }
+
+  /** @ignore */
+  inspect() {
+    return `Ref(${JSON.stringify(this.value)})`
+  }
+
+  equals(other) {
+    return other instanceof Ref && this.value === other.value
+  }
 }
 
 /**
@@ -69,6 +80,11 @@ export class FaunaSet {
   constructor(query) {
     /** Raw query object. */
     this.query = query
+  }
+
+  /** @ignore */
+  inspect() {
+    return `FaunaSet(${JSON.stringify(this.value)})`
   }
 
   /** @ignore */
@@ -130,6 +146,70 @@ export class Page {
   mapData(func) {
     return new Page(this.data.map(func), this.before, this.after)
   }
+}
 
-  // TODO: setIterator is async, so need a different way to do that...
+/** Used to iterate over the pages of a query. */
+export class PageIterator {
+  /**
+   * @param {Client} client
+   * @param {number} opts.pageSize Number of elements in each page.
+   * @param opts.mapLambda
+   *   Mapping query (made by {@link lambda}) applied to each element of each page.
+   * @param {function} opts.map
+   *   Mapping JavaScript function used on each page result.
+   */
+  constructor(client, set, opts={}) {
+    this.client = client
+    this.set = set
+    /** Set to `true` when there are no elements left to page through. */
+    this.done = false
+
+    Object.assign(this, applyDefaults(opts, {
+      pageSize: null,
+      mapLambda: null,
+      map: null
+    }))
+
+    // Change nulls for pageSize to `undefined` because
+    // `undefined` is automatically removed from queries by JSON.stringify.
+    if (this.pageSize === null)
+      this.pageSize = undefined
+
+    this.direction = undefined
+    this.cursor = undefined
+  }
+
+  /**
+   * Moves this iterator to the next page and returns its data.
+   * May set `this.done` to `true`.
+   */
+  async next() {
+    let q = query.paginate(this.set, {size: this.pageSize, [this.direction]: this.cursor})
+    if (this.mapLambda !== null)
+      q = query.map(this.mapLambda, q)
+
+    const page = Page.fromRaw(await this.client.query(q))
+
+    this.direction = page.after === undefined ? 'before' : 'after'
+    this.cursor = page[this.direction]
+    if (this._cursor === undefined)
+      this.done = true
+
+    if (this.map !== null)
+      return await Promise.all(page.data.map(this.map))
+    else
+      return page.data
+  }
+
+  /** Collects every element in every page. */
+  async all() {
+    const all = []
+    for (;;) {
+      const data = await this.next()
+      all.push(...data)
+      if (this.done)
+        break
+    }
+    return all
+  }
 }
