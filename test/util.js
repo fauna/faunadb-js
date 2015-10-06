@@ -38,13 +38,13 @@ export async function assertRejected(promise, errorType) {
     assert.fail('Expected promise to fail')
 }
 
+// Set in before hook, so won't be null during tests
+export let client = null
+export let clientSecret = null
+
 const rootClient = getClient({secret: {user: testConfig.rootKey}})
 const dbName = 'faunadb-js-test'
 export const dbRef = new Ref('databases', dbName)
-
-// set in before hook, so won't be null during tests
-export let client = null
-export let clientSecret = null
 
 // global before/after for every test
 
