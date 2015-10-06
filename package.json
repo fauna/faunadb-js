@@ -52,7 +52,7 @@
       "templateStrings": true
     },
     "globals": {
-      "console": true, "process": true,
+      "console": true, "process": true, "require": true,
       "before": true, "after": true, "describe": true, "it": true
     },
     "rules": {
