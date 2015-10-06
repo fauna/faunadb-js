@@ -1,5 +1,15 @@
 /** Base class for all FaunaDB errors. */
-export class FaunaError extends Error {}
+export class FaunaError extends Error {
+  constructor(message) {
+    super(message)
+    // Subclassing error doesn't work right until node 4.0.
+    // This is a kludge to give it some stack.
+    if (!('stack' in this)) {
+      this.message = message
+      this.stack = new Error(this.message).stack
+    }
+  }
+}
 
 /** Thrown when a query is malformed */
 export class InvalidQuery extends FaunaError {}
