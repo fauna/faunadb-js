@@ -60,7 +60,6 @@
       "comma-style": [1, "last"],
       "curly": [1, "multi"],
       "default-case": 1,
-      "generator-star-spacing": [1, "after"],
       "max-len": [1, 100, 4],
       "no-extra-parens": 1,
       "no-floating-decimal": 1,
