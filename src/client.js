@@ -221,9 +221,8 @@ const
       }
   },
 
-  queryStringForLogging = query => {
-    return query ? `?${Object.keys(query).map(key => `${key}=${query[key]}`).join('&')}` : ''
-  },
+  queryStringForLogging = query =>
+    query ? `?${Object.keys(query).map(key => `${key}=${query[key]}`).join('&')}` : '',
 
   removeUndefinedValues = object => {
     const res = {}
