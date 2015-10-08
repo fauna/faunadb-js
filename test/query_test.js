@@ -54,12 +54,29 @@ describe('query', () => {
     await assertQuery(query.quote(quoted), quoted)
   })
 
+  it('lambda', () => {
+    assert.deepEqual(
+      query.lambda(a => query.add(a, a)),
+      {lambda: 'a', expr: {add: [{var: 'a'}, {var: 'a'}]}})
+
+    assert.deepEqual(
+      query.lambda(a => query.lambda(b => query.lambda(c => [a, b, c]))),
+      {
+        lambda: 'a',
+        expr: {lambda: 'b', expr: {lambda: 'c', expr: [{var: 'a'}, {var: 'b'}, {var: 'c'}]}}
+      })
+
+    // Error in function should not affect future queries.
+    try { query.lambda(a => { throw new Error() }) } catch (err) { }
+
+    assert.deepEqual(query.lambda(a => a), {lambda: 'a', expr: {var: 'a'}})
+  })
+
   it('map', async function() {
-    // This is also test for query.lambda (can't test that alone)
-    const double = query.lambda('x', query.multiply([2, query.variable('x')]))
+    const double = query.lambda(x => query.multiply([2, x]))
     await assertQuery(query.map(double, [1, 2, 3]), [2, 4, 6])
 
-    const getN = query.lambda('x', query.select(['data', 'n'], query.get(query.variable('x'))))
+    const getN = query.lambda(x => query.select(['data', 'n'], query.get(x)))
     const page = query.paginate(nSet(1))
     const ns = query.map(getN, page)
     assert.deepEqual((await client.query(ns)).data, [1, 1])
@@ -68,7 +85,7 @@ describe('query', () => {
   it('foreach', async function() {
     const refs = [(await create()).ref, (await create()).ref]
     await client.query(
-      query.foreach(query.lambda('x', query.delete_expr(query.variable('x'))), refs))
+      query.foreach(query.lambda(query.delete_expr), refs))
     for (const ref of refs)
       await assertQuery(query.exists(ref), false)
   })
@@ -162,9 +179,7 @@ describe('query', () => {
     // For each obj with n=12, get the set of elements whose data.m refers to it.
     const joined = query.join(
       source,
-      query.lambda(
-        'x',
-        query.match(query.variable('x'), mIndexRef)))
+      query.lambda(x => query.match(x, mIndexRef)))
     await assertSet(joined, referencers)
   })
 
