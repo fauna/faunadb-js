@@ -1,29 +1,41 @@
 import {assert} from 'chai'
+import {join} from 'path'
 import Client from '../src/client'
 import {Ref} from '../src/objects'
+import {removeUndefinedValues} from '../src/_util'
 const env = process.env
 
 let testConfig
 try {
-  testConfig = require('../testConfig')
+  testConfig = require(join(__dirname, '../testConfig'))
 } catch (err) {
   console.log('testConfig.json not found, defaulting to environment variables')
   testConfig = {
     domain: env.FAUNA_DOMAIN,
     scheme: env.FAUNA_SCHEME,
     port: env.FAUNA_PORT,
-    rootKey: env.FAUNA_ROOT_KEY
+    auth: parseAuth(env.FAUNA_ROOT_KEY)
   }
 }
 
+function parseAuth(authStr) {
+  // Split on first ':' to get user:pass
+  const parts = authStr.split(':')
+  const user = parts.shift()
+  const pass = parts.join(':')
+  return {user, pass}
+}
+
+function takeObjectKeys(object, ...keys) {
+  const out = {}
+  for (const key of keys)
+    out[key] = object[key]
+  return out
+}
+
 export const getClient = opts => {
-  const defaultOpts = {
-    domain: testConfig.domain,
-    scheme: testConfig.scheme,
-    port: testConfig.port,
-    secret: clientSecret
-  }
-  return new Client(Object.assign(defaultOpts, opts))
+  const cfg = removeUndefinedValues(takeObjectKeys(testConfig, 'domain', 'scheme', 'port'))
+  return new Client(Object.assign({secret: clientSecret}, cfg, opts))
 }
 
 export async function assertRejected(promise, errorType) {
@@ -42,7 +54,7 @@ export async function assertRejected(promise, errorType) {
 export let client = null
 export let clientSecret = null
 
-export const rootClient = getClient({secret: {user: testConfig.rootKey}})
+export const rootClient = getClient({secret: testConfig.auth})
 const dbName = 'faunadb-js-test'
 export const dbRef = new Ref('databases', dbName)
 
