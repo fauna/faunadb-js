@@ -4,9 +4,8 @@ import {BadRequest, FaunaHTTPError, InternalError, MethodNotAllowed, NotFound,
   PermissionDenied, Unauthorized, UnavailableError} from './errors'
 import {Ref} from './objects'
 import {toJSON, parseJSON} from './_json'
+import {applyDefaults, removeUndefinedValues} from './_util'
 const env = process.env
-
-const allOptions = new Set(['domain', 'scheme', 'port', 'timeout', 'secret', 'logger'])
 
 const debugLogger = env.FAUNA_DEBUG || env.NODE_DEBUG === 'fauna' ? winston : null
 
@@ -40,22 +39,22 @@ export default class Client {
    *   A [winston](https://github.com/winstonjs/winston) Logger
    */
   constructor(options) {
-    const opt = (name, _default) =>
-      options.hasOwnProperty(name) ? options[name] : _default
+    const opts = applyDefaults(options, {
+      domain: 'rest.faunadb.com',
+      scheme: 'https',
+      port: null,
+      secret: null,
+      timeout: 60,
+      logger: null
+    })
 
-    const
-      domain = opt('domain', 'rest.faunadb.com'),
-      scheme = opt('scheme', 'https'),
-      port = opt('port', scheme === 'https' ? 443 : 80)
-    this._baseUrl = `${scheme}://${domain}:${port}`
+    if (opts.port === null)
+      opts.port = opts.scheme === 'https' ? 443 : 80
 
-    this._timeout = Math.floor(opt('timeout', 60) * 1000)
-    this._secret = opt('secret', null)
-    this._logger = opt('logger', null)
-
-    for (const key in options)
-      if (!allOptions.has(key))
-        throw new Error(`Bad option ${key}`)
+    this._baseUrl = `${opts.scheme}://${opts.domain}:${opts.port}`
+    this._timeout = Math.floor(opts.timeout * 1000)
+    this._secret = opts.secret
+    this._logger = opts.logger
   }
 
   /**
@@ -66,7 +65,7 @@ export default class Client {
    * @param {Object} query URL parameters.
    * @return {Object} Converted JSON response.
    */
-  get(path, query) {
+  get(path, query=null) {
     return this._execute('GET', path, null, query)
   }
 
@@ -135,11 +134,14 @@ export default class Client {
       this._logger.info(logged)
   }
 
-  async _execute(action, path, data, query) {
+  async _execute(action, path, data, query=null) {
     if (path instanceof Ref)
       path = path.value
-    if (query)
+    if (query !== null) {
       query = removeUndefinedValues(query)
+      if (Object.keys(query).length === 0)
+        query = null
+    }
 
     if (this._logger === null && debugLogger === null) {
       const {response, body} = await this._execute_without_logging(action, path, data, query)
@@ -181,7 +183,7 @@ export default class Client {
         url: path,
         auth: this._secret,
         qs: query,
-        body: toJSON(data),
+        body: data === null ? null : toJSON(data),
         timeout: this._timeout
       }
 
@@ -222,14 +224,4 @@ const
   },
 
   queryStringForLogging = query =>
-    query ? `?${Object.keys(query).map(key => `${key}=${query[key]}`).join('&')}` : '',
-
-  removeUndefinedValues = object => {
-    const res = {}
-    for (const key in object) {
-      const val = object[key]
-      if (val !== undefined)
-        res[key] = val
-    }
-    return Object.keys(res).length === 0 ? null : res
-  }
+    query ? `?${Object.keys(query).map(key => `${key}=${query[key]}`).join('&')}` : ''
