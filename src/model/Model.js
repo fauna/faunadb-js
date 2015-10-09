@@ -84,7 +84,10 @@ export default class Model {
           }
         },
         set(value) {
-          this._cache[fieldName] = value
+          // Clear any previous cached decoded value.
+          delete this._cache[fieldName]
+          // Codecs are not guaranteed to have decode(encode(value)) === value.
+          // So can't set _cache until getter is called.
           const encoded = field.codec.encode(value, this)
           setPath(field.path, encoded, this._current)
         }
@@ -215,7 +218,7 @@ export default class Model {
   }
 
   /** Initializes and saves a new instance. */
-  static async create(client, data) {
+  static async create(client, data={}) {
     const instance = new this(client, data)
     instance._initFromResource(await client.post(this.classRef, instance._current))
     return instance

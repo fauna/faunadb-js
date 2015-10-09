@@ -41,7 +41,7 @@ describe('Builtin', () => {
 
   it('key', async function() {
     const database = await Database.get(rootClient, dbRef)
-    const key = new Key(rootClient, {database, role: 'server'})
+    const key = new Key(rootClient, {database: database.ref, role: 'server'})
     await key.save()
     assert.isFalse(key.isNewInstance())
     assert(key.hashed_secret.length > 0)
@@ -50,7 +50,7 @@ describe('Builtin', () => {
   it('custom field', async function() {
     const database = await Database.get(rootClient, dbRef)
     Key.addField('x')
-    const key = new Key(rootClient, {database, role: 'server', x: 3})
+    const key = new Key(rootClient, {database: database.ref, role: 'server', x: 3})
     await key.save()
     assert.equal((await Key.get(rootClient, key.ref)).x, 3)
   })

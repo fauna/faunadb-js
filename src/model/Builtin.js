@@ -28,7 +28,7 @@ Database.setup('databases', {name: {}, api_version: {}})
 /** See the [docs](https://faunadb.com/documentation/objects#keys). */
 export class Key extends Builtin { }
 Key.setup('keys', {
-  database: {codec: new RefCodec(Database)},
+  database: {codec: RefCodec},
   role: {},
   secret: {},
   hashed_secret: {}
@@ -70,7 +70,7 @@ export class Index extends Builtin {
     if (typeof terms === 'string')
       terms = [{path: `data.${terms}`}]
     const source = await Class.getForModel(client, modelClass)
-    return await this.create(client, Object.assign({source, name, terms}, data))
+    return await this.create(client, Object.assign({source: source.ref, name, terms}, data))
   }
 
   /**
@@ -86,7 +86,7 @@ export class Index extends Builtin {
 }
 Index.setup('indexes', {
   name: {},
-  source: {codec: new RefCodec(Class)},
+  source: {codec: RefCodec},
   terms: {},
   values: {},
   unique: {},
@@ -107,7 +107,7 @@ export class ClassIndex extends Index {
     const name = modelClass.faunaClassName
     const source = await Class.getForModel(client, modelClass)
     const terms = [{path: 'class'}]
-    return await ClassIndex.create(client, Object.assign({source, name, terms}, data))
+    return await ClassIndex.create(client, Object.assign({source: source.ref, name, terms}, data))
   }
 
   /** Fetches the class index. */

@@ -8,7 +8,10 @@ import {Ref} from '../objects'
  *
  * A field without a Codec must store only JSON data.
  *
- * {@link Model} instances cache the results of conversions.
+ * Input data may be sanitized (e.g. RefCodec converts strings to {@link Ref}s),
+ * so there is no guarantee that `codec.decode(codec.encode(value)) === value`.
+ *
+ * {@link Model} instances cache the results of decoding.
  */
 export default class Codec {
   /**
@@ -26,35 +29,24 @@ export default class Codec {
 }
 
 /**
- * Uses a `Ref` as the decoded value and `{"@ref": string}` JSON as the encoded value.
- *
- * If the ref is invalid, `NotFound` will be thrown.
+ * Codec for a field whose value is always a {@link Ref}.
+ * Also converts any strings coming in to {@link Ref}s.
  */
-export class RefCodec extends Codec {
-  constructor(referencedModelClass) {
-    super()
-    this.referencedModelClass = referencedModelClass
-  }
+export const RefCodec = {
+  inspect() { return "RefCodec" },
 
-  /** Takes the {@link Ref] of a {@link Model}. */
+  decode(ref) {
+    return ref
+  },
+
   encode(value) {
     if (value === null)
       return null
-     else if (value instanceof Ref)
+    else if (typeof value === 'string')
+      return new Ref(value)
+    else if (value instanceof Ref)
       return value
-    else {
-      // value should be a Model
-      if (value.isNewInstance())
-        throw new InvalidValue('The referenced instance must be saved to the database first.')
-      if (!(value instanceof this.referencedModelClass))
-        throw new InvalidValue(
-          `The reference should be a ${this.referencedModelClass}; got a ${value.constructor}.`)
-      return value.ref
-    }
-  }
-
-  /** Fetches the data for a {@link Ref} and creates a {@link Model}. */
-  async decode(raw, model) {
-    return raw === null ? null : await this.referencedModelClass.get(model.client, raw)
+    else
+      throw new InvalidValue(`Expected a Ref, got: ${value}`)
   }
 }

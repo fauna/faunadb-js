@@ -1,6 +1,7 @@
 import {assert} from 'chai'
 import {client} from '../util'
 import {InvalidValue} from '../../src/errors'
+import {Ref} from '../../src/objects'
 import {Class} from '../../src/model/Builtin'
 import {RefCodec} from '../../src/model/Codec'
 import Field from '../../src/model/Field'
@@ -25,7 +26,7 @@ describe('Codec', () => {
     MyModel.setup('pikachus', {
       plainField: {},
       codecField: {codec: DoubleCodec},
-      refField: {codec: new RefCodec(MyModel)}
+      refField: {codec: RefCodec}
     })
     await Class.createForModel(client, MyModel)
 
@@ -36,12 +37,12 @@ describe('Codec', () => {
     class MyModel extends Model {}
     MyModel.setup('my_models', {
       plainField: {},
-      refField: {codec: new RefCodec(MyModel)}
+      refField: {codec: RefCodec}
     })
 
     assert.deepEqual(MyModel.fields, {
       plainField: new Field({path: ['data', 'plainField']}),
-      refField: new Field({codec: new RefCodec(MyModel), path: ['data', 'refField']})
+      refField: new Field({codec: RefCodec, path: ['data', 'refField']})
     })
   })
 
@@ -61,36 +62,17 @@ describe('Codec', () => {
   })
 
   it('ref codec', async function() {
-    const it = instance
+    const it = new MyModel(client)
+    assert.equal(it.refField, null)
 
-    const other = new MyModel(client, {plainField: 2, codecField: 'ddd', refField: null})
-    assert.equal(await it.refField, null)
+    const ref = new Ref('frogs', 123)
+    it.refField = 'frogs/123'
+    assert.deepEqual(it.refField, ref)
 
-    const setField = () => {
-      it.refField = other
-    }
-    // Fails because `other` has no Ref yet.
-    assert.throws(setField, InvalidValue)
-    await other.save()
-    setField()
-    assert.equal(it.getEncoded('refField'), other.ref)
-    assert.equal(await it.refField, other)
+    it.refField = ref
+    assert.equal(it.refField, ref)
 
-    await it.save()
-    it.refField = it
-
-    assert.deepEqual(it.getEncoded('refField'), it.ref)
-    assert.equal(await it.refField, it)
-
-    await it.save()
-    assert.deepEqual((await (await MyModel.get(client, it.ref)).refField).ref, it.ref)
-
-    // Values of wrong type will not save.
-    class MyOtherModel extends Model { }
-    MyOtherModel.setup('my_other_models')
-    await Class.createForModel(client, MyOtherModel)
-
-    const otherModel = await MyOtherModel.create(client)
-    assert.throws(() => { it.refField = otherModel }, InvalidValue)
+    // Fails for any other input
+    assert.throws(() => { it.refField = 123 }, InvalidValue)
   })
 })
