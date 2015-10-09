@@ -11,6 +11,7 @@
 
   "scripts": {
     "build": "babel src --out-dir lib --source-maps inline",
+    "watch": "babel src --out-dir lib --source-maps inline --watch",
     "doc": "esdoc -c esdoc.json",
     "lint": "eslint src test",
     "test": "mocha --compilers js:babel/register test/**/*.js"
