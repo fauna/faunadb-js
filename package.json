@@ -1,22 +1,18 @@
 {
   "name": "faunadb",
   "version": "0.0.0",
-
   "description": "FaunaDB (faunadb.com) client for node",
   "homepage": "https://faunadb.com",
   "repository": "faunadb/faunadb-js",
   "license": "MPL-2.0",
-
-  "files": ["lib"],
-
+  "files": ["src"],
   "scripts": {
-    "build": "babel src --out-dir lib --source-maps inline",
+    "install": "babel src --out-dir lib --source-maps inline",
     "watch": "babel src --out-dir lib --source-maps inline --watch",
     "doc": "esdoc -c esdoc.json",
     "lint": "eslint src test",
     "test": "mocha --compilers js:babel/register test/**/*.js"
   },
-
   "dependencies": {
     "babel-runtime": "5.8.25",
     "request": "2.64.0",
