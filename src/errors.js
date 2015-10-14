@@ -24,7 +24,7 @@ export class FaunaHTTPError extends FaunaError {
       [response_object['error']] :
       response_object['errors']
     const reason = response_object.reason
-    super(reason || errors[0].code)
+    super(reason || errors[0].code || errors[0])
     this.errors = errors
     this.reason = reason
     this.parameters = response_object.parameters
