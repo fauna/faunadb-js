@@ -266,7 +266,7 @@ export default class Model {
   }
 
   /**
-   * Calls {@link Index.match} and then works just like {@link page}.
+   * Calls {@link Index#match} and then works just like {@link page}.
    *
    * @param {Index} index
    * @param matchedValues Values for {@link Index.match}.
@@ -303,6 +303,8 @@ export default class Model {
   }
 
   /**
+   * Calls {@link Index#match} and then works just like {@link pageIterator}.
+   *
    * @param {Index} index Index whose instances are instances of this class.
    * @param matchedValues Matched value or array of matched values, passed into {@link Index.match}.
    * @param [pageSize] Size of each page.
@@ -318,6 +320,16 @@ export default class Model {
       mapLambda: indexRefGetter(index),
       map: instance => this.getFromResource(client, instance)
     })
+  }
+
+  /**
+   * Returns the first instance matched by the index.
+   * @param {Index} index
+   * @param matchedValues Same as for {@link Index.match}.
+   * @return Instance of this class.
+   */
+  static async getFromIndex(index, ...matchedValues) {
+    return this.getFromResource(index.client, await index.getSingle(...matchedValues))
   }
 
   /** @ignore */

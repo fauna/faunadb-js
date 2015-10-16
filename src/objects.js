@@ -156,7 +156,7 @@ export class PageIterator {
    * @param opts.mapLambda
    *   Mapping query (made by {@link lambda}) applied to each element of each page.
    * @param {function} opts.map
-   *   Mapping JavaScript function used on each page result.
+   *   Mapping JavaScript function used on each page element.
    */
   constructor(client, set, opts={}) {
     this.client = client

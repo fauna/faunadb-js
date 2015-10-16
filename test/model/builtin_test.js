@@ -1,6 +1,6 @@
 import {assert} from 'chai'
 import {assertRejected, client, dbRef, rootClient} from '../util'
-import {NotFound} from '../../src/errors'
+import {BadRequest, NotFound} from '../../src/errors'
 import {Class, ClassIndex, Database, Index, Key} from '../../src/model/Builtin'
 import Model from '../../src/model/Model'
 import {Ref} from '../../src/objects'
@@ -98,6 +98,42 @@ describe('Builtin', () => {
     await D.create(client, {x: 2, y: 1})
 
     assert.deepEqual((await D.pageIndex(idx, [1, 1])).data, [d11])
+  })
+
+  it('values', async function() {
+    class E extends Model {}
+    E.setup('es', {x: {}, y: {}, z: {}})
+    await Class.createForModel(client, E)
+
+    const index = await Index.createForModel(client, E, 'es_by_x_sorted', 'x', {
+      values: [{path: 'data.y'}, {path: 'data.z', reverse: true}]
+    })
+
+    const es = {}
+    for (let x = 0; x < 2; x = x + 1)
+      for (let y = 0; y < 2; y = y + 1)
+        for (let z = 0; z <  2; z = z + 1)
+          es[`${x}${y}${z}`] = await E.create(client, {x, y, z})
+
+    const expected = ['001', '000', '011', '010'].map(key => es[key])
+
+    assert.deepEqual((await E.pageIndex(index, 0)).data, expected)
+    assert.deepEqual(await E.pageIteratorForIndex(index, 0).all(), expected)
+  })
+
+  it('unique index', async function() {
+    class F extends Model {}
+    F.setup('fs', {x: {}})
+    await Class.createForModel(client, F)
+
+    const index = await Index.createForModel(client, F, 'fs_by_x', 'x', {unique: true})
+    const instance = await F.create(client, {x: 1})
+    // Unique index, so can't create another one.
+    assertRejected(() => F.create(client, {x: 1}), BadRequest)
+
+    assert.deepEqual(await index.getSingle(1), instance._current)
+    assert.deepEqual(await F.getFromIndex(index, 1), instance)
+    assertRejected(() => index.getSingle(2), NotFound)
   })
 
   it('class index', async function() {

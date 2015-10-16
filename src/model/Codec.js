@@ -2,7 +2,7 @@ import {InvalidValue} from '../errors'
 import {Ref} from '../objects'
 
 /**
- * A Codec sits inside a field in a {@link Model} and prepares data for database storage.
+ * A Codec sits inside a {@link Field} in a {@link Model} and prepares data for database storage.
  *
  * Encoded values must be JSON data: objects, lists, numbers, {@link Ref}s and {@link Set}s.
  *
@@ -33,7 +33,7 @@ export default class Codec {
  * Also converts any strings coming in to {@link Ref}s.
  */
 export const RefCodec = {
-  inspect() { return "RefCodec" },
+  inspect() { return 'RefCodec' },
 
   decode(ref) {
     return ref

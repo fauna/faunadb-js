@@ -75,13 +75,23 @@ export class Index extends Builtin {
 
   /**
    * Set query representing all instances whose value matches the index's term.
-   * See also {@link Model#pageIndex} and {@link Model#pageIteratorForIndex}.
+   * See also {@link Model.pageIndex} and {@link Model.pageIteratorForIndex}.
    */
   match(...matchedValues) {
     // Make query slightly neater by only using array if necessary.
     if (matchedValues.length === 1)
       matchedValues = matchedValues[0]
     return query.match(matchedValues, this.ref)
+  }
+
+  /**
+   * Returns raw data of the first instance matched by this index.
+   * Typically this will be used for an index with `unique: true`.
+   * See also {@link Model.getFromIndex}.
+   * @param matchedValues Same as for {@link match}.
+   */
+  async getSingle(...matchedValues) {
+    return await this.client.query(query.get(this.match(...matchedValues)))
   }
 }
 Index.setup('indexes', {
