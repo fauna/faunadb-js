@@ -36,12 +36,23 @@ Key.setup('keys', {
 
 /** See the [docs](https://faunadb.com/documentation/objects#classes). */
 export class Class extends Builtin {
-  /** Creates a class for the {@link Model}. */
+  /**
+   * Creates a Class for the {@link Model} class.
+   * @param {Client} client
+   * @param {Function} modelClass
+   * @param {Object} data Field values for the Class object.
+   * @return {Promise<Class>}
+   */
   static async createForModel(client, modelClass, data={}) {
     return await this.create(client, Object.assign({name: modelClass.faunaClassName}, data))
   }
 
-  /** Gets the class associated with a {@link Model}. */
+  /**
+   * Gets the Class associated with a {@link Model} class.
+   * @param {Client} client
+   * @param {Function} modelClass
+   * @return {Promise<Class>}
+   */
   static async getForModel(client, modelClass) {
     try {
       await this.get(client, modelClass.classRef)
@@ -65,6 +76,12 @@ export class Index extends Builtin {
   /**
    * Creates an Index for a {@link Model} class.
    * The index may not be usable immediately. See the docs.
+   * @param {Client} client
+   * @param {Function} modelClass
+   * @param {string} name
+   * @param {string|Array<{path: string}>} terms
+   * @param {Object} data Field values for the Index object.
+   * @return {Promise<Index>}
    */
   static async createForModel(client, modelClass, name, terms, data={}) {
     if (typeof terms === 'string')
@@ -75,7 +92,10 @@ export class Index extends Builtin {
 
   /**
    * Set query representing all instances whose value matches the index's term.
+   *
    * See also {@link Model.pageIndex} and {@link Model.pageIteratorForIndex}.
+   * @param matchedValues For each of `this.terms`, a value to match it.
+   * @return {object} A query set made by {@link match}.
    */
   match(...matchedValues) {
     // Make query slightly neater by only using array if necessary.
@@ -89,6 +109,7 @@ export class Index extends Builtin {
    * Typically this will be used for an index with `unique: true`.
    * See also {@link Model.getFromIndex}.
    * @param matchedValues Same as for {@link match}.
+   * @return {Promise<Object>}
    */
   async getSingle(...matchedValues) {
     return await this.client.query(query.get(this.match(...matchedValues)))
@@ -112,6 +133,10 @@ export class ClassIndex extends Index {
   /**
    * Creates a class index for the given model.
    * If the model is `classes/xyz`, the class index will be `indexes/xyz`.
+   * @param {Client} client
+   * @param {Function} modelClass
+   * @param {Object} data Field values for the ClassIndex object.
+   * @return {Promise<ClassIndex>}
    */
   static async createForModel(client, modelClass, data={}) {
     const name = modelClass.faunaClassName
@@ -120,12 +145,20 @@ export class ClassIndex extends Index {
     return await ClassIndex.create(client, Object.assign({source: source.ref, name, terms}, data))
   }
 
-  /** Fetches the class index. */
+  /**
+   * Fetches the class index.
+   * @param {Client} client
+   * @param {Function} modelClass
+   * @return {Promise<ClassIndex>}
+   */
   static async getForModel(client, modelClass) {
     return await ClassIndex.getById(client, modelClass.faunaClassName)
   }
 
-  /** Query set of all instances of the class. */
+  /**
+   * Query set of all instances of the class.
+   * @return {object} A query set made by {@link match}.
+   */
   match() {
     return query.match(this.getEncoded('source'), this.ref)
   }

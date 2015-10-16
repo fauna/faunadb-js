@@ -98,7 +98,7 @@ export default class Model {
   /**
    * Initialize (but do not save) a new instance.
    * @param {Client} client
-   * @param {object} data Fields to be set.
+   * @param {object} data Fields values for the new instance.
    */
   constructor(client, data) {
     /** Client instance that the model uses to save to the database. */
@@ -137,7 +137,7 @@ export default class Model {
     return this._current.ts
   }
 
-  /** For a field with a {@link Converter}s, gets the encoded value. */
+  /** For a field with a {@link Converter}, gets the encoded value. */
   getEncoded(fieldName) {
     const field = this.constructor.fields[fieldName]
     return getPath(field.path, this._current)
@@ -148,19 +148,29 @@ export default class Model {
     return !('ref' in this._current)
   }
 
-  /** Removes this instance from the database. */
+  /**
+   * Removes this instance from the database.
+   * @return {Promise<Object>}
+   */
   async delete() {
     return await this.client.query(this.deleteQuery())
   }
 
-  /** Query that deletes this instance. */
+  /**
+   * Query that deletes this instance.
+   * @return {Object} A {@link delete_expr} expression.
+   */
   deleteQuery() {
     if (this.isNewInstance())
       throw new InvalidQuery('Instance does not exist in the database.')
     return query.delete_expr(this.ref)
   }
 
-  /** Executes {@link saveQuery}. */
+  /**
+   * Executes {@link saveQuery}.
+   * @param replace Same as for {@link saveQuery}.
+   * @return {Promise<void>}
+   */
   async save(replace=false) {
     this._initFromResource(await this.client.query(this.saveQuery(replace)))
   }
@@ -174,6 +184,7 @@ export default class Model {
    *   If true, updates will update *all* fields
    *   using {@link replaceQuery} instead of {@link updateQuery}.
    *   See the [docs](https://faunadb.com/documentation/queries#write_functions).
+   * @return {Object} A query expression, ready to use with {@link Client#query}.
    */
   saveQuery(replace=false) {
     return this.isNewInstance() ?
@@ -181,21 +192,30 @@ export default class Model {
       replace ? this.replaceQuery() : this.updateQuery()
   }
 
-  /** Query to create a new instance. */
+  /**
+   * Query to create a new instance.
+   * @return {Object} A {@link create} expression.
+   */
   createQuery() {
     if (!this.isNewInstance())
       throw new InvalidQuery('Trying to create instance that has already been created.')
     return query.create(this.constructor.classRef, query.quote(this._current))
   }
 
-  /** Query to replace this instance's data. */
+  /**
+   * Query to replace this instance's data.
+   * @return {Object} A {@link replace} expression.
+   */
   replaceQuery() {
     if (this.isNewInstance())
       throw new InvalidQuery('Instance has not yet been created.')
     return query.replace(this.ref, query.quote(this._current))
   }
 
-  /** Query to update this instance's data. */
+  /**
+   * Query to update this instance's data.
+   * @return {Object} a {@link update} expression.
+   */
   updateQuery() {
     if (this.isNewInstance())
       throw new InvalidQuery('Instance has not yet been created.')
@@ -207,24 +227,46 @@ export default class Model {
     return this.faunaClassName === undefined
   }
 
-  /** Gets the instance of this class specified by `ref`. */
+  /**
+   * Gets the instance of this class specified by `ref`.
+   * @param {Client} client
+   * @param {Ref} ref Must be a reference to an instance of this class.
+   * @return {Promise<this>} An instance of this class.
+   */
   static async get(client, ref) {
     return this.getFromResource(client, await client.get(ref))
   }
 
-  /** Gets the instance of this class specified by `id`. */
+  /**
+   * Gets the instance of this class specified by `id`.
+   * @param {Client} client
+   * @param {number|string} instanceId `id` portion of a {@link Ref} for an instance of this class.
+   * @return {Promise<this>} An instance of this class.
+   */
   static async getById(client, instanceId) {
     return await this.get(client, new Ref(this.classRef, instanceId))
   }
 
-  /** Initializes and saves a new instance. */
+  /**
+   * Initializes and saves a new instance.
+   * @param {Client} client
+   * @param {Object} data Field values for the new instance.
+   * @return {Promise<this>} An instance of this class.
+   */
   static async create(client, data={}) {
     const instance = new this(client, data)
     instance._initFromResource(await client.post(this.classRef, instance._current))
     return instance
   }
 
-  /** Creates a new instance from query results. */
+  /**
+   * Creates a new instance from query results.
+   *
+   * See also {@link get}.
+   * @param {Client} client
+   * @param {Object} resource Raw instance data, usually the result of a query.
+   * @return {this} An instance of this class.
+   */
   static getFromResource(client, resource) {
     const instance = new this(client)
     instance._initFromResource(resource)
@@ -259,7 +301,8 @@ export default class Model {
    *
    * @param {Client} client
    * @param instanceSet Query set of instances of this class.
-   * @param pageParams Params to {@link query.paginate}.
+   * @param pageParams Params to {@link paginate}.
+   * @return {Promise<Page<this>>} Page whose elements are instances of this class.
    */
   static async page(client, instanceSet, pageParams={}) {
     return await this._mapPage(client, instanceSet, query.lambda(query.get), pageParams)
@@ -271,6 +314,7 @@ export default class Model {
    * @param {Index} index
    * @param matchedValues Values for {@link Index.match}.
    * @param pageParams Params to {@link query.paginate}.
+   * @return {Promise<Page<this>>} Page whose elements are instances of this class.
    */
   static async pageIndex(index, matchedValues, pageParams={}) {
     if (!(matchedValues instanceof Array))
@@ -293,6 +337,7 @@ export default class Model {
    * @param {Client} client
    * @param instanceSet Query set of {@link Ref}s to instances of this class.
    * @param [pageSize] Size of each page.
+   * @return {PageIterator<this>} PageIterator whose elements are instances of this class.
    */
   static pageIterator(client, instanceSet, pageSize=null) {
     return new PageIterator(client, instanceSet, {
@@ -308,6 +353,7 @@ export default class Model {
    * @param {Index} index Index whose instances are instances of this class.
    * @param matchedValues Matched value or array of matched values, passed into {@link Index.match}.
    * @param [pageSize] Size of each page.
+   * @return {PageIterator<this>} PageIterator whose elements are instances of this class.
    */
   static pageIteratorForIndex(index, matchedValues, pageSize=null) {
     const client = index.client
@@ -326,7 +372,7 @@ export default class Model {
    * Returns the first instance matched by the index.
    * @param {Index} index
    * @param matchedValues Same as for {@link Index.match}.
-   * @return Instance of this class.
+   * @return {Promise<this>} Instance of this class.
    */
   static async getFromIndex(index, ...matchedValues) {
     return this.getFromResource(index.client, await index.getSingle(...matchedValues))
