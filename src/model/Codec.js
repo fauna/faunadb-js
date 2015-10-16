@@ -10,8 +10,6 @@ import {Ref} from '../objects'
  *
  * Input data may be sanitized (e.g. RefCodec converts strings to {@link Ref}s),
  * so there is no guarantee that `codec.decode(codec.encode(value)) === value`.
- *
- * {@link Model} instances cache the results of decoding.
  */
 export default class Codec {
   /**

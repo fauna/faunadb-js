@@ -74,20 +74,11 @@ export default class Model {
         }
       } : {
         get() {
-          if (fieldName in this._cache)
-            return this._cache[fieldName]
-          else {
-            const encoded = getPath(field.path, this._current)
-            const decoded = field.codec.decode(encoded, this)
-            this._cache[fieldName] = decoded
-            return decoded
-          }
+          const encoded = getPath(field.path, this._current)
+          const decoded = field.codec.decode(encoded, this)
+          return decoded
         },
         set(value) {
-          // Clear any previous cached decoded value.
-          delete this._cache[fieldName]
-          // Codecs are not guaranteed to have decode(encode(value)) === value.
-          // So can't set _cache until getter is called.
           const encoded = field.codec.encode(value, this)
           setPath(field.path, encoded, this._current)
         }
@@ -115,26 +106,24 @@ export default class Model {
     }
   }
 
-  /** {@link Ref} of this instance in the database. Fails if {@link isNewInstance}. */
+  /** {@link Ref} of this instance in the database. `null` if {@link isNewInstance}. */
   get ref() {
-    if (this.isNewInstance())
-      throw new InvalidQuery('Instance has not been saved to the database, so no ref exists.')
-    return this._current.ref
+    const ref = this._current.ref
+    return ref === undefined ? null : ref
   }
 
   /** The id portion of this instance's {@link Ref}. Fails if {@link isNewInstance}. */
   get id() {
-    return this.ref.id
+    return this.ref === null ? null : this.ref.id
   }
 
   /**
    * Microsecond UNIX timestamp of the latest {@link save}.
-   * Fails if {@link isNewInstance}.
+   * `null` if {@link isNewInstance}.
    */
   get ts() {
-    if (this.isNewInstance())
-      throw new InvalidQuery('Instance has not been saved to the database, so no ts exists.')
-    return this._current.ts
+    const ts = this._current.ts
+    return ts === undefined ? null : ts
   }
 
   /** For a field with a {@link Converter}, gets the encoded value. */
@@ -288,8 +277,6 @@ export default class Model {
   _initState() {
     // New JSON data of the instance.
     this._current = objectDup(this._original)
-    // Maps from field names to decoded values. Only used for fields with a codec.
-    this._cache = {}
   }
 
   _diff() {

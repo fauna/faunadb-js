@@ -54,13 +54,6 @@ export class Class extends Builtin {
    * @return {Promise<Class>}
    */
   static async getForModel(client, modelClass) {
-    try {
-      await this.get(client, modelClass.classRef)
-    } catch (err) {
-      console.log(err)
-      console.log(err.stack)
-    }
-
     return await this.get(client, modelClass.classRef)
   }
 }

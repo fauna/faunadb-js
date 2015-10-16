@@ -1,6 +1,6 @@
 import {assert} from 'chai'
 import {assertRejected, client} from '../util'
-import {InvalidValue, InvalidQuery, NotFound} from '../../src/errors'
+import {InvalidValue, NotFound} from '../../src/errors'
 import {Class} from '../../src/model/Builtin'
 import Model from '../../src/model/Model'
 import {Ref} from '../../src/objects'
@@ -96,9 +96,9 @@ describe('Model', () => {
   it('ref, id, ts', async function() {
     const it = new MyModel(client, {number: 1, letter: 'a'})
 
-    assert.throws(() => it.ref, InvalidQuery)
-    assert.throws(() => it.id, InvalidQuery)
-    assert.throws(() => it.ts, InvalidQuery)
+    assert.equal(it.ref, null)
+    assert.equal(it.id, null)
+    assert.equal(it.ts, null)
 
     await it.save()
     assert(it.ref != null && it.ts != null)
