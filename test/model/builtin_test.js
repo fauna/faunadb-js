@@ -78,7 +78,7 @@ describe('Builtin', () => {
 
     assert.deepEqual((await MyModel.pageIndex(idx, 1)).data, [instance1, instance2])
 
-    const all = await MyModel.pageIteratorForIndex(idx, 1).all()
+    const all = await MyModel.streamIndex(idx, 1).all()
     assert.deepEqual(all, [instance1, instance2])
   })
 
@@ -118,7 +118,7 @@ describe('Builtin', () => {
     const expected = ['001', '000', '011', '010'].map(key => es[key])
 
     assert.deepEqual((await E.pageIndex(index, 0)).data, expected)
-    assert.deepEqual(await E.pageIteratorForIndex(index, 0).all(), expected)
+    assert.deepEqual(await E.streamIndex(index, 0).all(), expected)
   })
 
   it('unique index', async function() {
@@ -155,7 +155,7 @@ describe('Builtin', () => {
     assert.deepEqual(page2.data, [ms[2], ms[3]])
 
     // List of all Ms should be exactly 100 in length
-    const all = await M.pageIteratorForIndex(idx, 1).all()
+    const all = await M.streamIndex(idx, 1).all()
     assert.deepEqual(all, ms)
   })
 })

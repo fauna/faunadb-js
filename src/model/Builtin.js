@@ -86,7 +86,7 @@ export class Index extends Builtin {
   /**
    * Set query representing all instances whose value matches the index's term.
    *
-   * See also {@link Model.pageIndex} and {@link Model.pageIteratorForIndex}.
+   * See also {@link Model.pageIndex} and {@link Model.streamIndex}.
    * @param matchedValues For each of `this.terms`, a value to match it.
    * @return {object} A query set made by {@link match}.
    */

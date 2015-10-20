@@ -4,6 +4,7 @@ import {InvalidValue, NotFound} from '../../src/errors'
 import {Class} from '../../src/model/Builtin'
 import Model from '../../src/model/Model'
 import {Ref} from '../../src/objects'
+import * as query from '../../src/query'
 
 let MyModel
 
@@ -122,6 +123,22 @@ describe('Model', () => {
 
     await it.save()
     assert.deepEqual(await MyModel.get(client, it.ref), it)
+  })
+
+  it('stream', async function() {
+    const indexRef = (await client.post('indexes', {
+      name: 'my_models_by_number',
+      source: MyModel.classRef,
+      terms: [{path: 'data.number'}]
+    })).ref
+
+    const
+      a = await MyModel.create(client, {number: 12}),
+      b = await MyModel.create(client, {number: 12})
+
+    const instanceSet = query.match(12, indexRef)
+    const stream = MyModel.stream(client, instanceSet)
+    assert.deepEqual(await stream.all(), [a, b])
   })
 
   it('toString', () => {

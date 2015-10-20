@@ -1,6 +1,8 @@
 import {InvalidQuery, InvalidValue} from '../errors'
-import {Page, PageIterator, Ref} from '../objects'
+import {Page, Ref} from '../objects'
+import PageStream from '../PageStream'
 import * as query from '../query'
+import {applyDefaults} from '../_util'
 import Field from './Field'
 import {calculateDiff, getPath, objectDup, setPath} from './_util'
 
@@ -320,39 +322,42 @@ export default class Model {
   }
 
   /**
-   * Returns a PageIterator for `instanceSet` that converts results to model instances.
+   * Stream for `instanceSet` that converts results to model instances.
    * @param {Client} client
    * @param instanceSet Query set of {@link Ref}s to instances of this class.
-   * @param [pageSize] Size of each page.
-   * @return {PageIterator<this>} PageIterator whose elements are instances of this class.
+   * @param {number} opts.pageSize Size of each page.
+   * @return {PageStream<this>} Stream whose elements are instances of this class.
    */
-  static pageIterator(client, instanceSet, pageSize=null) {
-    return new PageIterator(client, instanceSet, {
-      pageSize,
-      mapLambda: query.lambda(query.get),
-      map: instance => this.getFromResource(client, instance)
+  static stream(client, instanceSet, opts={}) {
+    const {pageSize} = applyDefaults(opts, {
+      pageSize: undefined
     })
+    return PageStream.elements(client, instanceSet, {
+      pageSize,
+      mapLambda: query.lambda(query.get)
+    }).map(instance => this.getFromResource(client, instance))
   }
 
   /**
-   * Calls {@link Index#match} and then works just like {@link pageIterator}.
+   * Calls {@link Index#match} and then works just like {@link pageStream}.
    *
    * @param {Index} index Index whose instances are instances of this class.
    * @param matchedValues Matched value or array of matched values, passed into {@link Index.match}.
-   * @param [pageSize] Size of each page.
-   * @return {PageIterator<this>} PageIterator whose elements are instances of this class.
+   * @param {number} opts.pageSize Size of each page.
+   * @return {PageStream<this>} Stream whose elements are instances of this class.
    */
-  static pageIteratorForIndex(index, matchedValues, pageSize=null) {
+  static streamIndex(index, matchedValues, opts={}) {
+    const {pageSize} = applyDefaults(opts, {
+      pageSize: undefined
+    })
     const client = index.client
     if (!(matchedValues instanceof Array))
       matchedValues = [matchedValues]
     const matchSet = index.match(...matchedValues)
-
-    return new PageIterator(client, matchSet, {
+    return PageStream.elements(client, matchSet, {
       pageSize,
-      mapLambda: indexRefGetter(index),
-      map: instance => this.getFromResource(client, instance)
-    })
+      mapLambda: indexRefGetter(index)
+    }).map(instance => this.getFromResource(client, instance))
   }
 
   /**
