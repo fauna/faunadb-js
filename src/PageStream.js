@@ -15,7 +15,7 @@ export default class PageStream extends AsyncStream {
 
   /**
    * @param {Client} client
-   * @param {Object} set Set query (made by {@link match} or similar).
+   * @param {Object} set Set query made by {@link match} or similar.
    * @param {number} opts.pageSize Number of elements in each page.
    * @param {lambda} opts.mapLambda Mapping query applied to each element of each page.
    */
