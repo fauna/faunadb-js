@@ -42,7 +42,7 @@ export async function assertRejected(promise, errorType) {
 export let client = null
 export let clientSecret = null
 
-const rootClient = getClient({secret: {user: testConfig.rootKey}})
+export const rootClient = getClient({secret: {user: testConfig.rootKey}})
 const dbName = 'faunadb-js-test'
 export const dbRef = new Ref('databases', dbName)
 

@@ -14,11 +14,8 @@ export function applyDefaults(provided, defaults) {
   }
 
   for (const key in defaults)
-    if (!(key in out)) {
-      if (defaults[key] === undefined)
-        throw new Error(`Option ${key} must be provided.`)
+    if (!(key in out))
       out[key] = defaults[key]
-    }
 
   return out
 }

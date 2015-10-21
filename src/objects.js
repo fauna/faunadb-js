@@ -56,6 +56,15 @@ export class Ref {
   valueOf() {
     return this.value
   }
+
+  /** @ignore */
+  inspect() {
+    return `Ref(${JSON.stringify(this.value)})`
+  }
+
+  equals(other) {
+    return other instanceof Ref && this.value === other.value
+  }
 }
 
 /**
@@ -69,6 +78,11 @@ export class FaunaSet {
   constructor(query) {
     /** Raw query object. */
     this.query = query
+  }
+
+  /** @ignore */
+  inspect() {
+    return `FaunaSet(${JSON.stringify(this.value)})`
   }
 
   /** @ignore */
@@ -130,6 +144,4 @@ export class Page {
   mapData(func) {
     return new Page(this.data.map(func), this.before, this.after)
   }
-
-  // TODO: setIterator is async, so need a different way to do that...
 }
