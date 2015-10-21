@@ -35,7 +35,7 @@ let lambdaAutoVarName = 'a'
  * This form generates the names of lambda parameters for you, and is called like:
  *
  *     query.lambda(a => query.add(a, a))
- *     // Produces: {lambda: 'a', expr: {add: [{var: 'a'}, {var: 'a'}]}})
+ *     // Produces: {lambda: 'a', expr: {add: [{var: 'a'}, {var: 'a'}]}}
  *
  * You can also use {@link lambda_expr} directly.
  *
