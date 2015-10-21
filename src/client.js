@@ -60,10 +60,9 @@ export default class Client {
   /**
    * HTTP `GET`.
    * See the [docs](https://faunadb.com/documentation/rest).
-   *
    * @param {string|Ref} path Path relative the `domain` from the constructor.
    * @param {Object} query URL parameters.
-   * @return {Object} Converted JSON response.
+   * @return {Promise<Object>} Converted JSON response.
    */
   get(path, query=null) {
     return this._execute('GET', path, null, query)
@@ -72,17 +71,16 @@ export default class Client {
   /**
    * HTTP `POST`.
    * See the [docs](https://faunadb.com/documentation/rest).
-   *
    * @param {string|Ref} path Path relative to the `domain` from the constructor.
    * @param {Object} data Object to be converted to request JSON.
-   * @return {Object} Converted JSON response.
+   * @return {Promise<Object>} Converted JSON response.
    */
   post(path, data) {
     return this._execute('POST', path, data)
   }
 
   /**
-   * Like `post`, but a `PUT` request.
+   * Like {@link post}, but a `PUT` request.
    * See the [docs](https://faunadb.com/documentation/rest).
    */
   put(path, data) {
@@ -90,7 +88,7 @@ export default class Client {
   }
 
   /**
-   * Like `post`, but a `PATCH` request.
+   * Like {@link post}, but a `PATCH` request.
    * See the [docs](https://faunadb.com/documentation/rest).
    */
   patch(path, data) {
@@ -98,7 +96,7 @@ export default class Client {
   }
 
   /**
-   * Like `post`, but a `DELETE` request.
+   * Like {@link post}, but a `DELETE` request.
    * See the [docs](https://faunadb.com/documentation/rest).
    */
   delete(path, data) {
@@ -109,6 +107,8 @@ export default class Client {
    * Use the FaunaDB query API.
    * See the [docs](https://faunadb.com/documentation/queries)
    * and the query functions in this documentation.
+   * @param expression {object} Created from query functions such as {@link add}.
+   * @return {Promise<Object>} Server's response to the query.
    */
   query(expression) {
     return this._execute('POST', '', expression)
@@ -117,6 +117,7 @@ export default class Client {
   /**
    * Ping FaunaDB.
    * See the [docs](https://faunadb.com/documentation/rest#other).
+   * @return {Promise<string>}
    */
   ping(scope, timeout) {
     return this.get('ping', {scope, timeout})
