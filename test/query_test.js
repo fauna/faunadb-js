@@ -57,19 +57,24 @@ describe('query', () => {
   it('lambda', () => {
     assert.deepEqual(
       query.lambda(a => query.add(a, a)),
-      {lambda: 'a', expr: {add: [{var: 'a'}, {var: 'a'}]}})
+      {lambda: 'auto0', expr: {add: [{var: 'auto0'}, {var: 'auto0'}]}})
 
     assert.deepEqual(
       query.lambda(a => query.lambda(b => query.lambda(c => [a, b, c]))),
       {
-        lambda: 'a',
-        expr: {lambda: 'b', expr: {lambda: 'c', expr: [{var: 'a'}, {var: 'b'}, {var: 'c'}]}}
+        lambda: 'auto0',
+        expr: {
+          lambda: 'auto1',
+          expr: {
+            lambda: 'auto2',
+            expr: [{var: 'auto0'}, {var: 'auto1'}, {var: 'auto2'}]}
+          }
       })
 
     // Error in function should not affect future queries.
     try { query.lambda(() => { throw new Error() }) } catch (err) { }
 
-    assert.deepEqual(query.lambda(a => a), {lambda: 'a', expr: {var: 'a'}})
+    assert.deepEqual(query.lambda(a => a), {lambda: 'auto0', expr: {var: 'auto0'}})
   })
 
   it('map', async function() {
