@@ -11,7 +11,7 @@
     "watch": "babel src --out-dir lib --source-maps inline --watch",
     "doc": "esdoc -c esdoc.json",
     "lint": "eslint src test",
-    "test": "mocha --compilers js:babel/register test/**/*.js"
+    "test": "mocha --compilers js:babel/register test/*.js test/*/*.js"
   },
   "dependencies": {
     "babel-runtime": "5.8.25",
