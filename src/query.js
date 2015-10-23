@@ -181,15 +181,15 @@ export function divide(...numbers) {
   return varargsQuery('divide', numbers)
 }
 
-const
-  params = (mainParams, optionalParams) => {
-    for (const key in optionalParams) {
-      const val = optionalParams[key]
-      if (val !== null)
-        mainParams[key] = val
-    }
-    return mainParams
-  },
+function params(mainParams, optionalParams) {
+  for (const key in optionalParams) {
+    const val = optionalParams[key]
+    if (val !== null)
+      mainParams[key] = val
+  }
+  return mainParams
+}
 
-  varargsQuery = (name, values) =>
-    ({[name]: values.length === 1 ? values[0] : values})
+function varargsQuery(name, values) {
+  return {[name]: values.length === 1 ? values[0] : values}
+}
