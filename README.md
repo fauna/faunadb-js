@@ -2,6 +2,9 @@ Node.js client for [FaunaDB](https://faunadb.com).
 
 View documentation [here](https://faunadb.github.io/faunadb-js/).
 
+See an example [here](https://github.com/faunadb/faunadb-js/blob/master/examples/faunadb-test.js)
+([EcmaScript 7 version](https://github.com/faunadb/faunadb-js/blob/master/src/faunadb-test-es7.js)).
+
 See the [FaunaDB Documentation](https://faunadb.com/documentation) for
 a complete API reference, or look in
 [`/tests`](https://github.com/faunadb/faunadb-python/tree/master/tests) for more
@@ -19,9 +22,6 @@ All work with FaunaDB happens through a Client instance.
 All Client methods return [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
 Although it's possible to use Client alone, it's often easier to do work through Model classes.
 For advanced work, the query api (`faunadb/lib/query`) will be useful.
-
-See an example [here](https://github.com/faunadb/faunadb-js/blob/master/examples/faunadb-test.js)
-([EcmaScript 7 version](https://github.com/faunadb/faunadb-js/blob/master/src/faunadb-test-es7.js)).
 
 
 ## Building it yourself
