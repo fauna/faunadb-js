@@ -62,6 +62,7 @@ export class Ref {
     return `Ref(${JSON.stringify(this.value)})`
   }
 
+  /** Whether these are both Refs and have the same value. */
   equals(other) {
     return other instanceof Ref && this.value === other.value
   }
@@ -124,6 +125,7 @@ const allowed_event_actions = new Set([null, 'create', 'delete'])
  * See `paginate` in the [docs](https://faunadb.com/documentation/queries#read_functions).
  */
 export class Page {
+  /** Use this on an object that you know represents a Page. */
   static fromRaw(object) {
     return new Page(object.data, object.before, object.after)
   }
