@@ -3,7 +3,7 @@ Node.js client for [FaunaDB](https://faunadb.com).
 View documentation [here](https://faunadb.github.io/faunadb-js/).
 
 See an example [here](https://github.com/faunadb/faunadb-js/blob/master/examples/faunadb-test.js)
-([EcmaScript 7 version](https://github.com/faunadb/faunadb-js/blob/master/src/faunadb-test-es7.js)).
+([EcmaScript 7 version](https://github.com/faunadb/faunadb-js/blob/master/examples/faunadb-test-es7.js)).
 
 See the [FaunaDB Documentation](https://faunadb.com/documentation) for
 a complete API reference, or look in
