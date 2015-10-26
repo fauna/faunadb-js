@@ -9,7 +9,7 @@ To run this:
 
 var
   inherits = require('babel-runtime/helpers/inherits').default,
-  Client = require('faunadb/lib/client'),
+  Client = require('faunadb/lib/Client'),
   errors = require('faunadb/lib/errors'),
     NotFound = errors.NotFound,
   Model = require('faunadb/lib/model/Model'),
