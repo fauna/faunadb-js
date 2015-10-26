@@ -99,8 +99,8 @@ export default class Client {
    * Like {@link post}, but a `DELETE` request.
    * See the [docs](https://faunadb.com/documentation/rest).
    */
-  delete(path, data) {
-    return this._execute('DELETE', path, data)
+  delete(path) {
+    return this._execute('DELETE', path)
   }
 
   /**
@@ -119,7 +119,7 @@ export default class Client {
    * See the [docs](https://faunadb.com/documentation/rest#other).
    * @return {Promise<string>}
    */
-  ping(scope, timeout) {
+  ping(scope=undefined, timeout=undefined) {
     return this.get('ping', {scope, timeout})
   }
 
