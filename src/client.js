@@ -198,31 +198,31 @@ export default class Client {
   }
 }
 
-const
-  handleResponse = (response, response_object) => {
-    const code = response.statusCode
-    if (200 <= code && code <= 299)
-      return response_object.resource
-    else
-      switch (code) {
-        case 400:
-          throw new BadRequest(response_object)
-        case 401:
-          throw new Unauthorized(response_object)
-        case 403:
-          throw new PermissionDenied(response_object)
-        case 404:
-          throw new NotFound(response_object)
-        case 405:
-          throw new MethodNotAllowed(response_object)
-        case 500:
-          throw new InternalError(response_object)
-        case 503:
-          throw new UnavailableError(response_object)
-        default:
-          throw new FaunaHTTPError(response_object)
-      }
-  },
+function handleResponse(response, response_object) {
+  const code = response.statusCode
+  if (200 <= code && code <= 299)
+    return response_object.resource
+  else
+    switch (code) {
+      case 400:
+        throw new BadRequest(response_object)
+      case 401:
+        throw new Unauthorized(response_object)
+      case 403:
+        throw new PermissionDenied(response_object)
+      case 404:
+        throw new NotFound(response_object)
+      case 405:
+        throw new MethodNotAllowed(response_object)
+      case 500:
+        throw new InternalError(response_object)
+      case 503:
+        throw new UnavailableError(response_object)
+      default:
+        throw new FaunaHTTPError(response_object)
+    }
+}
 
-  queryStringForLogging = query =>
-    query ? `?${Object.keys(query).map(key => `${key}=${query[key]}`).join('&')}` : ''
+function queryStringForLogging(query) {
+  return query ? `?${Object.keys(query).map(key => `${key}=${query[key]}`).join('&')}` : ''
+}

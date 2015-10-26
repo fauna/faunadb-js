@@ -1,13 +1,14 @@
 import {FaunaSet, Ref} from './objects'
 
-export const
-  toJSON = (object, pretty=false) =>
-    pretty ? JSON.stringify(object, null, '  ') : JSON.stringify(object),
+export function toJSON(object, pretty=false) {
+  return pretty ? JSON.stringify(object, null, '  ') : JSON.stringify(object)
+}
 
-  parseJSON = json =>
-    JSON.parse(json, json_parse)
+export function parseJSON(json) {
+  return JSON.parse(json, json_parse)
+}
 
-const json_parse = (_, val) => {
+function json_parse(_, val) {
   if (typeof val !== 'object' || val === null)
     return val
   else if ('@ref' in val)

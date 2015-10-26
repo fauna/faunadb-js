@@ -379,7 +379,8 @@ export default class Model {
 }
 
 /** Lambda expression for getting an instance Ref out of a match result. */
-const indexRefGetter = index =>
-  index.values ?
+function indexRefGetter(index) {
+  return index.values ?
     query.lambda(arr => query.get(query.select(index.values.length, arr))) :
     query.lambda(query.get)
+}

@@ -33,7 +33,7 @@ function takeObjectKeys(object, ...keys) {
   return out
 }
 
-export const getClient = opts => {
+export function getClient(opts) {
   const cfg = removeUndefinedValues(takeObjectKeys(testConfig, 'domain', 'scheme', 'port'))
   return new Client(Object.assign({secret: clientSecret}, cfg, opts))
 }
