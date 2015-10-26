@@ -3,11 +3,16 @@ import * as query from './query'
 import AsyncStream from './AsyncStream'
 import {applyDefaults} from './_util'
 
-/** Used to iterate over the pages of a query. */
+/**
+Used to iterate over the pages of a query.
+Yields whole pages (Arrays) at a time.
+See {@link PageStream.elements} to use stream over individual elements.
+*/
 export default class PageStream extends AsyncStream {
   /**
   Yields individual elements rather than whole pages at a time.
   Parameters are the same as the constructor.
+  @return {AsyncStream}
   */
   static elements(client, set, opts={}) {
     return new PageStream(client, set, opts).flatten()
@@ -21,8 +26,8 @@ export default class PageStream extends AsyncStream {
    */
   constructor(client, set, opts={}) {
     super()
-    this.client = client
-    this.set = set
+    this._client = client
+    this._set = set
 
     Object.assign(this, applyDefaults(opts, {
       // `undefined` automatically removed from queries by JSON.stringify.
@@ -30,27 +35,27 @@ export default class PageStream extends AsyncStream {
       mapLambda: null
     }))
 
-    this.direction = undefined
-    this.cursor = undefined
+    this._direction = undefined
+    this._cursor = undefined
   }
 
   /** @override */
   async next() {
-    if (this.cursor === 'done')
+    if (this._cursor === 'done')
       return {done: true}
 
-    let q = query.paginate(this.set, {size: this.pageSize, [this.direction]: this.cursor})
+    let q = query.paginate(this._set, {size: this.pageSize, [this._direction]: this._cursor})
     if (this.mapLambda !== null)
       q = query.map(this.mapLambda, q)
 
-    const page = Page.fromRaw(await this.client.query(q))
+    const page = Page.fromRaw(await this._client.query(q))
 
-    if (this.direction === undefined)
-      this.direction = page.after === undefined ? 'before' : 'after'
-    this.cursor = page[this.direction]
+    if (this._direction === undefined)
+      this._direction = page.after === undefined ? 'before' : 'after'
+    this._cursor = page[this._direction]
 
-    if (this.cursor === undefined)
-      this.cursor = 'done'
+    if (this._cursor === undefined)
+      this._cursor = 'done'
     return {done: false, value: page.data}
   }
 }
