@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "run-test-es7": "babel faunadb-test-es7.js | node"
+    "run-test-es7": "babel-node faunadb-test-es7.js"
   },
   "dependencies": {
     "faunadb": "faunadb/faunadb-js"
