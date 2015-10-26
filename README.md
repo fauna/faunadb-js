@@ -48,9 +48,9 @@ that looks like this:
 `domain`, `scheme`, and `port` are optional and will default to FaunaDB cloud.
 So to test with cloud, `testConfig.json` is as simple as:
 
-  {
-    "rootKey": {"user": "me@example.com": "pass": "swordfish"}
-  }
+    {
+      "rootKey": {"user": "me@example.com": "pass": "swordfish"}
+    }
 
 You can also set the `FAUNA_DOMAIN`, `FAUNA_SCHEME`, `FAUNA_PORT`, and `FAUNA_ROOT_KEY` environment variables. `FAUNA_ROOT_KEY` may look like `me@example.com:swordfish` for cloud accounts.
 
