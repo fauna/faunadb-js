@@ -5,7 +5,7 @@ To run this:
   npm run faunadb-test-es7
 */
 
-import Client from 'faunadb/lib/client'
+import Client from 'faunadb/lib/Client'
 import {NotFound} from 'faunadb/lib/errors'
 import Model from 'faunadb/lib/model/Model'
 import {Class, Database, Key} from 'faunadb/lib/model/Builtin'

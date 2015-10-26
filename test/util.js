@@ -1,6 +1,6 @@
 import {assert} from 'chai'
 import {join} from 'path'
-import Client from '../src/client'
+import Client from '../src/Client'
 import {Ref} from '../src/objects'
 import {removeUndefinedValues} from '../src/_util'
 const env = process.env
