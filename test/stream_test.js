@@ -67,7 +67,7 @@ describe('stream', () => {
     // Test mapLambda
     const mapStream = PageStream.elements(client, gadgetsSet, {
       pageSize: 2,
-      mapLambda: query.lambda(x => query.select(['data', 'n'], query.get(x)))
+      mapLambda: a => query.select(['data', 'n'], query.get(a))
     })
     assert.deepEqual(await mapStream.all(), [0, 0, 0, 0])
   })

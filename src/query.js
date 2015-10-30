@@ -37,6 +37,9 @@ let lambdaAutoVarNumber = 0
  *     query.lambda(a => query.add(a, a))
  *     // Produces: {lambda: 'auto0', expr: {add: [{var: 'auto0'}, {var: 'auto0'}]}}
  *
+ * Query functions requiring lambdas can be pass raw functions without explicitly calling `lambda`.
+ * For example: `query.map(a => query.add(a, 1), collection)`.
+ *
  * You can also use {@link lambda_expr} directly.
  *
  * @param {function} lambda_body Takes a variable and uses it to construct an expression.
@@ -53,6 +56,11 @@ export function lambda(lambda_body) {
   }
 }
 
+/** If `value` is a function converts it to a query using {@link lambda}. */
+function toLambda(value) {
+  return value instanceof Function ? lambda(value) : value
+}
+
 /** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
 export function lambda_expr(var_name, expr) {
   return {lambda: var_name, expr}
@@ -60,12 +68,12 @@ export function lambda_expr(var_name, expr) {
 
 /** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
 export function map(lambda_expr, collection) {
-  return {map: lambda_expr, collection}
+  return {map: toLambda(lambda_expr), collection}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
 export function foreach(lambda_expr, collection) {
-  return {foreach: lambda_expr, collection}
+  return {foreach: toLambda(lambda_expr), collection}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#read_functions). */
@@ -133,7 +141,7 @@ export function difference(...sets) {
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
 export function join(source, target) {
-  return {join: source, with: target}
+  return {join: source, with: toLambda(target)}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */

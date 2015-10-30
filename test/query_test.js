@@ -78,19 +78,17 @@ describe('query', () => {
   })
 
   it('map', async function() {
-    const double = query.lambda(x => query.multiply([2, x]))
-    await assertQuery(query.map(double, [1, 2, 3]), [2, 4, 6])
+    await assertQuery(query.map(a => query.multiply([2, a]), [1, 2, 3]), [2, 4, 6])
 
-    const getN = query.lambda(x => query.select(['data', 'n'], query.get(x)))
     const page = query.paginate(nSet(1))
-    const ns = query.map(getN, page)
+    const ns = query.map(a => query.select(['data', 'n'], query.get(a)), page)
     assert.deepEqual((await client.query(ns)).data, [1, 1])
   })
 
   it('foreach', async function() {
     const refs = [(await create()).ref, (await create()).ref]
     await client.query(
-      query.foreach(query.lambda(query.delete_expr), refs))
+      query.foreach(query.delete_expr, refs))
     for (const ref of refs)
       await assertQuery(query.exists(ref), false)
   })
@@ -182,9 +180,7 @@ describe('query', () => {
     await assertSet(source, referenced)
 
     // For each obj with n=12, get the set of elements whose data.m refers to it.
-    const joined = query.join(
-      source,
-      query.lambda(x => query.match(x, mIndexRef)))
+    const joined = query.join(source, a => query.match(a, mIndexRef))
     await assertSet(joined, referencers)
   })
 
