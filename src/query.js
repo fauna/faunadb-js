@@ -45,7 +45,7 @@ export function lambda(lambda_body) {
   const varName = `auto${lambdaAutoVarNumber}`
   lambdaAutoVarNumber += 1
 
-  // Make sure lambdaVarName returns to its former value even if there are errors.
+  // Make sure lambdaAutoVarNumber returns to its former value even if there are errors.
   try {
     return lambda_expr(varName, lambda_body(variable(varName)))
   } finally {
