@@ -294,7 +294,7 @@ export default class Model {
    * @return {Promise<Page<this>>} Page whose elements are instances of this class.
    */
   static async page(client, instanceSet, pageParams={}) {
-    return await this._mapPage(client, instanceSet, query.lambda(query.get), pageParams)
+    return await this._mapPage(client, instanceSet, query.get, pageParams)
   }
 
   /**
@@ -334,7 +334,7 @@ export default class Model {
     })
     return PageStream.elements(client, instanceSet, {
       pageSize,
-      mapLambda: query.lambda(query.get)
+      mapLambda: query.get
     }).map(instance => this.getFromResource(client, instance))
   }
 
@@ -381,6 +381,6 @@ export default class Model {
 /** Lambda expression for getting an instance Ref out of a match result. */
 function indexRefGetter(index) {
   return index.values ?
-    query.lambda(arr => query.get(query.select(index.values.length, arr))) :
-    query.lambda(query.get)
+    arr => query.get(query.select(index.values.length, arr)) :
+    query.get
 }
