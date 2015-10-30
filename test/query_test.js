@@ -72,8 +72,7 @@ describe('query', () => {
       })
 
     // Error in function should not affect future queries.
-    try { query.lambda(() => { throw new Error() }) } catch (err) { }
-
+    assert.throws(() => query.lambda(() => { throw new Error() }), Error)
     assert.deepEqual(query.lambda(a => a), {lambda: 'auto0', expr: {var: 'auto0'}})
   })
 
