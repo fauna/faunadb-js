@@ -41,7 +41,7 @@ let lambdaAutoVarNumber = 0
  *     // Produces: {lambda: 'auto0', expr: {add: [{var: 'auto0'}, {var: 'auto0'}]}}
  *
  * Query functions requiring lambdas can be pass raw functions without explicitly calling `lambda`.
- * For example: `query.map(a => query.add(a, 1), collection)`.
+ * For example: `query.map(collection, a => query.add(a, 1))`.
  *
  * You can also use {@link lambda_pattern}, or use {@link lambda_expr} directly.
  *
@@ -106,12 +106,12 @@ export function lambda_expr(var_name, expr) {
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
-export function map(lambda_expr, collection) {
+export function map(collection, lambda_expr) {
   return {map: toLambda(lambda_expr), collection}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
-export function foreach(lambda_expr, collection) {
+export function foreach(collection, lambda_expr) {
   return {foreach: toLambda(lambda_expr), collection}
 }
 

@@ -46,7 +46,7 @@ export default class PageStream extends AsyncStream {
 
     let q = query.paginate(this._set, {size: this.pageSize, [this._direction]: this._cursor})
     if (this.mapLambda !== null)
-      q = query.map(this.mapLambda, q)
+      q = query.map(q, this.mapLambda)
 
     const page = Page.fromRaw(await this._client.query(q))
 

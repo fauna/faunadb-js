@@ -316,7 +316,7 @@ export default class Model {
 
   static async _mapPage(client, instanceSet, pageLambda, pageParams) {
     const pageQuery = query.paginate(instanceSet, pageParams)
-    const mapQuery = query.map(pageLambda, pageQuery)
+    const mapQuery = query.map(pageQuery, pageLambda)
     const page = Page.fromRaw(await client.query(mapQuery))
     return page.mapData(resource => this.getFromResource(client, resource))
   }
