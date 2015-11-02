@@ -78,6 +78,12 @@ describe('query', () => {
 
   it('map', async function() {
     await assertQuery(query.map(a => query.multiply([2, a]), [1, 2, 3]), [2, 4, 6])
+    // Should work for manually constructed lambda too.
+    await assertQuery(
+      query.map(
+        query.lambda_expr('a', query.multiply([2, query.variable('a')])),
+        [1, 2, 3]),
+      [2, 4, 6])
 
     const page = query.paginate(nSet(1))
     const ns = query.map(a => query.select(['data', 'n'], query.get(a)), page)
