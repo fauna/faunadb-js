@@ -1,4 +1,4 @@
-Node.js client for [FaunaDB](https://faunadb.com).
+Node.js driver for [FaunaDB](https://faunadb.com).
 
 View documentation [here](https://faunadb.github.io/faunadb-js/).
 
@@ -10,7 +10,7 @@ a complete API reference, or look in
 [`/tests`](https://github.com/faunadb/faunadb-python/tree/master/tests) for more
 examples.
 
-## Using the Client
+## Using the Driver
 
 ### Install
 
