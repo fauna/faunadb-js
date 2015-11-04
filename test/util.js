@@ -44,7 +44,8 @@ export async function assertRejected(promise, errorType) {
     await promise
     succeeded = true
   } catch (error) {
-    assert(error instanceof errorType)
+    if (!(error instanceof errorType))
+      throw error
   }
   if (succeeded)
     assert.fail('Expected promise to fail')
