@@ -130,6 +130,15 @@ export function drop(number, collection) {
   return {drop: number, collection}
 }
 
+export function prepend(elements, collection) {
+  return {prepend: elements, collection}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
+export function append(elements, collection) {
+  return {append: elements, collection}
+}
+
 /** See the [docs](https://faunadb.com/documentation/queries#read_functions). */
 export function get(ref, ts=null) {
   return params({get: ref}, {ts})
@@ -209,6 +218,11 @@ export function concat(...strings) {
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+export function concatWithSeparator(separator, ...strings) {
+  return {concat: varargs(strings), separator}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 export function contains(path, _in) {
   return {contains: path, in: _in}
 }
@@ -241,6 +255,26 @@ export function subtract(...numbers) {
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 export function divide(...numbers) {
   return {divide: varargs(numbers)}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+export function modulo(...numbers) {
+  return {modulo: varargs(numbers)}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+export function and(...booleans) {
+  return {and: varargs(booleans)}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+export function or(...booleans) {
+  return {or: varargs(booleans)}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+export function not(boolean) {
+  return {not: boolean}
 }
 
 /** Adds optional parameters to the query. */
