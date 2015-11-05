@@ -61,11 +61,12 @@ describe('Builtin', () => {
     assert(cls.history_days > 0)
     assert.equal(cls.name, MyModel.faunaClassName)
 
-    cls.permissions = 'public'
+    const permissions = {read: cls.ref}
+    cls.permissions = permissions
     await cls.save()
 
-    assert.equal(cls.permissions, 'public')
-    assert.equal((await Class.getForModel(client, MyModel)).permissions, 'public')
+    assert.deepEqual(cls.permissions, permissions)
+    assert.deepEqual((await Class.getForModel(client, MyModel)).permissions, permissions)
   })
 
   it('index', async function() {
