@@ -15,7 +15,7 @@ export function if_expr(condition, true_expr, false_expr) {
 
 /** See the [docs](https://faunadb.com/documentation/queries#basic_form). */
 export function do_expr(...expressions) {
-  return varargsQuery('do', expressions)
+  return {do: varargs(expressions)}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
@@ -126,17 +126,17 @@ export function match(match, index) {
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
 export function union(...sets) {
-  return varargsQuery('union', sets)
+  return {union: varargs(sets)}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
 export function intersection(...sets) {
-  return varargsQuery('intersection', sets)
+  return {intersection: varargs(sets)}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
 export function difference(...sets) {
-  return varargsQuery('difference', sets)
+  return {difference: varargs(sets)}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
@@ -146,12 +146,12 @@ export function join(source, target) {
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 export function equals(...values) {
-  return varargsQuery('equals', values)
+  return {equals: varargs(values)}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 export function concat(...strings) {
-  return varargsQuery('concat', strings)
+  return {concat: varargs(strings)}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
@@ -171,24 +171,25 @@ export function selectWithDefault(path, data, _default) {
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 export function add(...numbers) {
-  return varargsQuery('add', numbers)
+  return {add: varargs(numbers)}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 export function multiply(...numbers) {
-  return varargsQuery('multiply', numbers)
+  return {multiply: varargs(numbers)}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 export function subtract(...numbers) {
-  return varargsQuery('subtract', numbers)
+  return {subtract: varargs(numbers)}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 export function divide(...numbers) {
-  return varargsQuery('divide', numbers)
+  return {divide: varargs(numbers)}
 }
 
+/** Adds optional parameters to the query. */
 function params(mainParams, optionalParams) {
   for (const key in optionalParams) {
     const val = optionalParams[key]
@@ -198,6 +199,11 @@ function params(mainParams, optionalParams) {
   return mainParams
 }
 
-function varargsQuery(name, values) {
-  return {[name]: values.length === 1 ? values[0] : values}
+/**
+ * Called on rest arguments.
+ * This ensures that a single value passed is not put in an array, so
+ * `query.add([1, 2])` will work as well as `query.add(1, 2)`.
+ */
+function varargs(values) {
+  return values.length === 1 ? values[0] : values
 }
