@@ -31,6 +31,11 @@ For advanced work, the query api (`faunadb/lib/query`) will be useful.
     npm install
 
 
+### Build
+
+`npm run build` or `npm run watch`.
+
+
 ### Test
 
     npm run test
