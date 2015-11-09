@@ -5,12 +5,7 @@ To run this:
   npm run faunadb-test-es7
 */
 
-import Client from 'faunadb/lib/Client'
-import {NotFound} from 'faunadb/lib/errors'
-import Model from 'faunadb/lib/model/Model'
-import {Class, Database, Key} from 'faunadb/lib/model/Builtin'
-import {Ref} from 'faunadb/lib/objects'
-import * as query from 'faunadb/lib/query'
+import {Class, Client, Database, Key, Model, NotFound, Ref, query} from 'faunadb'
 
 const rootClient = new Client({
   secret: {
