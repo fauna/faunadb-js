@@ -5,9 +5,9 @@
   "homepage": "https://faunadb.com",
   "repository": "faunadb/faunadb-js",
   "license": "MPL-2.0",
-  "files": ["src"],
+  "files": ["src", "lib"],
   "scripts": {
-    "install": "babel src --out-dir lib --source-maps inline",
+    "build": "babel src --out-dir lib --source-maps inline",
     "watch": "babel src --out-dir lib --source-maps inline --watch",
     "doc": "esdoc -c esdoc.json",
     "lint": "eslint src test",
