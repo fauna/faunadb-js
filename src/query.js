@@ -1,3 +1,6 @@
+import {inspect} from 'util'
+import {InvalidQuery} from './errors'
+
 /** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
 export function let_expr(vars, in_expr) {
   return {let: vars, in: in_expr}
@@ -40,9 +43,10 @@ let lambdaAutoVarNumber = 0
  * Query functions requiring lambdas can be pass raw functions without explicitly calling `lambda`.
  * For example: `query.map(a => query.add(a, 1), collection)`.
  *
- * You can also use {@link lambda_expr} directly.
+ * You can also use {@link lambda_pattern}, or use {@link lambda_expr} directly.
  *
  * @param {function} lambda_body Takes a variable and uses it to construct an expression.
+ * @return {lambda_expr}
  */
 export function lambda(lambda_body) {
   const varName = `auto${lambdaAutoVarNumber}`
@@ -59,6 +63,41 @@ export function lambda(lambda_body) {
 /** If `value` is a function converts it to a query using {@link lambda}. */
 function toLambda(value) {
   return value instanceof Function ? lambda(value) : value
+}
+
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#basic_forms).
+ * This form gathers variables from the pattern you provide and puts them in an object.
+ * It is called like:
+ *
+ *     q = query.map(
+ *       query.lambda_pattern(['foo', '', 'bar'], ({foo, bar}) => [bar, foo]),
+ *       [[1, 2, 3], [4, 5, 6]]))
+ *     // Result of client.query(q) is: [[3, 1], [6, 4]].
+ *
+ * @param {Array|object} pattern
+ *   Tree of Arrays and objects. Leaves are the names of variables.
+ *   If a leaf is the empty string `''`, it is ignored.
+ * @param {function} lambda_body
+ *   Takes an object of variables taken from the leaves of `pattern`, and returns a query.
+ * @return {lambda_expr}
+ */
+export function lambda_pattern(pattern, lambda_body) {
+  const vars = {}
+  function collectVars(pat) {
+    if (pat instanceof Array)
+      pat.forEach(collectVars)
+    else if (typeof pat === 'object')
+      for (const key in pat)
+        collectVars(pat[key])
+    else if (typeof pat === 'string') {
+      if (pat !== '')
+        vars[pat] = variable(pat)
+    } else
+      throw new InvalidQuery(`Pattern must be Array, object, or string; got ${inspect(pat)}.`)
+  }
+  collectVars(pattern)
+  return lambda_expr(pattern, lambda_body(vars))
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
