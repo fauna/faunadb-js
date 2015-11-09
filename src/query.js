@@ -45,16 +45,16 @@ let lambdaAutoVarNumber = 0
  *
  * You can also use {@link lambda_pattern}, or use {@link lambda_expr} directly.
  *
- * @param {function} lambda_body Takes a variable and uses it to construct an expression.
+ * @param {function} func Takes a variable and uses it to construct an expression.
  * @return {lambda_expr}
  */
-export function lambda(lambda_body) {
+export function lambda(func) {
   const varName = `auto${lambdaAutoVarNumber}`
   lambdaAutoVarNumber += 1
 
   // Make sure lambdaAutoVarNumber returns to its former value even if there are errors.
   try {
-    return lambda_expr(varName, lambda_body(variable(varName)))
+    return lambda_expr(varName, func(variable(varName)))
   } finally {
     lambdaAutoVarNumber -= 1
   }
@@ -78,11 +78,11 @@ function toLambda(value) {
  * @param {Array|object} pattern
  *   Tree of Arrays and objects. Leaves are the names of variables.
  *   If a leaf is the empty string `''`, it is ignored.
- * @param {function} lambda_body
+ * @param {function} func
  *   Takes an object of variables taken from the leaves of `pattern`, and returns a query.
  * @return {lambda_expr}
  */
-export function lambda_pattern(pattern, lambda_body) {
+export function lambda_pattern(pattern, func) {
   const vars = {}
   function collectVars(pat) {
     if (pat instanceof Array)
@@ -97,7 +97,7 @@ export function lambda_pattern(pattern, lambda_body) {
       throw new InvalidQuery(`Pattern must be Array, object, or string; got ${inspect(pat)}.`)
   }
   collectVars(pattern)
-  return lambda_expr(pattern, lambda_body(vars))
+  return lambda_expr(pattern, func(vars))
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
