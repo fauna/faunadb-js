@@ -12,8 +12,8 @@ export function variable(varName) {
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
-export function if_expr(condition, true_expr, false_expr) {
-  return {if: condition, then: true_expr, else: false_expr}
+export function if_expr(condition, then, _else) {
+  return {if: condition, then, else: _else}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#basic_form). */
@@ -22,13 +22,13 @@ export function do_expr(...expressions) {
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
-export function object(object) {
-  return {object}
+export function object(fields) {
+  return {object: fields}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
-export function quote(quote) {
-  return {quote}
+export function quote(expr) {
+  return {quote: expr}
 }
 
 let lambdaAutoVarNumber = 0
@@ -159,8 +159,8 @@ export function delete_expr(ref) {
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
-export function match(match, index) {
-  return {match, index}
+export function match(terms, index) {
+  return {match: terms, index}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
@@ -194,18 +194,18 @@ export function concat(...strings) {
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
-export function contains(path, value) {
-  return {contains: path, in: value}
+export function contains(path, _in) {
+  return {contains: path, in: _in}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
-export function select(path, data) {
-  return {select: path, from: data}
+export function select(path, from) {
+  return {select: path, from}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
-export function selectWithDefault(path, data, _default) {
-  return {select: path, from: data, default: _default}
+export function selectWithDefault(path, from, _default) {
+  return {select: path, from: from, default: _default}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
