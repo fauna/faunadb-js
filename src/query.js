@@ -115,6 +115,21 @@ export function foreach(lambda_expr, collection) {
   return {foreach: toLambda(lambda_expr), collection}
 }
 
+/** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
+export function filter(collection, lambda_expr) {
+  return {filter: toLambda(lambda_expr), collection}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
+export function take(number, collection) {
+  return {take: number, collection}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
+export function drop(number, collection) {
+  return {drop: number, collection}
+}
+
 /** See the [docs](https://faunadb.com/documentation/queries#read_functions). */
 export function get(ref, ts=null) {
   return params({get: ref}, {ts})
