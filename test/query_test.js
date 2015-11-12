@@ -1,6 +1,6 @@
 import {assert} from 'chai'
 import {BadRequest, InvalidQuery, NotFound} from '../src/errors'
-import {FaunaSet} from '../src/objects'
+import {FaunaDate, FaunaSet, FaunaTime} from '../src/objects'
 import * as query from '../src/query'
 import {assertRejected, client} from './util'
 
@@ -264,6 +264,23 @@ describe('query', () => {
     // For each obj with n=12, get the set of elements whose data.m refers to it.
     const joined = query.join(source, a => query.match(a, mIndexRef))
     await assertSet(joined, referencers)
+  })
+
+  it('time', async function() {
+    const time = '1970-01-01T00:00:00.123456789Z'
+    await assertQuery(query.time(time), new FaunaTime(time))
+    // 'now' refers to the current time.
+    assert.instanceOf(await client.query(query.time('now')), FaunaTime)
+  })
+
+  it('epoch', async function() {
+    await assertQuery(query.epoch(12, 'second'), new FaunaTime('1970-01-01T00:00:12Z'))
+    const nanoTime = new FaunaTime('1970-01-01T00:00:00.123456789Z')
+    await assertQuery(query.epoch(123456789, 'nanosecond'), nanoTime)
+  })
+
+  it('date', async function() {
+    await assertQuery(query.date('1970-01-01'), new FaunaDate('1970-01-01'))
   })
 
   it('equals', async function() {
