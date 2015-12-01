@@ -47,8 +47,8 @@ export async function assertRejected(promise, errorType) {
     if (!(error instanceof errorType))
       throw error
   }
-  if (succeeded)
-    assert.fail('Expected promise to fail')
+
+  assert(!succeeded, 'Expected promise to fail.')
 }
 
 // Set in before hook, so won't be null during tests
