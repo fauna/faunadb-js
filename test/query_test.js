@@ -129,7 +129,7 @@ describe('query', () => {
 
     const page = query.paginate(nSet(1))
     const ns = query.map(a => query.select(['data', 'n'], query.get(a)), page)
-    assert.deepEqual((await client.query(ns)).data, [1, 1])
+    assertQuery(ns, {data: [1, 1]})
   })
 
   it('foreach', async function() {
@@ -138,6 +138,29 @@ describe('query', () => {
       query.foreach(query.delete_expr, refs))
     for (const ref of refs)
       await assertQuery(query.exists(ref), false)
+  })
+
+  it('filter', async function() {
+    //TODO
+    //await assertQuery(query.filter([1, 2, 3, 4], a => query.equals(query.modulo(a, 2), 0)), [2, 4])
+
+    // Works on page too
+    const page = query.paginate(nSet(1))
+    const refsWithM = query.filter(page, a =>
+      query.contains(['data', 'm'], query.get(a)))
+    await assertQuery(refsWithM, {data: [refN1M1]})
+  })
+
+  it('take', async function() {
+    await assertQuery(query.take(1, [1, 2]), [1])
+    await assertQuery(query.take(3, [1, 2]), [1, 2])
+    await assertQuery(query.take(-1, [1, 2]), [])
+  })
+
+  it('drop', async function() {
+    await assertQuery(query.drop(1, [1, 2]), [2])
+    await assertQuery(query.drop(3, [1, 2]), [])
+    await assertQuery(query.drop(-1, [1, 2]), [1, 2])
   })
 
   it('get', async function() {
