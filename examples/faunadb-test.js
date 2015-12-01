@@ -5,19 +5,14 @@ To run this:
   node faunadb-test.js
 */
 
+/* eslint-disable no-var */
+
 'use strict'
 
-var
-  inherits = require('babel-runtime/helpers/inherits').default,
-  Client = require('faunadb/lib/Client'),
-  errors = require('faunadb/lib/errors'),
-    NotFound = errors.NotFound,
-  Model = require('faunadb/lib/model/Model'),
-  builtin = require('faunadb/lib/model/Builtin'),
-    Class = builtin.Class, Database = builtin.Database, Key = builtin.Key,
-  objects = require('faunadb/lib/objects'),
-    Ref = objects.Ref,
-  query = require('faunadb/lib/query')
+var inherits = require('babel-runtime/helpers/inherits').default
+var _ = require('faunadb'),
+  Client = _.Client, NotFound = _.NotFound, Model = _.Model, Class = _.Class, Database = _.Database,
+  Key = _.Key, Ref = _.Ref, query = _.query
 
 var rootClient = new Client({
   secret: {
