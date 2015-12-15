@@ -1,6 +1,6 @@
 {
   "name": "faunadb",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "FaunaDB (faunadb.com) client for node",
   "homepage": "https://faunadb.com",
   "repository": "faunadb/faunadb-js",
