@@ -207,6 +207,21 @@ export function join(source, target) {
   return {join: source, with: toLambda(target)}
 }
 
+/** See the [docs](https://faunadb.com/documentation/queries#time_functions). */
+export function time(string) {
+  return {time: string}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#time_functions). */
+export function epoch(number, unit) {
+  return {epoch: number, unit}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#time_functions). */
+export function date(string) {
+  return {date: string}
+}
+
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 export function equals(...values) {
   return {equals: varargs(values)}

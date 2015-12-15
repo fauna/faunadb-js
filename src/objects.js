@@ -147,3 +147,62 @@ export class Page {
     return new Page(this.data.map(func), this.before, this.after)
   }
 }
+
+/** FaunaDB time. See the [docs](https://faunadb.com/documentation/queries#values-special_types). */
+export class FaunaTime {
+  /**
+   * @param {string|Date} value If a Date, this is converted to a string.
+   */
+  constructor(value) {
+    if (value instanceof Date)
+      value = value.toISOString()
+    else if (!value.endsWith('Z'))
+      throw new InvalidValue(`Only allowed timezone is 'Z', got: ${value}`)
+    /**
+     * ISO8601 time.
+     * @type {string}
+     */
+    this.value = value
+  }
+
+  /**
+   * This is lossy as Dates have millisecond rather than nanosecond precision.
+   * @return {Date}
+   */
+  get date() {
+    return new Date(this.value)
+  }
+
+  /** @ignore */
+  toJSON() {
+    return {'@ts': this.value}
+  }
+}
+
+/** FaunaDB date. See the [docs](https://faunadb.com/documentation/queries#values-special_types). */
+export class FaunaDate {
+  /**
+   * @param {string|Date} value
+   *   If a Date, this is converted to a string, with time-of-day discarded.
+   */
+  constructor(value) {
+    if (value instanceof Date)
+      // The first 10 characters 'YYYY-MM-DD' are the date portion.
+      value = value.toISOString().slice(0, 10)
+    /**
+     * ISO8601 date.
+     * @type {string}
+     */
+    this.value = value
+  }
+
+  /** @return {Date} */
+  get date() {
+    return new Date(this.value)
+  }
+
+  /** @ignore */
+  toJSON() {
+    return {'@date': this.value}
+  }
+}
