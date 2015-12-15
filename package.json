@@ -11,34 +11,43 @@
     "watch": "babel src --out-dir lib --source-maps inline --watch",
     "doc": "esdoc -c esdoc.json",
     "lint": "eslint index.js src test examples/*.js",
-    "test": "mocha --compilers js:babel/register test/*.js test/*/*.js"
+    "test": "mocha --compilers js:babel-register test/*.js test/*/*.js"
   },
   "dependencies": {
-    "babel-runtime": "5.8.25",
-    "request": "2.65.0",
-    "winston": "1.1.1"
+    "babel-runtime": "6.3.19",
+    "request": "2.69.0",
+    "winston": "2.1.1"
   },
   "devDependencies": {
-    "babel-cli": "6.1.2",
-    "babel-plugin-syntax-async-functions": "6.0.14",
-    "babel-plugin-transform-async-to-generator": "6.0.14",
-    "babel-plugin-transform-runtime": "6.1.2",
-    "babel-preset-es2015": "6.1.2",
-    "babel-eslint": "4.1.3",
-    "chai": "3.4.0",
-    "esdoc": "0.4.1",
-    "esdoc-es7-plugin": "0.0.2",
-    "eslint": "1.7.3",
-    "mocha": "2.3.3"
+    "babel-cli": "6.4.5",
+    "babel-eslint": "5.0.0-beta6",
+    "babel-plugin-syntax-async-functions": "6.3.13",
+    "babel-plugin-transform-async-to-generator": "6.4.6",
+    "babel-plugin-transform-es2015-destructuring": "6.4.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.4.5",
+    "babel-plugin-transform-es2015-parameters": "6.4.5",
+    "babel-plugin-transform-es2015-spread": "6.4.0",
+    "babel-plugin-transform-strict-mode": "6.3.13",
+    "babel-plugin-transform-runtime": "6.4.3",
+    "babel-register": "6.4.3",
+    "chai": "3.4.1",
+    "esdoc": "0.4.3",
+    "esdoc-es7-plugin": "0.0.3",
+    "eslint": "1.10.3",
+    "mocha": "2.4.3"
   },
   "engines": {"node": ">= 0.10.0"},
   "babel": {
     "plugins": [
       "syntax-async-functions",
       "transform-async-to-generator",
+      "transform-es2015-destructuring",
+      "transform-es2015-modules-commonjs",
+      "transform-es2015-parameters",
+      "transform-es2015-spread",
+      "transform-strict-mode",
       "transform-runtime"
-    ],
-    "presets": ["es2015"]
+    ]
   },
   "eslintConfig": {
     "parser": "babel-eslint",
@@ -87,5 +96,6 @@
       "spaced-comment": 1,
       "space-in-parens": [1, "never"]
     }
-  }
+  },
+  "engines": {"node": ">= 4.0.0"}
 }

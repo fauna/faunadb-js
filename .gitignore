@@ -1,4 +1,5 @@
 esdoc
+lib
 node_modules
 npm-debug.log
 testConfig.json
