@@ -1,0 +1,17 @@
+sudo: required
+env:
+  global:
+    - FAUNA_ROOT_KEY=secret
+    - FAUNA_DOMAIN=localhost
+    - FAUNA_SCHEME=http
+    - FAUNA_PORT=8443
+jdk:
+  - oraclejdk8
+before_install:
+  - openssl aes-256-cbc -K $encrypted_c0ecaa32cf03_key -iv $encrypted_c0ecaa32cf03_iv -in core.tgz.enc -out core.tgz -d
+  - tar zxf core.tgz
+  - sh install-core.sh
+  - sudo apt-get install -y npm
+script:
+  - npm install
+  - npm run test
