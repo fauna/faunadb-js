@@ -129,7 +129,8 @@ describe('Model', () => {
     const indexRef = (await client.post('indexes', {
       name: 'my_models_by_number',
       source: MyModel.classRef,
-      terms: [{path: 'data.number'}]
+      terms: [{path: 'data.number'}],
+      active: true
     })).ref
 
     const
