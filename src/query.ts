@@ -246,6 +246,18 @@ export function join(source: Query, target: Lambda): Query {
   return {join: source, with: toLambda(target)}
 }
 
+// String functions
+
+/** See the [docs](https://faunadb.com/documentation/queries#string_functions). */
+export function concat(strings: Array<string>, separator: string = null): Query {
+  return params({concat: strings}, {separator})
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#string_functions). */
+export function casefold(str: string) {
+  return {casefold: str}
+}
+
 // Time and date functions
 
 /** See the [docs](https://faunadb.com/documentation/queries#time_functions). */
@@ -268,11 +280,6 @@ export function date(string: Query): Query {
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 export function equals(...values: Array<Query>): Query {
   return {equals: varargs(values)}
-}
-
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
-export function concat(strings: Array<string>, separator: string = null): Query {
-  return params({concat: strings}, {separator})
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
