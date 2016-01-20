@@ -15,10 +15,7 @@ describe('Client', () => {
   })
 
   it('ping', async () => {
-    assert.equal(await client.ping(), 'Scope Global is OK')
-    for (const scope of ['global', 'local', 'node', 'all'])
-      assert.equal(await client.ping(scope),
-        `Scope ${scope[0].toUpperCase()}${scope.slice(1)} is OK`)
+    assert.equal(await client.ping('all'), 'Scope all is OK')
   })
 
   it('get', async () => {
