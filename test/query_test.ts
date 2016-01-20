@@ -338,9 +338,9 @@ describe('query', () => {
   })
 
   it('concat', async () => {
-    await assertQuery(query.concat('a', 'b', 'c'), 'abc')
-    await assertQuery(query.concat(), '')
-    await assertQuery(query.concatWithSeparator('.', 'a', 'b', 'c'), 'a.b.c')
+    await assertQuery(query.concat(['a', 'b', 'c']), 'abc')
+    await assertQuery(query.concat([]), '')
+    await assertQuery(query.concat(['a', 'b', 'c'], '.'), 'a.b.c')
   })
 
   it('contains', async () => {

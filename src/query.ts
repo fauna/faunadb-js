@@ -271,13 +271,8 @@ export function equals(...values: Array<Query>): Query {
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
-export function concat(...strings: Array<Query>): Query {
-  return {concat: varargs(strings)}
-}
-
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
-export function concatWithSeparator(separator: Query, ...strings: Array<Query>): Query {
-  return {concat: varargs(strings), separator}
+export function concat(strings: Array<string>, separator: string = null): Query {
+  return params({concat: strings}, {separator})
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
