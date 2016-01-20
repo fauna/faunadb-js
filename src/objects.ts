@@ -77,7 +77,7 @@ This looks like This looks like `{"@set": set_query}`.
 For query sets see [[match]], [[union]],
 [[intersection]], [[difference]], and [[join]].
 */
-export class FaunaSet {
+export class SetRef {
   constructor(
     /** Raw query object. */
     public query: Query) {}
@@ -89,7 +89,7 @@ export class FaunaSet {
 
   /** @ignore */
   inspect(): string {
-    return `FaunaSet(${JSON.stringify(this.query)})`
+    return `SetRef(${JSON.stringify(this.query)})`
   }
 }
 

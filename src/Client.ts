@@ -17,7 +17,7 @@ It is encouraged to pass e.g. [[Ref]] objects instead of raw JSON data.
 
 All methods return a converted JSON response.
 This is an object containing Arrays, strings, and other objects.
-Any [[Ref]], [[FaunaSet]], [[FaunaTime]], or [[FaunaDate]]
+Any [[Ref]], [[SetRef]], [[FaunaTime]], or [[FaunaDate]]
 values in it will also be parsed.
 (So instead of `{ "@ref": "classes/frogs/123" }`,
 you will get `new Ref("classes/frogs/123")`.)
