@@ -246,6 +246,23 @@ export function join(source: Query, target: Lambda): Query {
   return {join: source, with: toLambda(target)}
 }
 
+// Authentication
+
+/** See the [docs](https://faunadb.com/documentation/queries#auth_functions). */
+export function login(ref: Query, params: Query): Query {
+  return {login: ref, params}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#auth_functions). */
+export function logout(delete_tokens: Query): Query {
+  return {logout: delete_tokens}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#auth_functions). */
+export function identify(ref: Query, password: Query): Query {
+  return {identify: ref, password}
+}
+
 // String functions
 
 /** See the [docs](https://faunadb.com/documentation/queries#string_functions). */
