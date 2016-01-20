@@ -323,6 +323,26 @@ export function modulo(...numbers: Array<Query>): Query {
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+export function lt(...values: Array<Query>): Query {
+  return {lt: varargs(values)}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+export function lte(...values: Array<Query>): Query {
+  return {lte: varargs(values)}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+export function gt(...values: Array<Query>): Query {
+  return {gt: varargs(values)}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+export function gte(...values: Array<Query>): Query {
+  return {gte: varargs(values)}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 export function and(...booleans: Array<Query>): Query {
   return {and: varargs(booleans)}
 }

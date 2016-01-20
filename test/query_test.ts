@@ -308,15 +308,15 @@ describe('query', () => {
     const joined = query.join(source, a => query.match(mIndexRef, a))
     await assertSet(joined, referencers)
   })
-  
+
   // String functions
-  
+
   it('concat', async () => {
     await assertQuery(query.concat(['a', 'b', 'c']), 'abc')
     await assertQuery(query.concat([]), '')
     await assertQuery(query.concat(['a', 'b', 'c'], '.'), 'a.b.c')
   })
-  
+
   it('casefold', async () => {
     await assertQuery(query.casefold('Hen Wen'), 'hen wen')
   })
@@ -401,6 +401,22 @@ describe('query', () => {
     await assertQuery(query.modulo(2), 2)
     await assertBadQuery(query.modulo(1, 0))
     await assertBadQuery(query.modulo())
+  })
+
+  it('lt', async () => {
+    await assertQuery(query.lt(1, 2), true)
+  })
+
+  it('lte', async () => {
+    await assertQuery(query.lte(1, 1), true)
+  })
+
+  it('gt', async () => {
+    await assertQuery(query.gt(2, 1), true)
+  })
+
+  it('gt', async () => {
+    await assertQuery(query.gte(1, 1), true)
   })
 
   it('and', async () => {
