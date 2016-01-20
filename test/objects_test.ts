@@ -33,7 +33,7 @@ describe('objects', () => {
     const
       index = new Ref('indexes', 'frogs_by_size'),
       jsonIndex = '{"@ref":"indexes/frogs_by_size"}',
-      match = new FaunaSet(query.match(ref, index)),
+      match = new FaunaSet(query.match(index, ref)),
       jsonMatch = `{"@set":{"match":${jsonIndex},"terms":${jsonRef}}}`
     assert.deepEqual(parseJSON(jsonMatch), match)
     assert.equal(toJSON(match), jsonMatch)

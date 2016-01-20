@@ -222,7 +222,7 @@ export function removeEvent(event: Event): Query {
 // Sets
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
-export function match(terms: Query, index: Query): Query {
+export function match(index: Query, terms: Query): Query {
   return {match: index, terms}
 }
 

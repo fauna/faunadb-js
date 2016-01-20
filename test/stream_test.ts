@@ -54,7 +54,7 @@ describe('stream', () => {
     await create(1)
     const b = await create(0), c = await create(0), d = await create(0)
 
-    const gadgetsSet = query.match(0, indexRef)
+    const gadgetsSet = query.match(indexRef, 0)
 
     const stream = new PageStream(client, gadgetsSet, {pageSize: 2})
 
