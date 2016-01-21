@@ -44,7 +44,7 @@ let lambdaAutoVarNumber = 0
 See the [docs](https://faunadb.com/documentation/queries#basic_forms).
 This form generates the names of lambda parameters for you, and is called like:
 
-    query.lambda(a 45 query.add(a, a))
+    query.lambda(a => query.add(a, a))
     // Produces: {lambda: 'auto0', expr: {add: [{var: 'auto0'}, {var: 'auto0'}]}}
 
 Query functions requiring lambdas can be pass raw functions without explicitly calling `lambda`.
