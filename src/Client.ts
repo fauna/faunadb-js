@@ -141,7 +141,7 @@ export default class Client {
     path: Ref | string,
     data: any = null,
     query: HttpQuery = null): Promise<any> {
-    const strPath: string = typeof path === 'string' ? path : path.value
+    const strPath = typeof path === 'string' ? path : path.value
     if (query !== null) {
       query = removeUndefinedValues(query)
       if (Object.keys(query).length === 0)
