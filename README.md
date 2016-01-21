@@ -38,6 +38,7 @@ For advanced work, the query api (`faunadb/lib/query`) will be useful.
 
 ### Test
 
+    npm run build-test # or npm run watch-test
     npm run test
 
 To run tests, you will need to create a `testConfig.json` in the faunadb-js directory
@@ -71,8 +72,9 @@ To run a single test file:
     mocha --compilers js:babel/register test/client_test.js
 
 
-### Document
-
+### Lint, Document
+  
+    npm run lint
     npm run doc
 
 

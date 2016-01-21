@@ -1,0 +1,8 @@
+{
+  "files.exclude": {
+    "compiled-test": true,
+    "doc": true,
+    "lib": true,
+    "node_modules": true
+  }
+}
