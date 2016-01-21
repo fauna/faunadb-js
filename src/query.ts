@@ -1,3 +1,4 @@
+import * as getParameterNames from 'fn-annotate'
 import {inspect} from 'util'
 import {InvalidQuery} from './errors'
 import {Event} from './objects'
@@ -38,6 +39,19 @@ export function quote(expr: Query): Query {
   return {quote: expr}
 }
 
+//doc
+export function lambda(func: (...vars: Array<Var>) => Query): Query {
+  const vars = getParameterNames(func)
+  switch (vars.length) {
+    case 0:
+      throw new Error('Function must take at least 1 argument.')
+    case 1:
+      return lambda_expr(vars[0], func(variable(vars[0])))
+    default:
+      return lambda_expr(vars, func(...vars.map(variable)))
+  }
+}
+
 let lambdaAutoVarNumber = 0
 
 /**
@@ -52,7 +66,7 @@ For example: `query.map(collection, a => query.add(a, 1))`.
 
 You can also use [[lambda_pattern]], or use [[lambda_expr]] directly.
 */
-export function lambda(func: (variable: Var) => Query): Query {
+export function lambdaOLD(func: (variable: Var) => Query): Query {
   const varName = `auto${lambdaAutoVarNumber}`
   lambdaAutoVarNumber += 1
 

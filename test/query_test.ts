@@ -60,68 +60,20 @@ describe('query', () => {
     await assertQuery(query.quote(quoted), quoted)
   })
 
-  it('lambda', () => {
+  it('lambda', async () => {
+    assert.throws(() => query.lambda(() => 0), Error)
+
     assert.deepEqual(
       query.lambda(a => query.add(a, a)),
-      {lambda: 'auto0', expr: {add: [{var: 'auto0'}, {var: 'auto0'}]}})
+      {lambda: 'a', expr: {add: [{var: 'a'}, {var: 'a'}]}})
 
-    assert.deepEqual(
-      query.lambda(a => query.lambda(b => query.lambda(c => [a, b, c]))),
-      {
-        lambda: 'auto0',
-        expr: {
-          lambda: 'auto1',
-          expr: {
-            lambda: 'auto2',
-            expr: [{var: 'auto0'}, {var: 'auto1'}, {var: 'auto2'}]}
-          }
-      })
+    const multi_args = query.lambda((a, b) => [b, a])
+    assert.deepEqual(multi_args, {
+      lambda: ['a', 'b'],
+      expr: [{var: 'b'}, {var: 'a'}]
+    })
 
-    // Error in function should not affect future queries.
-    assert.throws(() => query.lambda((_): Query => { throw new Error() }), Error)
-    assert.deepEqual(query.lambda(a => a), {lambda: 'auto0', expr: {var: 'auto0'}})
-  })
-
-  it('lambda_pattern', async () => {
-    const arrayLambda = query.lambda_pattern(['a', 'b'], ({a, b}) => [b, a])
-    assert.deepEqual(arrayLambda, query.lambda_expr(['a', 'b'],
-      [query.variable('b'), query.variable('a')]))
-    await assertQuery(query.map([[1, 2], [3, 4]], arrayLambda), [[2, 1], [4, 3]])
-
-    const objectLambda = query.lambda_pattern({alpha: 'a', beta: 'b'}, ({a, b}) => [b, a])
-    assert.deepEqual(objectLambda, query.lambda_expr({alpha: 'a', beta: 'b'},
-      [query.variable('b'), query.variable('a')]))
-    const objectData = query.quote([{alpha: 1, beta: 2}, {alpha: 3, beta: 4}])
-    await assertQuery(query.map(objectData, objectLambda), [[2, 1], [4, 3]])
-
-    const mixedPattern = {alpha: ['a', 'b'], beta: {gamma: 'c', delta: 'd'}}
-    const mixedLambda = query.lambda_pattern(mixedPattern, ({a, b, c, d}) => [a, b, c, d])
-    assert.deepEqual(mixedLambda, query.lambda_expr(mixedPattern,
-      [query.variable('a'), query.variable('b'), query.variable('c'), query.variable('d')]))
-    const mixedData = query.quote([{alpha: [1, 2], beta: {gamma: 3, delta: 4}}])
-    await assertQuery(query.map(mixedData, mixedLambda), [[1, 2, 3, 4]])
-
-    // Allows ignored variables.
-    const ignoreLambda = query.lambda_pattern(['foo', '', 'bar'], ({foo, bar}) => [bar, foo])
-    assert.deepEqual(ignoreLambda, query.lambda_expr(['foo', '', 'bar'],
-      [query.variable('bar'), query.variable('foo')]))
-    await assertQuery(query.map([[1, 2, 3], [4, 5, 6]], ignoreLambda), [[3, 1], [6, 4]])
-
-    // A variable used multiple times takes on the value of the last binding.
-    const dupLambda = query.lambda_pattern(['foo', '', 'foo'], ({foo}) => foo)
-    await assertQuery(query.map([[1, 2, 3]], dupLambda), [3])
-
-    // Extra array elements are ignored.
-    const ignore_lambda = query.lambda_pattern(['a', 'b'], ({a, b}) => [a, b])
-    await assertQuery(query.map([[1, 2, 3]], ignore_lambda), [[1, 2]])
-
-    // Object patterns must have all keys.
-    await assertBadQuery(query.map(
-      [{alpha: 1, beta: 2}],
-      query.lambda_pattern({alpha: 'a'}, () => 0)))
-
-    // Lambda generator fails for bad pattern.
-    assert.throws(() => query.lambda_pattern({alpha: 0}, () => 0), InvalidQuery)
+    await assertQuery(query.map([[1, 2], [3, 4]], multi_args), [[2, 1], [4, 3]])
   })
 
   // Collection functions

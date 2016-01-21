@@ -19,6 +19,7 @@
     "all": "npm run build && npm run build-test && npm run test && npm run lint && npm run doc"
   },
   "dependencies": {
+    "fn-annotate": "1.1.3",
     "request": "2.67.0",
     "winston": "1.1.1"
   },
