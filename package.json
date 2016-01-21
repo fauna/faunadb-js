@@ -1,82 +1,43 @@
 {
   "name": "faunadb",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "FaunaDB (faunadb.com) client for node",
   "homepage": "https://faunadb.com",
   "repository": "faunadb/faunadb-js",
   "license": "MPL-2.0",
-  "files": ["src", "lib"],
+  "files": ["src"],
+  "typings": "lib",
   "scripts": {
-    "build": "babel src --out-dir lib --source-maps inline",
-    "watch": "babel src --out-dir lib --source-maps inline --watch",
-    "doc": "esdoc -c esdoc.json",
-    "lint": "eslint index.js src test examples/*.js",
-    "test": "mocha --compilers js:babel/register test/*.js test/*/*.js"
+    "install": "npm run build",
+    "build": "gulp build-src",
+    "watch": "gulp watch-src",
+    "build-test": "gulp build-test",
+    "watch-build-test": "gulp watch-test",
+    "test": "mocha compiled-test/*.js compiled-test/*/*.js",
+    "doc": "typedoc src --out doc --name FaunaDB --readme README.md --module commonjs --target ES6 --experimentalAsyncFunctions",
+    "lint": "tslint src/*.ts src/model/*.ts test/*.ts test/model/*.ts",
+    "all": "npm run build && npm run build-test && npm run test && npm run lint && npm run doc"
   },
   "dependencies": {
-    "babel-runtime": "5.8.25",
-    "request": "2.65.0",
+    "fn-annotate": "1.1.3",
+    "request": "2.67.0",
     "winston": "1.1.1"
   },
   "devDependencies": {
-    "babel": "5.8.23",
-    "babel-eslint": "4.1.3",
-    "chai": "3.4.0",
-    "esdoc": "0.4.1",
-    "esdoc-es7-plugin": "0.0.2",
-    "eslint": "1.7.3",
-    "mocha": "2.3.3"
+    "babel-plugin-transform-es2015-destructuring": "6.4.0",
+    "babel-plugin-transform-es2015-parameters": "6.4.2",
+    "babel-plugin-transform-es2015-spread": "6.4.0",
+    "babel-plugin-transform-strict-mode": "6.3.13",
+    "chai": "3.4.1",
+    "gulp": "3.9.0",
+    "gulp-babel": "6.1.1",
+    "gulp-sourcemaps": "1.6.0",
+    "gulp-typescript": "2.10.0",
+    "merge2": "1.0.0",
+    "mocha": "2.3.4",
+    "tslint": "3.2.2",
+    "typedoc": "0.3.12",
+    "typescript": "1.7.5"
   },
-  "engines": {"node": ">= 0.10.0"},
-  "babel": {
-    "optional": ["runtime"]
-  },
-  "eslintConfig": {
-    "parser": "babel-eslint",
-    "ecmaFeatures": {
-      "arrowFunctions": true,
-      "blockBindings": true,
-      "classes": true,
-      "defaultParams": true,
-      "destructuring": true,
-      "forOf": true,
-      "generators": true,
-      "modules": true,
-      "objectLiteralShorthandMethods": true,
-      "objectLiteralShortandProperties": true,
-      "restParams": true,
-      "spread": true,
-      "templateStrings": true
-    },
-    "globals": {
-      "console": true, "__dirname": true, "process": true, "require": true,
-      "before": true, "after": true, "describe": true, "it": true
-    },
-    "rules": {
-      "array-bracket-spacing": 1,
-      "comma-style": [1, "last"],
-      "curly": [1, "multi"],
-      "default-case": 1,
-      "max-len": [1, 100, 4],
-      "no-extra-parens": 1,
-      "no-floating-decimal": 1,
-      "no-multiple-empty-lines": [1, {"max": 2}],
-      "no-plusplus": 1,
-      "no-spaced-func": 1,
-      "no-throw-literal": 1,
-      "no-undef": 1,
-      "no-unused-vars": 1,
-      "no-var": 1,
-      "no-void": 1,
-      "no-trailing-spaces": 1,
-      "object-curly-spacing": 1,
-      "padded-blocks": [1, "never"],
-      "quote-props": [1, "as-needed"],
-      "quotes": [1, "single"],
-      "space-before-blocks": [1, "always"],
-      "space-before-function-paren": [1, "never"],
-      "spaced-comment": 1,
-      "space-in-parens": [1, "never"]
-    }
-  }
+  "engines": {"node": ">= 4.0.0"}
 }
