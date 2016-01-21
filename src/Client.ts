@@ -248,7 +248,13 @@ function handleResponse(response: Response, responseObject: any): any {
 }
 
 function queryStringForLogging(query: HttpQuery): string {
-  return query === null ?
-    '' :
-    `?${Object.keys(query).map((key: string) => `${key}=${query[key]}`).join('&')}`
+  if (query === null)
+    return ''
+
+  const keys = Object.keys(query)
+  if (keys.length === 0)
+    return ''
+
+  const pairs = keys.map((key: string) => `${key}=${query[key]}`)
+  return `?${pairs.join('&')}`
 }
