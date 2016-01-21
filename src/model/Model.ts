@@ -409,7 +409,7 @@ function indexRefGetter(index: Index): Query {
     const lastIndex = index.values.length - 1
     if (index.values[lastIndex].path !== 'ref')
       throw new Error('Can only get model from index if last of index.values is a Ref.')
-    return query.lambda((arr) => query.get(query.select(lastIndex, arr)))
+    return query.lambda(arr => query.get(query.select(lastIndex, arr)))
   } else
     return query.lambda(query.get)
 }

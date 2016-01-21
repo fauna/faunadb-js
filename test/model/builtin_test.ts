@@ -18,7 +18,7 @@ describe('Builtin', () => {
 
   it('database', async () => {
     const name = 'builtin_test_database'
-    const db = new Database(rootClient, {name, api_version:'2.0'})
+    const db = new Database(rootClient, {name, api_version: '2.0'})
     assert.equal(db.name, name)
     assert.equal(db.api_version, '2.0')
 

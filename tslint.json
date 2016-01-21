@@ -1,6 +1,11 @@
 {
   "rules": {
-    "align": true,
+    "align": [
+      true,
+      "parameters",
+      "arguments",
+      "statements"
+    ],
     "class-name": true,
     "comment-format": [true, "check-space"],
     "eofline": true,
@@ -15,10 +20,12 @@
     "no-duplicate-variable": true,
     "no-eval": true,
     "no-internal-module": true,
+    "no-require-imports": true,
     "no-string-literal": true,
     "no-switch-case-fall-through": true,
     "no-trailing-whitespace": true,
     "no-unreachable": true,
+    "no-unused-expression": true,
     "no-unused-variable": true,
     "no-var-keyword": true,
     "quotemark": [true, "single"],
@@ -26,6 +33,11 @@
     "switch-default": true,
     "trailing-comma": [true, {"multiline": "never", "singleline": "never"}],
     "triple-equals": true,
+    "typedef": [
+      true,
+      "property-declaration",
+      "member-variable-declaration"
+    ],
     "typedef-whitespace": [
       true,
       {
@@ -38,15 +50,13 @@
     ],
     "whitespace": [
       true,
-      {
-        "check-branch": true,
-        "check-decl": true,
-        "check-operator": true,
-        "check-module": true,
-        "check-separator": true,
-        "check-type": true,
-        "check-typecast": true
-      }
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-module",
+      "check-separator",
+      "check-type",
+      "check-typecast"
     ]
   }
 }

@@ -32,7 +32,7 @@ abstract class AsyncStream<A> {
 
   /** Perform an action for each value in the stream. */
   async each(doEach: (element: A) => MaybePromise<void>): Promise<void> {
-    for (;;) {
+    while (true) {
       const {value, done} = await this.next()
       if (done)
         break
@@ -105,7 +105,7 @@ class FilterStream<A> extends AsyncStream<A> {
   }
 
   async next(): Promise<NextResult<A>> {
-    for (;;) {
+    while (true) {
       const {done, value} = await this.base.next()
       // TODO: want to write `done || await this.predicate(value)`
       // but typescript compiles that into unrunnable code

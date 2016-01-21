@@ -1,4 +1,5 @@
 import {assert} from 'chai'
+import {readFileSync} from 'fs'
 import {join} from 'path'
 import {env} from 'process'
 import Client, {Auth} from '../lib/Client'
@@ -7,7 +8,7 @@ import {removeUndefinedValues} from '../lib/_util'
 
 let testConfig: {domain: string, scheme: string, port: number, auth: Auth}
 try {
-  testConfig = require(join(__dirname, '../testConfig'))
+  testConfig = JSON.parse(readFileSync(join(__dirname, '../testConfig'), 'utf-8'))
 } catch (err) {
   console.log('testConfig.json not found, defaulting to environment variables')
   testConfig = {

@@ -170,7 +170,8 @@ export default class Client {
         statusCode = response.statusCode,
         apiTime = response.headers['x-http-request-processing-time'],
         latency = Math.floor(realTime)
-      this.log(true,
+      this.log(
+        true,
         `Response (${statusCode}): API processing ${apiTime}ms, network latency ${latency}ms`)
       return handleResponse(response, responseObject)
     }

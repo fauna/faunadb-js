@@ -17,7 +17,8 @@ describe('Client', () => {
   it('ping', async () => {
     assert.equal(await client.ping(), 'Scope Global is OK')
     for (const scope of ['global', 'local', 'node', 'all'])
-      assert.equal(await client.ping(scope),
+      assert.equal(
+        await client.ping(scope),
         `Scope ${scope[0].toUpperCase()}${scope.slice(1)} is OK`)
   })
 
@@ -55,6 +56,6 @@ describe('Client', () => {
   })
 })
 
-function createInstance() {
+function createInstance(): any {
   return client.post('classes/my_class', {})
 }
