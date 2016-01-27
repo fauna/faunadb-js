@@ -1,4 +1,4 @@
-import {InvalidQuery, InvalidValue} from './errors'
+import {InvalidValue} from './errors'
 
 /**
  * FaunaDB ref.
@@ -91,34 +91,6 @@ export class SetRef {
     return {'@set': this.query}
   }
 }
-
-/**
- * FaunaDB Event.
- * See the [docs](https://faunadb.com/documentation/queries#values).
- */
-export class Event {
-  /**
-   * Events are not automatically converted.
-   * Use this on an object that you know represents an Event.
-   */
-  static fromRaw(object) {
-    return new Event(object.ts, object.action, object.resource)
-  }
-
-  constructor(ts, action, resource) {
-    /** Microsecond UNIX timestamp at which the event occured. */
-    this.ts = ts
-    if (!allowed_event_actions.has(action))
-      throw new InvalidQuery('Action must be create or delete or null.')
-    if (action !== null)
-      /** 'create' or 'delete' */
-      this.action = action
-    if (resource !== null)
-      /** The {@link Ref} of the affected instance. */
-      this.resource = resource
-  }
-}
-const allowed_event_actions = new Set([null, 'create', 'delete'])
 
 /**
  * A single pagination result.
