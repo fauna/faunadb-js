@@ -225,5 +225,13 @@ function handleResponse(response, response_object) {
 }
 
 function queryStringForLogging(query) {
-  return query ? `?${Object.keys(query).map(key => `${key}=${query[key]}`).join('&')}` : ''
+  if (query === null)
+    return ''
+
+  const keys = Object.keys(query)
+  if (keys.length === 0)
+    return ''
+
+  const pairs = keys.map(key => `${key}=${query[key]}`)
+  return `?${pairs.join('&')}`
 }
