@@ -33,6 +33,11 @@ describe('query', () => {
 
   // Basic forms
 
+  it('Expr inspect', () => {
+    const expr = query.add(1, query.divide(4, 2))
+    assert.equal('Expr({"add":[1,{"divide":[4,2]}]})', expr.inspect())
+  })
+
   it('let/var', async () => {
     await assertQuery(query.let_expr({x: 1}, query.variable('x')), 1)
   })
@@ -48,32 +53,22 @@ describe('query', () => {
     await assertQuery(query.exists(ref), false)
   })
 
-  it('object', async () => {
-    const obj = query.object({x: query.let_expr({x: 1}, query.variable('x'))})
-    await assertQuery(obj, {x: 1})
-  })
-
-  it('quote', async () => {
-    const quoted = query.let_expr({x: 1}, query.variable('x'))
-    await assertQuery(query.quote(quoted), quoted)
-  })
-
   it('lambda', async () => {
     assert.throws(() => query.lambda(() => 0))
 
     assert.deepEqual(
-      query.lambda(a => query.add(a, a)),
+      query.toQuery(a => query.add(a, a)),
       {lambda: 'a', expr: {add: [{var: 'a'}, {var: 'a'}]}})
 
-    const multi_args = query.lambda((a, b) => [b, a])
+    const multi_args = query.toQuery((a, b) => [b, a])
     assert.deepEqual(multi_args, {
       lambda: ['a', 'b'],
       expr: [{var: 'b'}, {var: 'a'}]
     })
-    await assertQuery(query.map([[1, 2], [3, 4]], multi_args), [[2, 1], [4, 3]])
+    await assertQuery(query.map([[1, 2], [3, 4]], new query.Expr(multi_args)), [[2, 1], [4, 3]])
 
     // function() works too
-    assert.deepEqual(multi_args, query.lambda(function(a, b) { return [b, a] }))
+    assert.deepEqual(multi_args, query.toQuery(function(a, b) { return [b, a] }))
   })
 
   // Collection functions
@@ -177,13 +172,13 @@ describe('query', () => {
 
   it('update', async () => {
     const ref = (await create()).ref
-    const got = await client.query(query.update(ref, query.quote({data: {m: 9}})))
+    const got = await client.query(query.update(ref, {data: {m: 9}}))
     assert.deepEqual(got.data, {n: 0, m: 9})
   })
 
   it('replace', async () => {
     const ref = (await create()).ref
-    const got = await client.query(query.replace(ref, query.quote({data: {m: 9}})))
+    const got = await client.query(query.replace(ref, {data: {m: 9}}))
     assert.deepEqual(got.data, {m: 9})
   })
 
@@ -199,7 +194,7 @@ describe('query', () => {
     const prevTs = ts - 1
 
     // Add previous event
-    const inserted = query.quote({data: {weight: 0}})
+    const inserted = {data: {weight: 0}}
     await client.query(query.insert(ref, prevTs, 'create', inserted))
 
     // Get version from previous event
@@ -212,7 +207,7 @@ describe('query', () => {
     const ref = instance.ref
 
     // Change it
-    const newInstance = await client.query(query.replace(ref, query.quote({data: {weight: 1}})))
+    const newInstance = await client.query(query.replace(ref, {data: {weight: 1}}))
     await assertQuery(query.get(ref), newInstance)
 
     // Delete that event
@@ -262,9 +257,9 @@ describe('query', () => {
 
   it('login/logout', async () => {
     const instanceRef = (await client.query(
-      query.create(classRef, query.quote({credentials: {password: 'sekrit'}})))).ref
+      query.create(classRef, {credentials: {password: 'sekrit'}}))).ref
     const secret = (await client.query(
-      query.login(instanceRef, query.quote({password: 'sekrit'})))).secret
+      query.login(instanceRef, {password: 'sekrit'}))).secret
     const instanceClient = getClient({secret: {user: secret}})
 
     assert.deepEqual(
@@ -277,7 +272,7 @@ describe('query', () => {
 
   it('identify', async () => {
     const instanceRef = (await client.query(
-      query.create(classRef, query.quote({credentials: {password: 'sekrit'}})))).ref
+      query.create(classRef, {credentials: {password: 'sekrit'}}))).ref
     await assertQuery(query.identify(instanceRef, 'sekrit'), true)
   })
 
@@ -322,14 +317,14 @@ describe('query', () => {
   })
 
   it('contains', async () => {
-    const obj = query.quote({a: {b: 1}})
+    const obj = {a: {b: 1}}
     await assertQuery(query.contains(['a', 'b'], obj), true)
     await assertQuery(query.contains('a', obj), true)
     await assertQuery(query.contains(['a', 'c'], obj), false)
   })
 
   it('select', async () => {
-    const obj = query.quote({a: {b: 1}})
+    const obj = {a: {b: 1}}
     await assertQuery(query.select('a', obj), {b: 1})
     await assertQuery(query.select(['a', 'b'], obj), 1)
     await assertQuery(query.selectWithDefault('c', obj, null), null)
@@ -425,10 +420,10 @@ describe('query', () => {
 function create(data={}) {
   if (data.n === undefined)
     data.n = 0
-  return client.query(query.create(classRef, query.quote({data})))
+  return client.query(query.create(classRef, {data}))
 }
 function createThimble(data) {
-  return client.query(query.create(thimbleClassRef, query.quote({data})))
+  return client.query(query.create(thimbleClassRef, {data}))
 }
 
 function nSet(n) {

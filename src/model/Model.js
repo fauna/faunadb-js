@@ -190,7 +190,7 @@ export default class Model {
   createQuery() {
     if (!this.isNewInstance())
       throw new InvalidQuery('Trying to create instance that has already been created.')
-    return query.create(this.constructor.classRef, query.quote(this._current))
+    return query.create(this.constructor.classRef, this._current)
   }
 
   /**
@@ -200,7 +200,7 @@ export default class Model {
   replaceQuery() {
     if (this.isNewInstance())
       throw new InvalidQuery('Instance has not yet been created.')
-    return query.replace(this.ref, query.quote(this._current))
+    return query.replace(this.ref, this._current)
   }
 
   /**
@@ -210,7 +210,7 @@ export default class Model {
   updateQuery() {
     if (this.isNewInstance())
       throw new InvalidQuery('Instance has not yet been created.')
-    return query.update(this.ref, query.quote(this._diff()))
+    return query.update(this.ref, this._diff())
   }
 
   /** A Model class is considered abstract if {@link setup} was never called. */

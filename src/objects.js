@@ -1,4 +1,5 @@
 import {InvalidValue} from './errors'
+import {Expr} from './query'
 
 /**
  * FaunaDB ref.
@@ -78,7 +79,7 @@ export class Ref {
 export class SetRef {
   constructor(query) {
     /** Raw query object. */
-    this.query = query
+    this.query = query instanceof Expr ? query.value : query
   }
 
   /** @ignore */
