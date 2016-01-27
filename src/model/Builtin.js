@@ -11,7 +11,9 @@ import Model from './Model'
 export default class Builtin extends Model {
   /** @private */
   static setup(...args) {
-    super.setup(...args)
+    // todo: babel bug, want to write:
+    // super.setup(...args)
+    super.setup.apply(this, args)
     assert(!this.isAbstract())
     // classRef does not have 'classes' in front
     this.classRef = new Ref(this.faunaClassName)

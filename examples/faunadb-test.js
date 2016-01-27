@@ -10,7 +10,7 @@ To run this:
 'use strict'
 
 var inherits = require('babel-runtime/helpers/inherits').default
-var _ = require('faunadb'),
+var _ = require('../index'),
   Client = _.Client, NotFound = _.NotFound, Model = _.Model, Class = _.Class, Database = _.Database,
   Key = _.Key, Ref = _.Ref, query = _.query
 

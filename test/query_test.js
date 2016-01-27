@@ -112,7 +112,7 @@ describe('query', () => {
     // Object patterns must have all keys.
     await assertBadQuery(query.map(
       [{alpha: 1, beta: 2}],
-      query.lambda_pattern({alpha: 'a'}, () => 0),))
+      query.lambda_pattern({alpha: 'a'}, () => 0)))
 
     // Lambda generator fails for bad pattern.
     assert.throws(() => query.lambda_pattern({alpha: 0}, () => 0), InvalidQuery)

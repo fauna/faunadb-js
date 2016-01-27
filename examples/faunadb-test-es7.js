@@ -2,10 +2,10 @@
 To run this:
   cd to examples
   npm install
-  npm run faunadb-test-es7
+  npm run run-test-es7
 */
 
-import {Class, Client, Database, Key, Model, NotFound, Ref, query} from 'faunadb'
+import {Class, Client, Database, Key, Model, NotFound, Ref, query} from '../index'
 
 const rootClient = new Client({
   secret: {

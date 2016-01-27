@@ -66,26 +66,26 @@ export default class Model {
     const field = new Field(fieldOpts)
     this.fields[fieldName] = field
 
-    const {get, set} = field.codec === null ?
+    const {getter, setter} = field.codec === null ?
       {
-        get() {
+        getter() {
           return getPath(field.path, this._current)
         },
-        set(value) {
+        setter(value) {
           setPath(field.path, value, this._current)
         }
       } : {
-        get() {
+        getter() {
           const encoded = getPath(field.path, this._current)
           const decoded = field.codec.decode(encoded, this)
           return decoded
         },
-        set(value) {
+        setter(value) {
           const encoded = field.codec.encode(value, this)
           setPath(field.path, encoded, this._current)
         }
       }
-    Object.defineProperty(this.prototype, fieldName, {get, set})
+    Object.defineProperty(this.prototype, fieldName, {get: getter, set: setter})
   }
 
   /**
