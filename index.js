@@ -4,7 +4,7 @@
 var singleExports =
   ['model/Codec', 'model/Field', 'model/Model', 'AsyncStream', 'Client', 'PageStream']
 singleExports.forEach(function(filename) {
-  var module = require('./lib/' + filename)
+  var module = require('./lib/' + filename).default
   exports[module.name] = module
 })
 

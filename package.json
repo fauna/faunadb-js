@@ -6,6 +6,7 @@
   "repository": "faunadb/faunadb-js",
   "license": "MPL-2.0",
   "files": ["src", "lib"],
+  "engines": {"node": ">= 4.0.0"},
   "scripts": {
     "build": "babel src --out-dir lib --source-maps inline",
     "watch": "babel src --out-dir lib --source-maps inline --watch",
@@ -36,7 +37,6 @@
     "eslint": "1.10.3",
     "mocha": "2.4.3"
   },
-  "engines": {"node": ">= 0.10.0"},
   "babel": {
     "plugins": [
       "syntax-async-functions",
@@ -96,6 +96,5 @@
       "spaced-comment": 1,
       "space-in-parens": [1, "never"]
     }
-  },
-  "engines": {"node": ">= 4.0.0"}
+  }
 }
