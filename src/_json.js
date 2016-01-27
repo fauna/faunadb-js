@@ -1,4 +1,4 @@
-import {FaunaDate, FaunaSet, FaunaTime, Ref} from './objects'
+import {FaunaDate, FaunaTime, Ref, SetRef} from './objects'
 
 export function toJSON(object, pretty=false) {
   return pretty ? JSON.stringify(object, null, '  ') : JSON.stringify(object)
@@ -16,7 +16,7 @@ function json_parse(_, val) {
   else if ('@obj' in val)
     return val['@obj']
   else if ('@set' in val)
-    return new FaunaSet(val['@set'])
+    return new SetRef(val['@set'])
   else if ('@ts' in val)
     return new FaunaTime(val['@ts'])
   else if ('@date' in val)

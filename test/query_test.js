@@ -1,6 +1,6 @@
 import {assert} from 'chai'
 import {BadRequest, InvalidQuery, NotFound} from '../src/errors'
-import {FaunaDate, FaunaSet, FaunaTime} from '../src/objects'
+import {FaunaDate, FaunaTime, SetRef} from '../src/objects'
 import * as query from '../src/query'
 import {assertRejected, client} from './util'
 
@@ -183,8 +183,8 @@ describe('query', () => {
     await assertQuery(query.paginate(testSet, {size: 1}), {data: [refN1], after: refN1M1})
     await assertQuery(query.paginate(testSet, {sources: true}), {
       data: [
-        {sources: [new FaunaSet(testSet)], value: refN1},
-        {sources: [new FaunaSet(testSet)], value: refN1M1}
+        {sources: [new SetRef(testSet)], value: refN1},
+        {sources: [new SetRef(testSet)], value: refN1M1}
       ]
     })
   })

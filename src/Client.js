@@ -16,7 +16,7 @@ const debugLogger = env.FAUNA_DEBUG || env.NODE_DEBUG === 'fauna' ? winston : nu
  *
  * All methods return a converted JSON response.
  * This is an object containing Arrays, strings, and other objects.
- * Any {@link Ref}, {@link FaunaSet}, {@link FaunaTime}, or {@link FaunaDate}
+ * Any {@link Ref}, {@link SetRef}, {@link FaunaTime}, or {@link FaunaDate}
  * values in it will also be parsed.
  * (So instead of `{ "@ref": "classes/frogs/123" }`,
  * you will get `new Ref("classes/frogs/123")`.)
