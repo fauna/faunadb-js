@@ -183,8 +183,8 @@ export function delete_expr(ref) {
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
-export function match(terms, index) {
-  return {match: terms, index}
+export function match(index, ...terms) {
+  return {match: index, terms: varargs(terms)}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
