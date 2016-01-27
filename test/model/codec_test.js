@@ -10,7 +10,7 @@ import Model from '../../src/model/Model'
 let MyModel, instance
 
 describe('Codec', () => {
-  before(async function() {
+  before(async () => {
     const DoubleCodec = {
       encode(value) {
         return value + value
@@ -61,7 +61,7 @@ describe('Codec', () => {
     assert.equal(it.getEncoded('codecField'), 'doubdoub')
   })
 
-  it('ref codec', async function() {
+  it('ref codec', async () => {
     const it = new MyModel(client)
     assert.equal(it.refField, null)
 

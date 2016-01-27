@@ -9,13 +9,13 @@ import * as query from '../../src/query'
 let MyModel
 
 describe('Builtin', () => {
-  before(async function() {
+  before(async () => {
     MyModel = class MyModel extends Model {}
     MyModel.setup('bananas', {x: {}})
     await Class.createForModel(client, MyModel)
   })
 
-  it('database', async function() {
+  it('database', async () => {
     const name = 'builtin_test_database'
     const db = new Database(rootClient, {name, api_version:'2.0'})
     assert.equal(db.name, name)
@@ -34,12 +34,12 @@ describe('Builtin', () => {
 
   // See core issue #1975.
   if (false)
-    it('database existence', async function() {
+    it('database existence', async () => {
       assert.isFalse(await rootClient.query(
         query.exists(new Ref('databases', 'not_a_real_database_name'))))
     })
 
-  it('key', async function() {
+  it('key', async () => {
     const database = await Database.get(rootClient, dbRef)
     const key = new Key(rootClient, {database: database.ref, role: 'server'})
     await key.save()
@@ -47,7 +47,7 @@ describe('Builtin', () => {
     assert(key.hashed_secret.length > 0)
   })
 
-  it('custom field', async function() {
+  it('custom field', async () => {
     const database = await Database.get(rootClient, dbRef)
     Key.addField('x')
     const key = new Key(rootClient, {database: database.ref, role: 'server', x: 3})
@@ -55,7 +55,7 @@ describe('Builtin', () => {
     assert.equal((await Key.get(rootClient, key.ref)).x, 3)
   })
 
-  it('class', async function() {
+  it('class', async () => {
     const cls = await Class.getForModel(client, MyModel)
     assert.isFalse(cls.isNewInstance())
     assert(cls.history_days > 0)
@@ -69,7 +69,7 @@ describe('Builtin', () => {
     assert.deepEqual((await Class.getForModel(client, MyModel)).permissions, permissions)
   })
 
-  it('index', async function() {
+  it('index', async () => {
     const idx = await Index.createForModel(client, MyModel, 'mooses_by_x', 'x')
     assert.deepEqual(await Index.getById(client, 'mooses_by_x'), idx)
 
@@ -83,7 +83,7 @@ describe('Builtin', () => {
     assert.deepEqual(all, [instance1, instance2])
   })
 
-  it('terms and values', async function() {
+  it('terms and values', async () => {
     class D extends Model {}
     D.setup('ds', {x: {}, y: {}})
     await Class.createForModel(client, D)
@@ -101,7 +101,7 @@ describe('Builtin', () => {
     assert.deepEqual((await D.pageIndex(idx, [1, 1])).data, [d11])
   })
 
-  it('values', async function() {
+  it('values', async () => {
     class E extends Model {}
     E.setup('es', {x: {}, y: {}, z: {}})
     await Class.createForModel(client, E)
@@ -122,7 +122,7 @@ describe('Builtin', () => {
     assert.deepEqual(await E.streamIndex(index, 0).all(), expected)
   })
 
-  it('unique index', async function() {
+  it('unique index', async () => {
     class F extends Model {}
     F.setup('fs', {x: {}})
     await Class.createForModel(client, F)
@@ -137,7 +137,7 @@ describe('Builtin', () => {
     assertRejected(() => index.getSingle(2), NotFound)
   })
 
-  it('class index', async function() {
+  it('class index', async () => {
     class M extends Model {}
     M.setup('test_list_model', {number: {}})
     await Class.createForModel(client, M)

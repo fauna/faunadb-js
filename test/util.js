@@ -61,7 +61,7 @@ export const dbRef = new Ref('databases', dbName)
 
 // global before/after for every test
 
-before(async function() {
+before(async () => {
   try { await rootClient.delete(dbRef) } catch (err) { }
   await rootClient.post('databases', {name: dbName})
   const key = await rootClient.post('keys', {database: dbRef, role: 'server'})

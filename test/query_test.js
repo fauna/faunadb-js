@@ -7,7 +7,7 @@ import {assertRejected, client} from './util'
 let class_ref, nIndexRef, mIndexRef, refN1, refM1, refN1M1
 
 describe('query', () => {
-  before(async function() {
+  before(async () => {
     class_ref = (await client.post('classes', {name: 'widgets'})).ref
 
     nIndexRef = (await client.post('indexes', {
@@ -29,27 +29,27 @@ describe('query', () => {
     refN1M1 = (await create({n: 1, m: 1})).ref
   })
 
-  it('let/var', async function() {
+  it('let/var', async () => {
     await assertQuery(query.let_expr({x: 1}, query.variable('x')), 1)
   })
 
-  it('if', async function() {
+  it('if', async () => {
     await assertQuery(query.if_expr(true, 't', 'f'), 't')
     await assertQuery(query.if_expr(false, 't', 'f'), 'f')
   })
 
-  it('do', async function() {
+  it('do', async () => {
     const ref = (await create()).ref
     await assertQuery(query.do_expr(query.delete_expr(ref), 1), 1)
     await assertQuery(query.exists(ref), false)
   })
 
-  it('object', async function() {
+  it('object', async () => {
     const obj = query.object({x: query.let_expr({x: 1}, query.variable('x'))})
     await assertQuery(obj, {x: 1})
   })
 
-  it('quote', async function() {
+  it('quote', async () => {
     const quoted = query.let_expr({x: 1}, query.variable('x'))
     await assertQuery(query.quote(quoted), quoted)
   })
@@ -76,7 +76,7 @@ describe('query', () => {
     assert.deepEqual(query.lambda(a => a), {lambda: 'auto0', expr: {var: 'auto0'}})
   })
 
-  it('lambda_pattern', async function() {
+  it('lambda_pattern', async () => {
     const arrayLambda = query.lambda_pattern(['a', 'b'], ({a, b}) => [b, a])
     assert.deepEqual(arrayLambda, query.lambda_expr(['a', 'b'],
       [query.variable('b'), query.variable('a')]))
@@ -118,7 +118,7 @@ describe('query', () => {
     assert.throws(() => query.lambda_pattern({alpha: 0}, () => 0), InvalidQuery)
   })
 
-  it('map', async function() {
+  it('map', async () => {
     await assertQuery(query.map([1, 2, 3], a => query.multiply([2, a])), [2, 4, 6])
     // Should work for manually constructed lambda too.
     await assertQuery(
@@ -130,7 +130,7 @@ describe('query', () => {
     assertQuery(ns, {data: [1, 1]})
   })
 
-  it('foreach', async function() {
+  it('foreach', async () => {
     const refs = [(await create()).ref, (await create()).ref]
     await client.query(query.foreach(refs, query.delete_expr))
     for (const ref of refs)
@@ -138,7 +138,7 @@ describe('query', () => {
   })
 
 
-  it('filter', async function() {
+  it('filter', async () => {
     await assertQuery(query.filter([1, 2, 3, 4], a => query.equals(query.modulo(a, 2), 0)), [2, 4])
 
     // Works on page too
@@ -148,36 +148,36 @@ describe('query', () => {
     await assertQuery(refsWithM, {data: [refN1M1]})
   })
 
-  it('take', async function() {
+  it('take', async () => {
     await assertQuery(query.take(1, [1, 2]), [1])
     await assertQuery(query.take(3, [1, 2]), [1, 2])
     await assertQuery(query.take(-1, [1, 2]), [])
   })
 
-  it('drop', async function() {
+  it('drop', async () => {
     await assertQuery(query.drop(1, [1, 2]), [2])
     await assertQuery(query.drop(3, [1, 2]), [])
     await assertQuery(query.drop(-1, [1, 2]), [1, 2])
   })
 
-  it('prepend', async function() {
+  it('prepend', async () => {
     await assertQuery(query.prepend([1, 2, 3], [4, 5, 6]), [1, 2, 3, 4, 5, 6])
     // Fails for non-array.
     await assertBadQuery(query.prepend([1, 2], 'foo'))
   })
 
-  it('append', async function() {
+  it('append', async () => {
     await assertQuery(query.append([4, 5, 6], [1, 2, 3]), [1, 2, 3, 4, 5, 6])
     // Fails for non-array.
     await assertBadQuery(query.append([1, 2], 'foo'))
   })
 
-  it('get', async function() {
+  it('get', async () => {
     const instance = await create()
     await assertQuery(query.get(instance.ref), instance)
   })
 
-  it('paginate', async function() {
+  it('paginate', async () => {
     const testSet = nSet(1)
     await assertQuery(query.paginate(testSet), {data: [refN1, refN1M1]})
     await assertQuery(query.paginate(testSet, {size: 1}), {data: [refN1], after: refN1M1})
@@ -189,14 +189,14 @@ describe('query', () => {
     })
   })
 
-  it('exists', async function() {
+  it('exists', async () => {
     const ref = (await create()).ref
     await assertQuery(query.exists(ref), true)
     await client.query(query.delete_expr(ref))
     await assertQuery(query.exists(ref), false)
   })
 
-  it('count', async function() {
+  it('count', async () => {
     await create({n: 123})
     await create({n: 123})
     const instances = nSet(123)
@@ -204,48 +204,48 @@ describe('query', () => {
     assert.typeOf(await client.query(query.count(instances)), 'number')
   })
 
-  it('create', async function() {
+  it('create', async () => {
     const instance = await create()
     assert('ref' in instance)
     assert('ts' in instance)
     assert.deepEqual(instance.class, class_ref)
   })
 
-  it('update', async function() {
+  it('update', async () => {
     const ref = (await create()).ref
     const got = await client.query(query.update(ref, query.quote({data: {m: 9}})))
     assert.deepEqual(got.data, {n: 0, m: 9})
   })
 
-  it('replace', async function() {
+  it('replace', async () => {
     const ref = (await create()).ref
     const got = await client.query(query.replace(ref, query.quote({data: {m: 9}})))
     assert.deepEqual(got.data, {m: 9})
   })
 
-  it('delete', async function() {
+  it('delete', async () => {
     const ref = (await create()).ref
     await client.query(query.delete_expr(ref))
     await assertQuery(query.exists(ref), false)
   })
 
-  it('match', async function() {
+  it('match', async () => {
     await assertSet(nSet(1), [refN1, refN1M1])
   })
 
-  it('union', async function() {
+  it('union', async () => {
     await assertSet(query.union(nSet(1), mSet(1)), [refN1, refM1, refN1M1])
   })
 
-  it('intersection', async function() {
+  it('intersection', async () => {
     await assertSet(query.intersection(nSet(1), mSet(1)), [refN1M1])
   })
 
-  it('difference', async function() {
+  it('difference', async () => {
     await assertSet(query.difference(nSet(1), mSet(1)), [refN1]) // but not refN1M1
   })
 
-  it('join', async function() {
+  it('join', async () => {
     const referenced = [
       (await create({n: 12})).ref,
       (await create({n: 12})).ref
@@ -263,44 +263,44 @@ describe('query', () => {
     await assertSet(joined, referencers)
   })
 
-  it('time', async function() {
+  it('time', async () => {
     const time = '1970-01-01T00:00:00.123456789Z'
     await assertQuery(query.time(time), new FaunaTime(time))
     // 'now' refers to the current time.
     assert.instanceOf(await client.query(query.time('now')), FaunaTime)
   })
 
-  it('epoch', async function() {
+  it('epoch', async () => {
     await assertQuery(query.epoch(12, 'second'), new FaunaTime('1970-01-01T00:00:12Z'))
     const nanoTime = new FaunaTime('1970-01-01T00:00:00.123456789Z')
     await assertQuery(query.epoch(123456789, 'nanosecond'), nanoTime)
   })
 
-  it('date', async function() {
+  it('date', async () => {
     await assertQuery(query.date('1970-01-01'), new FaunaDate('1970-01-01'))
   })
 
-  it('equals', async function() {
+  it('equals', async () => {
     await assertQuery(query.equals(1, 1, 1), true)
     await assertQuery(query.equals(1, 1, 2), false)
     await assertQuery(query.equals(1), true)
     await assertBadQuery(query.equals())
   })
 
-  it('concat', async function() {
+  it('concat', async () => {
     await assertQuery(query.concat(['a', 'b', 'c']), 'abc')
     await assertQuery(query.concat([]), '')
     await assertQuery(query.concat(['a', 'b', 'c'], '.'), 'a.b.c')
   })
 
-  it('contains', async function() {
+  it('contains', async () => {
     const obj = query.quote({a: {b: 1}})
     await assertQuery(query.contains(['a', 'b'], obj), true)
     await assertQuery(query.contains('a', obj), true)
     await assertQuery(query.contains(['a', 'c'], obj), false)
   })
 
-  it('select', async function() {
+  it('select', async () => {
     const obj = query.quote({a: {b: 1}})
     await assertQuery(query.select('a', obj), {b: 1})
     await assertQuery(query.select(['a', 'b'], obj), 1)
@@ -308,29 +308,29 @@ describe('query', () => {
     await assertBadQuery(query.select('c', obj), NotFound)
   })
 
-  it('select for array', async function() {
+  it('select for array', async () => {
     const arr = [1, 2, 3]
     await assertQuery(query.select(2, arr), 3)
     await assertBadQuery(query.select(3, arr), NotFound)
   })
 
-  it('add', async function() {
+  it('add', async () => {
     await assertQuery(query.add(2, 3, 5), 10)
     await assertBadQuery(query.add())
   })
 
-  it('multiply', async function() {
+  it('multiply', async () => {
     await assertQuery(query.multiply(2, 3, 5), 30)
     await assertBadQuery(query.multiply())
   })
 
-  it('subtract', async function() {
+  it('subtract', async () => {
     await assertQuery(query.subtract(2, 3, 5), -6)
     await assertQuery(query.subtract(2), 2)
     await assertBadQuery(query.subtract())
   })
 
-  it('divide', async function() {
+  it('divide', async () => {
     // TODO: can't make this query because 2.0 === 2
     // await assertQuery(query.divide(2, 3, 5), 2/15)
     await assertQuery(query.divide(2), 2)
@@ -338,7 +338,7 @@ describe('query', () => {
     await assertBadQuery(query.divide())
   })
 
-  it('modulo', async function() {
+  it('modulo', async () => {
     await assertQuery(query.modulo(5, 2), 1)
     // This is (15 % 10) % 2
     await assertQuery(query.modulo(15, 10, 2), 1)
@@ -363,7 +363,7 @@ describe('query', () => {
     await assertQuery(query.gte(1, 1), true)
   })
 
-  it('and', async function() {
+  it('and', async () => {
     await assertQuery(query.and(true, true, false), false)
     await assertQuery(query.and(true, true, true), true)
     await assertQuery(query.and(true), true)
@@ -371,7 +371,7 @@ describe('query', () => {
     await assertBadQuery(query.and())
   })
 
-  it('or', async function() {
+  it('or', async () => {
     await assertQuery(query.or(false, false, true), true)
     await assertQuery(query.or(false, false, false), false)
     await assertQuery(query.or(true), true)
@@ -379,12 +379,12 @@ describe('query', () => {
     await assertBadQuery(query.or())
   })
 
-  it('not', async function() {
+  it('not', async () => {
     await assertQuery(query.not(true), false)
     await assertQuery(query.not(false), true)
   })
 
-  it('varargs', async function() {
+  it('varargs', async () => {
     // Works for lists too
     await assertQuery(query.add([2, 3, 5]), 10)
     // Works for a variable equal to a list
