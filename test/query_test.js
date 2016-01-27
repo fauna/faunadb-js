@@ -347,6 +347,22 @@ describe('query', () => {
     await assertBadQuery(query.modulo())
   })
 
+  it('lt', async () => {
+    await assertQuery(query.lt(1, 2), true)
+  })
+
+  it('lte', async () => {
+    await assertQuery(query.lte(1, 1), true)
+  })
+
+  it('gt', async () => {
+    await assertQuery(query.gt(2, 1), true)
+  })
+
+  it('gte', async () => {
+    await assertQuery(query.gte(1, 1), true)
+  })
+
   it('and', async function() {
     await assertQuery(query.and(true, true, false), false)
     await assertQuery(query.and(true, true, true), true)
