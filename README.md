@@ -67,8 +67,7 @@ For fuller testing, run `./test-all.sh`, which uses [nvm](https://github.com/cre
 
 To run a single test file:
 
-    npm install -g mocha
-    mocha --compilers js:babel-register test/client_test.js
+    node_modules/mocha/bin/mocha --compilers js:babel-register test/client_test.js
 
 
 ### Document
