@@ -9,15 +9,39 @@ export class InvalidValue extends FaunaError {}
 
 /** Thrown when the FaunaDB server responds with an error. */
 export class FaunaHTTPError extends FaunaError {
-  constructor(response_object) {
-    const errors = 'error' in response_object ?
-      [response_object['error']] :
-      response_object['errors']
-    const reason = response_object.reason
-    super(reason || errors[0].code || errors[0])
+  constructor(requestResult) {
+    const response = requestResult.responseContent
+    const errors = response.errors
+    super(errors.length === 0 ? '(empty `errors`)' : errors[0].code)
+    /** @type {RequestResult} */
+    this.requestResult = requestResult
+    // todo: list of ErrorData objects
     this.errors = errors
-    this.reason = reason
-    this.parameters = response_object.parameters
+  }
+
+  static raiseForStatusCode(requestResult) {
+    const code = requestResult.statusCode
+    if (200 <= code && code <= 299)
+      return requestResult.resource
+    else
+      switch (code) {
+        case 400:
+          throw new BadRequest(requestResult)
+        case 401:
+          throw new Unauthorized(requestResult)
+        case 403:
+          throw new PermissionDenied(requestResult)
+        case 404:
+          throw new NotFound(requestResult)
+        case 405:
+          throw new MethodNotAllowed(requestResult)
+        case 500:
+          throw new InternalError(requestResult)
+        case 503:
+          throw new UnavailableError(requestResult)
+        default:
+          throw new FaunaHTTPError(requestResult)
+      }
   }
 }
 

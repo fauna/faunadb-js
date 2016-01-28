@@ -1,13 +1,9 @@
 import request from 'request'
-import winston from 'winston'
-import {BadRequest, FaunaHTTPError, InternalError, MethodNotAllowed, NotFound,
-  PermissionDenied, Unauthorized, UnavailableError} from './errors'
+import {FaunaHTTPError} from './errors'
 import {Ref} from './objects'
 import {toJSON, parseJSON} from './_json'
+import RequestResult from './RequestResult'
 import {applyDefaults, removeUndefinedValues} from './_util'
-const env = process.env
-
-const debugLogger = env.FAUNA_DEBUG || env.NODE_DEBUG === 'fauna' ? winston : null
 
 /**
  * Directly communicates with FaunaDB via JSON.
@@ -36,8 +32,8 @@ export default class Client {
    * @param {string} options.secret.user
    * @param {string} options.secret.pass
    * @param {?number} options.timeout Read timeout in seconds.
-   * @param {?Logger} options.logger
-   *   A [winston](https://github.com/winstonjs/winston) Logger
+   * @param {function(res: RequestResult): void} options.observer
+   *   Callback that will be called after every completed request.
    */
   constructor(options) {
     const opts = applyDefaults(options, {
@@ -46,7 +42,7 @@ export default class Client {
       port: null,
       secret: null,
       timeout: 60,
-      logger: null
+      observer: null
     })
 
     if (opts.port === null)
@@ -55,7 +51,7 @@ export default class Client {
     this._baseUrl = `${opts.scheme}://${opts.domain}:${opts.port}`
     this._timeout = Math.floor(opts.timeout * 1000)
     this._secret = opts.secret
-    this._logger = opts.logger
+    this._observer = opts.observer
   }
 
   /**
@@ -124,56 +120,30 @@ export default class Client {
     return this.get('ping', {scope, timeout})
   }
 
-  _log(indented, logged) {
-    if (indented) {
-      const indent_str = '  '
-      logged = indent_str + logged.split('\n').join(`\n${indent_str}`)
-    }
-
-    if (debugLogger !== null)
-      debugLogger.info(logged)
-    if (this._logger !== null)
-      this._logger.info(logged)
-  }
-
   async _execute(action, path, data, query=null) {
     if (path instanceof Ref)
       path = path.value
-    if (query !== null) {
+    if (query !== null)
       query = removeUndefinedValues(query)
-      if (Object.keys(query).length === 0)
-        query = null
-    }
 
-    if (this._logger === null && debugLogger === null) {
-      const {response, body} = await this._execute_without_logging(action, path, data, query)
-      return handleResponse(response, parseJSON(body))
-    } else {
-      const real_time_begin = Date.now()
-      const {response, body} = await this._execute_without_logging(action, path, data, query)
-      const real_time = Date.now() - real_time_begin
+    const startTime = Date.now()
+    const {response, body} = await this._performRequest(action, path, data, query)
+    const endTime = Date.now()
+    const responseObject = parseJSON(body)
+    const requestResult = new RequestResult(
+      this,
+      action, path, query, data,
+      body, responseObject, response.statusCode, response.headers,
+      startTime, endTime)
 
-      this._log(false, `Fauna ${action} /${path}${queryStringForLogging(query)}`)
-      this._log(true, `Credentials: ${JSON.stringify(this._secret)}`)
-      if (data)
-        this._log(true, `Request JSON: ${toJSON(data, true)}`)
+    if (this._observer != null)
+      this._observer(requestResult)
 
-      const headers_json = toJSON(response.headers, true)
-      const response_object = parseJSON(body)
-      const response_json = toJSON(response_object, true)
-      this._log(true, `Response headers: ${headers_json}`)
-      this._log(true, `Response JSON: ${response_json}`)
-      const
-        statusCode = response.statusCode,
-        apiTime = response.headers['x-http-request-processing-time'],
-        latency = Math.floor(real_time)
-      this._log(true,
-        `Response (${statusCode}): API processing ${apiTime}ms, network latency ${latency}ms`)
-      return handleResponse(response, response_object)
-    }
+    FaunaHTTPError.raiseForStatusCode(requestResult)
+    return responseObject['resource']
   }
 
-  _execute_without_logging(action, path, data, query) {
+  _performRequest(action, path, data, query) {
     return new Promise((resolve, reject) => {
       // request has a bug when trying to request empty path.
       if (path === '')
@@ -197,33 +167,4 @@ export default class Client {
       })
     })
   }
-}
-
-function handleResponse(response, response_object) {
-  const code = response.statusCode
-  if (200 <= code && code <= 299)
-    return response_object.resource
-  else
-    switch (code) {
-      case 400:
-        throw new BadRequest(response_object)
-      case 401:
-        throw new Unauthorized(response_object)
-      case 403:
-        throw new PermissionDenied(response_object)
-      case 404:
-        throw new NotFound(response_object)
-      case 405:
-        throw new MethodNotAllowed(response_object)
-      case 500:
-        throw new InternalError(response_object)
-      case 503:
-        throw new UnavailableError(response_object)
-      default:
-        throw new FaunaHTTPError(response_object)
-    }
-}
-
-function queryStringForLogging(query) {
-  return query ? `?${Object.keys(query).map(key => `${key}=${query[key]}`).join('&')}` : ''
 }

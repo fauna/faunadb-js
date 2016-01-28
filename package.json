@@ -16,8 +16,7 @@
   },
   "dependencies": {
     "babel-runtime": "6.3.19",
-    "request": "2.69.0",
-    "winston": "2.1.1"
+    "request": "2.69.0"
   },
   "devDependencies": {
     "babel-cli": "6.4.5",
@@ -31,11 +30,11 @@
     "babel-plugin-transform-strict-mode": "6.3.13",
     "babel-plugin-transform-runtime": "6.4.3",
     "babel-register": "6.4.3",
-    "chai": "3.4.1",
+    "chai": "3.5.0",
     "esdoc": "0.4.3",
     "esdoc-es7-plugin": "0.0.3",
     "eslint": "1.10.3",
-    "mocha": "2.4.3"
+    "mocha": "2.4.4"
   },
   "babel": {
     "plugins": [
