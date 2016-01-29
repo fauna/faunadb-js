@@ -1,6 +1,6 @@
 import {assert} from 'chai'
 import {InvalidValue} from '../src/errors'
-import {Event, FaunaDate, FaunaTime, Page, Ref, SetRef} from '../src/objects'
+import {FaunaDate, FaunaTime, Page, Ref, SetRef} from '../src/objects'
 import {parseJSON, toJSON} from '../src/_json'
 import * as query from '../src/query'
 
@@ -37,12 +37,6 @@ describe('objects', () => {
       jsonMatch = `{"@set":{"match":${jsonRef},"index":${jsonIndex}}}`
     assert.deepEqual(parseJSON(jsonMatch), match)
     assert.equal(toJSON(match), jsonMatch)
-  })
-
-  it('event', () => {
-    assert.equal(toJSON(new Event(123, null, null)), '{"ts":123}')
-    const event_json = '{"ts":123,"action":"create","resource":{"@ref":"classes/frogs/123"}}'
-    assert.equal(toJSON(new Event(123, 'create', ref)), event_json)
   })
 
   it('page', () => {
