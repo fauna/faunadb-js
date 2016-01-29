@@ -1,3 +1,4 @@
+import btoa from 'btoa-lite'
 import request from 'superagent'
 import {FaunaHTTPError} from './errors'
 import {Ref} from './objects'
@@ -150,10 +151,7 @@ export default class Client {
     if (data)
       rq.send(data)
     if (this._secret)
-      if (this._secret.pass)
-        rq.auth(this._secret.user, this._secret.pass)
-      else
-        rq.auth(this._secret.user)
+      rq.set('Authorization', secretHeader(this._secret))
     rq.timeout(this._timeout)
 
     return new Promise((resolve, reject) => {
@@ -166,4 +164,9 @@ export default class Client {
       })
     })
   }
+}
+
+function secretHeader(secret) {
+  const str = 'pass' in secret ? `${secret.user}:${secret.pass}` : secret.user
+  return `Basic ${btoa(str)}`
 }

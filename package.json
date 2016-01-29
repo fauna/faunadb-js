@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "babel-runtime": "6.3.19",
+    "btoa-lite": "1.0.0",
     "superagent": "1.7.2"
   },
   "devDependencies": {
