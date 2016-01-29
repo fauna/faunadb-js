@@ -297,23 +297,6 @@ export default class Model {
     return await this._mapPage(client, instanceSet, query.get, pageParams)
   }
 
-  /**
-   * Calls {@link Index#match} and then works just like {@link page}.
-   *
-   * @param {Index} index
-   * @param matchedValues Values for {@link Index.match}.
-   * @param pageParams Params to {@link query.paginate}.
-   * @return {Promise<Page<this>>} Page whose elements are instances of this class.
-   */
-  static async pageIndex(index, matchedValues, pageParams={}) {
-    if (!(matchedValues instanceof Array))
-      matchedValues = [matchedValues]
-    const client = index.client
-    const matchSet = index.match(...matchedValues)
-    const getter = indexRefGetter(index)
-    return this._mapPage(client, matchSet, getter, pageParams)
-  }
-
   static async _mapPage(client, instanceSet, pageLambda, pageParams) {
     const pageQuery = query.paginate(instanceSet, pageParams)
     const mapQuery = query.map(pageQuery, pageLambda)
@@ -339,28 +322,6 @@ export default class Model {
   }
 
   /**
-   * Calls {@link Index#match} and then works just like {@link pageStream}.
-   *
-   * @param {Index} index Index whose instances are instances of this class.
-   * @param matchedValues Matched value or array of matched values, passed into {@link Index.match}.
-   * @param {number} opts.pageSize Size of each page.
-   * @return {PageStream<this>} Stream whose elements are instances of this class.
-   */
-  static streamIndex(index, matchedValues, opts={}) {
-    const {pageSize} = applyDefaults(opts, {
-      pageSize: undefined
-    })
-    const client = index.client
-    if (!(matchedValues instanceof Array))
-      matchedValues = [matchedValues]
-    const matchSet = index.match(...matchedValues)
-    return PageStream.elements(client, matchSet, {
-      pageSize,
-      mapLambda: indexRefGetter(index)
-    }).map(instance => this.getFromResource(client, instance))
-  }
-
-  /**
    * Returns the first instance matched by the index.
    * @param {Index} index
    * @param matchedValues Same as for {@link Index.match}.
@@ -376,11 +337,4 @@ export default class Model {
       `${key}: ${this[key]}`).join(', ')
     return `${this.constructor.name}(${fields})`
   }
-}
-
-/** Lambda expression for getting an instance Ref out of a match result. */
-function indexRefGetter(index) {
-  return index.values ?
-    arr => query.get(query.select(index.values.length, arr)) :
-    query.get
 }
