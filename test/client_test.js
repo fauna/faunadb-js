@@ -1,8 +1,6 @@
 import {assert} from 'chai'
-import Stream from 'stream'
-import {Logger, transports} from 'winston'
 import {NotFound, Unauthorized} from '../src/errors'
-import {assertRejected, client, clientSecret, dbRef, getClient} from './util'
+import {assertRejected, client, dbRef, getClient} from './util'
 
 let cls
 
@@ -60,46 +58,6 @@ describe('Client', () => {
     await client.delete(instance.ref)
     await assertRejected(client.get(instance.ref), NotFound)
   })
-
-  it('logger', async function() {
-    const logs = await captureLogs(client => client.ping())
-    assert.equal(logs[0], 'Fauna GET /ping')
-    assert.equal(logs[1], `  Credentials: {"user":"${clientSecret.user}"}`)
-    assert(logs[2].startsWith('  Response headers: {'))
-    assert.equal(logs[3], `  Response JSON: {
-    "resource": "Scope Global is OK"
-  }`)
-    assert.match(logs[4], /^  Response \(200\): API processing \d+ms, network latency \d+ms$/)
-    assert.equal(logs.length, 5)
-  })
-
-  it('logger_no_auth', async function() {
-    const logs = await captureLogs(client => client.ping(), {secret: null})
-    assert.equal(logs[1], '  Credentials: null')
-  })
 })
 
 const createInstance = () => client.post('classes/my_class', {})
-
-async function captureLogs(doWithClient, clientOpts={}) {
-  const stream = new TestStream()
-  const logger = new Logger({transports: [new transports.File({stream})]})
-  const client = getClient(Object.assign({logger}, clientOpts))
-  await doWithClient(client)
-  return stream.end()
-}
-
-class TestStream extends Stream {
-  constructor() {
-    super()
-    this.chunks = []
-  }
-
-  write(chunk) {
-    this.chunks.push(chunk)
-  }
-
-  end() {
-    return this.chunks.map(str => JSON.parse(str).message)
-  }
-}
