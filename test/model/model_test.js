@@ -9,20 +9,20 @@ import * as query from '../../src/query'
 let MyModel
 
 describe('Model', () => {
-  before(async function() {
+  before(async () => {
     MyModel = class MyModel extends Model {}
     MyModel.setup('my_models', {number: {}, letter: {}})
     await Class.createForModel(client, MyModel)
   })
 
-  it('common fields', async function() {
+  it('common fields', async () => {
     const instance = await MyModel.create(client)
     assert.instanceOf(instance.ref, Ref)
     assert.typeOf(instance.ts, 'number')
     assert.equal(instance.id, instance.ref.id)
   })
 
-  it('persistence', async function() {
+  it('persistence', async () => {
     const it = new MyModel(client, {number: 1, letter: 'a'})
 
     const get = () => MyModel.get(client, it.ref)
@@ -48,7 +48,7 @@ describe('Model', () => {
     assert.throws(() => new MyModel(client, {nubber: 1}), InvalidValue)
   })
 
-  it('replace', async function() {
+  it('replace', async () => {
     const it = new MyModel(client, {number: 1, letter: 'a'})
     await it.save()
 
@@ -76,7 +76,7 @@ describe('Model', () => {
     assert.deepEqual(await get(), it)
   })
 
-  it('replace with new fields', async function() {
+  it('replace with new fields', async () => {
     class GrowModel extends Model {}
     GrowModel.setup('grow_models', {number: {}})
     await Class.createForModel(client, GrowModel)
@@ -94,7 +94,7 @@ describe('Model', () => {
     assert.deepEqual(await GrowModel.get(client, g.ref), g)
   })
 
-  it('ref, id, ts', async function() {
+  it('ref, id, ts', async () => {
     const it = new MyModel(client, {number: 1, letter: 'a'})
 
     assert.equal(it.ref, null)
@@ -113,7 +113,7 @@ describe('Model', () => {
     assert(it.ts != null && it.ts !== ts1)
   })
 
-  it('update', async function() {
+  it('update', async () => {
     const it = new MyModel(client, {number: {a: {b: 1, c: 2}}})
     await it.save()
 
@@ -125,7 +125,7 @@ describe('Model', () => {
     assert.deepEqual(await MyModel.get(client, it.ref), it)
   })
 
-  it('stream', async function() {
+  it('stream', async () => {
     const indexRef = (await client.post('indexes', {
       name: 'my_models_by_number',
       source: MyModel.classRef,

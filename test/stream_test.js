@@ -8,35 +8,35 @@ const countToFour = () =>
   AsyncStream.fromIterable([0, 1, 2, 3, 4])
 
 describe('stream', () => {
-  it('stream', async function() {
+  it('stream', async () => {
     assert.deepEqual(await countToFour().all(), [0, 1, 2, 3, 4])
   })
 
-  it('map', async function() {
+  it('map', async () => {
     assert.deepEqual(await countToFour().map(n => n * 2).all(), [0, 2, 4, 6, 8])
   })
 
-  it('filter', async function() {
+  it('filter', async () => {
     assert.deepEqual(await countToFour().filter(n => n % 2 === 0).all(), [0, 2, 4])
   })
 
-  it('takeWhile', async function() {
+  it('takeWhile', async () => {
     assert.deepEqual(await countToFour().takeWhile(n => n < 3).all(), [0, 1, 2])
   })
 
-  it('flatten', async function() {
+  it('flatten', async () => {
     assert.deepEqual(
       await AsyncStream.fromIterable([[0, 1], [], [2, 3, 4]]).flatten().all(),
       [0, 1, 2, 3, 4])
   })
 
-  it('flatMap', async function() {
+  it('flatMap', async () => {
     assert.deepEqual(
       await AsyncStream.fromIterable([0, 1, 2]).flatMap(n => [n, n]).all(),
       [0, 0, 1, 1, 2, 2])
   })
 
-  it('page stream', async function() {
+  it('page stream', async () => {
     const classRef = (await client.post('classes', {name: 'gadgets'})).ref
     const indexRef = (await client.post('indexes', {
       name: 'gadgets_by_n',
