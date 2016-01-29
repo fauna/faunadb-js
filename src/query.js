@@ -228,13 +228,8 @@ export function equals(...values) {
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
-export function concat(...strings) {
-  return {concat: varargs(strings)}
-}
-
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
-export function concatWithSeparator(separator, ...strings) {
-  return {concat: varargs(strings), separator}
+export function concat(strings, separator = null) {
+  return params({concat: strings}, {separator})
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
