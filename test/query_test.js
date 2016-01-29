@@ -134,7 +134,7 @@ describe('query', () => {
   it('paginate', async () => {
     const testSet = nSet(1)
     await assertQuery(query.paginate(testSet), {data: [refN1, refN1M1]})
-    await assertQuery(query.paginate(testSet, {size: 1}), {data: [refN1], after: refN1M1})
+    await assertQuery(query.paginate(testSet, {size: 1}), {data: [refN1], after: [refN1M1]})
     await assertQuery(query.paginate(testSet, {sources: true}), {
       data: [
         {sources: [new SetRef(testSet)], value: refN1},
