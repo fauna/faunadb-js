@@ -273,6 +273,26 @@ export function modulo(...numbers) {
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+export function lt(...values) {
+  return {lt: varargs(values)}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+export function lte(...values) {
+  return {lte: varargs(values)}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+export function gt(...values) {
+  return {gt: varargs(values)}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+export function gte(...values) {
+  return {gte: varargs(values)}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 export function and(...booleans) {
   return {and: varargs(booleans)}
 }
