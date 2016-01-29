@@ -96,7 +96,7 @@ export class Index extends Builtin {
     // Make query slightly neater by only using array if necessary.
     if (matchedValues.length === 1)
       matchedValues = matchedValues[0]
-    return query.match(matchedValues, this.ref)
+    return query.match(this.ref, matchedValues)
   }
 
   /**
@@ -155,6 +155,6 @@ export class ClassIndex extends Index {
    * @return {object} A query set made by {@link match}.
    */
   match() {
-    return query.match(this.getEncoded('source'), this.ref)
+    return query.match(this.ref, this.getEncoded('source'))
   }
 }

@@ -259,7 +259,7 @@ describe('query', () => {
     await assertSet(source, referenced)
 
     // For each obj with n=12, get the set of elements whose data.m refers to it.
-    const joined = query.join(source, a => query.match(a, mIndexRef))
+    const joined = query.join(source, a => query.match(mIndexRef, a))
     await assertSet(joined, referencers)
   })
 
@@ -398,10 +398,10 @@ function create(data={}) {
   return client.query(query.create(class_ref, query.quote({data})))
 }
 function nSet(n) {
-  return query.match(n, nIndexRef)
+  return query.match(nIndexRef, n)
 }
 function mSet(m) {
-  return query.match(m, mIndexRef)
+  return query.match(mIndexRef, m)
 }
 
 async function assertQuery(query, expected) {

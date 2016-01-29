@@ -136,7 +136,7 @@ describe('Model', () => {
       a = await MyModel.create(client, {number: 12}),
       b = await MyModel.create(client, {number: 12})
 
-    const instanceSet = query.match(12, indexRef)
+    const instanceSet = query.match(indexRef, 12)
     const stream = MyModel.stream(client, instanceSet)
     assert.deepEqual(await stream.all(), [a, b])
   })
