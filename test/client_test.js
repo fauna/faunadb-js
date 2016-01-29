@@ -15,15 +15,7 @@ describe('Client', () => {
   })
 
   it('ping', async function() {
-    const tests = {
-      global: 'Scope Global is OK',
-      local: 'Scope Local is OK',
-      node: 'Scope Node is OK',
-      all: 'Scope All is OK'
-    }
-    assert.equal(await client.ping(), 'Scope Global is OK')
-    for (const key in tests)
-      assert.equal(await client.ping(key), tests[key])
+    assert.equal(await client.ping('all'), 'Scope all is OK')
   })
 
   it('get', async function() {
