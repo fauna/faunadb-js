@@ -88,13 +88,4 @@ describe('Builtin', () => {
     assert.deepEqual(await F.getFromIndex(index, 1), instance)
     assertRejected(() => index.getSingle(2), NotFound)
   })
-
-  it('class index', async () => {
-    class M extends Model {}
-    M.setup('test_list_model', {number: {}})
-    await Class.createForModel(client, M)
-
-    const idx = await ClassIndex.createForModel(client, M)
-    assert.deepEqual(await ClassIndex.getForModel(client, M), idx)
-  })
 })
