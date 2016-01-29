@@ -72,54 +72,6 @@ describe('Builtin', () => {
   it('index', async () => {
     const idx = await Index.createForModel(client, MyModel, 'mooses_by_x', 'x')
     assert.deepEqual(await Index.getById(client, 'mooses_by_x'), idx)
-
-    const instance1 = await MyModel.create(client, {x: 1})
-    await MyModel.create(client, {x: 2})
-    const instance2 = await MyModel.create(client, {x: 1})
-
-    assert.deepEqual((await MyModel.pageIndex(idx, 1)).data, [instance1, instance2])
-
-    const all = await MyModel.streamIndex(idx, 1).all()
-    assert.deepEqual(all, [instance1, instance2])
-  })
-
-  it('terms and values', async () => {
-    class D extends Model {}
-    D.setup('ds', {x: {}, y: {}})
-    await Class.createForModel(client, D)
-
-    const idx = await Index.createForModel(
-      client,
-      D,
-      'ds_by_x_y',
-      [{path: 'data.x'}, {path: 'data.y'}])
-
-    const d11 = await D.create(client, {x: 1, y: 1})
-    await D.create(client, {x: 1, y: 2})
-    await D.create(client, {x: 2, y: 1})
-
-    assert.deepEqual((await D.pageIndex(idx, [1, 1])).data, [d11])
-  })
-
-  it('values', async () => {
-    class E extends Model {}
-    E.setup('es', {x: {}, y: {}, z: {}})
-    await Class.createForModel(client, E)
-
-    const index = await Index.createForModel(client, E, 'es_by_x_sorted', 'x', {
-      values: [{path: 'data.y'}, {path: 'data.z', reverse: true}]
-    })
-
-    const es = {}
-    for (let x = 0; x < 2; x = x + 1)
-      for (let y = 0; y < 2; y = y + 1)
-        for (let z = 0; z <  2; z = z + 1)
-          es[`${x}${y}${z}`] = await E.create(client, {x, y, z})
-
-    const expected = ['001', '000', '011', '010'].map(key => es[key])
-
-    assert.deepEqual((await E.pageIndex(index, 0)).data, expected)
-    assert.deepEqual(await E.streamIndex(index, 0).all(), expected)
   })
 
   it('unique index', async () => {
@@ -144,19 +96,5 @@ describe('Builtin', () => {
 
     const idx = await ClassIndex.createForModel(client, M)
     assert.deepEqual(await ClassIndex.getForModel(client, M), idx)
-
-    const ms = []
-    for (let i = 0; i < 10; i = i + 1)
-      ms.push(await M.create(client, {number: i}))
-
-    const ms_set = idx.match()
-    const page = await M.page(client, ms_set, {size: 2})
-    assert.deepEqual(page.data, [ms[0], ms[1]])
-    const page2 = await M.page(client, ms_set, {size: 2, after: page.after})
-    assert.deepEqual(page2.data, [ms[2], ms[3]])
-
-    // List of all Ms should be exactly 100 in length
-    const all = await M.streamIndex(idx, 1).all()
-    assert.deepEqual(all, ms)
   })
 })
