@@ -40,7 +40,6 @@ describe('objects', () => {
   })
 
   it('event', () => {
-    assert.equal(toJSON(new Event(123, null, null)), '{"ts":123}')
     const event_json = '{"ts":123,"action":"create","resource":{"@ref":"classes/frogs/123"}}'
     assert.equal(toJSON(new Event(123, 'create', ref)), event_json)
   })

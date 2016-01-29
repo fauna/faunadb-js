@@ -106,19 +106,17 @@ export class Event {
   }
 
   constructor(ts, action, resource) {
+    if (!(action === 'create' || action === 'delete'))
+      throw new InvalidQuery('Action must be create or delete.')
+
     /** Microsecond UNIX timestamp at which the event occured. */
     this.ts = ts
-    if (!allowed_event_actions.has(action))
-      throw new InvalidQuery('Action must be create or delete or null.')
-    if (action !== null)
-      /** 'create' or 'delete' */
-      this.action = action
-    if (resource !== null)
-      /** The {@link Ref} of the affected instance. */
-      this.resource = resource
+    /** 'create' or 'delete' */
+    this.action = action
+    /** The {@link Ref} of the affected instance. */
+    this.resource = resource
   }
 }
-const allowed_event_actions = new Set([null, 'create', 'delete'])
 
 /**
  * A single pagination result.
