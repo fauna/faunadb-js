@@ -1,8 +1,8 @@
 import {assert} from 'chai'
 import {BadRequest, NotFound} from '../src/errors'
-import {FaunaDate, FaunaTime, SetRef} from '../src/objects'
+import {FaunaDate, FaunaTime, Ref, SetRef} from '../src/objects'
 import * as query from '../src/query'
-import {assertRejected, client} from './util'
+import {assertRejected, client, getClient} from './util'
 
 let class_ref, nIndexRef, mIndexRef, refN1, refM1, refN1M1
 
@@ -215,6 +215,27 @@ describe('query', () => {
     // For each obj with n=12, get the set of elements whose data.m refers to it.
     const joined = query.join(source, a => query.match(mIndexRef, a))
     await assertSet(joined, referencers)
+  })
+
+  it('login/logout', async () => {
+    const instanceRef = (await client.query(
+      query.create(class_ref, query.quote({credentials: {password: 'sekrit'}})))).ref
+    const secret = (await client.query(
+      query.login(instanceRef, query.quote({password: 'sekrit'})))).secret
+    const instanceClient = getClient({secret: {user: secret}})
+
+    assert.deepEqual(
+      await instanceClient.query(
+        query.select('ref', query.get(new Ref('classes/widgets/self')))),
+      instanceRef)
+
+    assert.isTrue(await instanceClient.query(query.logout(true)))
+  })
+
+  it('identify', async () => {
+    const instanceRef = (await client.query(
+      query.create(class_ref, query.quote({credentials: {password: 'sekrit'}})))).ref
+    await assertQuery(query.identify(instanceRef, 'sekrit'), true)
   })
 
   it('time', async () => {

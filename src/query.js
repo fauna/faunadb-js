@@ -172,6 +172,19 @@ export function join(source, target) {
   return {join: source, with: toLambda(target)}
 }
 
+/** See the [docs](https://faunadb.com/documentation/queries#auth_functions). */
+export function login(ref, params) {
+  return {login: ref, params}
+}
+
+export function logout(delete_tokens) {
+  return {logout: delete_tokens}
+}
+
+export function identify(ref, password) {
+  return {identify: ref, password}
+}
+
 /** See the [docs](https://faunadb.com/documentation/queries#time_functions). */
 export function time(string) {
   return {time: string}
