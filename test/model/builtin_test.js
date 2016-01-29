@@ -1,7 +1,7 @@
 import {assert} from 'chai'
 import {assertRejected, client, dbRef, rootClient} from '../util'
 import {BadRequest, NotFound} from '../../src/errors'
-import {Class, ClassIndex, Database, Index, Key} from '../../src/model/Builtin'
+import {Class, Database, Index, Key} from '../../src/model/Builtin'
 import Model from '../../src/model/Model'
 import {Ref} from '../../src/objects'
 import * as query from '../../src/query'

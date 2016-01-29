@@ -4,22 +4,22 @@ import {FaunaDate, FaunaTime, Ref, SetRef} from '../src/objects'
 import * as query from '../src/query'
 import {assertRejected, client, getClient} from './util'
 
-let class_ref, nIndexRef, mIndexRef, refN1, refM1, refN1M1
+let classRef, nIndexRef, mIndexRef, refN1, refM1, refN1M1
 
 describe('query', () => {
   before(async () => {
-    class_ref = (await client.post('classes', {name: 'widgets'})).ref
+    classRef = (await client.post('classes', {name: 'widgets'})).ref
 
     nIndexRef = (await client.post('indexes', {
       name: 'widgets_by_n',
-      source: class_ref,
+      source: classRef,
       path: 'data.n',
       active: true
     })).ref
 
     mIndexRef = (await client.post('indexes', {
       name: 'widgets_by_m',
-      source: class_ref,
+      source: classRef,
       path: 'data.m',
       active: true
     })).ref
@@ -162,7 +162,7 @@ describe('query', () => {
     const instance = await create()
     assert('ref' in instance)
     assert('ts' in instance)
-    assert.deepEqual(instance.class, class_ref)
+    assert.deepEqual(instance.class, classRef)
   })
 
   it('update', async () => {
@@ -219,7 +219,7 @@ describe('query', () => {
 
   it('login/logout', async () => {
     const instanceRef = (await client.query(
-      query.create(class_ref, query.quote({credentials: {password: 'sekrit'}})))).ref
+      query.create(classRef, query.quote({credentials: {password: 'sekrit'}})))).ref
     const secret = (await client.query(
       query.login(instanceRef, query.quote({password: 'sekrit'})))).secret
     const instanceClient = getClient({secret: {user: secret}})
@@ -234,7 +234,7 @@ describe('query', () => {
 
   it('identify', async () => {
     const instanceRef = (await client.query(
-      query.create(class_ref, query.quote({credentials: {password: 'sekrit'}})))).ref
+      query.create(classRef, query.quote({credentials: {password: 'sekrit'}})))).ref
     await assertQuery(query.identify(instanceRef, 'sekrit'), true)
   })
 
@@ -370,7 +370,7 @@ describe('query', () => {
 function create(data={}) {
   if (data.n === undefined)
     data.n = 0
-  return client.query(query.create(class_ref, query.quote({data})))
+  return client.query(query.create(classRef, query.quote({data})))
 }
 function nSet(n) {
   return query.match(nIndexRef, n)
