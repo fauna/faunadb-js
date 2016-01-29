@@ -1,6 +1,6 @@
 import {assert} from 'chai'
 import {InvalidValue} from '../src/errors'
-import {Event, FaunaDate, FaunaSet, FaunaTime, Page, Ref} from '../src/objects'
+import {Event, FaunaDate, FaunaTime, Page, Ref, SetRef} from '../src/objects'
 import {parseJSON, toJSON} from '../src/_json'
 import * as query from '../src/query'
 
@@ -33,7 +33,7 @@ describe('objects', () => {
     const
       index = new Ref('indexes', 'frogs_by_size'),
       jsonIndex = '{"@ref":"indexes/frogs_by_size"}',
-      match = new FaunaSet(query.match(ref, index)),
+      match = new SetRef(query.match(ref, index)),
       jsonMatch = `{"@set":{"match":${jsonRef},"index":${jsonIndex}}}`
     assert.deepEqual(parseJSON(jsonMatch), match)
     assert.equal(toJSON(match), jsonMatch)

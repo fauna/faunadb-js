@@ -75,7 +75,7 @@ export class Ref {
  * For query sets see {@link match}, {@link union},
  * {@link intersection}, {@link difference}, and {@link join}.
  */
-export class FaunaSet {
+export class SetRef {
   constructor(query) {
     /** Raw query object. */
     this.query = query
@@ -83,7 +83,7 @@ export class FaunaSet {
 
   /** @ignore */
   inspect() {
-    return `FaunaSet(${JSON.stringify(this.value)})`
+    return `SetRef(${JSON.stringify(this.value)})`
   }
 
   /** @ignore */
