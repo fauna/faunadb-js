@@ -4,6 +4,13 @@ import {toJSON} from './_json'
  * Function that can be the `observer` for a {@link Client}.
  * Will call `loggerFunction` on a string representation of each {@link RequestResult}.
  * @param {function(logged: string): void} loggerFunction
+ * @return {function(res: RequestResult): void}
+ * @example
+ * const client = new Client({
+ *   ... other options ...
+ *   observer: logger(console.log)
+ * })
+ * await client.ping() // Logs the request and response.
  */
 export function logger(loggerFunction) {
   return requestResult => {
