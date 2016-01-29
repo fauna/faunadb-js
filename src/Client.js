@@ -1,7 +1,8 @@
-import request from 'request'
+import btoa from 'btoa-lite'
+import request from 'superagent'
 import {FaunaHTTPError} from './errors'
 import {Ref} from './objects'
-import {toJSON, parseJSON} from './_json'
+import {parseJSON} from './_json'
 import RequestResult from './RequestResult'
 import {applyDefaults, removeUndefinedValues} from './_util'
 
@@ -127,13 +128,13 @@ export default class Client {
       query = removeUndefinedValues(query)
 
     const startTime = Date.now()
-    const {response, body} = await this._performRequest(action, path, data, query)
+    const response = await this._performRequest(action, path, data, query)
     const endTime = Date.now()
-    const responseObject = parseJSON(body)
+    const responseObject = parseJSON(response.text)
     const requestResult = new RequestResult(
       this,
       action, path, query, data,
-      body, responseObject, response.statusCode, response.headers,
+      response.text, responseObject, response.status, response.header,
       startTime, endTime)
 
     if (this._observer != null)
@@ -144,27 +145,28 @@ export default class Client {
   }
 
   _performRequest(action, path, data, query) {
+    const rq = request(action, `${this._baseUrl}/${path}`)
+    if (query)
+      rq.query(query)
+    if (data)
+      rq.send(data)
+    if (this._secret)
+      rq.set('Authorization', secretHeader(this._secret))
+    rq.timeout(this._timeout)
+
     return new Promise((resolve, reject) => {
-      // request has a bug when trying to request empty path.
-      if (path === '')
-        path = '/'
-
-      const opts = {
-        method: action,
-        baseUrl: this._baseUrl,
-        url: path,
-        auth: this._secret,
-        qs: query,
-        body: data === null ? null : toJSON(data),
-        timeout: this._timeout
-      }
-
-      request(opts, (err, response, body) => {
-        if (err)
-          reject(err)
+      rq.end((error, result) => {
+        // superagent treates 4xx and 5xx status codes as exceptions. We'll handle those ourselves.
+        if (error && !('status' in error))
+          reject(error)
         else
-          resolve({response, body})
+          resolve(result)
       })
     })
   }
+}
+
+function secretHeader(secret) {
+  const str = 'pass' in secret ? `${secret.user}:${secret.pass}` : secret.user
+  return `Basic ${btoa(str)}`
 }
