@@ -21,9 +21,7 @@ export class FaunaHTTPError extends FaunaError {
 
   static raiseForStatusCode(requestResult) {
     const code = requestResult.statusCode
-    if (200 <= code && code <= 299)
-      return requestResult.resource
-    else
+    if (code < 200 || code >= 300)
       switch (code) {
         case 400:
           throw new BadRequest(requestResult)
