@@ -205,9 +205,14 @@ export function equals(...values) {
   return {equals: varargs(values)}
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/** See the [docs](https://faunadb.com/documentation/queries#string_functions). */
 export function concat(strings, separator = null) {
   return params({concat: strings}, {separator})
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#string_functions). */
+export function casefold(string) {
+  return {casefold: string}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */

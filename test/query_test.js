@@ -268,6 +268,10 @@ describe('query', () => {
     await assertQuery(query.concat(['a', 'b', 'c'], '.'), 'a.b.c')
   })
 
+  it('casefold', async () => {
+    await assertQuery(query.casefold('Hen Wen'), 'hen wen')
+  })
+
   it('contains', async () => {
     const obj = query.quote({a: {b: 1}})
     await assertQuery(query.contains(['a', 'b'], obj), true)
