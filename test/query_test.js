@@ -29,6 +29,8 @@ describe('query', () => {
     refN1M1 = (await create({n: 1, m: 1})).ref
   })
 
+  // Basic forms
+
   it('let/var', async () => {
     await assertQuery(query.let_expr({x: 1}, query.variable('x')), 1)
   })
@@ -71,6 +73,8 @@ describe('query', () => {
     // function() works too
     assert.deepEqual(multi_args, query.lambda(function(a, b) { return [b, a] }))
   })
+
+  // Collection functions
 
   it('map', async () => {
     await assertQuery(query.map([1, 2, 3], a => query.multiply([2, a])), [2, 4, 6])
@@ -126,6 +130,8 @@ describe('query', () => {
     await assertBadQuery(query.append([1, 2], 'foo'))
   })
 
+  // Read functions
+
   it('get', async () => {
     const instance = await create()
     await assertQuery(query.get(instance.ref), instance)
@@ -158,6 +164,8 @@ describe('query', () => {
     assert.typeOf(await client.query(query.count(instances)), 'number')
   })
 
+  // Write functinos
+
   it('create', async () => {
     const instance = await create()
     assert('ref' in instance)
@@ -182,6 +190,8 @@ describe('query', () => {
     await client.query(query.delete_expr(ref))
     await assertQuery(query.exists(ref), false)
   })
+
+  // Sets
 
   it('match', async () => {
     await assertSet(nSet(1), [refN1, refN1M1])
@@ -217,6 +227,8 @@ describe('query', () => {
     await assertSet(joined, referencers)
   })
 
+  // Authentication
+
   it('login/logout', async () => {
     const instanceRef = (await client.query(
       query.create(classRef, query.quote({credentials: {password: 'sekrit'}})))).ref
@@ -238,6 +250,20 @@ describe('query', () => {
     await assertQuery(query.identify(instanceRef, 'sekrit'), true)
   })
 
+  // String functions
+
+  it('concat', async () => {
+    await assertQuery(query.concat(['a', 'b', 'c']), 'abc')
+    await assertQuery(query.concat([]), '')
+    await assertQuery(query.concat(['a', 'b', 'c'], '.'), 'a.b.c')
+  })
+
+  it('casefold', async () => {
+    await assertQuery(query.casefold('Hen Wen'), 'hen wen')
+  })
+
+  // Time and date functions
+
   it('time', async () => {
     const time = '1970-01-01T00:00:00.123456789Z'
     await assertQuery(query.time(time), new FaunaTime(time))
@@ -255,21 +281,13 @@ describe('query', () => {
     await assertQuery(query.date('1970-01-01'), new FaunaDate('1970-01-01'))
   })
 
+  // Miscellaneous functions
+
   it('equals', async () => {
     await assertQuery(query.equals(1, 1, 1), true)
     await assertQuery(query.equals(1, 1, 2), false)
     await assertQuery(query.equals(1), true)
     await assertBadQuery(query.equals())
-  })
-
-  it('concat', async () => {
-    await assertQuery(query.concat(['a', 'b', 'c']), 'abc')
-    await assertQuery(query.concat([]), '')
-    await assertQuery(query.concat(['a', 'b', 'c'], '.'), 'a.b.c')
-  })
-
-  it('casefold', async () => {
-    await assertQuery(query.casefold('Hen Wen'), 'hen wen')
   })
 
   it('contains', async () => {
@@ -362,6 +380,8 @@ describe('query', () => {
     await assertQuery(query.not(true), false)
     await assertQuery(query.not(false), true)
   })
+
+  // Helpers
 
   it('varargs', async () => {
     // Works for lists too

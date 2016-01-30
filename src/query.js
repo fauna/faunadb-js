@@ -1,5 +1,7 @@
 import getParameterNames from 'fn-annotate'
 
+// Basic forms
+
 /** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
 export function let_expr(vars, in_expr) {
   return {let: vars, in: in_expr}
@@ -70,6 +72,8 @@ export function lambda_expr(var_name, expr) {
   return {lambda: var_name, expr}
 }
 
+// Collection functions
+
 /** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
 export function map(collection, lambda_expr) {
   return {map: toLambda(lambda_expr), collection}
@@ -104,6 +108,8 @@ export function append(elements, collection) {
   return {append: elements, collection}
 }
 
+// Read functions
+
 /** See the [docs](https://faunadb.com/documentation/queries#read_functions). */
 export function get(ref, ts=null) {
   return params({get: ref}, {ts})
@@ -127,6 +133,8 @@ export function count(set, events=null) {
   return params({count: set}, {events})
 }
 
+// Write functions
+
 /** See the [docs](https://faunadb.com/documentation/queries#write_functions). */
 export function create(class_ref, params) {
   return {create: class_ref, params}
@@ -146,6 +154,8 @@ export function replace(ref, params) {
 export function delete_expr(ref) {
   return {delete: ref}
 }
+
+// Sets
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
 export function match(index, ...terms) {
@@ -172,18 +182,36 @@ export function join(source, target) {
   return {join: source, with: toLambda(target)}
 }
 
+// Authentication
+
 /** See the [docs](https://faunadb.com/documentation/queries#auth_functions). */
 export function login(ref, params) {
   return {login: ref, params}
 }
 
+/** See the [docs](https://faunadb.com/documentation/queries#auth_functions). */
 export function logout(delete_tokens) {
   return {logout: delete_tokens}
 }
 
+/** See the [docs](https://faunadb.com/documentation/queries#auth_functions). */
 export function identify(ref, password) {
   return {identify: ref, password}
 }
+
+// String functions
+
+/** See the [docs](https://faunadb.com/documentation/queries#string_functions). */
+export function concat(strings, separator = null) {
+  return params({concat: strings}, {separator})
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#string_functions). */
+export function casefold(string) {
+  return {casefold: string}
+}
+
+// Time and date functions
 
 /** See the [docs](https://faunadb.com/documentation/queries#time_functions). */
 export function time(string) {
@@ -200,19 +228,11 @@ export function date(string) {
   return {date: string}
 }
 
+// Miscellaneous functions
+
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 export function equals(...values) {
   return {equals: varargs(values)}
-}
-
-/** See the [docs](https://faunadb.com/documentation/queries#string_functions). */
-export function concat(strings, separator = null) {
-  return params({concat: strings}, {separator})
-}
-
-/** See the [docs](https://faunadb.com/documentation/queries#string_functions). */
-export function casefold(string) {
-  return {casefold: string}
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
@@ -289,6 +309,8 @@ export function or(...booleans) {
 export function not(boolean) {
   return {not: boolean}
 }
+
+// Helpers
 
 /** Adds optional parameters to the query. */
 function params(mainParams, optionalParams) {
