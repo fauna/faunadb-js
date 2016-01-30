@@ -4,7 +4,7 @@ import {FaunaDate, FaunaTime, Ref, SetRef} from '../src/objects'
 import * as query from '../src/query'
 import {assertRejected, client, getClient} from './util'
 
-let classRef, nIndexRef, mIndexRef, refN1, refM1, refN1M1
+let classRef, nIndexRef, mIndexRef, refN1, refM1, refN1M1, thimbleClassRef
 
 describe('query', () => {
   before(async () => {
@@ -27,6 +27,8 @@ describe('query', () => {
     refN1 = (await create({n: 1})).ref
     refM1 = (await create({m: 1})).ref
     refN1M1 = (await create({n: 1, m: 1})).ref
+
+    thimbleClassRef = (await client.post('classes', {name: 'thimbles'})).ref
   })
 
   // Basic forms
@@ -189,6 +191,35 @@ describe('query', () => {
     const ref = (await create()).ref
     await client.query(query.delete_expr(ref))
     await assertQuery(query.exists(ref), false)
+  })
+
+  it('insert', async () => {
+    const instance = await createThimble({weight: 1})
+    const ref = instance.ref, ts = instance.ts
+    const prevTs = ts - 1
+
+    // Add previous event
+    const inserted = query.quote({data: {weight: 0}})
+    await client.query(query.insert(ref, prevTs, 'create', inserted))
+
+    // Get version from previous event
+    const old = await client.query(query.get(ref, prevTs))
+    assert.deepEqual(old.data, {weight: 0})
+  })
+
+  it('remove', async () => {
+    const instance = await createThimble({weight: 0})
+    const ref = instance.ref
+
+    // Change it
+    const newInstance = await client.query(query.replace(ref, query.quote({data: {weight: 1}})))
+    await assertQuery(query.get(ref), newInstance)
+
+    // Delete that event
+    await client.query(query.remove(ref, newInstance.ts, 'create'))
+
+    // Assert that it was undone
+    await assertQuery(query.get(ref), instance)
   })
 
   // Sets
@@ -396,6 +427,10 @@ function create(data={}) {
     data.n = 0
   return client.query(query.create(classRef, query.quote({data})))
 }
+function createThimble(data) {
+  return client.query(query.create(thimbleClassRef, query.quote({data})))
+}
+
 function nSet(n) {
   return query.match(nIndexRef, n)
 }

@@ -155,6 +155,16 @@ export function delete_expr(ref) {
   return {delete: ref}
 }
 
+/** See the [docs](https://faunadb.com/documentation/queries#write_functions). */
+export function insert(ref, ts, action, params) {
+  return {insert: ref, ts, action, params}
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#write_functions). */
+export function remove(ref, ts, action) {
+  return {remove: ref, ts, action}
+}
+
 // Sets
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
