@@ -69,4 +69,6 @@ before(async () => {
   client = getClient()
 })
 
-after(() => rootClient.delete(dbRef))
+after(async () => {
+  try { await rootClient.delete(dbRef) } catch (err) { }
+})

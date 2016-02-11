@@ -13,14 +13,14 @@ describe('query', () => {
     nIndexRef = (await client.post('indexes', {
       name: 'widgets_by_n',
       source: classRef,
-      path: 'data.n',
+      terms: [{path: 'data.n'}],
       active: true
     })).ref
 
     mIndexRef = (await client.post('indexes', {
       name: 'widgets_by_m',
       source: classRef,
-      path: 'data.m',
+      terms: [{path: 'data.m'}],
       active: true
     })).ref
 

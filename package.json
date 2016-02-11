@@ -13,7 +13,7 @@
     "watch": "babel src --out-dir lib --source-maps inline --watch",
     "doc": "esdoc -c esdoc.json",
     "lint": "eslint index.js src test examples/*.js",
-    "test": "mocha --compilers js:babel-register test/*.js test/*/*.js"
+    "test": "mocha --timeout 60000 --compilers js:babel-register test/*.js test/*/*.js"
   },
   "dependencies": {
     "babel-runtime": "6.3.19",

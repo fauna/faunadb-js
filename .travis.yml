@@ -1,0 +1,21 @@
+sudo: false
+language: node_js
+node_js:
+- '4.0'
+- stable
+env:
+  global:
+  - secure: w+MP7I2qqrMa7hrfvJ/UEaUN1X2laibd3saGirqMlBDIeD2EiCSNWMPF+dOPKKIH6D63FaQmpI38i6vrP+187LL0b46QcRkE7fPzq0CQuDyWXvkTIpLunrRdiog4GjbJ3BGFUewMwV/mx7MiKIkRxvCyK9xW3zdOicE/Yz/GdXSk3OOd5W/8OyRNlJrjU5zyVtcb9wSEbP/2HHaVp/daXqWrp68SQqZNlJcb5yM7C9gP9JZNN3GX/4gbpFwxdtYy5657v9Kx9WLyQe87S8CZleilXFfrV3s3YIeJnJVLku2OznHune8l4k+MaoCav7x0pHFh70pdOlkYdAJFCY1IDrHtvLIeEGmjrJVbycFvcCu2V5O/U9bNec9CQClALc8umLZ42b/h+OrV6XUsopNEAC9Qd2TUrl2Q933gUR+M/UKPW9tDtE+E52rLNmBkb/ShSvnbd32a6VZYid4zdVqIeLiMXhqHFBFLcgy5EXHyOb7K+vInQHHWlnhpFH+QYFYbNsuM9fM573AP3a7+UCJmB3sstFwHqF0pNScHYDzxRKGRw6/SsKfIY5Oa9wHHS/NfGv9uzZJSmQVtev5CjbkR9aJtt4Sj/34PrZ7XIjRCzziNHZK0pWvG8xDlL7nlsy7gN6Ta8/W7ag1+pDlrG76Ty8H8a9htm/YLxJpBeVYzQq0=
+  - FAUNA_DOMAIN=rest.faunadb.com
+  - FAUNA_SCHEME=https
+  - FAUNA_PORT=443
+script:
+- npm install
+- npm run test
+notifications:
+  email: false
+  slack:
+    secure: xPvDh2UKCxVQMEFDlwwzgZ62ORxWsSS0OtHxAd9UcnNJ3lNwivqdBJUdcnCBYddH4P1gnE60Fw/5HNnobb1QtHjq/MTqy3x2aKFR8+fubghBF+FB+xFsW80YkIe6UA4SeWJGvYkhlA3VV64O+qgtidFsI+cuk7KfnvIshkFt2Eq7IzBWqkqaqzapr8nOTbjOR+iihSfoBsHk+e+3UY53T8LyDjoUzlVOg2zk23VAGkljqxLxjrl3/syl+E8WnHcaVKw7Ihmu1lz8gFuINunLE66GvOG3PoP0kY8xQ6jb9MszDkxIETfUUEQYlvf4clUyh6hG/uAzSj5AyyyBgMGiUE9cXsrVB9zVsXByDfi/014tSPk0yF1XLyK1EMR+8n4FJQZfLYivf7C/3HFNYp7bPczBNUOYh5kQbslqtXfwi728v0WWEQTzG+alTgpQiXfyyYmiJvfInJLA7ZpivIq+iltYsDTzEgk3N+hY+4xLntfxHVuVZTSNlsiqlnAWW75q4vMzr2Qk6oMdJBmIbMYeXL0rWUH6MWjo+6DtqXRiP6bYy8sj7ja2U91RU1cdnHhpmMLOJIHc80+2xmvBChbllGTDpkGcDHf116oCGbRLsyo/drMgljb4RwuLlozwbjYNUZgcIuqR9Si8AtJZHyCInIAG8fp2JaLuW56ZefX2vnQ=
+branches:
+  only:
+    - master
