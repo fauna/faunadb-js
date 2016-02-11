@@ -4,6 +4,7 @@ import {FaunaHTTPError} from './errors'
 import {Ref} from './objects'
 import {parseJSON} from './_json'
 import RequestResult from './RequestResult'
+import {toQuery} from './query'
 import {applyDefaults, removeUndefinedValues} from './_util'
 
 /**
@@ -105,11 +106,11 @@ export default class Client {
    * Use the FaunaDB query API.
    * See the [docs](https://faunadb.com/documentation/queries)
    * and the query functions in this documentation.
-   * @param expression {object} Created from query functions such as {@link add}.
+   * @param expression {object} A query.
    * @return {Promise<Object>} Server's response to the query.
    */
   query(expression) {
-    return this._execute('POST', '', expression)
+    return this._execute('POST', '', toQuery(expression))
   }
 
   /**

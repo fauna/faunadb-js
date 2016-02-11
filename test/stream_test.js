@@ -46,7 +46,7 @@ describe('stream', () => {
     })).ref
 
     async function create(n) {
-      const q = query.create(classRef, query.quote({data: {n}}))
+      const q = query.create(classRef, {data: {n}})
       return (await client.query(q)).ref
     }
 
