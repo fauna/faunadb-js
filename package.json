@@ -7,6 +7,7 @@
   "license": "MPL-2.0",
   "files": ["src", "lib"],
   "engines": {"node": ">= 4.0.0"},
+  "main": "index.js",
   "scripts": {
     "build": "babel src --out-dir lib --source-maps inline",
     "watch": "babel src --out-dir lib --source-maps inline --watch",
