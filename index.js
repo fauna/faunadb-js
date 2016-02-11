@@ -1,22 +1,15 @@
 /* global exports */
 /* eslint-disable no-var */
 
-var singleExports =
-  ['model/Codec', 'model/Field', 'model/Model', 'AsyncStream', 'Client', 'PageStream']
-singleExports.forEach(function(filename) {
-  var module = require('./lib/' + filename).default
-  exports[module.name] = module
-})
+exports.Codec = require('./lib/model/Codec').default
+exports.Field = require('./lib/model/Field').default
+exports.Model = require('./lib/model/Model').default
+exports.Builtin = require('./lib/model/Builtin').default
 
-var multipleExports = ['model/Builtin', 'errors', 'objects']
-multipleExports.forEach(function(filename) {
-  var module = require('./lib/' + filename)
-  if ('default' in module) {
-    exports[module.default.name] = module.default
-    delete module.default
-  }
-  for (var key in module)
-    exports[key] = module[key]
-})
+exports.AsyncStream = require('./lib/AsyncStream').default
+exports.Client = require('./lib/Client').default
+exports.PageStream = require('./lib/PageStream').default
 
+exports.errors = require('./lib/errors')
+exports.objects = require('./lib/objects')
 exports.query = require('./lib/query')

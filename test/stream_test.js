@@ -41,7 +41,7 @@ describe('stream', () => {
     const indexRef = (await client.post('indexes', {
       name: 'gadgets_by_n',
       source: classRef,
-      path: 'data.n',
+      terms: [{path: 'data.n'}],
       active: true
     })).ref
 
