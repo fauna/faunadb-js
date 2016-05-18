@@ -6,6 +6,9 @@ rules:
   curly:
     - error
     - all
+  eqeqeq:
+    - error
+    - smart
   indent:
     - error
     - 2

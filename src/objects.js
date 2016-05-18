@@ -26,7 +26,7 @@ function Ref() {
  */
 Ref.prototype.class = function() {
   var parts = this.value.split("/");
-  if (parts.length == 1) {
+  if (parts.length === 1) {
     return this;
   } else {
     return new Ref(parts.slice(0, parts.length - 1).join("/"));
@@ -39,7 +39,7 @@ Ref.prototype.class = function() {
  */
 Ref.prototype.id = function() {
   var parts = this.value.split("/");
-  if (parts.length == 1) {
+  if (parts.length === 1) {
     throw new errors.InvalidValue("The Ref does not have an id.");
   }
   return parts[parts.length - 1];
