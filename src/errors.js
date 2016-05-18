@@ -17,27 +17,15 @@ function InvalidValue() {
 
 /** Thrown when the FaunaDB server responds with an error. */
 function FaunaHTTPError(requestResult) {
-  var result;
-  Object.defineProperty(this, "requestResult", {
-    get: function () {
-      return result;
-    },
-    set: function (res) {
-      result = res;
-    }
-  });
-
-  Object.defineProperty(this, "errors", {
-    get: function () {
-      return result.response.errors;
-    }
-  });
-
   // super(errors.length === 0 ? '(empty `errors`)' : errors[0].code)
   // TODO: Message
   
   this.requestResult = requestResult;
 }
+
+FaunaHTTPError.prototype.errors = function() {
+  return this.requestResult.response.errors;
+};
 
 FaunaHTTPError.raiseForStatusCode = function (requestResult) {
   var code = requestResult.statusCode;

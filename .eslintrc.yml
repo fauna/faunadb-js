@@ -10,9 +10,14 @@ rules:
     - error
     - 2
     - { SwitchCase: 1 }
+  object-curly-spacing:
+    - error
+    - always
   linebreak-style:
     - error
     - unix
+  space-infix-ops:
+    - error
   quotes:
     - error
     - double
