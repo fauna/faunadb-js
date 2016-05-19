@@ -1,4 +1,4 @@
-import {toJSON} from './_json'
+var json = require('./_json');
 
 /**
  * Function that can be the `observer` for a {@link Client}.
@@ -12,50 +12,67 @@ import {toJSON} from './_json'
  * })
  * await client.ping() // Logs the request and response.
  */
-export function logger(loggerFunction) {
-  return requestResult => {
-    loggerFunction(showRequestResult(requestResult))
-  }
+function logger(loggerFunction) {
+  return function(requestResult) {
+    loggerFunction(showRequestResult(requestResult));
+  };
 }
 
 /** Translates a {@link RequestResult} to a string suitable for logging. */
-export function showRequestResult(requestResult) {
-  const {query, method, path, auth, requestContent, responseHeaders, responseContent,
-    statusCode, timeTaken} = requestResult
+function showRequestResult(requestResult) {
+  var query = requestResult.query,
+    method = requestResult.method,
+    path = requestResult.path,
+    auth = requestResult.auth,
+    requestContent = requestResult.requestContent,
+    responseHeaders = requestResult.responseHeaders,
+    responseContent = requestResult.responseContent,
+    statusCode = requestResult.statusCode,
+    timeTaken = requestResult.timeTaken;
 
-  let out = ''
+  var out = '';
+  
   function log(str) {
-    out = out + str
+    out = out + str;
   }
 
-  function indent(str) {
-    const indentStr = '  '
-    return str.split('\n').join('\n' + indentStr)
+  log('Fauna ' + method + ' /' + path + _queryString(query) + '\n');
+  log('  Credentials: ' + auth == null ? 'null' : (auth.user + ':' + auth.pass + '\n'));
+  if (requestContent != null) {
+    log('  Request JSON: ' + _showJSON(requestContent) + '\n');
   }
+  log('  Response headers: ' + _showJSON(responseHeaders) + '\n');
+  log('  Response JSON: ' + _showJSON(responseContent) + '\n');
+  log('  Response (' + statusCode + '): Network latency ' + timeTaken + 'ms\n');
 
-  function showJSON(object) {
-    return indent(toJSON(object, true))
-  }
-
-  log(`Fauna ${method} /${path}${queryString(query)}\n`)
-  log(`  Credentials: ${auth == null ? 'null' : `${auth.user}:${auth.pass}`}\n`)
-  if (requestContent != null)
-    log(`  Request JSON: ${showJSON(requestContent)}\n`)
-  log(`  Response headers: ${showJSON(responseHeaders)}\n`)
-  log(`  Response JSON: ${showJSON(responseContent)}\n`)
-  log(`  Response (${statusCode}): Network latency ${timeTaken}ms\n`)
-
-  return out
+  return out;
 }
 
-function queryString(query) {
-  if (query == null)
-    return ''
-
-  const keys = Object.keys(query)
-  if (keys.length === 0)
-    return ''
-
-  const pairs = keys.map(key => `${key}=${query[key]}`)
-  return `?${pairs.join('&')}`
+  
+function _indent(str) {
+  var indentStr = '  ';
+  return str.split('\n').join('\n' + indentStr);
 }
+  
+function _showJSON(object) {
+  return _indent(json.toJSON(object, true));
+}
+
+function _queryString(query) {
+  if (query == null) {
+    return '';
+  }
+
+  var keys = Object.keys(query);
+  if (keys.length === 0) {
+    return '';
+  }
+
+  var pairs = keys.map(function(key) { return key + '=' + query[key]; });
+  return '?' + pairs.join('&');
+}
+
+module.exports = {
+  logger: logger,
+  showRequestResult: showRequestResult
+};

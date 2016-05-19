@@ -85,7 +85,7 @@ function calculateDiff(original, current) {
 
 /** Accepts only plain objects, not Refs or Sets. */
 function isObject(object) {
-  return typeof object === "object" && object.constructor === Object;
+  return typeof object === 'object' && object.constructor === Object;
 }
 
 module.exports = {
