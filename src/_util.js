@@ -4,29 +4,38 @@
  * Throws errors for provided options that aren't recognized.
  * A default value of `undefined` is used to indicate that the option must be provided.
  */
-export function applyDefaults(provided, defaults) {
-  const out = {}
+function applyDefaults(provided, defaults) {
+  var out = {};
 
-  for (const key in provided) {
-    if (!(key in defaults))
-      throw new Error(`No such option ${key}.`)
-    out[key] = provided[key]
+  for (var providedKey in provided) {
+    if (!(providedKey in defaults)) {
+      throw new Error("No such option " + providedKey);
+    }
+    out[providedKey] = provided[providedKey];
   }
 
-  for (const key in defaults)
-    if (!(key in out))
-      out[key] = defaults[key]
+  for (var defaultsKey in defaults) {
+    if (!(defaultsKey in out)) {
+      out[defaultsKey] = defaults[defaultsKey];
+    }
+  }
 
-  return out
+  return out;
 }
 
 /** Returns a new object without any keys where the value would be undefined. */
-export function removeUndefinedValues(object) {
-  const res = {}
-  for (const key in object) {
-    const val = object[key]
-    if (val !== undefined)
-      res[key] = val
+function removeUndefinedValues(object) {
+  var res = {};
+  for (var key in object) {
+    var val = object[key];
+    if (val !== undefined) {
+      res[key] = val;
+    }
   }
-  return res
+  return res;
 }
+
+module.exports = {
+  applyDefaults: applyDefaults,
+  removeUndefinedValues: removeUndefinedValues
+};
