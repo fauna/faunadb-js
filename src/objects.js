@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-var errors = require("./errors");
+var errors = require('./errors');
 
 /**
  * FaunaDB ref.
@@ -16,7 +16,7 @@ function Ref() {
    * Can also call `new Ref('databases', 'prydain')` or `new Ref(new Ref('databases'), 'prydain').
    */
   var parts = Array.prototype.slice.call(arguments);
-  this.value = parts.join("/");
+  this.value = parts.join('/');
 }
 
 /**
@@ -25,11 +25,11 @@ function Ref() {
  * So `new Ref('a', 'b/c').class` will be `new Ref('a/b')`.
  */
 Ref.prototype.class = function() {
-  var parts = this.value.split("/");
+  var parts = this.value.split('/');
   if (parts.length === 1) {
     return this;
   } else {
-    return new Ref(parts.slice(0, parts.length - 1).join("/"));
+    return new Ref(parts.slice(0, parts.length - 1).join('/'));
   }
 };
 
@@ -38,16 +38,16 @@ Ref.prototype.class = function() {
  * this is everything after the last `/`.
  */
 Ref.prototype.id = function() {
-  var parts = this.value.split("/");
+  var parts = this.value.split('/');
   if (parts.length === 1) {
-    throw new errors.InvalidValue("The Ref does not have an id.");
+    throw new errors.InvalidValue('The Ref does not have an id.');
   }
   return parts[parts.length - 1];
 };
 
 /** @ignore */
 Ref.prototype.toJSON = function() {
-  return { "@ref": this.value };
+  return { '@ref': this.value };
 };
 
 /** @ignore */
@@ -62,7 +62,7 @@ Ref.prototype.valueOf = function() {
 
 /** @ignore */
 Ref.prototype.inspect = function() {
-  return "Ref(" + JSON.stringify(this.value) + ")";
+  return 'Ref(' + JSON.stringify(this.value) + ')';
 };
 
 /** Whether these are both Refs and have the same value. */
@@ -84,12 +84,12 @@ function SetRef(query) {
 
 /** @ignore */
 SetRef.prototype.inspect = function() {
-  return "SetRef(" + JSON.stringify(this.value) + ")";
+  return 'SetRef(' + JSON.stringify(this.value) + ')';
 };
 
 /** @ignore */
 SetRef.prototype.toJSON = function() {
-  return { "@set": this.query };
+  return { '@set': this.query };
 };
 
 /**
@@ -124,8 +124,8 @@ Page.prototype.mapData = function(func) {
 function FaunaTime(value) {
   if (value instanceof Date) {
     value = value.toISOString();
-  } else if (!value.endsWith("Z")) {
-    throw new errors.InvalidValue("Only allowed timezone is 'Z', got: " + value);
+  } else if (!value.endsWith('Z')) {
+    throw new errors.InvalidValue('Only allowed timezone is \'Z\', got: ' + value);
   }
   
   this.value = value;
@@ -141,7 +141,7 @@ FaunaTime.prototype.date = function() {
 
 /** @ignore */
 FaunaTime.prototype.toJSON = function() {
-  return { "@ts": this.value };
+  return { '@ts': this.value };
 };
 
 /** FaunaDB date. See the [docs](https://faunadb.com/documentation/queries#values-special_types). */
@@ -169,7 +169,7 @@ FaunaDate.prototype.date = function() {
 
 /** @ignore */
 FaunaDate.prototype.toJSON = function()  {
-  return { "@date": this.value };
+  return { '@date': this.value };
 };
 
 module.exports = {

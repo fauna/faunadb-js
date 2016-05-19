@@ -23,7 +23,7 @@ rules:
     - error
   quotes:
     - error
-    - double
+    - single
   semi:
     - error
     - always

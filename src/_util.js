@@ -9,7 +9,7 @@ function applyDefaults(provided, defaults) {
 
   for (var providedKey in provided) {
     if (!(providedKey in defaults)) {
-      throw new Error("No such option " + providedKey);
+      throw new Error('No such option ' + providedKey);
     }
     out[providedKey] = provided[providedKey];
   }
