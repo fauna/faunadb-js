@@ -1,262 +1,294 @@
-import {assert} from 'chai'
-import {BadRequest, NotFound} from '../src/errors'
-import {FaunaDate, FaunaTime, Ref, SetRef} from '../src/objects'
-import * as query from '../src/query'
-import {assertRejected, client, getClient} from './util'
+var assert = require('chai').assert;
+var errors = require('../src/errors');
+var objects = require('../src/objects');
+var query = require('../src/query');
+var util = require('./util');
 
-let classRef, nIndexRef, mIndexRef, refN1, refM1, refN1M1, thimbleClassRef
+var FaunaDate = objects.FaunaDate,
+  FaunaTime = objects.FaunaTime,
+  Ref = objects.Ref,
+  SetRef = objects.SetRef;
 
-describe('query', () => {
-  before(async () => {
-    classRef = (await client.post('classes', {name: 'widgets'})).ref
+var client = util.client;
 
-    nIndexRef = (await client.post('indexes', {
-      name: 'widgets_by_n',
-      source: classRef,
-      path: 'data.n',
-      active: true
-    })).ref
+var classRef, nIndexRef, mIndexRef, refN1, refM1, refN1M1, thimbleClassRef;
 
-    mIndexRef = (await client.post('indexes', {
-      name: 'widgets_by_m',
-      source: classRef,
-      path: 'data.m',
-      active: true
-    })).ref
+describe('query', function () {
+  before(function () {
+    client.post('classes', {name: 'widgets'}).then(function(instance) {
+      var classRef = instance.ref;
 
-    refN1 = (await create({n: 1})).ref
-    refM1 = (await create({m: 1})).ref
-    refN1M1 = (await create({n: 1, m: 1})).ref
+      var nIndexRefP = client.post('indexes', {
+        name: 'widgets_by_n',
+        source: classRef,
+        path: 'data.n',
+        active: true
+      }).then(function(i) { nIndexRef = i.ref });
 
-    thimbleClassRef = (await client.post('classes', {name: 'thimbles'})).ref
-  })
+      var mIndexRefP = client.post('indexes', {
+        name: 'widgets_by_m',
+        source: classRef,
+        path: 'data.m',
+        active: true
+      }).then(function(i) { mIndexRef = i.ref });
+
+      var refN1P = create({n:1}).then(function(i) {refN1 = i.ref});
+      var refM1P = create({m:1}).then(function(i) {refM1 = i.ref});
+      var refN1M1P = create({n:1,m:1}).then(function(i) { refN1M1 = i.ref });
+      var thimbleClassRefP  = client.post('classes', {name:'thimbles'}).then(function(i) { thimbleClassRef = i.ref });
+
+      return Promise.all([nIndexRefP, mIndexRefP, refN1P, refM1P, refN1M1P, thimbleClassRefP]);
+    });
+  });
 
   // Basic forms
 
-  it('let/var', async () => {
-    await assertQuery(query.let_expr({x: 1}, query.variable('x')), 1)
-  })
+  it('let/var', function () {
+    assertQuery(query.let_expr({x: 1}, query.variable('x')), 1);
+  });
 
-  it('if', async () => {
-    await assertQuery(query.if_expr(true, 't', 'f'), 't')
-    await assertQuery(query.if_expr(false, 't', 'f'), 'f')
-  })
+  it('if', function () {
+    assertQuery(query.if_expr(true, 't', 'f'), 't');
+    assertQuery(query.if_expr(false, 't', 'f'), 'f');
+  });
 
-  it('do', async () => {
-    const ref = (await create()).ref
-    await assertQuery(query.do_expr(query.delete_expr(ref), 1), 1)
-    await assertQuery(query.exists(ref), false)
-  })
+  it('do', function () {
+    create().then(function(i) {
+      var ref = i.ref;
+      return assertQuery(query.do_expr(query.delete_expr(ref), 1), 1).then(function () {
+        assertQuery(query.exists(ref), false);
+      });
+    });
+  });
 
-  it('object', async () => {
-    const obj = query.object({x: query.let_expr({x: 1}, query.variable('x'))})
-    await assertQuery(obj, {x: 1})
-  })
+  it('object', function () {
+    var obj = query.object({x: query.let_expr({x: 1}, query.variable('x'))});
+    assertQuery(obj, {x: 1});
+  });
 
-  it('quote', async () => {
-    const quoted = query.let_expr({x: 1}, query.variable('x'))
-    await assertQuery(query.quote(quoted), quoted)
-  })
+  it('quote', function () {
+    var quoted = query.let_expr({x: 1}, query.variable('x'));
+    assertQuery(query.quote(quoted), quoted);
+  });
 
-  it('lambda', async () => {
-    assert.throws(() => query.lambda(() => 0))
+  it('lambda', function () {
+    assert.throws(function () {query.lambda(function () { return 0 })});
 
     assert.deepEqual(
-      query.lambda(a => query.add(a, a)),
-      {lambda: 'a', expr: {add: [{var: 'a'}, {var: 'a'}]}})
+      query.lambda(function(a) { query.add(a, a) }),
+      {lambda: 'a', expr: {add: [{var: 'a'}, {var: 'a'}]}});
 
-    const multi_args = query.lambda((a, b) => [b, a])
+    var multi_args = query.lambda(function(a, b) { return [b, a] });
     assert.deepEqual(multi_args, {
       lambda: ['a', 'b'],
       expr: [{var: 'b'}, {var: 'a'}]
-    })
-    await assertQuery(query.map([[1, 2], [3, 4]], multi_args), [[2, 1], [4, 3]])
+    });
+
+    assertQuery(query.map([[1, 2], [3, 4]], multi_args), [[2, 1], [4, 3]]);
 
     // function() works too
-    assert.deepEqual(multi_args, query.lambda(function(a, b) { return [b, a] }))
-  })
+    assert.deepEqual(multi_args, query.lambda(function(a, b) { return [b, a] }));
+  });
 
   // Collection functions
 
-  it('map', async () => {
-    await assertQuery(query.map([1, 2, 3], a => query.multiply([2, a])), [2, 4, 6])
+  it('map', function () {
+    assertQuery(query.map([1, 2, 3], function(a) { query.multiply([2, a])}), [2, 4, 6]);
     // Should work for manually constructed lambda too.
-    await assertQuery(
+    assertQuery(
       query.map([1, 2, 3], query.lambda_expr('a', query.multiply([2, query.variable('a')]))),
-      [2, 4, 6])
+      [2, 4, 6]);
 
-    const page = query.paginate(nSet(1))
-    const ns = query.map(page, a => query.select(['data', 'n'], query.get(a)))
-    assertQuery(ns, {data: [1, 1]})
-  })
+    var page = query.paginate(nSet(1));
+    var ns = query.map(page, function(a) { query.select(['data', 'n'], query.get(a))});
+    assertQuery(ns, {data: [1, 1]});
+  });
 
-  it('foreach', async () => {
-    const refs = [(await create()).ref, (await create()).ref]
-    await client.query(query.foreach(refs, query.delete_expr))
-    for (const ref of refs)
-      await assertQuery(query.exists(ref), false)
-  })
+  it('foreach', function () {
+    Promise.all([create(), create()]).then(function(results) {
+      return [results[0].ref, results[1].ref];
+    }).then(function(refs) {
+      client.query(query.foreach(refs, query.delete_expr));
+      for (var ref in refs) {
+        assertQuery(query.exists(ref), false);
+      }
+    });
+  });
 
-
-  it('filter', async () => {
-    await assertQuery(query.filter([1, 2, 3, 4], a => query.equals(query.modulo(a, 2), 0)), [2, 4])
+  it('filter', function () {
+    assertQuery(query.filter([1, 2, 3, 4], function(a) { query.equals(query.modulo(a, 2), 0)}), [2, 4]);
 
     // Works on page too
-    const page = query.paginate(nSet(1))
-    const refsWithM = query.filter(page, a =>
-      query.contains(['data', 'm'], query.get(a)))
-    await assertQuery(refsWithM, {data: [refN1M1]})
-  })
+    var page = query.paginate(nSet(1));
+    var refsWithM = query.filter(page, function(a) {
+      query.contains(['data', 'm'], query.get(a))});
+    assertQuery(refsWithM, {data: [refN1M1]});
+  });
 
-  it('take', async () => {
-    await assertQuery(query.take(1, [1, 2]), [1])
-    await assertQuery(query.take(3, [1, 2]), [1, 2])
-    await assertQuery(query.take(-1, [1, 2]), [])
-  })
+  it('take', function () {
+    assertQuery(query.take(1, [1, 2]), [1]);
+    assertQuery(query.take(3, [1, 2]), [1, 2]);
+    assertQuery(query.take(-1, [1, 2]), []);
+  });
 
-  it('drop', async () => {
-    await assertQuery(query.drop(1, [1, 2]), [2])
-    await assertQuery(query.drop(3, [1, 2]), [])
-    await assertQuery(query.drop(-1, [1, 2]), [1, 2])
-  })
+  it('drop', function () {
+    assertQuery(query.drop(1, [1, 2]), [2]);
+    assertQuery(query.drop(3, [1, 2]), []);
+    assertQuery(query.drop(-1, [1, 2]), [1, 2]);
+  });
 
-  it('prepend', async () => {
-    await assertQuery(query.prepend([1, 2, 3], [4, 5, 6]), [1, 2, 3, 4, 5, 6])
+  it('prepend', function () {
+    assertQuery(query.prepend([1, 2, 3], [4, 5, 6]), [1, 2, 3, 4, 5, 6]);
     // Fails for non-array.
-    await assertBadQuery(query.prepend([1, 2], 'foo'))
-  })
+    assertBadQuery(query.prepend([1, 2], 'foo'));
+  });
 
-  it('append', async () => {
-    await assertQuery(query.append([4, 5, 6], [1, 2, 3]), [1, 2, 3, 4, 5, 6])
+  it('append', function () {
+    assertQuery(query.append([4, 5, 6], [1, 2, 3]), [1, 2, 3, 4, 5, 6]);
     // Fails for non-array.
-    await assertBadQuery(query.append([1, 2], 'foo'))
-  })
+    assertBadQuery(query.append([1, 2], 'foo'));
+  });
 
   // Read functions
 
-  it('get', async () => {
-    const instance = await create()
-    await assertQuery(query.get(instance.ref), instance)
-  })
+  it('get', function () {
+    create().then(function(instance) {
+      assertQuery(query.get(instance.ref), instance);
+    });
+  });
 
-  it('paginate', async () => {
-    const testSet = nSet(1)
-    await assertQuery(query.paginate(testSet), {data: [refN1, refN1M1]})
-    await assertQuery(query.paginate(testSet, {size: 1}), {data: [refN1], after: [refN1M1]})
-    await assertQuery(query.paginate(testSet, {sources: true}), {
+  it('paginate', function () {
+    var testSet = nSet(1);
+    assertQuery(query.paginate(testSet), {data: [refN1, refN1M1]});
+    assertQuery(query.paginate(testSet, {size: 1}), {data: [refN1], after: [refN1M1]});
+    assertQuery(query.paginate(testSet, {sources: true}), {
       data: [
         {sources: [new SetRef(testSet)], value: refN1},
         {sources: [new SetRef(testSet)], value: refN1M1}
       ]
-    })
-  })
+    });
+  });
 
-  it('exists', async () => {
-    const ref = (await create()).ref
-    await assertQuery(query.exists(ref), true)
-    await client.query(query.delete_expr(ref))
-    await assertQuery(query.exists(ref), false)
-  })
+  it('exists', function () {
+    create().then(function(i) {
+      var ref = i.ref;
+      assertQuery(query.exists(ref), true);
+      client.query(query.delete_expr(ref));
+      assertQuery(query.exists(ref), false);
+    });
+  });
 
-  it('count', async () => {
-    await create({n: 123})
-    await create({n: 123})
-    const instances = nSet(123)
+  it('count', function () {
+    create({n: 123});
+    create({n: 123});
+    var instances = nSet(123);
     // `count` is currently only approximate. Should be 2.
-    assert.typeOf(await client.query(query.count(instances)), 'number')
-  })
+    return client.query(query.count(instances)).then(function(count) {
+      assert.typeOf(count, 'number');
+    });
+  });
 
   // Write functinos
 
-  it('create', async () => {
-    const instance = await create()
-    assert('ref' in instance)
-    assert('ts' in instance)
-    assert.deepEqual(instance.class, classRef)
-  })
+  it('create', function () {
+    create().then(function(instance) {
+      assert('ref' in instance);
+      assert('ts' in instance);
+      assert.deepEqual(instance.class, classRef);
+    });
+  });
 
-  it('update', async () => {
-    const ref = (await create()).ref
-    const got = await client.query(query.update(ref, query.quote({data: {m: 9}})))
-    assert.deepEqual(got.data, {n: 0, m: 9})
-  })
+  it('update', function () {
+    create().then(function(i) {
+      var ref = i.ref;
+      return client.query(query.update(ref, query.quote({data: {m: 9}})));
+    }).then(function(got) {
+      assert.deepEqual(got.data, {n: 0, m: 9});
+    });
+  });
 
-  it('replace', async () => {
-    const ref = (await create()).ref
-    const got = await client.query(query.replace(ref, query.quote({data: {m: 9}})))
-    assert.deepEqual(got.data, {m: 9})
-  })
+  it('replace', function () {
+    create().then(function(i) {
+      var ref = i.ref;
+      return client.query(query.replace(ref, query.quote({data: {m: 9}})));
+    }).then(function(got) {
+      assert.deepEqual(got.data, {m: 9})
+    });
+  });
 
-  it('delete', async () => {
-    const ref = (await create()).ref
-    await client.query(query.delete_expr(ref))
-    await assertQuery(query.exists(ref), false)
-  })
+  it('delete', function () {
+    create().then(function(i) {
+      var ref = i.ref;
+      client.query(query.delete_expr(ref)).then(function() {
+        assertQuery(query.exists(ref), false);
+      });
+    });
+  });
 
-  it('insert', async () => {
-    const instance = await createThimble({weight: 1})
-    const ref = instance.ref, ts = instance.ts
-    const prevTs = ts - 1
+  it('insert', function () {
+    createThimble({weight: 1}).then(function(instance) {
+      var ref = instance.ref;
+      var ts = instance.ts;
+      var prevTs = ts - 1;
 
-    // Add previous event
-    const inserted = query.quote({data: {weight: 0}})
-    await client.query(query.insert(ref, prevTs, 'create', inserted))
+      var inserted = query.quote({data: {weight: 0}})
 
-    // Get version from previous event
-    const old = await client.query(query.get(ref, prevTs))
-    assert.deepEqual(old.data, {weight: 0})
-  })
+      client.query(query.insert(ref, prevTs, 'create', inserted)).then(function() {
+        return client.query(query.get(ref, prevTs));
+      }).then(function(old) {
+        assert.deepEqual(old.data, {weight: 0})
+      });
+    });
+  });
 
-  it('remove', async () => {
-    const instance = await createThimble({weight: 0})
-    const ref = instance.ref
+  it('remove', function () {
+    createThimble({weight: 0}).then(function(instance) {
+      var ref = instance.ref
 
-    // Change it
-    const newInstance = await client.query(query.replace(ref, query.quote({data: {weight: 1}})))
-    await assertQuery(query.get(ref), newInstance)
-
-    // Delete that event
-    await client.query(query.remove(ref, newInstance.ts, 'create'))
-
-    // Assert that it was undone
-    await assertQuery(query.get(ref), instance)
-  })
+      client.query(query.replace(ref, query.quote({data: {weight: 1}}))).then(function(newInstance) {
+        assertQuery(query.get(ref), newInstance).then(function() {
+          return client.query(query.remove(ref, newInstance.ts, 'create'))
+        }).then(function() {
+          assertQuery(query.get(ref), instance);
+        });
+      });
+    });
+  });
 
   // Sets
 
-  it('match', async () => {
-    await assertSet(nSet(1), [refN1, refN1M1])
-  })
+  it('match', function () {
+    assertSet(nSet(1), [refN1, refN1M1]);
+  });
 
-  it('union', async () => {
-    await assertSet(query.union(nSet(1), mSet(1)), [refN1, refM1, refN1M1])
-  })
+  it('union', function () {
+    assertSet(query.union(nSet(1), mSet(1)), [refN1, refM1, refN1M1]);
+  });
 
-  it('intersection', async () => {
-    await assertSet(query.intersection(nSet(1), mSet(1)), [refN1M1])
-  })
+  it('intersection', function () {
+    assertSet(query.intersection(nSet(1), mSet(1)), [refN1M1]);
+  });
 
-  it('difference', async () => {
-    await assertSet(query.difference(nSet(1), mSet(1)), [refN1]) // but not refN1M1
-  })
+  it('difference', function () {
+    assertSet(query.difference(nSet(1), mSet(1)), [refN1]) // but not refN1M1
+  });
 
-  it('join', async () => {
-    const referenced = [
-      (await create({n: 12})).ref,
-      (await create({n: 12})).ref
-    ]
-    const referencers = [
-      (await create({m: referenced[0]})).ref,
-      (await create({m: referenced[1]})).ref
-    ]
+  it('join', function () {
+    Promise.all([create({n:12}), create({n:12})]).then(function(results) {
+      var referenced = [results[0].ref, results[1].ref];
 
-    const source = nSet(12)
-    await assertSet(source, referenced)
+      return Promise.all([create({m: referenced[0]}), create({m: referenced[1]})]).then(function(results2) {
+        var referencers = [results2[0].ref, results2[1].ref];
+        var source = nSet(12);
 
-    // For each obj with n=12, get the set of elements whose data.m refers to it.
-    const joined = query.join(source, a => query.match(mIndexRef, a))
-    await assertSet(joined, referencers)
-  })
+        assertSet(source, referenced);
+
+        // For each obj with n=12, get the set of elements whose data.m refers to it.
+        var joined = query.join(source, function(a) { query.match(mIndexRef, a) });
+        assertSet(joined, referencers);
+      });
+    });
+  });
 
   // Authentication
 
@@ -265,7 +297,7 @@ describe('query', () => {
       query.create(classRef, query.quote({credentials: {password: 'sekrit'}})))).ref
     const secret = (await client.query(
       query.login(instanceRef, query.quote({password: 'sekrit'})))).secret
-    const instanceClient = getClient({secret: {user: secret}})
+    const instanceClient = util.getClient({secret: {user: secret}})
 
     assert.deepEqual(
       await instanceClient.query(
@@ -333,13 +365,13 @@ describe('query', () => {
     await assertQuery(query.select('a', obj), {b: 1})
     await assertQuery(query.select(['a', 'b'], obj), 1)
     await assertQuery(query.selectWithDefault('c', obj, null), null)
-    await assertBadQuery(query.select('c', obj), NotFound)
+    await assertBadQuery(query.select('c', obj), errors.NotFound)
   })
 
   it('select for array', async () => {
     const arr = [1, 2, 3]
     await assertQuery(query.select(2, arr), 3)
-    await assertBadQuery(query.select(3, arr), NotFound)
+    await assertBadQuery(query.select(3, arr), errors.NotFound)
   })
 
   it('add', async () => {
@@ -420,7 +452,7 @@ describe('query', () => {
     // Works for a variable equal to a list
     await assertQuery(query.let_expr({x: [2, 3, 5]}, query.add(query.variable('x'))), 10)
   })
-})
+});
 
 function create(data={}) {
   if (data.n === undefined)
@@ -441,8 +473,8 @@ function mSet(m) {
 async function assertQuery(query, expected) {
   assert.deepEqual(await client.query(query), expected)
 }
-async function assertBadQuery(query, errorType=BadRequest) {
-  await assertRejected(client.query(query), errorType)
+async function assertBadQuery(query, errorType=errors.BadRequest) {
+  await util.assertRejected(client.query(query), errorType)
 }
 async function assertSet(set, expected) {
   assert.deepEqual(await getSetContents(set), expected)
