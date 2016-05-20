@@ -14,7 +14,12 @@
   },
   "main": "index.js",
   "scripts": {},
-  "dependencies": {},
+  "dependencies": {
+    "btoa-lite": "^1.0.0",
+    "es6-promise": "^3.2.1",
+    "fn-annotate": "^1.1.3",
+    "superagent": "^2.0.0-alpha.3"
+  },
   "devDependencies": {
     "eslint": "^2.10.2"
   }

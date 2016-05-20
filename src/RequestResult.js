@@ -47,7 +47,7 @@ function RequestResult(client, method, path, query, requestContent, responseRaw,
    * Response headers.
    * @type {object}
    */
-  this.responseheaders = responseHeaders;
+  this.responseHeaders = responseHeaders;
 
   /**
    * Time the request started.
