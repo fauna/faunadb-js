@@ -102,5 +102,11 @@ module.exports = {
   FaunaHTTPError: FaunaHTTPError,
   InvalidValue: InvalidValue,
   InvalidQuery: InvalidQuery,
-  Error: Error
+  BadRequest: BadRequest,
+  Unauthorized: Unauthorized,
+  PermissionDenied: PermissionDenied,
+  NotFound: NotFound,
+  MethodNotAllowed: MethodNotAllowed,
+  InternalError: InternalError,
+  UnavailableError: UnavailableError
 };
