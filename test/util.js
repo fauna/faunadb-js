@@ -14,6 +14,14 @@ try {
   testConfig = require(path.join(__dirname, '../testConfig'));
 } catch (err) {
   console.log('testConfig.json not found, defaulting to environment variables');
+  if (typeof env.FAUNA_DOMAIN === 'undefined' ||
+      typeof env.FAUNA_SCHEME === 'undefined' ||
+      typeof env.FAUNA_PORT === 'undefined' ||
+      typeof env.FAUNA_ROOT_KEY === 'undefined') {
+    console.log('Environment variables not defined. Please create a config file or set env vars.');
+    process.exit();
+  }
+
   testConfig = {
     domain: env.FAUNA_DOMAIN,
     scheme: env.FAUNA_SCHEME,
@@ -67,13 +75,15 @@ var dbRef = new Ref('databases', dbName);
 // global before/after for every test
 
 before(function () {
-  rootClient.delete(dbRef).then(function() {
+  return rootClient.delete(dbRef).then(function() {
     return rootClient.post('databases', { name: dbName });
   }).then(function() {
     return rootClient.post('keys', { database: dbRef, role: 'server' });
   }).then(function(key) {
     clientSecret = { user: key.secret };
     client = getClient();
+  }).catch(function(exception) {
+    console.log("failed: "+exception);
   });
 });
 

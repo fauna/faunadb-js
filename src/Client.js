@@ -5,7 +5,7 @@ var objects = require('./objects');
 var json = require('./_json');
 var RequestResult = require('./RequestResult');
 var util = require('./_util');
-var Promise = require('es6-promise');
+var Promise = require('es6-promise').Promise;
 
 /**
  * Directly communicates with FaunaDB via JSON.
@@ -136,7 +136,7 @@ Client.prototype._execute = function (action, path, data, query) {
 
   var startTime = Date.now();
   var self = this;
-  this._performRequest(action, path, data, query).then(function (response) {
+  return this._performRequest(action, path, data, query).then(function (response) {
     var endTime = Date.now();
     var responseObject = json.parseJSON(response.text);
     var requestResult = new RequestResult(

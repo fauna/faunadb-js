@@ -6,3 +6,4 @@ testConfig.json
 typings/
 *.iml
 .idea/
+.vscode/

@@ -8,29 +8,30 @@ var classRef;
 
 describe('clientLogger', function () {
   before(function () {
-    client.post('classes', {name: 'logging_tests'}).then(function(res) {
+    return client.post('classes', { name: 'logging_tests' }).then(function (res) {
       classRef = res['ref'];
     });
   });
 
   it('logging', function () {
-    captureLogged(function(client) {
+    console.log("HELLO");
+    return captureLogged(function (client) {
       return client.ping();
-    }).then(function(res) {
+    }).then(function (res) {
       var readLine = lineReader(res);
       assert.equal(readLine(), 'Fauna GET /ping');
       assert.match(readLine(), /^  Credentials:/);
       assert.equal(readLine(), '  Response headers: {');
-      
+
       // Skip through headers
       while (true) {
-        const line = readLine();
+        var line = readLine();
         if (!line.startsWith('    ')) {
           assert.equal(line, '  }');
-          break
+          break;
         }
       }
-      
+
       assert.equal(readLine(), '  Response JSON: {');
       assert.equal(readLine(), '    "resource": "Scope global is OK"');
       assert.equal(readLine(), '  }');
@@ -39,9 +40,9 @@ describe('clientLogger', function () {
   });
 
   it('request content', function () {
-    captureLogged(function(client) {
-      return client.post(classRef, {data: {}});
-    }).then(function(res) {
+    captureLogged(function (client) {
+      return client.post(classRef, { data: {} });
+    }).then(function (res) {
       var readLine = lineReader(res);
       assert.equal(readLine(), 'Fauna POST /classes/logging_tests');
       assert.match(readLine(), /^  Credentials:/);
@@ -53,9 +54,9 @@ describe('clientLogger', function () {
   });
 
   it('no auth', function () {
-    captureLogged(function(client) {
+    captureLogged(function (client) {
       return client.ping();
-    }, { secret: null }).then(function(res) {
+    }, { secret: null }).then(function (res) {
       var readLine = lineReader(res);
       readLine();
       assert.equal(readLine(), '  Credentials: null');
@@ -63,26 +64,26 @@ describe('clientLogger', function () {
   });
 
   it('url query', function () {
-    client.post(classRef, {data: {}}).then(function(instance) {
-      return captureLogged(function(client) {
+    client.post(classRef, { data: {} }).then(function (instance) {
+      return captureLogged(function (client) {
         return client.get(instance.ref, { ts: instance.ts });
       });
-    }).then(function(res) {
+    }).then(function (res) {
       var readLine = lineReader(res);
-      assert.equal(readLine(), 'Fauna GET /'+instance.ref+'?ts='+instance.ts);
+      assert.equal(readLine(), 'Fauna GET /' + instance.ref + '?ts=' + instance.ts);
     });
   });
 
   it('empty object as url query', function () {
-    client.post(classRef, {data: {}}).then(function(instance) {
-      return captureLogged(function(client) {
-        return client.get(instance.ref, {}).then(function(instance2) {
+    client.post(classRef, { data: {} }).then(function (instance) {
+      return captureLogged(function (client) {
+        return client.get(instance.ref, {}).then(function (instance2) {
           assert.deepEqual(instance, instance2);
         });
       });
-    }).then(function(res) {
+    }).then(function (res) {
       var readLine = lineReader(res);
-      assert.equal(readLine(), 'Fauna GET /'+instance.ref);
+      assert.equal(readLine(), 'Fauna GET /' + instance.ref);
     });
   });
 });
@@ -91,15 +92,15 @@ function captureLogged(clientAction, clientParams) {
   if (typeof clientParams === 'undefined') {
     clientParams = {};
   }
-  
+
   var logged;
   var loggedClient = getClient(Object.assign({
-    observer: logger(function(str) {
+    observer: logger(function (str) {
       logged = str
     })
   }, clientParams));
-  
-  clientAction(loggedClient).then(function() { return logged; });
+
+  clientAction(loggedClient).then(function () { return logged; });
 }
 
 function lineReader(str) {
