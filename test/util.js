@@ -3,6 +3,8 @@ var path = require('path');
 var Client = require('../src/Client');
 var objects = require('../src/objects');
 var util = require('../src/_util');
+var errors = require('../src/errors');
+var query = require('../src/query');
 
 var assert = chai.assert;
 var Ref = objects.Ref;
@@ -66,8 +68,12 @@ function assertRejected(promise, errorType) {
 }
 
 // Set in before hook, so won't be null during tests
-var client = null;
+var _client = null;
 var clientSecret = null;
+
+function client() {
+  return _client;
+}
 
 var rootClient = getClient({ secret: testConfig.auth });
 var dbName = 'faunadb-js-test';
@@ -76,13 +82,19 @@ var dbRef = new Ref('databases', dbName);
 // global before/after for every test
 
 before(function () {
-  return rootClient.delete(dbRef).then(function() {
-    return rootClient.post('databases', { name: dbName });
+  return rootClient.query(query.delete_expr(dbRef)).catch(function(exception) {
+    if (exception instanceof errors.BadRequest) {
+      return;
+    } else {
+      throw exception;
+    }
   }).then(function() {
-    return rootClient.post('keys', { database: dbRef, role: 'server' });
+    return rootClient.query(query.create(new objects.Ref('databases'), query.object({ name: dbName })));
+  }).then(function() {
+    return rootClient.query(query.create(new objects.Ref('keys'), query.quote({ database: dbRef, role: 'server' })));
   }).then(function(key) {
     clientSecret = { user: key.secret };
-    client = getClient();
+    _client = getClient();
   }).catch(function(exception) {
     console.log('failed: ' + exception);
   });

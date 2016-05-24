@@ -29,7 +29,7 @@ function FaunaHTTPError(requestResult) {
 }
 
 FaunaHTTPError.prototype.errors = function() {
-  return this.requestResult.response.errors;
+  return this.requestResult.responseContent.errors;
 };
 
 FaunaHTTPError.raiseForStatusCode = function (requestResult) {

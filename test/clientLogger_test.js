@@ -2,19 +2,19 @@ var assert = require('chai').assert;
 var logger = require('../src/clientLogger').logger;
 var util = require('./util');
 
-var client = util.client;
-
+var client;
 var classRef;
 
 describe('clientLogger', function () {
   before(function () {
+    // Hideous way to ensure the client is initialized.
+    client = util.client();
     return client.post('classes', { name: 'logging_tests' }).then(function (res) {
       classRef = res['ref'];
     });
   });
 
   it('logging', function () {
-    console.log("HELLO");
     return captureLogged(function (client) {
       return client.ping();
     }).then(function (res) {
