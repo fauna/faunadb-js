@@ -40,7 +40,8 @@ function parseAuth(authStr) {
 
 function takeObjectKeys(object) {
   var out = {};
-  for (var key in arguments) {
+  for (var i = 0; i < arguments.length; ++i) {
+    var key = arguments[i];
     out[key] = object[key];
   }
   return out;
@@ -83,7 +84,7 @@ before(function () {
     clientSecret = { user: key.secret };
     client = getClient();
   }).catch(function(exception) {
-    console.log("failed: "+exception);
+    console.log('failed: ' + exception);
   });
 });
 

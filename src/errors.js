@@ -2,23 +2,28 @@
 
 var util = require('util');
 
-function FaunaError() {
+function FaunaError(message) { 
+  Error.call(this);
+  this.name = this.constructor.name;
+  this.message = message;
 }
 
 /** Thrown when a query is malformed */
 function InvalidQuery() {
-
+  FaunaError.call(this, arguments);
 }
 
 /** Thrown when a value can not be accepted. */
 function InvalidValue() {
-
+  FaunaError.call(this, arguments);
 }
 
 /** Thrown when the FaunaDB server responds with an error. */
 function FaunaHTTPError(requestResult) {
-  // super(errors.length === 0 ? '(empty `errors`)' : errors[0].code)
-  // TODO: Message
+  var response = requestResult.responseContent;
+  var errors = response.errors;
+  var message = errors.length === 0 ? '(empty "errors")' : errors[0].code;
+  FaunaError.call(this, message);
   
   this.requestResult = requestResult;
 }
@@ -53,37 +58,37 @@ FaunaHTTPError.raiseForStatusCode = function (requestResult) {
 
 /** HTTP 400 error. */
 function BadRequest(requestResult) {
-  BadRequest.super_.apply(this, requestResult);
+  FaunaHTTPError.call(this, requestResult);
 }
 
 /** HTTP 401 error. */
 function Unauthorized(requestResult) {
-  Unauthorized.super_.apply(this, requestResult);
+  FaunaHTTPError.call(this, requestResult);
 }
 
 /** HTTP 403 error. */
-function PermissionDenied() {
-
+function PermissionDenied(requestResult) {
+  FaunaHTTPError.call(this, requestResult);
 }
 
 /** HTTP 404 error. */
-function NotFound() {
-
+function NotFound(requestResult) {
+  FaunaHTTPError.call(this, requestResult);
 }
 
 /** HTTP 405 error. */
-function MethodNotAllowed() {
-
+function MethodNotAllowed(requestResult) {
+  FaunaHTTPError.call(this, requestResult);
 }
 
 /** HTTP 500 error. */
-function InternalError() {
-
+function InternalError(requestResult) {
+  FaunaHTTPError.call(this, requestResult);
 }
 
 /** HTTP 503 error. */
-function UnavailableError() {
-
+function UnavailableError(requestResult) {
+  FaunaHTTPError.call(this, requestResult);
 }
 
 util.inherits(FaunaError, Error);
