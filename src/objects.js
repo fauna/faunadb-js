@@ -24,26 +24,26 @@ function Ref() {
  * This is done by removing the id.
  * So `new Ref('a', 'b/c').class` will be `new Ref('a/b')`.
  */
-Ref.prototype.class = function() {
+Object.defineProperty(Ref.prototype, 'class', { get: function() {
   var parts = this.value.split('/');
   if (parts.length === 1) {
     return this;
   } else {
     return new Ref(parts.slice(0, parts.length - 1).join('/'));
   }
-};
+} });
 
 /**
  * Removes the class part of the Ref, leaving only the id.
  * this is everything after the last `/`.
  */
-Ref.prototype.id = function() {
+Object.defineProperty(Ref.prototype, 'id', { get: function() {
   var parts = this.value.split('/');
   if (parts.length === 1) {
     throw new errors.InvalidValue('The Ref does not have an id.');
   }
   return parts[parts.length - 1];
-};
+} });
 
 /** @ignore */
 Ref.prototype.toJSON = function() {
@@ -135,9 +135,9 @@ function FaunaTime(value) {
  * This is lossy as Dates have millisecond rather than nanosecond precision.
  * @return {Date}
  */
-FaunaTime.prototype.date = function() {
+Object.defineProperty(FaunaTime.prototype, 'date', { get: function() {
   return new Date(this.value);
-};
+} });
 
 /** @ignore */
 FaunaTime.prototype.toJSON = function() {
@@ -163,9 +163,9 @@ function FaunaDate(value) {
 }
 
 /** @return {Date} */
-FaunaDate.prototype.date = function() {
+Object.defineProperty(FaunaDate.prototype, 'date', { get: function() {
   return new Date(this.value);
-};
+} });
 
 /** @ignore */
 FaunaDate.prototype.toJSON = function()  {

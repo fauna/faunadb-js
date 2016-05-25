@@ -28,7 +28,7 @@ describe('objects', function() {
 
     var keys = new Ref('keys');
     assert.deepEqual(keys.class, keys);
-    assert.throws(function () { return keys.id }, errors.InvalidValue);
+    assert.throws(function () { return keys.id; }, errors.InvalidValue);
 
     var keyRef = new Ref(keys, '123');
     assert.deepEqual(keyRef.class, keys);
@@ -43,14 +43,14 @@ describe('objects', function() {
       index = new Ref('indexes', 'frogs_by_size'),
       jsonIndex = '{"@ref":"indexes/frogs_by_size"}',
       match = new SetRef(query.match(index, ref)),
-      jsonMatch = '{"@set":{"match":'+jsonIndex+',"terms":'+jsonRef+'}}';
+      jsonMatch = '{"@set":{"match":' + jsonIndex + ',"terms":' + jsonRef + '}}';
     assert.deepEqual(json.parseJSON(jsonMatch), match);
     assert.equal(json.toJSON(match), jsonMatch);
   });
 
   it('page', function () {
-    assert.deepEqual(Page.fromRaw({data: 1, before: 2, after: 3}), new Page(1, 2, 3));
-    assert.deepEqual(new Page([1, 2, 3], 2, 3).mapData(function(x) { return x + 1}), new Page([2, 3, 4], 2, 3));
+    assert.deepEqual(Page.fromRaw({ data: 1, before: 2, after: 3 }), new Page(1, 2, 3));
+    assert.deepEqual(new Page([1, 2, 3], 2, 3).mapData(function(x) { return x + 1;}), new Page([2, 3, 4], 2, 3));
   });
 
   it('time conversion', function () {
@@ -64,14 +64,14 @@ describe('objects', function() {
 
     // time offset not allowed
     assert.throws(function () {
-      return new FaunaTime('1970-01-01T00:00:00.000+04:00')}, errors.InvalidValue);
+      return new FaunaTime('1970-01-01T00:00:00.000+04:00');}, errors.InvalidValue);
   });
 
   it('time', function () {
-      var test_ts = new FaunaTime('1970-01-01T00:00:00.123456789Z');
-      var test_ts_json = '{"@ts":"1970-01-01T00:00:00.123456789Z"}';
-      assert.equal(json.toJSON(test_ts), test_ts_json);
-      assert.deepEqual(json.parseJSON(test_ts_json), test_ts);
+    var test_ts = new FaunaTime('1970-01-01T00:00:00.123456789Z');
+    var test_ts_json = '{"@ts":"1970-01-01T00:00:00.123456789Z"}';
+    assert.equal(json.toJSON(test_ts), test_ts_json);
+    assert.deepEqual(json.parseJSON(test_ts_json), test_ts);
   });
 
   it('date conversion', function () {
@@ -90,5 +90,5 @@ describe('objects', function() {
     var test_date_json = '{"@date":"1970-01-01"}';
     assert.equal(json.toJSON(test_date), test_date_json);
     assert.deepEqual(json.parseJSON(test_date_json), test_date);
-  })
+  });
 });

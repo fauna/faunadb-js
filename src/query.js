@@ -177,7 +177,9 @@ function remove(ref, ts, action) {
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
 function match(index) {
-  return { match: index, terms: varargs(arguments) };
+  var args = argsToArray(arguments);
+  args.shift();
+  return { match: index, terms: varargs(args) };
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
@@ -348,7 +350,14 @@ function params(mainParams, optionalParams) {
  * `query.add([1, 2])` will work as well as `query.add(1, 2)`.
  */
 function varargs(values) {
-  return values.length === 1 ? values[0] : values;
+  var valuesAsArr = (typeof values === 'array') ? values : Array.prototype.slice.call(values);
+  return values.length === 1 ? values[0] : valuesAsArr;
+}
+
+function argsToArray(args) {
+  var rv = [];
+  rv.push.apply(rv, args);
+  return rv;
 }
 
 function defaults(param, def) {
