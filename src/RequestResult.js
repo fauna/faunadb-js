@@ -62,17 +62,17 @@ function RequestResult(client, method, path, query, requestContent, responseRaw,
   this.endTime = endTime;
 }
 
+/** @type {{user: string, pass: string}} */
+Object.defineProperty(RequestResult.prototype, 'auth', { get: function() {
+  return this.client._secret;
+} });
+
 /**
  * `this.endTime - this.startTime`: Time taken in milliseconds.
  * @type {number}
  */
-RequestResult.prototype.timeTaken = function() {
+Object.defineProperty(RequestResult.prototype, 'timeTaken', { get: function() {
   return this.endTime - this.startTime;
-};
-
-/** @type {{user: string, pass: string}} */
-RequestResult.prototype.auth = function() {
-  return this.client._secret;
-};
+} });
 
 module.exports = RequestResult;

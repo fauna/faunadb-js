@@ -145,8 +145,8 @@ Client.prototype._execute = function (action, path, data, query) {
       response.text, responseObject, response.status, response.header,
       startTime, endTime);
 
-    if (this._observer != null) {
-      this._observer(requestResult);
+    if (self._observer != null) {
+      self._observer(requestResult);
     }
 
     errors.FaunaHTTPError.raiseForStatusCode(requestResult);

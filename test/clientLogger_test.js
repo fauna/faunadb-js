@@ -15,8 +15,8 @@ describe('clientLogger', function () {
   });
 
   it('logging', function () {
-    return captureLogged(function (client) {
-      return client.ping();
+    return captureLogged(function (loggingClient) {
+      return loggingClient.ping();
     }).then(function (res) {
       var readLine = lineReader(res);
       assert.equal(readLine(), 'Fauna GET /ping');
@@ -40,7 +40,7 @@ describe('clientLogger', function () {
   });
 
   it('request content', function () {
-    captureLogged(function (client) {
+    return captureLogged(function (client) {
       return client.post(classRef, { data: {} });
     }).then(function (res) {
       var readLine = lineReader(res);
@@ -54,7 +54,7 @@ describe('clientLogger', function () {
   });
 
   it('no auth', function () {
-    captureLogged(function (client) {
+    return captureLogged(function (client) {
       return client.ping();
     }, { secret: null }).then(function (res) {
       var readLine = lineReader(res);
@@ -64,26 +64,26 @@ describe('clientLogger', function () {
   });
 
   it('url query', function () {
-    client.post(classRef, { data: {} }).then(function (instance) {
+    return client.post(classRef, { data: {} }).then(function (instance) {
       return captureLogged(function (client) {
         return client.get(instance.ref, { ts: instance.ts });
+      }).then(function (res) {
+        var readLine = lineReader(res);
+        assert.equal(readLine(), 'Fauna GET /' + instance.ref + '?ts=' + instance.ts);
       });
-    }).then(function (res) {
-      var readLine = lineReader(res);
-      assert.equal(readLine(), 'Fauna GET /' + instance.ref + '?ts=' + instance.ts);
     });
   });
 
   it('empty object as url query', function () {
-    client.post(classRef, { data: {} }).then(function (instance) {
+    return client.post(classRef, { data: {} }).then(function (instance) {
       return captureLogged(function (client) {
         return client.get(instance.ref, {}).then(function (instance2) {
           assert.deepEqual(instance, instance2);
         });
+      }).then(function (logged) {
+        var readLine = lineReader(logged);
+        assert.equal(readLine(), 'Fauna GET /' + instance.ref);
       });
-    }).then(function (res) {
-      var readLine = lineReader(res);
-      assert.equal(readLine(), 'Fauna GET /' + instance.ref);
     });
   });
 });
@@ -94,17 +94,16 @@ function captureLogged(clientAction, clientParams) {
   }
 
   var logged;
-  var loggedClient = getClient(Object.assign({
+  var loggedClient = util.getClient(Object.assign({
     observer: logger(function (str) {
-      logged = str
+      logged = str;
     })
   }, clientParams));
 
-  clientAction(loggedClient).then(function () { return logged; });
+  return clientAction(loggedClient).then(function () { return logged; });
 }
 
 function lineReader(str) {
   var lines = str.split('\n');
-  return function () { return lines.shift(); }
+  return function () { return lines.shift(); };
 }
-

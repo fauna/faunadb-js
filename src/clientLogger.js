@@ -14,7 +14,7 @@ var json = require('./_json');
  */
 function logger(loggerFunction) {
   return function(requestResult) {
-    loggerFunction(showRequestResult(requestResult));
+    return loggerFunction(showRequestResult(requestResult));
   };
 }
 
@@ -37,7 +37,7 @@ function showRequestResult(requestResult) {
   }
 
   log('Fauna ' + method + ' /' + path + _queryString(query) + '\n');
-  log('  Credentials: ' + auth == null ? 'null' : (auth.user + ':' + auth.pass + '\n'));
+  log('  Credentials: ' + (auth == null ? 'null' : (auth.user + ':' + auth.pass)) + '\n');
   if (requestContent != null) {
     log('  Request JSON: ' + _showJSON(requestContent) + '\n');
   }
