@@ -28,3 +28,6 @@ rules:
   semi:
     - error
     - always
+  no-trailing-spaces:
+    - error
+    - { skipBlankLines: false }

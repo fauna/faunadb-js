@@ -51,7 +51,7 @@ function quote(expr) {
  (To destructure single-element arrays use {@link lambda_expr}.)
  */
 function lambda(func) {
-  var vars = annotate.getParameterNames(func);
+  var vars = annotate(func);
   switch (vars.length) {
     case 0:
       throw new Error('Function must take at least 1 argument.');
@@ -376,7 +376,7 @@ module.exports = {
   object: object,
   quote: quote,
   lambda: lambda,
-  lambda_expr: toLambda,
+  lambda_expr: lambda_expr,
   map: map,
   foreach: foreach,
   filter: filter,
