@@ -15,7 +15,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha test/",
-    "browser-test": "karma start browserTest.conf.js"
+    "browser-test-mac": "karma start browserTest.conf.js --browsers Chrome,Safari,Firefox"
   },
   "dependencies": {
     "btoa-lite": "^1.0.0",
