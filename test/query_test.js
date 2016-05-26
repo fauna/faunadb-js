@@ -35,12 +35,16 @@ describe('query', function () {
       }))).then(function(i) { mIndexRef = i.ref; });
 
       return Promise.all([nIndexRefP, mIndexRefP]).then(function() {
-        var refN1P = create({ n: 1 }).then(function (i) { refN1 = i.ref; });
-        var refM1P = create({ m: 1 }).then(function (i) { refM1 = i.ref; });
-        var refN1M1P = create({ n: 1, m: 1 }).then(function (i) { refN1M1 = i.ref; });
+        var createP = create({ n: 1 }).then(function (i) {
+          refN1 = i.ref;
+          return create({ m: 1 });
+        }).then(function (i) {
+          refM1 = i.ref;
+          return create({ n: 1, m: 1 });
+        }).then(function (i) { refN1M1 = i.ref; });
         var thimbleClassRefP = client.post('classes', { name: 'thimbles' }).then(function (i) { thimbleClassRef = i.ref; });
 
-        return Promise.all([refN1P, refM1P, refN1M1P, thimbleClassRefP]);
+        return Promise.all([createP, thimbleClassRefP]);
       });
     });
   });

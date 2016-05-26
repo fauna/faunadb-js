@@ -13,7 +13,7 @@ var env = process.env;
 
 var testConfig;
 try {
-  testConfig = require(path.join(__dirname, '../testConfig'));
+  testConfig = require('../testConfig.json');
 } catch (err) {
   console.log('testConfig.json not found, defaulting to environment variables');
   if (typeof env.FAUNA_DOMAIN === 'undefined' ||
