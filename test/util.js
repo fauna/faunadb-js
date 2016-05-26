@@ -1,5 +1,4 @@
 var chai = require('chai');
-var path = require('path');
 var Client = require('../src/Client');
 var objects = require('../src/objects');
 var util = require('../src/_util');
@@ -56,7 +55,7 @@ function getClient(opts) {
 
 function assertRejected(promise, errorType) {
   var succeeded = false;
-  
+
   return promise.then(function() {
     succeeded = true;
     assert(!succeeded, 'Expected promise to fail.');
@@ -75,22 +74,18 @@ function client() {
   return _client;
 }
 
+function randomString() {
+  return (Math.random() * 0xFFFFFF << 0).toString(16);
+}
+
 var rootClient = getClient({ secret: testConfig.auth });
-var dbName = 'faunadb-js-test';
+var dbName = 'faunadb-js-test-' + randomString();
 var dbRef = new Ref('databases', dbName);
 
 // global before/after for every test
 
 before(function () {
-  return rootClient.query(query.delete_expr(dbRef)).catch(function(exception) {
-    if (exception instanceof errors.BadRequest) {
-      return;
-    } else {
-      throw exception;
-    }
-  }).then(function() {
-    return rootClient.query(query.create(new objects.Ref('databases'), query.object({ name: dbName })));
-  }).then(function() {
+  return rootClient.query(query.create(new objects.Ref('databases'), query.object({ name: dbName }))).then(function() {
     return rootClient.query(query.create(new objects.Ref('keys'), query.quote({ database: dbRef, role: 'server' })));
   }).then(function(key) {
     clientSecret = { user: key.secret };
