@@ -124,10 +124,10 @@ Page.prototype.mapData = function(func) {
 function FaunaTime(value) {
   if (value instanceof Date) {
     value = value.toISOString();
-  } else if (!value.endsWith('Z')) {
+  } else if (!(value.charAt(value.length - 1) === 'Z')) {
     throw new errors.InvalidValue('Only allowed timezone is \'Z\', got: ' + value);
   }
-  
+
   this.value = value;
 }
 
