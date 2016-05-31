@@ -1,9 +1,10 @@
 var chai = require('chai');
 var Client = require('../src/Client');
-var objects = require('../src/objects');
-var util = require('../src/_util');
 var errors = require('../src/errors');
 var query = require('../src/query');
+var objectAssign = require('object-assign');
+var objects = require('../src/objects');
+var util = require('../src/_util');
 
 var assert = chai.assert;
 var Ref = objects.Ref;
@@ -50,7 +51,7 @@ function takeObjectKeys(object) {
 
 function getClient(opts) {
   var cfg = util.removeUndefinedValues(takeObjectKeys(testConfig, 'domain', 'scheme', 'port'));
-  return new Client(Object.assign({ secret: clientSecret }, cfg, opts));
+  return new Client(objectAssign({ secret: clientSecret }, cfg, opts));
 }
 
 function assertRejected(promise, errorType) {

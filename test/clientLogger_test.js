@@ -1,5 +1,6 @@
 var assert = require('chai').assert;
 var logger = require('../src/clientLogger').logger;
+var objectAssign = require('object-assign');
 var util = require('./util');
 
 var client;
@@ -94,7 +95,7 @@ function captureLogged(clientAction, clientParams) {
   }
 
   var logged;
-  var loggedClient = util.getClient(Object.assign({
+  var loggedClient = util.getClient(objectAssign({
     observer: logger(function (str) {
       logged = str;
     })
