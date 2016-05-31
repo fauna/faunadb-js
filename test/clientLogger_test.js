@@ -6,6 +6,14 @@ var util = require('./util');
 var client;
 var classRef;
 
+// Polyfill for startsWith, which IE11 does not support
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function(searchString, position) {
+    position = position || 0;
+    return this.indexOf(searchString, position) === position;
+  };
+}
+
 describe('clientLogger', function () {
   before(function () {
     // Hideous way to ensure the client is initialized.
