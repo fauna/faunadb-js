@@ -24,6 +24,7 @@
     "superagent": "^1.8.2"
   },
   "devDependencies": {
+    "browserify": "^13.0.1",
     "chai": "^3.5.0",
     "eslint": "^2.10.2",
     "karma": "^0.13.22",
@@ -33,6 +34,7 @@
     "karma-mocha": "^1.0.1",
     "karma-safari-launcher": "^1.0.0",
     "karma-spec-reporter": "0.0.26",
-    "mocha": "^2.4.5"
+    "mocha": "^2.4.5",
+    "watchify": "^3.7.0"
   }
 }
