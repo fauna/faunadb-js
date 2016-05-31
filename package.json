@@ -15,7 +15,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha test/",
-    "browser-test-mac": "karma start browserTest.conf.js --browsers Chrome,Safari,Firefox"
+    "browser-test-mac": "karma start browserTest.conf.js --browsers Chrome,Safari,Firefox",
+    "browser-test-win": "karma start browserTest.conf.js --browsers Chrome,Firefox,IE"
   },
   "dependencies": {
     "btoa-lite": "^1.0.0",
@@ -32,6 +33,7 @@
     "karma-browserify": "^5.0.5",
     "karma-chrome-launcher": "^1.0.1",
     "karma-firefox-launcher": "^1.0.0",
+    "karma-ie-launcher": "^1.0.0",
     "karma-mocha": "^1.0.1",
     "karma-safari-launcher": "^1.0.0",
     "karma-spec-reporter": "0.0.26",

@@ -15,7 +15,7 @@ var client;
 var classRef, nIndexRef, mIndexRef, refN1, refM1, refN1M1, thimbleClassRef;
 
 describe('query', function () {
-  this.timeout(5000);
+  this.timeout(10000);
   before(function () {
     // Hideous way to ensure that the client is initialized.
     client = util.client();
