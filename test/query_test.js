@@ -12,7 +12,7 @@ var FaunaDate = objects.FaunaDate,
 
 var client;
 
-var classRef, nIndexRef, mIndexRef, refN1, refM1, refN1M1, thimbleClassRef;
+var classRef, nIndexRef, mIndexRef, nCoveredIndexRef, refN1, refM1, refN1M1, thimbleClassRef;
 
 describe('query', function () {
   this.timeout(10000);
@@ -35,13 +35,20 @@ describe('query', function () {
         terms: [ { 'field': ['data', 'm'] }]
       })).then(function(i) { mIndexRef = i.ref; });
 
-      return Promise.all([nIndexRefP, mIndexRefP]).then(function() {
-        var createP = create({ n: 1 }).then(function (i) {
+      var nCoveredIndexRefP = client.query(query.create(new Ref('indexes'), {
+        name: 'widgets_cost_by_p',
+        source: classRef,
+        terms: [ { 'field': ['data', 'p' ] }],
+        values: [ { 'field': ['data', 'cost' ] }]
+      })).then(function(i) { nCoveredIndexRef = i.ref });
+
+      return Promise.all([nIndexRefP, mIndexRefP, nCoveredIndexRefP]).then(function() {
+        var createP = create({ n: 1, p: 1, cost: 10 }).then(function (i) {
           refN1 = i.ref;
-          return create({ m: 1 });
+          return create({ m: 1, p: 1, cost: 15 });
         }).then(function (i) {
           refM1 = i.ref;
-          return create({ n: 1, m: 1 });
+          return create({ n: 1, m: 1, p: 1, cost: 10 });
         }).then(function (i) { refN1M1 = i.ref; });
         var thimbleClassRefP = client.post('classes', { name: 'thimbles' }).then(function (i) { thimbleClassRef = i.ref; });
 
@@ -298,6 +305,14 @@ describe('query', function () {
 
   it('difference', function () {
     assertSet(query.difference(nSet(1), mSet(1)), [refN1]); // but not refN1M1
+  });
+
+  it('distinct', function() {
+
+
+    return client.query(query.paginate(query.match(nCoveredIndexRef, 1))).then(function (res) {
+      console.log(res);
+    });
   });
 
   it('join', function () {

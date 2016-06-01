@@ -162,7 +162,6 @@ Client.prototype._performRequest = function (action, path, data, query) {
 
   if (data) {
     rq.send(data);
-    rq.set('Content-Type', 'application/json');
   }
 
   if (this._secret) {

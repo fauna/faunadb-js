@@ -195,6 +195,11 @@ function difference() {
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
+function distinct(set) {
+  return new Expr({ distinct: Expr.wrap(set) });
+}
+
+/** See the [docs](https://faunadb.com/documentation/queries#sets). */
 function join(source, target) {
   return new Expr({ join: Expr.wrap(source), with: Expr.wrap(toLambda(target)) });
 }
@@ -247,6 +252,11 @@ function date(string) {
 }
 
 // Miscellaneous functions
+
+/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+function next_id() {
+  return new Expr({ next_id: null });
+}
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function equals() {
