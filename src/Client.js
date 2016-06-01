@@ -126,6 +126,12 @@ Client.prototype.ping = function (scope, timeout) {
 Client.prototype._execute = function (action, path, data, query) {
   query = defaults(query, null);
 
+  var serializedData = null;
+
+  if (data !== null) {
+    serializedData = json.toJSON(data);
+  }
+
   if (path instanceof objects.Ref) {
     path = path.value;
   }
@@ -136,7 +142,7 @@ Client.prototype._execute = function (action, path, data, query) {
 
   var startTime = Date.now();
   var self = this;
-  return this._performRequest(action, path, data, query).then(function (response) {
+  return this._performRequest(action, path, serializedData, query).then(function (response) {
     var endTime = Date.now();
     var responseObject = json.parseJSON(response.text);
     var requestResult = new RequestResult(
@@ -162,6 +168,7 @@ Client.prototype._performRequest = function (action, path, data, query) {
 
   if (data) {
     rq.send(data);
+    rq.set('Content-Type', 'application/json');
   }
 
   if (this._secret) {

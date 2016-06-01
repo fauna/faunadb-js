@@ -1,12 +1,13 @@
+var Expr = require('./Expr');
 var objects = require('./objects');
 
 function toJSON(object, pretty) {
   pretty = typeof pretty !== 'undefined' ? pretty : false;
 
   if (pretty) {
-    return JSON.stringify(object, null, '  ');
+    return JSON.stringify(object, _unwrap, '  ');
   } else {
-    return JSON.stringify(object);
+    return JSON.stringify(object, _unwrap);
   }
 }
 
@@ -29,6 +30,14 @@ function json_parse(_, val) {
     return new objects.FaunaDate(val['@date']);
   } else {
     return val;
+  }
+}
+
+function _unwrap(_, value) {
+  if (value instanceof Expr) {
+    return value.raw;
+  } else {
+    return value;
   }
 }
 

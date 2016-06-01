@@ -1,5 +1,6 @@
 var assert = require('chai').assert;
 var errors = require('../src/errors');
+var Expr = require('../src/Expr');
 var objects = require('../src/objects');
 
 var FaunaDate = objects.FaunaDate,
@@ -38,11 +39,16 @@ describe('objects', function() {
     assert.equal('' + blobRef, 'classes/blobs/123');
   });
 
+  it('serializes expr', function() {
+    var expr = new Expr({ some: 'stringField', num: 2 });
+    assert.equal(json.toJSON(expr), '{"some":"stringField","num":2}');
+  });
+
   it('set', function () {
     var
       index = new Ref('indexes', 'frogs_by_size'),
       jsonIndex = '{"@ref":"indexes/frogs_by_size"}',
-      match = new SetRef(query.match(index, ref)),
+      match = new SetRef({ match: index, terms: ref }),
       jsonMatch = '{"@set":{"match":' + jsonIndex + ',"terms":' + jsonRef + '}}';
     assert.deepEqual(json.parseJSON(jsonMatch), match);
     assert.equal(json.toJSON(match), jsonMatch);

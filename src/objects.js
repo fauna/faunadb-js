@@ -1,6 +1,9 @@
 'use strict';
 
 var errors = require('./errors');
+var util = require('util');
+
+function FaunaObject() { }
 
 /**
  * FaunaDB ref.
@@ -172,7 +175,14 @@ FaunaDate.prototype.toJSON = function()  {
   return { '@date': this.value };
 };
 
+util.inherits(Ref, FaunaObject);
+util.inherits(SetRef, FaunaObject);
+util.inherits(Page, FaunaObject);
+util.inherits(FaunaTime, FaunaObject);
+util.inherits(FaunaDate, FaunaObject);
+
 module.exports = {
+  FaunaObject: FaunaObject,
   Ref: Ref,
   SetRef: SetRef,
   Page: Page,

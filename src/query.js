@@ -1,36 +1,32 @@
 var annotate = require('fn-annotate');
+var Expr = require('./Expr');
 var objectAssign = require('object-assign');
 
 // Basic forms
 
 /** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
 function let_expr(vars, in_expr) {
-  return { let: vars, in: in_expr };
+  return new Expr({ let: Expr.wrapValues(vars), in: Expr.wrap(in_expr) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#basic_form). */
 function variable(varName) {
-  return { var: varName };
+  return new Expr({ var: Expr.wrap(varName) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
 function if_expr(condition, then, _else) {
-  return { if: condition, then: then, else: _else };
+  return new Expr({ if: Expr.wrap(condition), then: Expr.wrap(then), else: Expr.wrap(_else) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#basic_form). */
 function do_expr() {
-  return { do: varargs(arguments) };
+  return new Expr({ do: Expr.wrap(varargs(arguments)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
 function object(fields) {
-  return { object: fields };
-}
-
-/** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
-function quote(expr) {
-  return { quote: expr };
+  return new Expr({ object: Expr.wrapValues(fields) });
 }
 
 /**
@@ -70,43 +66,43 @@ function toLambda(value) {
 
 /** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
 function lambda_expr(var_name, expr) {
-  return { lambda: var_name, expr: expr };
+  return new Expr({ lambda: Expr.wrap(var_name), expr: Expr.wrap(expr) });
 }
 
 // Collection functions
 
 /** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
 function map(collection, lambda_expr) {
-  return { map: toLambda(lambda_expr), collection: collection };
+  return new Expr({ map: Expr.wrap(toLambda(lambda_expr)), collection: Expr.wrap(collection) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
 function foreach(collection, lambda_expr) {
-  return { foreach: toLambda(lambda_expr), collection: collection };
+  return new Expr({ foreach: Expr.wrap(toLambda(lambda_expr)), collection: Expr.wrap(collection) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
 function filter(collection, lambda_expr) {
-  return { filter: toLambda(lambda_expr), collection: collection };
+  return new Expr({ filter: Expr.wrap(toLambda(lambda_expr)), collection: Expr.wrap(collection) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
 function take(number, collection) {
-  return { take: number, collection: collection };
+  return new Expr({ take: Expr.wrap(number), collection: Expr.wrap(collection) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
 function drop(number, collection) {
-  return { drop: number, collection: collection };
+  return new Expr({ drop: Expr.wrap(number), collection: Expr.wrap(collection) });
 }
 
 function prepend(elements, collection) {
-  return { prepend: elements, collection: collection };
+  return new Expr({ prepend: Expr.wrap(elements), collection: Expr.wrap(collection) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
 function append(elements, collection) {
-  return { append: elements, collection: collection };
+  return new Expr({ append: Expr.wrap(elements), collection: Expr.wrap(collection) });
 }
 
 // Read functions
@@ -115,7 +111,7 @@ function append(elements, collection) {
 function get(ref, ts) {
   ts = defaults(ts, null);
 
-  return params({ get: ref }, { ts: ts });
+  return new Expr(params({ get: Expr.wrap(ref) }, { ts: Expr.wrap(ts) }));
 }
 
 /**
@@ -125,53 +121,53 @@ function get(ref, ts) {
 function paginate(set, opts) {
   opts = defaults(opts, {});
 
-  return objectAssign({ paginate: set }, opts);
+  return new Expr(objectAssign({ paginate: Expr.wrap(set) }, Expr.wrapValues(opts)));
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#read_functions). */
 function exists(ref, ts) {
   ts = defaults(ts, null);
 
-  return params({ exists: ref }, { ts: ts });
+  return new Expr(params({ exists: Expr.wrap(ref) }, { ts: Expr.wrap(ts) }));
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#read_functions). */
 function count(set, events) {
   events = defaults(events, null);
 
-  return params({ count: set }, { events: events });
+  return new Expr(params({ count: Expr.wrap(set) }, { events: Expr.wrapValues(events) }));
 }
 
 // Write functions
 
 /** See the [docs](https://faunadb.com/documentation/queries#write_functions). */
 function create(class_ref, params) {
-  return { create: class_ref, params: params };
+  return new Expr({ create: Expr.wrap(class_ref), params: Expr.wrap(params) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#write_functions). */
 function update(ref, params) {
-  return { update: ref, params: params };
+  return new Expr({ update: Expr.wrap(ref), params: Expr.wrap(params) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#write_functions). */
 function replace(ref, params) {
-  return { replace: ref, params: params };
+  return new Expr({ replace: Expr.wrap(ref), params: Expr.wrap(params) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#write_functions). */
 function delete_expr(ref) {
-  return { delete: ref };
+  return new Expr({ delete: Expr.wrap(ref) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#write_functions). */
 function insert(ref, ts, action, params) {
-  return { insert: ref, ts: ts, action: action, params: params };
+  return new Expr({ insert: Expr.wrap(ref), ts: Expr.wrap(ts), action: Expr.wrap(action), params: Expr.wrap(params) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#write_functions). */
 function remove(ref, ts, action) {
-  return { remove: ref, ts: ts, action: action };
+  return new Expr({ remove: Expr.wrap(ref), ts: Expr.wrap(ts), action: Expr.wrap(action) });
 }
 
 // Sets
@@ -180,44 +176,44 @@ function remove(ref, ts, action) {
 function match(index) {
   var args = argsToArray(arguments);
   args.shift();
-  return { match: index, terms: varargs(args) };
+  return new Expr({ match: Expr.wrap(index), terms: Expr.wrap(varargs(args)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
 function union() {
-  return { union: varargs(arguments) };
+  return new Expr({ union: Expr.wrap(varargs(arguments)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
 function intersection() {
-  return { intersection: varargs(arguments) };
+  return new Expr({ intersection: Expr.wrap(varargs(arguments)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
 function difference() {
-  return { difference: varargs(arguments) };
+  return new Expr({ difference: Expr.wrap(varargs(arguments)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#sets). */
 function join(source, target) {
-  return { join: source, with: toLambda(target) };
+  return new Expr({ join: Expr.wrap(source), with: Expr.wrap(toLambda(target)) });
 }
 
 // Authentication
 
 /** See the [docs](https://faunadb.com/documentation/queries#auth_functions). */
 function login(ref, params) {
-  return { login: ref, params: params };
+  return new Expr({ login: Expr.wrap(ref), params: Expr.wrap(params) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#auth_functions). */
 function logout(delete_tokens) {
-  return { logout: delete_tokens };
+  return new Expr({ logout: Expr.wrap(delete_tokens) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#auth_functions). */
 function identify(ref, password) {
-  return { identify: ref, password: password };
+  return new Expr({ identify: Expr.wrap(ref), password: Expr.wrap(password) });
 }
 
 // String functions
@@ -225,111 +221,111 @@ function identify(ref, password) {
 /** See the [docs](https://faunadb.com/documentation/queries#string_functions). */
 function concat(strings, separator) {
   separator = defaults(separator, null);
-  return params({ concat: strings }, { separator: separator });
+  return new Expr(params({ concat: Expr.wrap(strings) }, { separator: Expr.wrap(separator) }));
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#string_functions). */
 function casefold(string) {
-  return { casefold: string };
+  return new Expr({ casefold: Expr.wrap(string) });
 }
 
 // Time and date functions
 
 /** See the [docs](https://faunadb.com/documentation/queries#time_functions). */
 function time(string) {
-  return { time: string };
+  return new Expr({ time: Expr.wrap(string) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#time_functions). */
 function epoch(number, unit) {
-  return { epoch: number, unit: unit };
+  return new Expr({ epoch: Expr.wrap(number), unit: Expr.wrap(unit) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#time_functions). */
 function date(string) {
-  return { date: string };
+  return new Expr({ date: Expr.wrap(string) });
 }
 
 // Miscellaneous functions
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function equals() {
-  return { equals: varargs(arguments) };
+  return new Expr({ equals: varargs(arguments) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function contains(path, _in) {
-  return { contains: path, in: _in };
+  return new Expr({ contains: Expr.wrap(path), in: Expr.wrap(_in) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function select(path, from) {
-  return { select: path, from: from };
+  return new Expr({ select: Expr.wrap(path), from: Expr.wrap(from) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function selectWithDefault(path, from, _default) {
-  return { select: path, from: from, default: _default };
+  return new Expr({ select: Expr.wrap(path), from: Expr.wrap(from), default: Expr.wrapValues(_default) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function add() {
-  return { add: varargs(arguments) };
+  return new Expr({ add: Expr.wrap(varargs(arguments)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function multiply() {
-  return { multiply: varargs(arguments) };
+  return new Expr({ multiply: Expr.wrap(varargs(arguments)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function subtract() {
-  return { subtract: varargs(arguments) };
+  return new Expr({ subtract: Expr.wrap(varargs(arguments)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function divide() {
-  return { divide: varargs(arguments) };
+  return new Expr({ divide: Expr.wrap(varargs(arguments)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function modulo() {
-  return { modulo: varargs(arguments) };
+  return new Expr({ modulo: Expr.wrap(varargs(arguments)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function lt() {
-  return { lt: varargs(arguments) };
+  return new Expr({ lt: Expr.wrap(varargs(arguments)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function lte() {
-  return { lte: varargs(arguments) };
+  return new Expr({ lte: Expr.wrap(varargs(arguments)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function gt() {
-  return { gt: varargs(arguments) };
+  return new Expr({ gt: Expr.wrap(varargs(arguments)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function gte() {
-  return { gte: varargs(arguments) };
+  return new Expr({ gte: Expr.wrap(varargs(arguments)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function and() {
-  return { and: varargs(arguments) };
+  return new Expr({ and: Expr.wrap(varargs(arguments)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function or() {
-  return { or: varargs(arguments) };
+  return new Expr({ or: Expr.wrap(varargs(arguments)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
 function not(boolean) {
-  return { not: boolean };
+  return new Expr({ not: Expr.wrap(boolean) });
 }
 
 // Helpers
@@ -351,7 +347,7 @@ function params(mainParams, optionalParams) {
  * `query.add([1, 2])` will work as well as `query.add(1, 2)`.
  */
 function varargs(values) {
-  var valuesAsArr = (typeof values === 'array') ? values : Array.prototype.slice.call(values);
+  var valuesAsArr = Array.isArray(values) ? values : Array.prototype.slice.call(values);
   return values.length === 1 ? values[0] : valuesAsArr;
 }
 
@@ -375,7 +371,6 @@ module.exports = {
   if_expr: if_expr,
   do_expr: do_expr,
   object: object,
-  quote: quote,
   lambda: lambda,
   lambda_expr: lambda_expr,
   map: map,
