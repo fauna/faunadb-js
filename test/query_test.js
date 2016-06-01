@@ -79,19 +79,18 @@ describe('query', function () {
   it('lambda', function () {
     assert.throws(function () { query.lambda(function () { return 0; } ); });
 
-// TODO: FIX ME
-//    assert.deepEqual(
-//      query.lambda(function (a) { return query.add(a, a); }),
-//      { lambda: 'a', expr: { add: [{ var: 'a' }, { var: 'a' }] } });
+    assert.deepEqual(
+      util.unwrapExpr(query.lambda(function (a) { return query.add(a, a); })),
+      { lambda: 'a', expr: { add: [{ var: 'a' }, { var: 'a' }] } });
 
     var multi_args = query.lambda(function (a, b) { return [b, a]; });
-//    assert.deepEqual(multi_args, {
-//      lambda: ['a', 'b'],
-//      expr: [{ var: 'b' }, { var: 'a' }]
-//    });
+    assert.deepEqual(util.unwrapExpr(multi_args), {
+      lambda: ['a', 'b'],
+      expr: [{ var: 'b' }, { var: 'a' }]
+    });
 
     // function() works too
-//    assert.deepEqual(multi_args, query.lambda(function (a, b) { return [b, a]; }));
+    assert.deepEqual(multi_args, query.lambda(function (a, b) { return [b, a]; }));
 
     return assertQuery(query.map([[1, 2], [3, 4]], multi_args), [[2, 1], [4, 3]]);
   });
@@ -183,15 +182,14 @@ describe('query', function () {
     var testSet = nSet(1);
     var p1 = assertQuery(query.paginate(testSet), { data: [refN1, refN1M1] });
     var p2 = assertQuery(query.paginate(testSet, { size: 1 }), { data: [refN1], after: [refN1M1] });
-// TODO: FIXME
-//    var p3 = assertQuery(query.paginate(testSet, { sources: true }), {
-//      data: [
-//        { sources: [new SetRef(testSet)], value: refN1 },
-//        { sources: [new SetRef(testSet)], value: refN1M1 }
-//      ]
-//    });
+    var p3 = assertQuery(query.paginate(testSet, { sources: true }), {
+      data: [
+        { sources: [new SetRef(util.unwrapExpr(testSet))], value: refN1 },
+        { sources: [new SetRef(util.unwrapExpr(testSet))], value: refN1M1 }
+      ]
+    });
 
-    return Promise.all([p1, p2, /*p3*/]);
+    return Promise.all([p1, p2, p3]);
   });
 
   it('exists', function () {

@@ -5,9 +5,9 @@ function toJSON(object, pretty) {
   pretty = typeof pretty !== 'undefined' ? pretty : false;
 
   if (pretty) {
-    return JSON.stringify(object, _unwrap, '  ');
+    return JSON.stringify(object, null, '  ');
   } else {
-    return JSON.stringify(object, _unwrap);
+    return JSON.stringify(object);
   }
 }
 
@@ -30,14 +30,6 @@ function json_parse(_, val) {
     return new objects.FaunaDate(val['@date']);
   } else {
     return val;
-  }
-}
-
-function _unwrap(_, value) {
-  if (value instanceof Expr) {
-    return value.raw;
-  } else {
-    return value;
   }
 }
 

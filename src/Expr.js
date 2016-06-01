@@ -36,4 +36,8 @@ Expr.wrapValues = function(obj) {
   }
 };
 
+Expr.prototype.toJSON = function() {
+  return this.raw;
+};
+
 module.exports = Expr;

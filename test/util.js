@@ -1,6 +1,6 @@
 var chai = require('chai');
 var Client = require('../src/Client');
-var errors = require('../src/errors');
+var Expr = require('../src/Expr');
 var query = require('../src/query');
 var objectAssign = require('object-assign');
 var objects = require('../src/objects');
@@ -79,6 +79,32 @@ function randomString() {
   return (Math.random() * 0xFFFFFF << 0).toString(16);
 }
 
+function unwrapExpr(obj) {
+  if (obj instanceof Expr) {
+    return unwrapExprValues(obj.raw);
+  } else {
+    return obj;
+  }
+}
+
+function unwrapExprValues(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map(function(elem) {
+      return unwrapExpr(elem);
+    });
+  } else if (typeof obj === 'object') {
+    var rv = {};
+
+    Object.keys(obj).forEach(function (key) {
+      rv[key] = unwrapExpr(obj[key]);
+    });
+
+    return rv;
+  } else {
+    return obj;
+  }
+}
+
 var rootClient = getClient({ secret: testConfig.auth });
 var dbName = 'faunadb-js-test-' + randomString();
 var dbRef = new Ref('databases', dbName);
@@ -106,5 +132,6 @@ module.exports = {
   client: client,
   clientSecret: clientSecret,
   rootClient: rootClient,
-  dbRef: dbRef
+  dbRef: dbRef,
+  unwrapExpr: unwrapExpr
 };
