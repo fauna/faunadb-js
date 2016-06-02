@@ -416,6 +416,7 @@ module.exports = {
   time: time,
   epoch: epoch,
   date: date,
+  next_id: next_id,
   equals: equals,
   contains: contains,
   select: select,

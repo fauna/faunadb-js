@@ -405,6 +405,13 @@ describe('query', function () {
   });
 
   // Miscellaneous functions
+  it('next_id', function() {
+    return client.query(query.next_id()).then(function(res) {
+      var parsed = parseInt(res);
+      assert.isNotNaN(parsed);
+      assert.isNumber(parsed);
+    });
+  });
 
   it('equals', function () {
     var p1 = assertQuery(query.equals(1, 1, 1), true);
