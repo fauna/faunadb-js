@@ -1,3 +1,5 @@
+'use strict';
+
 var chai = require('chai');
 var Client = require('../src/Client');
 var Expr = require('../src/Expr');

@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Used for functions that take an options objects.
  * Fills in defaults for options not provided.
