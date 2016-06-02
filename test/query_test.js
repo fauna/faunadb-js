@@ -302,12 +302,12 @@ describe('query', function () {
 
   it('join', function () {
     return create({ n: 12 }).then(function(res1) {
-      return create({n : 12 }).then(function(res2) {
+      return create({ n: 12 }).then(function(res2) {
         return [res1.ref, res2.ref];
       });
     }).then(function(referenced) {
-      return create({m: referenced[0]}).then(function(res1) {
-        return create({m: referenced[1]}).then(function(res2) {
+      return create({ m: referenced[0] }).then(function(res1) {
+        return create({ m: referenced[1] }).then(function(res2) {
           return [res1.ref, res2.ref];
         });
       }).then(function (referencers) {
