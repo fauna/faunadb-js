@@ -10,7 +10,7 @@ describe('Client', function () {
     // Hideous way to ensure that the client is initialized.
     client = util.client();
 
-    client.post('classes', { name: 'my_class' }).then(function(result) {
+    return client.post('classes', { name: 'my_class' }).then(function(result) {
       cls = result;
     });
   });
