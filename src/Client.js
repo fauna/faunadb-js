@@ -175,7 +175,9 @@ Client.prototype._performRequest = function (action, path, data, query) {
   return new Promise(function (resolve, reject) {
     rq.end(function (error, result) {
       // superagent treates 4xx and 5xx status codes as exceptions. We'll handle those ourselves.
-      if (error && !('status' in error)) {
+      if (error &&
+          error.response &&
+          !(error.response.status >= 400 && error.response.status <= 599)) {
         reject(error);
       } else {
         resolve(result);

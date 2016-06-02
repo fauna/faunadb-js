@@ -2,10 +2,19 @@
 
 var assert = require('chai').assert;
 var logger = require('../src/clientLogger').logger;
+var objectAssign = require('object-assign');
 var util = require('./util');
 
 var client;
 var classRef;
+
+// Polyfill for startsWith, which IE11 does not support
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function(searchString, position) {
+    position = position || 0;
+    return this.indexOf(searchString, position) === position;
+  };
+}
 
 describe('clientLogger', function () {
   before(function () {
@@ -96,7 +105,7 @@ function captureLogged(clientAction, clientParams) {
   }
 
   var logged;
-  var loggedClient = util.getClient(Object.assign({
+  var loggedClient = util.getClient(objectAssign({
     observer: logger(function (str) {
       logged = str;
     })
