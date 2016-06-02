@@ -14,7 +14,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "mocha debug test/",
+    "test": "mocha test/",
     "browser-test-mac": "karma start browserTest.conf.js --browsers Chrome,Safari,Firefox",
     "browser-test-win": "karma start browserTest.conf.js --browsers Chrome,Firefox,IE",
     "browser-test-linux": "karma start browserTest.conf.js --browsers Chrome,Firefox"
