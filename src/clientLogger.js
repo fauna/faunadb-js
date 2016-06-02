@@ -1,3 +1,5 @@
+'use strict';
+
 var json = require('./_json');
 
 /**

@@ -1,3 +1,5 @@
+'use strict';
+
 var chai = require('chai');
 var path = require('path');
 var Client = require('../src/Client');

@@ -1,3 +1,5 @@
+'use strict';
+
 var assert = require('chai').assert;
 var errors = require('../src/errors');
 var util = require('./util');

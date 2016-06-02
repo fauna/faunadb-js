@@ -1,3 +1,5 @@
+'use strict';
+
 var assert = require('chai').assert;
 var logger = require('../src/clientLogger').logger;
 var util = require('./util');

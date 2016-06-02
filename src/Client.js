@@ -1,3 +1,5 @@
+'use strict';
+
 var btoa = require('btoa-lite');
 var request = require('superagent');
 var errors = require('./errors');
