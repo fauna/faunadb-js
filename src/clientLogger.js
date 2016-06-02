@@ -33,7 +33,7 @@ function showRequestResult(requestResult) {
     timeTaken = requestResult.timeTaken;
 
   var out = '';
-  
+
   function log(str) {
     out = out + str;
   }
@@ -50,12 +50,12 @@ function showRequestResult(requestResult) {
   return out;
 }
 
-  
+
 function _indent(str) {
   var indentStr = '  ';
   return str.split('\n').join('\n' + indentStr);
 }
-  
+
 function _showJSON(object) {
   return _indent(json.toJSON(object, true));
 }
