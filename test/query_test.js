@@ -1,3 +1,5 @@
+'use strict';
+
 var assert = require('chai').assert;
 var errors = require('../src/errors');
 var objects = require('../src/objects');
@@ -287,34 +289,40 @@ describe('query', function () {
   // Sets
 
   it('match', function () {
-    assertSet(nSet(1), [refN1, refN1M1]);
+    return assertSet(nSet(1), [refN1, refN1M1]);
   });
 
   it('union', function () {
-    assertSet(query.union(nSet(1), mSet(1)), [refN1, refM1, refN1M1]);
+    return assertSet(query.union(nSet(1), mSet(1)), [refN1, refM1, refN1M1]);
   });
 
   it('intersection', function () {
-    assertSet(query.intersection(nSet(1), mSet(1)), [refN1M1]);
+    return assertSet(query.intersection(nSet(1), mSet(1)), [refN1M1]);
   });
 
   it('difference', function () {
-    assertSet(query.difference(nSet(1), mSet(1)), [refN1]); // but not refN1M1
+    return assertSet(query.difference(nSet(1), mSet(1)), [refN1]); // but not refN1M1
   });
 
   it('join', function () {
-    return Promise.all([create({ n: 12 }), create({ n: 12 })]).then(function (results) {
-      var referenced = [results[0].ref, results[1].ref];
-
-      return Promise.all([create({ m: referenced[0] }), create({ m: referenced[1] })]).then(function (results2) {
-        var referencers = [results2[0].ref, results2[1].ref];
+    return create({ n: 12 }).then(function(res1) {
+      return create({ n: 12 }).then(function(res2) {
+        return [res1.ref, res2.ref];
+      });
+    }).then(function(referenced) {
+      return create({ m: referenced[0] }).then(function(res1) {
+        return create({ m: referenced[1] }).then(function(res2) {
+          return [res1.ref, res2.ref];
+        });
+      }).then(function (referencers) {
         var source = nSet(12);
 
-        assertSet(source, referenced);
+        var p1 = assertSet(source, referenced);
 
         // For each obj with n=12, get the set of elements whose data.m refers to it.
-        var joined = query.join(source, function (a) { query.match(mIndexRef, a); });
-        assertSet(joined, referencers);
+        var joined = query.join(source, function (a) { return query.match(mIndexRef, a); });
+        var p2 = assertSet(joined, referencers);
+        return Promise.all([p1, p2]);
       });
     });
   });
