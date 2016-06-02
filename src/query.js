@@ -406,6 +406,7 @@ module.exports = {
   union: union,
   intersection: intersection,
   difference: difference,
+  distinct: distinct,
   join: join,
   login: login,
   logout: logout,

@@ -310,11 +310,10 @@ describe('query', function () {
   });
 
   it('distinct', function() {
+    var nonDistinctP = assertSet(query.match(nCoveredIndexRef, 1), [10, 10, 15]);
+    var distinctP = assertSet(query.distinct(query.match(nCoveredIndexRef, 1)), [10, 15]);
 
-
-    return client.query(query.paginate(query.match(nCoveredIndexRef, 1))).then(function (res) {
-      console.log(res);
-    });
+    return Promise.all([nonDistinctP, distinctP])
   });
 
   it('join', function () {

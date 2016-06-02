@@ -22,6 +22,8 @@ function Ref() {
   this.value = parts.join('/');
 }
 
+util.inherits(Ref, FaunaObject);
+
 /**
  * Gets the class part out of the Ref.
  * This is done by removing the id.
@@ -85,6 +87,8 @@ function SetRef(query) {
   this.query = query;
 }
 
+util.inherits(SetRef, FaunaObject);
+
 /** @ignore */
 SetRef.prototype.inspect = function() {
   return 'SetRef(' + JSON.stringify(this.value) + ')';
@@ -111,6 +115,8 @@ function Page(data, before, after) {
   this.after = after;
 }
 
+util.inherits(Page, FaunaObject);
+
 /** Use this on an object that you know represents a Page. */
 Page.fromRaw = function(object) {
   return new Page(object.data, object.before, object.after);
@@ -133,6 +139,8 @@ function FaunaTime(value) {
 
   this.value = value;
 }
+
+util.inherits(FaunaTime, FaunaObject);
 
 /**
  * This is lossy as Dates have millisecond rather than nanosecond precision.
@@ -165,6 +173,8 @@ function FaunaDate(value) {
   this.value = value;
 }
 
+util.inherits(FaunaDate, FaunaObject);
+
 /** @return {Date} */
 Object.defineProperty(FaunaDate.prototype, 'date', { get: function() {
   return new Date(this.value);
@@ -174,12 +184,6 @@ Object.defineProperty(FaunaDate.prototype, 'date', { get: function() {
 FaunaDate.prototype.toJSON = function()  {
   return { '@date': this.value };
 };
-
-util.inherits(Ref, FaunaObject);
-util.inherits(SetRef, FaunaObject);
-util.inherits(Page, FaunaObject);
-util.inherits(FaunaTime, FaunaObject);
-util.inherits(FaunaDate, FaunaObject);
 
 module.exports = {
   FaunaObject: FaunaObject,
