@@ -1,3 +1,5 @@
+'use strict';
+
 var annotate = require('fn-annotate');
 var objectAssign = require('object-assign');
 

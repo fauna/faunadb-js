@@ -16,7 +16,7 @@ function objectDup(data) {
 
 /**
  * Recursively looks for :samp:`path` in :samp:`data`.
- * e.g. :samp:`get_path(["a", "b"], {"a": {"b": 1}})` should be 1.
+ * e.g. :samp:`getPath(["a", "b"], {"a": {"b": 1}})` should be 1.
  *
  * @param {Array} path Object keys keys, outermost to innermost.
  * @param {Object} data Object of data (potentially nested).

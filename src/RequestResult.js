@@ -1,3 +1,5 @@
+'use strict';
+
 function RequestResult(client, method, path, query, requestContent, responseRaw, responseContent, statusCode, responseHeaders, startTime, endTime) {
   /** @type {Client} */
   this.client = client;
