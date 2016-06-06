@@ -21,12 +21,14 @@ function Page(client, set) {
 
 Page.prototype.map = function(lambda) {
   var rv = this.clone();
-  rv._fauna_functions.push(function(q) { query.map(q, lambda) });
+  rv._fauna_functions.push(function(q) { return query.map(q, lambda) });
   return rv;
 };
 
 Page.prototype.filter = function(lambda) {
- 
+  var rv = this.clone();
+  rv._fauna_functions.push(function(q) { return query.filter(q, lambda) });
+  return rv;
 };
 
 Page.prototype.iterator = function() {
@@ -74,14 +76,11 @@ Page.prototype._next_page = function(cursor) {
 };
 
 Page.prototype.clone = function() {
-  var rv = {
-    client: this.client,
-    set: this.set,
-    _fauna_functions: this._fauna_functions
-  };
-
-  rv.prototype = Page;
-  return rv;
+  return Object.create(Page.prototype, {
+    client: { value: this.client },
+    set: { value: this.set },
+    _fauna_functions: { value: this._fauna_functions }
+  });
 };
 
 module.exports = Page;
