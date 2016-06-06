@@ -11,6 +11,8 @@ var Ref = objects.Ref;
 
 var client;
 
+const NUM_INSTANCES = 100;
+
 var classRef, indexRef, instanceRefs = {}, refsToIndex = {};
 
 describe('page', function() {
@@ -27,7 +29,7 @@ describe('page', function() {
         indexRef = resp.ref;
 
         var promises = [];
-        for(var i = 0; i < 100; ++i) {
+        for(var i = 0; i < NUM_INSTANCES; ++i) {
           var p = client.query(query.create(classRef, { "data": { "i": i }})).then(function(resp) {
             instanceRefs[resp.data.i] = resp.ref;
             refsToIndex[resp.ref] = resp.data.i;
@@ -60,7 +62,7 @@ describe('page', function() {
         i += 1;
       });
     }).then(function() {
-      assert.equal(i, Object.keys(refsToIndex).length);
+      assert.equal(i, NUM_INSTANCES);
     });
   });
 
@@ -73,7 +75,46 @@ describe('page', function() {
         i += 2;
       });
     }).then(function() {
-      assert.equal(i, Object.keys(refsToIndex).length);
+      assert.equal(i, NUM_INSTANCES);
     });
+  });
+
+  it('reverses pagination', function() {
+    var i = NUM_INSTANCES - 1;
+    var page = new Page(client, query.match(indexRef), { before: null });
+    return page.each(function(p) {
+      p.reverse().forEach(function(item) {
+        assert.equal(i, refsToIndex[item[1]]);
+        i -= 1;
+      });
+    }).then(function() {
+      assert.equal(i, -1); // ensure we made it to the end of the set
+    });
+  });
+
+  it('honors passed in cursor', function() {
+    var i = 50;
+    var page = new Page(client, query.match(indexRef), { after: 50 });
+    return page.each(function(p) {
+      p.forEach(function(item) {
+        assert.equal(i, refsToIndex[item[1]]);
+        i += 1;
+      });
+    }).then(function() {
+      assert.equal(i, NUM_INSTANCES);
+    });
+  });
+
+  it('honors passed in cursor in the reverse direction', function() {
+    var i = 50;
+    var page = new Page(client, query.match(indexRef), { before: 51 });
+    return page.each(function(p) {
+      p.reverse().forEach(function(item) {
+        assert.equal(i, refsToIndex[item[1]]);
+        i -= 1;
+      });
+    }).then(function() {
+      assert.equal(i, -1);
+    })
   });
 });
