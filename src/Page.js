@@ -88,6 +88,8 @@ Page.prototype._handle_page = function(lambda) {
  */
 Page.prototype._next_page = function(cursor) {
   var opts = {};
+  objectAssign(opts, this.params);
+
   if (cursor !== undefined) {
     if (this.reverse) {
       opts.before = cursor;

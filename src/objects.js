@@ -82,9 +82,9 @@ Ref.prototype.equals = function(other) {
  * For query sets see {@link match}, {@link union},
  * {@link intersection}, {@link difference}, and {@link join}.
  */
-function SetRef(query) {
+function SetRef(value) {
   /** Raw query object. */
-  this.query = query;
+  this.value = value;
 }
 
 util.inherits(SetRef, FaunaObject);
@@ -96,7 +96,7 @@ SetRef.prototype.inspect = function() {
 
 /** @ignore */
 SetRef.prototype.toJSON = function() {
-  return { '@set': this.query };
+  return { '@set': this.value };
 };
 
 /**

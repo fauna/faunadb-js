@@ -14,12 +14,33 @@ var client;
 const NUM_INSTANCES = 100;
 
 var classRef, indexRef, instanceRefs = {}, refsToIndex = {};
+var tsClassRef, tsIndexRef, tsInstance1Ref, tsInstance1Ts, tsInstance2Ref, tsInstance2Ts;
 
 describe('page', function() {
   before(function() {
     client = util.client();
-    
-    return client.query(query.create(new Ref('classes'), {"name": "paged_things"} )).then(function(resp) {
+
+    var p1 = client.query(query.create(new Ref('classes'), { "name": "timestamped_things"} )).then(function(resp) {
+      tsClassRef = resp.ref;
+
+      return client.query(query.create(new Ref('indexes'), {
+        name: 'timestamped_things_by_class',
+        source: tsClassRef
+      })).then(function(resp) {
+        tsIndexRef = resp.ref;
+        return client.query(query.create(tsClassRef));
+      }).then(function(resp) {
+        tsInstance1Ref = resp.ref;
+        tsInstance1Ts = resp.ts;
+
+        return client.query(query.create(tsClassRef));
+      }).then(function(resp) {
+        tsInstance2Ref = resp.ref;
+        tsInstance2Ts = resp.ts;
+      });
+    });
+
+    var p2 = client.query(query.create(new Ref('classes'), {"name": "paged_things"} )).then(function(resp) {
       classRef = resp.ref;
       return client.query(query.create(new Ref('indexes'), {
         name: 'things_by_class',
@@ -40,6 +61,8 @@ describe('page', function() {
         return Promise.all(promises);
       });
     });
+
+    return Promise.all([p1, p2]);
   });
 
   it('pages', function() {
@@ -116,5 +139,56 @@ describe('page', function() {
     }).then(function() {
       assert.equal(i, -1);
     })
+  });
+
+  it('honors size', function() {
+    var i = 0;
+    var numPages = 20;
+    var pageSize = NUM_INSTANCES / numPages;
+
+    var page = new Page(client, query.match(indexRef), { size: pageSize });
+    return page.each(function(item) {
+      // Note that this relies on numPages being a factor of NUM_INSTANCES
+      assert.equal(item.length, pageSize);
+      i += 1;
+    }).then(function() {
+      assert.equal(i, numPages);
+    });
+  });
+
+  it('honors ts', function() {
+    var page = new Page(client, query.match(tsIndexRef));
+    var p1 = page.each(function(item) {
+      assert.equal(item.length, 2);
+    });
+
+    var page2 = new Page(client, query.match(tsIndexRef), { ts: tsInstance1Ts });
+    var p2 = page2.each(function(item) {
+      assert.equal(item.length, 1);
+      assert.deepEqual(item[0], tsInstance1Ref);
+    });
+
+    return Promise.all([p1, p2]);
+  });
+
+  it('honors events', function() {
+    var page = new Page(client, query.match(indexRef), { events: true });
+    return page.each(function(p) {
+      p.forEach(function(item) {
+        assert.property(item, 'ts');
+        assert.property(item, 'action');
+        assert.property(item, 'resource');
+        assert.property(item, 'values');
+      });
+    });
+  })
+
+  it('honors sources', function() {
+    var page = new Page(client, query.match(indexRef), { sources: true });
+    return page.each(function(p) {
+      p.forEach(function(item) {
+        assert.property(item, 'sources');
+      });
+    });
   });
 });
