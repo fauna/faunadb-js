@@ -2,7 +2,7 @@
 
 var util = require('util');
 
-function FaunaError(message) { 
+function FaunaError(message) {
   Error.call(this);
   this.name = this.constructor.name;
   this.message = message;

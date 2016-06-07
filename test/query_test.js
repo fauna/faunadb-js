@@ -42,7 +42,7 @@ describe('query', function () {
         source: classRef,
         terms: [ { 'field': ['data', 'p' ] }],
         values: [ { 'field': ['data', 'cost' ] }]
-      })).then(function(i) { nCoveredIndexRef = i.ref });
+      })).then(function(i) { nCoveredIndexRef = i.ref; });
 
       return Promise.all([nIndexRefP, mIndexRefP, nCoveredIndexRefP]).then(function() {
         var createP = create({ n: 1, p: 1, cost: 10 }).then(function (i) {

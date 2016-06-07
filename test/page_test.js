@@ -11,16 +11,17 @@ var Ref = objects.Ref;
 
 var client;
 
-const NUM_INSTANCES = 100;
+var NUM_INSTANCES = 100;
 
 var classRef, indexRef, instanceRefs = {}, refsToIndex = {};
-var tsClassRef, tsIndexRef, tsInstance1Ref, tsInstance1Ts, tsInstance2Ref, tsInstance2Ts;
+var tsClassRef, tsIndexRef, tsInstance1Ref, tsInstance1Ts;
 
 describe('page', function() {
+  this.timeout(5000);
   before(function() {
     client = util.client();
 
-    var p1 = client.query(query.create(new Ref('classes'), { "name": "timestamped_things"} )).then(function(resp) {
+    var p1 = client.query(query.create(new Ref('classes'), { 'name': 'timestamped_things' } )).then(function(resp) {
       tsClassRef = resp.ref;
 
       return client.query(query.create(new Ref('indexes'), {
@@ -34,24 +35,21 @@ describe('page', function() {
         tsInstance1Ts = resp.ts;
 
         return client.query(query.create(tsClassRef));
-      }).then(function(resp) {
-        tsInstance2Ref = resp.ref;
-        tsInstance2Ts = resp.ts;
       });
     });
 
-    var p2 = client.query(query.create(new Ref('classes'), {"name": "paged_things"} )).then(function(resp) {
+    var p2 = client.query(query.create(new Ref('classes'), { 'name': 'paged_things' } )).then(function(resp) {
       classRef = resp.ref;
       return client.query(query.create(new Ref('indexes'), {
         name: 'things_by_class',
         source: classRef,
-        values: [ {"field": [ "data", "i" ]},  { "field": "ref" }]
+        values: [{ 'field': [ 'data', 'i' ] }, { 'field': 'ref' }]
       })).then(function(resp) {
         indexRef = resp.ref;
 
         var promises = [];
         for(var i = 0; i < NUM_INSTANCES; ++i) {
-          var p = client.query(query.create(classRef, { "data": { "i": i }})).then(function(resp) {
+          var p = client.query(query.create(classRef, { 'data': { 'i': i } })).then(function(resp) {
             instanceRefs[resp.data.i] = resp.ref;
             refsToIndex[resp.ref] = resp.data.i;
           });
@@ -92,7 +90,7 @@ describe('page', function() {
   it('filters pagination', function() {
     var i = 0;
     var page = new Page(client, query.match(indexRef));
-    return page.filter(function(i) { return query.equals(query.modulo([query.select(0, i), 2]), 0) }).each(function(p) {
+    return page.filter(function(i) { return query.equals(query.modulo([query.select(0, i), 2]), 0); }).each(function(p) {
       p.forEach(function(item) {
         assert.equal(i, refsToIndex[item[1]]);
         i += 2;
@@ -138,7 +136,7 @@ describe('page', function() {
       });
     }).then(function() {
       assert.equal(i, -1);
-    })
+    });
   });
 
   it('honors size', function() {
@@ -181,7 +179,7 @@ describe('page', function() {
         assert.property(item, 'values');
       });
     });
-  })
+  });
 
   it('honors sources', function() {
     var page = new Page(client, query.match(indexRef), { sources: true });
@@ -189,6 +187,13 @@ describe('page', function() {
       p.forEach(function(item) {
         assert.property(item, 'sources');
       });
+    });
+  });
+
+  it('honors a combination of parameters', function() {
+    var page = new Page(client, query.match(indexRef), { before: {}, events: true } );
+    return page.each(function(page) {
+      console.log(page);
     });
   });
 });
