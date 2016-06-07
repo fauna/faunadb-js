@@ -125,7 +125,7 @@ before(function () {
 });
 
 after(function () {
-  rootClient.delete(dbRef);
+  return rootClient.delete(dbRef);
 });
 
 module.exports = {
