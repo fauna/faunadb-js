@@ -56,11 +56,6 @@ describe('objects', function() {
     assert.equal(json.toJSON(match), jsonMatch);
   });
 
-  it('page', function () {
-    assert.deepEqual(Page.fromRaw({ data: 1, before: 2, after: 3 }), new Page(1, 2, 3));
-    assert.deepEqual(new Page([1, 2, 3], 2, 3).mapData(function(x) { return x + 1;}), new Page([2, 3, 4], 2, 3));
-  });
-
   it('time conversion', function () {
     var dt = new Date();
     assert.deepEqual(new FaunaTime(dt).date, dt);
