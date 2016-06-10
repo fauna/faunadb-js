@@ -3,7 +3,7 @@
 var assert = require('chai').assert;
 var query = require('../src/query');
 var objects = require('../src/objects');
-var Page = require('../src/Page');
+var PageHelper = require('../src/PageHelper');
 var Promise = require('es6-promise').Promise;
 var util = require('./util');
 
@@ -64,8 +64,8 @@ describe('page', function() {
   });
 
   it('pages', function() {
-    var page = new Page(client, query.match(indexRef));
-    return page.each(function(p) {
+    var page = new PageHelper(client, query.match(indexRef));
+    return page.eachPage(function(p) {
       p.forEach(function(item) {
         var i = item[0];
         var ref = item[1];
@@ -76,8 +76,8 @@ describe('page', function() {
 
   it('maps pagination', function() {
     var i = 0;
-    var page = new Page(client, query.match(indexRef));
-    return page.map(function(i) { return query.select([1], i); }).each(function(p) {
+    var page = new PageHelper(client, query.match(indexRef));
+    return page.map(function(i) { return query.select([1], i); }).eachPage(function(p) {
       p.forEach(function(item) {
         assert.equal(i, refsToIndex[item]);
         i += 1;
@@ -89,8 +89,8 @@ describe('page', function() {
 
   it('filters pagination', function() {
     var i = 0;
-    var page = new Page(client, query.match(indexRef));
-    return page.filter(function(i) { return query.equals(query.modulo([query.select(0, i), 2]), 0); }).each(function(p) {
+    var page = new PageHelper(client, query.match(indexRef));
+    return page.filter(function(i) { return query.equals(query.modulo([query.select(0, i), 2]), 0); }).eachPage(function(p) {
       p.forEach(function(item) {
         assert.equal(i, refsToIndex[item[1]]);
         i += 2;
@@ -102,8 +102,8 @@ describe('page', function() {
 
   it('reverses pagination', function() {
     var i = NUM_INSTANCES - 1;
-    var page = new Page(client, query.match(indexRef), { before: null });
-    return page.each(function(p) {
+    var page = new PageHelper(client, query.match(indexRef), { before: null });
+    return page.eachPage(function(p) {
       p.reverse().forEach(function(item) {
         assert.equal(i, refsToIndex[item[1]]);
         i -= 1;
@@ -115,8 +115,8 @@ describe('page', function() {
 
   it('honors passed in cursor', function() {
     var i = 50;
-    var page = new Page(client, query.match(indexRef), { after: 50 });
-    return page.each(function(p) {
+    var page = new PageHelper(client, query.match(indexRef), { after: 50 });
+    return page.eachPage(function(p) {
       p.forEach(function(item) {
         assert.equal(i, refsToIndex[item[1]]);
         i += 1;
@@ -128,8 +128,8 @@ describe('page', function() {
 
   it('honors passed in cursor in the reverse direction', function() {
     var i = 50;
-    var page = new Page(client, query.match(indexRef), { before: 51 });
-    return page.each(function(p) {
+    var page = new PageHelper(client, query.match(indexRef), { before: 51 });
+    return page.eachPage(function(p) {
       p.reverse().forEach(function(item) {
         assert.equal(i, refsToIndex[item[1]]);
         i -= 1;
@@ -144,8 +144,8 @@ describe('page', function() {
     var numPages = 20;
     var pageSize = NUM_INSTANCES / numPages;
 
-    var page = new Page(client, query.match(indexRef), { size: pageSize });
-    return page.each(function(item) {
+    var page = new PageHelper(client, query.match(indexRef), { size: pageSize });
+    return page.eachPage(function(item) {
       // Note that this relies on numPages being a factor of NUM_INSTANCES
       assert.equal(item.length, pageSize);
       i += 1;
@@ -155,13 +155,13 @@ describe('page', function() {
   });
 
   it('honors ts', function() {
-    var page = new Page(client, query.match(tsIndexRef));
-    var p1 = page.each(function(item) {
+    var page = new PageHelper(client, query.match(tsIndexRef));
+    var p1 = page.eachPage(function(item) {
       assert.equal(item.length, 2);
     });
 
-    var page2 = new Page(client, query.match(tsIndexRef), { ts: tsInstance1Ts });
-    var p2 = page2.each(function(item) {
+    var page2 = new PageHelper(client, query.match(tsIndexRef), { ts: tsInstance1Ts });
+    var p2 = page2.eachPage(function(item) {
       assert.equal(item.length, 1);
       assert.deepEqual(item[0], tsInstance1Ref);
     });
@@ -170,8 +170,8 @@ describe('page', function() {
   });
 
   it('honors events', function() {
-    var page = new Page(client, query.match(indexRef), { events: true });
-    return page.each(function(p) {
+    var page = new PageHelper(client, query.match(indexRef), { events: true });
+    return page.eachPage(function(p) {
       p.forEach(function(item) {
         assert.property(item, 'ts');
         assert.property(item, 'action');
@@ -182,8 +182,8 @@ describe('page', function() {
   });
 
   it('honors sources', function() {
-    var page = new Page(client, query.match(indexRef), { sources: true });
-    return page.each(function(p) {
+    var page = new PageHelper(client, query.match(indexRef), { sources: true });
+    return page.eachPage(function(p) {
       p.forEach(function(item) {
         assert.property(item, 'sources');
       });
@@ -191,9 +191,27 @@ describe('page', function() {
   });
 
   it('honors a combination of parameters', function() {
-    var page = new Page(client, query.match(indexRef), { before: {}, events: true } );
-    return page.each(function(page) {
-      console.log(page);
+    var page = new PageHelper(client, query.match(indexRef), { before: null, events: true, sources: true } );
+    return page.eachPage(function(p) {
+      p.forEach(function(item) {
+        assert.property(item, 'value');
+        assert.property(item, 'sources');
+
+        var value = item.value;
+        assert.property(value, 'ts');
+        assert.property(value, 'action');
+        assert.property(value, 'resource');
+        assert.property(value, 'values');
+      });
+    });
+  });
+
+  it('paginates eachPage item', function() {
+    var i = 0;
+    var page = new PageHelper(client, query.match(indexRef));
+    return page.eachItem(function(item) {
+      assert.equal(i, refsToIndex[item[1]]);
+      i += 1;
     });
   });
 });

@@ -117,7 +117,7 @@ function Page(data, before, after) {
 
 util.inherits(Page, FaunaObject);
 
-/** Use this on an object that you know represents a Page. */
+/** Use this on an object that you know represents a PageHelper. */
 Page.fromRaw = function(object) {
   return new Page(object.data, object.before, object.after);
 };
