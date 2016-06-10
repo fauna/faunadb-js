@@ -70,6 +70,14 @@ describe('Client', function () {
       util.assertRejected(client.get(instance.ref), errors.NotFound);
     });
   });
+
+  it('paginates', function() {
+    return createInstance().then(function(instance) {
+      return client.paginate(instance.ref).eachItem(function(i) {
+        assert.deepEqual(instance.ref, i);
+      });
+    });
+  });
 });
 
 function createInstance() {

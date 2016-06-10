@@ -7,6 +7,7 @@ var objects = require('./objects');
 var json = require('./_json');
 var RequestResult = require('./RequestResult');
 var util = require('./_util');
+var PageHelper = require('./PageHelper');
 var Promise = require('es6-promise').Promise;
 
 /**
@@ -114,6 +115,12 @@ Client.prototype.delete = function (path) {
  */
 Client.prototype.query = function (expression) {
   return this._execute('POST', '', expression);
+};
+
+Client.prototype.paginate = function(expression, params) {
+  params = defaults(params, {});
+
+  return new PageHelper(this, expression, params);
 };
 
 /**
