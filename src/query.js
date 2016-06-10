@@ -118,7 +118,7 @@ function get(ref, ts) {
 
 /**
  * See the [docs](https://faunadb.com/documentation/queries#read_functions).
- * You may want to convert the result of this to a {@link Page}.
+ * You may want to convert the result of this to a {@link PageHelper}.
  */
 function paginate(set, opts) {
   opts = defaults(opts, {});

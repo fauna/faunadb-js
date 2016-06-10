@@ -2,6 +2,7 @@
 
 var query = require('./query');
 var objectAssign = require('object-assign');
+var Promise = require('es6-promise').Promise;
 
 /**
  *
@@ -10,7 +11,7 @@ var objectAssign = require('object-assign');
  * @param params
  * @constructor
  */
-function Page(client, set, params) {
+function PageHelper(client, set, params) {
   if (params === undefined) {
     params = {};
   }
@@ -21,7 +22,7 @@ function Page(client, set, params) {
   objectAssign(this.params, params);
 
   if ('before' in params && 'after' in params) {
-    throw "Cursor directions 'before' and 'after' are exclusive.";
+    throw 'Cursor directions "before" and "after"j are exclusive.';
   }
 
   if ('before' in params) {
@@ -45,23 +46,29 @@ function Page(client, set, params) {
   this._fauna_functions = [];
 }
 
-Page.prototype.map = function(lambda) {
+PageHelper.prototype.map = function(lambda) {
   var rv = this.clone();
-  rv._fauna_functions.push(function(q) { return query.map(q, lambda) });
+  rv._fauna_functions.push(function(q) { return query.map(q, lambda); });
   return rv;
 };
 
-Page.prototype.filter = function(lambda) {
+PageHelper.prototype.filter = function(lambda) {
   var rv = this.clone();
-  rv._fauna_functions.push(function(q) { return query.filter(q, lambda) });
+  rv._fauna_functions.push(function(q) { return query.filter(q, lambda); });
   return rv;
 };
 
-Page.prototype.each = function(lambda) {
+PageHelper.prototype.eachPage = function(lambda) {
   return this._next_page(this.cursor).then(this._handle_page(lambda));
 };
 
-Page.prototype._handle_page = function(lambda) {
+PageHelper.prototype.eachItem = function(lambda) {
+  return this._next_page(this.cursor).then(this._handle_page(function(page) {
+    page.forEach(lambda);
+  }));
+};
+
+PageHelper.prototype._handle_page = function(lambda) {
   var self = this;
   return function (page) {
     lambda(page.data);
@@ -86,7 +93,7 @@ Page.prototype._handle_page = function(lambda) {
  * @returns {Promise.<Object>}
  * @private
  */
-Page.prototype._next_page = function(cursor) {
+PageHelper.prototype._next_page = function(cursor) {
   var opts = {};
   objectAssign(opts, this.params);
 
@@ -113,8 +120,8 @@ Page.prototype._next_page = function(cursor) {
   return this.client.query(q);
 };
 
-Page.prototype.clone = function() {
-  return Object.create(Page.prototype, {
+PageHelper.prototype.clone = function() {
+  return Object.create(PageHelper.prototype, {
     client: { value: this.client },
     set: { value: this.set },
     _fauna_functions: { value: this._fauna_functions },
@@ -123,4 +130,4 @@ Page.prototype.clone = function() {
   });
 };
 
-module.exports = Page;
+module.exports = PageHelper;
