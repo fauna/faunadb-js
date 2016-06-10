@@ -99,33 +99,6 @@ SetRef.prototype.toJSON = function() {
   return { '@set': this.value };
 };
 
-/**
- * A single pagination result.
- * See `paginate` in the [docs](https://faunadb.com/documentation/queries#read_functions).
- */
-function Page(data, before, after) {
-  /**
-   * Always a list.
-   * Elements could be raw data; some methods may convert data.
-   */
-  this.data = data;
-  /** Optional {@link Ref} for an instance that comes before this page. */
-  this.before = before;
-  /** Optional {@link Ref} for an instance that comes after this page. */
-  this.after = after;
-}
-
-util.inherits(Page, FaunaObject);
-
-/** Use this on an object that you know represents a PageHelper. */
-Page.fromRaw = function(object) {
-  return new Page(object.data, object.before, object.after);
-};
-
-Page.prototype.mapData = function(func) {
-  return new Page(this.data.map(func), this.before, this.after);
-};
-
 /** FaunaDB time. See the [docs](https://faunadb.com/documentation/queries#values-special_types). */
 /**
  * @param {string|Date} value If a Date, this is converted to a string.
@@ -189,7 +162,6 @@ module.exports = {
   FaunaObject: FaunaObject,
   Ref: Ref,
   SetRef: SetRef,
-  Page: Page,
   FaunaTime: FaunaTime,
   FaunaDate: FaunaDate
 };
