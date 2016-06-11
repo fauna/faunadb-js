@@ -24,7 +24,7 @@ function FaunaHTTPError(requestResult) {
   var errors = response.errors;
   var message = errors.length === 0 ? '(empty "errors")' : errors[0].code;
   FaunaError.call(this, message);
-  
+
   this.requestResult = requestResult;
 }
 
