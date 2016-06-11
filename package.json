@@ -19,6 +19,11 @@
     "browser-test-win": "karma start browserTest.conf.js --browsers Chrome,Firefox,IE",
     "browser-test-linux": "karma start browserTest.conf.js --browsers Chrome,Firefox"
   },
+  "files": [
+    "index.d.ts",
+    "src/"
+  ],
+  "typings": "index.ts.d",
   "dependencies": {
     "btoa-lite": "^1.0.0",
     "es6-promise": "^3.2.1",
