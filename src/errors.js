@@ -8,15 +8,21 @@ function FaunaError(message) {
   this.message = message;
 }
 
+util.inherits(FaunaError, Error);
+
 /** Thrown when a query is malformed */
 function InvalidQuery() {
   FaunaError.call(this, arguments);
 }
 
+util.inherits(InvalidQuery, FaunaError);
+
 /** Thrown when a value can not be accepted. */
 function InvalidValue() {
   FaunaError.call(this, arguments);
 }
+
+util.inherits(InvalidValue, FaunaError);
 
 /** Thrown when the FaunaDB server responds with an error. */
 function FaunaHTTPError(requestResult) {
@@ -27,6 +33,8 @@ function FaunaHTTPError(requestResult) {
 
   this.requestResult = requestResult;
 }
+
+util.inherits(FaunaHTTPError, FaunaError);
 
 FaunaHTTPError.prototype.errors = function() {
   return this.requestResult.responseContent.errors;
@@ -61,46 +69,48 @@ function BadRequest(requestResult) {
   FaunaHTTPError.call(this, requestResult);
 }
 
+util.inherits(BadRequest, FaunaHTTPError);
+
 /** HTTP 401 error. */
 function Unauthorized(requestResult) {
   FaunaHTTPError.call(this, requestResult);
 }
+
+util.inherits(Unauthorized, FaunaHTTPError);
 
 /** HTTP 403 error. */
 function PermissionDenied(requestResult) {
   FaunaHTTPError.call(this, requestResult);
 }
 
+util.inherits(PermissionDenied, FaunaHTTPError);
+
 /** HTTP 404 error. */
 function NotFound(requestResult) {
   FaunaHTTPError.call(this, requestResult);
 }
+
+util.inherits(NotFound, FaunaHTTPError);
 
 /** HTTP 405 error. */
 function MethodNotAllowed(requestResult) {
   FaunaHTTPError.call(this, requestResult);
 }
 
+util.inherits(MethodNotAllowed, FaunaHTTPError);
+
 /** HTTP 500 error. */
 function InternalError(requestResult) {
   FaunaHTTPError.call(this, requestResult);
 }
+
+util.inherits(InternalError, FaunaHTTPError);
 
 /** HTTP 503 error. */
 function UnavailableError(requestResult) {
   FaunaHTTPError.call(this, requestResult);
 }
 
-util.inherits(FaunaError, Error);
-util.inherits(InvalidQuery, FaunaError);
-util.inherits(InvalidValue, FaunaError);
-util.inherits(FaunaHTTPError, FaunaError);
-util.inherits(BadRequest, FaunaHTTPError);
-util.inherits(Unauthorized, FaunaHTTPError);
-util.inherits(PermissionDenied, FaunaHTTPError);
-util.inherits(NotFound, FaunaHTTPError);
-util.inherits(MethodNotAllowed, FaunaHTTPError);
-util.inherits(InternalError, FaunaHTTPError);
 util.inherits(UnavailableError, FaunaHTTPError);
 
 module.exports = {
