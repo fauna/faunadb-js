@@ -8,3 +8,4 @@ typings/
 .idea/
 .vscode/
 faunadb*.tgz
+out/

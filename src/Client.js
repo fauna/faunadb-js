@@ -11,22 +11,24 @@ var PageHelper = require('./PageHelper');
 var Promise = require('es6-promise').Promise;
 
 /**
- * Directly communicates with FaunaDB via JSON.
+ * The callback that will be executed after every completed request.
  *
- * It is encouraged to pass e.g. {@link Ref} objects instead of raw JSON data.
+ * @callback Client~observerCallback
+ * @param {RequestResult} res
+ */
+
+/**
+ * A client for interacting with FaunaDB.
  *
- * All methods return a converted JSON response.
- * This is an object containing Arrays, strings, and other objects.
- * Any {@link Ref}, {@link SetRef}, {@link FaunaTime}, or {@link FaunaDate}
- * values in it will also be parsed.
+ * All methods return a typed JSON object representing a FaunaDB response.
+ * Literal types in the response object will remain as strings, Arrays, and objects.
+ * FaunaDB types, such as {@link Ref}, {@link SetRef}, {@link FaunaTime}, and {@link FaunaDate} will
+ * be converted into the appropriate type.
+ *
  * (So instead of `{ "@ref": "classes/frogs/123" }`,
  * you will get `new Ref("classes/frogs/123")`.)
  *
- * There is no way to automatically convert to any other type, such as {@link Event},
- * from the response; you'll have to do that yourself manually.
- */
-/**
- *
+ * @constructor
  * @param {string} options.domain Base URL for the FaunaDB server.
  * @param {('http'|'https')} options.scheme HTTP scheme to use.
  * @param {number} options.port Port of the FaunaDB server.
@@ -36,7 +38,7 @@ var Promise = require('es6-promise').Promise;
  * @param {string} options.secret.user
  * @param {string} options.secret.pass
  * @param {?number} options.timeout Read timeout in seconds.
- * @param {function(res: RequestResult): void} options.observer
+ * @param {Client~observerCallback} options.observer
  *   Callback that will be called after every completed request.
  */
 function Client(options) {
@@ -110,7 +112,7 @@ Client.prototype.delete = function (path) {
  * Use the FaunaDB query API.
  * See the [docs](https://faunadb.com/documentation/queries)
  * and the query functions in this documentation.
- * @param expression {object} Created from query functions such as {@link add}.
+ * @param expression {Expr} Created from query functions such as {@link add}.
  * @return {Promise<Object>} Server's response to the query.
  */
 Client.prototype.query = function (expression) {
