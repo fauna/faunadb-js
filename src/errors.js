@@ -1,6 +1,17 @@
 'use strict';
 
 var util = require('util');
+/**
+ * Errors
+ * @module errors
+ */
+
+
+/**
+ *
+ * @param message
+ * @constructor
+ */
 
 function FaunaError(message) {
   Error.call(this);

@@ -1,5 +1,33 @@
 'use strict';
 
+/**
+ * A structure containing the request and response context for a given FaunaDB request. Provided to an observer
+ * registered in the {@link Client} constructor.
+ *
+ * @param {Client} client
+ *   The FaunaDB client used to execute the request.
+ * @param {'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' } method
+ *   The HTTP method used in the request.
+ * @param {string} path
+ *   The path that was queried. Relative to the client's domain.
+ * @param {string} query
+ *   URL query parameters. Only set if `method` is "GET".
+ * @param {Object} requestContent
+ *   The request data.
+ * @param {string} responseRaw
+ *   The unparsed response data, as a string.
+ * @param {object} responseContent
+ *   The response data parsed as JSON.
+ * @param {number} statusCode
+ *   The HTTP response status code.
+ * @param {object} responseHeaders
+ *   The HTTP headers returned in the response.
+ * @param {Date} startTime
+ *   The time the request was issued by the client.
+ * @param {Date} endTime
+ *   The time the response was received by the client.
+ * @constructor
+ */
 function RequestResult(client, method, path, query, requestContent, responseRaw, responseContent, statusCode, responseHeaders, startTime, endTime) {
   /** @type {Client} */
   this.client = client;
@@ -7,10 +35,7 @@ function RequestResult(client, method, path, query, requestContent, responseRaw,
   /** @type {'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'} */
   this.method = method;
 
-  /**
-   * Path that was queried. Relative to client's domain.
-   * @type {string}
-   */
+  /** @type {string} */
   this.path = path;
 
   /**
@@ -20,16 +45,10 @@ function RequestResult(client, method, path, query, requestContent, responseRaw,
    */
   this.query = query;
 
-  /**
-   * Request data.
-   * @type {object}
-   */
+  /** @type {object} */
   this.requestContent = requestContent;
 
-  /**
-   * String value returned by the server.
-   * @type {string}
-   */
+  /** @type {string} */
   this.responseRaw = responseRaw;
 
   /**
@@ -39,32 +58,23 @@ function RequestResult(client, method, path, query, requestContent, responseRaw,
    */
   this.responseContent = responseContent;
 
-  /**
-   * HTTP status code.
-   * @type {number}
-   */
+  /** @type {number} */
   this.statusCode = statusCode;
 
-  /**
-   * Response headers.
-   * @type {object}
-   */
+  /** @type {object} */
   this.responseHeaders = responseHeaders;
 
-  /**
-   * Time the request started.
-   * @type {Date}
-   */
+  /** @type {Date} */
   this.startTime = startTime;
 
-  /**
-   * Time the response was received.
-   * @type {Date}
-   */
+  /** @type {Date} */
   this.endTime = endTime;
 }
 
-/** @type {{user: string, pass: string}} */
+/**
+ * Returns the auth object configured in the client.
+ * @type {{user: string, pass: string}}
+ */
 Object.defineProperty(RequestResult.prototype, 'auth', { get: function() {
   return this.client._secret;
 } });
