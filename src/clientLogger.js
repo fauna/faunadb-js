@@ -2,17 +2,28 @@
 
 var json = require('./_json');
 
+/** Functions to assist with debug logging.
+ * @module clientLogger
+ */
+
+/**
+ * A user provided log line handler.
+ *
+ * @callback loggerCallback
+ * @param {string} logged
+ */
+
 /**
  * Function that can be the `observer` for a {@link Client}.
  * Will call `loggerFunction` on a string representation of each {@link RequestResult}.
- * @param {function(logged: string): void} loggerFunction
- * @return {function(res: RequestResult): void}
+ * @param {loggerCallback} loggerFunction
+ * @return {Client~observerCallback}
  * @example
- * const client = new Client({
+ * var client = new Client({
  *   ... other options ...
  *   observer: logger(console.log)
  * })
- * await client.ping() // Logs the request and response.
+ * client.ping() // Logs the request and response.
  */
 function logger(loggerFunction) {
   return function(requestResult) {
@@ -20,7 +31,13 @@ function logger(loggerFunction) {
   };
 }
 
-/** Translates a {@link RequestResult} to a string suitable for logging. */
+// TODO: Example
+/**
+ * Convenience function used by {@link logger} to transform a {@link RequestResult}
+ * to a string for logging.
+ * @param {RequestResult} requestResult
+ * @returns {string} string to be logged.
+ */
 function showRequestResult(requestResult) {
   var query = requestResult.query,
     method = requestResult.method,
