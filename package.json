@@ -6,8 +6,8 @@
   "repository": "faunadb/faunadb-js",
   "license": "MPL-2.0",
   "files": [
-    "src",
-    "lib"
+    "index.d.ts",
+    "src/"
   ],
   "engines": {
     "node": ">= 4.0.0"
@@ -19,10 +19,6 @@
     "browser-test-win": "karma start browserTest.conf.js --browsers Chrome,Firefox,IE",
     "browser-test-linux": "karma start browserTest.conf.js --browsers Chrome,Firefox"
   },
-  "files": [
-    "index.d.ts",
-    "src/"
-  ],
   "typings": "index.ts.d",
   "dependencies": {
     "btoa-lite": "^1.0.0",
@@ -35,6 +31,7 @@
     "browserify": "^13.0.1",
     "chai": "^3.5.0",
     "eslint": "^2.10.2",
+    "jsdoc": "^3.4.0",
     "karma": "^0.13.22",
     "karma-browserify": "^5.0.5",
     "karma-chrome-launcher": "^1.0.1",
