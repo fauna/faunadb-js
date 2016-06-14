@@ -7,7 +7,6 @@ export class FaunaError extends Error {
   message: string;
 }
 
-export class InvalidQuery extends FaunaError {}
 export class InvalidValue extends FaunaError {}
 
 export class FaunaHttpError extends FaunaError {
