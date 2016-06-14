@@ -3,6 +3,11 @@
 var errors = require('./errors');
 var util = require('util');
 
+/**
+ * Base type for FaunaDB objects.
+ *
+ * @constructor
+ */
 function FaunaObject() { }
 
 /**
@@ -11,14 +16,25 @@ function FaunaObject() { }
  *
  * A simple wrapper around a string which can be extracted using `ref.value`.
  * Queries that require a Ref will not work if you just pass in a string.
+ *
+ * You can create a Ref from a string, such as `new Ref('databases/prydain')`.
+ * You can also call `new Ref('databases', 'prydain')` or `new Ref(new Ref('databases'), 'prydain').
+ *
+ * @param {string|Ref} valueOrParent
+ *   The string value of the Ref, or the parent portion of the Ref if child is specified.
+ * @param {?string} id
+ *   The child portion of the ref.
+ *
+ * @extends FaunaObject
+ * @constructor
  */
 function Ref() {
-  // TODO: Constructor documentation
-  /**
-   * Create a Ref from a string, such as `new Ref('databases/prydain')`.
-   * Can also call `new Ref('databases', 'prydain')` or `new Ref(new Ref('databases'), 'prydain').
-   */
   var parts = Array.prototype.slice.call(arguments);
+  /**
+   * The string value of the ref.
+   *
+   * @type {string}
+   */
   this.value = parts.join('/');
 }
 
@@ -28,6 +44,9 @@ util.inherits(Ref, FaunaObject);
  * Gets the class part out of the Ref.
  * This is done by removing the id.
  * So `new Ref('a', 'b/c').class` will be `new Ref('a/b')`.
+ *
+ * @member {string}
+ * @name Ref#class
  */
 Object.defineProperty(Ref.prototype, 'class', { get: function() {
   var parts = this.value.split('/');
@@ -41,6 +60,9 @@ Object.defineProperty(Ref.prototype, 'class', { get: function() {
 /**
  * Removes the class part of the Ref, leaving only the id.
  * this is everything after the last `/`.
+ *
+ * @member {string}
+ * @name Ref#id
  */
 Object.defineProperty(Ref.prototype, 'id', { get: function() {
   var parts = this.value.split('/');
@@ -70,7 +92,11 @@ Ref.prototype.inspect = function() {
   return 'Ref(' + JSON.stringify(this.value) + ')';
 };
 
-/** Whether these are both Refs and have the same value. */
+/**
+ * Whether these are both Refs and have the same value.
+ * @param {any} other
+ * @returns {boolean}
+ */
 Ref.prototype.equals = function(other) {
   return other instanceof Ref && this.value === other.value;
 };
@@ -78,9 +104,12 @@ Ref.prototype.equals = function(other) {
 /**
  * FaunaDB Set.
  * This represents a set returned as part of a response.
- * This looks like This looks like `{"@set": set_query}`.
+ * This looks like `{"@set": set_query}`.
  * For query sets see {@link match}, {@link union},
  * {@link intersection}, {@link difference}, and {@link join}.
+ *
+ * @extends FaunaObject
+ * @constructor
  */
 function SetRef(value) {
   /** Raw query object. */
@@ -99,9 +128,11 @@ SetRef.prototype.toJSON = function() {
   return { '@set': this.value };
 };
 
-/** FaunaDB time. See the [docs](https://faunadb.com/documentation/queries#values-special_types). */
-/**
+/** FaunaDB time. See the [docs](https://faunadb.com/documentation/queries#values-special_types).
+ *
  * @param {string|Date} value If a Date, this is converted to a string.
+ * @extends FaunaObject
+ * @constructor
  */
 function FaunaTime(value) {
   if (value instanceof Date) {
@@ -116,8 +147,11 @@ function FaunaTime(value) {
 util.inherits(FaunaTime, FaunaObject);
 
 /**
+ * Returns the date wrapped by this object.
  * This is lossy as Dates have millisecond rather than nanosecond precision.
- * @return {Date}
+ *
+ * @member {Date}
+ * @name FaunaTime#date
  */
 Object.defineProperty(FaunaTime.prototype, 'date', { get: function() {
   return new Date(this.value);
@@ -128,11 +162,13 @@ FaunaTime.prototype.toJSON = function() {
   return { '@ts': this.value };
 };
 
-/** FaunaDB date. See the [docs](https://faunadb.com/documentation/queries#values-special_types). */
-  /**
-   * @param {string|Date} value
-   *   If a Date, this is converted to a string, with time-of-day discarded.
-   */
+/** FaunaDB date. See the [docs](https://faunadb.com/documentation/queries#values-special_types).
+ *
+ * @param {string|Date} value
+ *   If a Date, this is converted to a string, with time-of-day discarded.
+ * @extends FaunaObject
+ * @constructor
+ */
 function FaunaDate(value) {
   if (value instanceof Date) {
     // The first 10 characters 'YYYY-MM-DD' are the date portion.
@@ -148,7 +184,10 @@ function FaunaDate(value) {
 
 util.inherits(FaunaDate, FaunaObject);
 
-/** @return {Date} */
+/**
+ * @member {Date}
+ * @name FaunaDate#date
+ */
 Object.defineProperty(FaunaDate.prototype, 'date', { get: function() {
   return new Date(this.value);
 } });
