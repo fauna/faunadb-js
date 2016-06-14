@@ -122,7 +122,8 @@ function map(collection, lambda_expr) {
   return new Expr({ map: Expr.wrap(toLambda(lambda_expr)), collection: Expr.wrap(collection) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#collection_functions).
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#collection_functions).
  *
  * @param {any} collection
  * @param {any} lambda_expr
@@ -132,7 +133,8 @@ function foreach(collection, lambda_expr) {
   return new Expr({ foreach: Expr.wrap(toLambda(lambda_expr)), collection: Expr.wrap(collection) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#collection_functions).
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#collection_functions).
  *
  * @param {any} collection
  * @param {any} lambda_expr
@@ -142,7 +144,8 @@ function filter(collection, lambda_expr) {
   return new Expr({ filter: Expr.wrap(toLambda(lambda_expr)), collection: Expr.wrap(collection) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#collection_functions).
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#collection_functions).
  *
  * @param {any} collection
  * @param {any} lambda_expr
@@ -152,23 +155,48 @@ function take(number, collection) {
   return new Expr({ take: Expr.wrap(number), collection: Expr.wrap(collection) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#collection_functions).
+ *
+ * @param {any} number
+ * @param {any} collection
+ * @return {Expr}
+ * */
 function drop(number, collection) {
   return new Expr({ drop: Expr.wrap(number), collection: Expr.wrap(collection) });
 }
 
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#collection_functions).
+ *
+ * @param {any} elements
+ * @param {any} collection
+ * @returns {Expr}
+ */
 function prepend(elements, collection) {
   return new Expr({ prepend: Expr.wrap(elements), collection: Expr.wrap(collection) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#collection_functions).
+ *
+ * @param {any} elements
+ * @param {any} collection
+ * @returns {Expr}
+ */
 function append(elements, collection) {
   return new Expr({ append: Expr.wrap(elements), collection: Expr.wrap(collection) });
 }
 
 // Read functions
 
-/** See the [docs](https://faunadb.com/documentation/queries#read_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#read_functions).
+ *
+ * @param {any} ref
+ * @param {any} ts
+ * @returns {Expr}
+ */
 function get(ref, ts) {
   ts = defaults(ts, null);
 
@@ -177,7 +205,12 @@ function get(ref, ts) {
 
 /**
  * See the [docs](https://faunadb.com/documentation/queries#read_functions).
- * You may want to convert the result of this to a {@link PageHelper}.
+ * You may want to utilize {@link Client#paginate} to obtain a {@link PageHelper},
+ * rather than using this query function directly.
+ *
+ * @param {any} set
+ * @param {Object} opts
+ * @returns {Expr}
  */
 function paginate(set, opts) {
   opts = defaults(opts, {});
@@ -185,14 +218,26 @@ function paginate(set, opts) {
   return new Expr(objectAssign({ paginate: Expr.wrap(set) }, Expr.wrapValues(opts)));
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#read_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#read_functions).
+ *
+ * @param {any} ref
+ * @param {any} ts
+ * @returns {Expr}
+ */
 function exists(ref, ts) {
   ts = defaults(ts, null);
 
   return new Expr(params({ exists: Expr.wrap(ref) }, { ts: Expr.wrap(ts) }));
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#read_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#read_functions).
+ *
+ * @param {any} set
+ * @param {any} events
+ * @returns {Expr}
+ */
 function count(set, events) {
   events = defaults(events, null);
 
@@ -201,200 +246,399 @@ function count(set, events) {
 
 // Write functions
 
-/** See the [docs](https://faunadb.com/documentation/queries#write_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#write_functions).
+ *
+ * @param {any} class_ref
+ * @param {any} params
+ * @returns {Expr}
+ */
 function create(class_ref, params) {
   return new Expr({ create: Expr.wrap(class_ref), params: Expr.wrap(params) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#write_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#write_functions).
+ *
+ * @param {any} ref
+ * @param {any} params
+ */
 function update(ref, params) {
   return new Expr({ update: Expr.wrap(ref), params: Expr.wrap(params) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#write_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#write_functions).
+ *
+ * @param {any} ref
+ * @param {any} params
+ * @returns {Expr}
+ */
 function replace(ref, params) {
   return new Expr({ replace: Expr.wrap(ref), params: Expr.wrap(params) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#write_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#write_functions).
+ *
+ * @param {any} ref
+ * @returns {Expr}
+ */
 function delete_expr(ref) {
   return new Expr({ delete: Expr.wrap(ref) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#write_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#write_functions).
+ *
+ * @param {any} ref
+ * @param {any} ts
+ * @param {any} action
+ * @param {any} params
+ * @returns {Expr}
+ */
 function insert(ref, ts, action, params) {
   return new Expr({ insert: Expr.wrap(ref), ts: Expr.wrap(ts), action: Expr.wrap(action), params: Expr.wrap(params) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#write_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#write_functions).
+ *
+ * @param {any} ref
+ * @param {any} ts
+ * @param {any} action
+ * @returns {Expr}
+ */
 function remove(ref, ts, action) {
   return new Expr({ remove: Expr.wrap(ref), ts: Expr.wrap(ts), action: Expr.wrap(action) });
 }
 
 // Sets
 
-/** See the [docs](https://faunadb.com/documentation/queries#sets). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#sets).
+ *
+ * @param {any} index
+ * @returns {Expr}
+ */
 function match(index) {
   var args = argsToArray(arguments);
   args.shift();
   return new Expr({ match: Expr.wrap(index), terms: Expr.wrap(varargs(args)) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#sets). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#sets).
+ *
+ * @param {...any} sets
+ * @returns {Expr}
+ */
 function union() {
   return new Expr({ union: Expr.wrap(varargs(arguments)) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#sets). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#sets).
+ *
+ * @param {...any} sets
+ * @returns {Expr}
+ * */
 function intersection() {
   return new Expr({ intersection: Expr.wrap(varargs(arguments)) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#sets). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#sets).
+ *
+ * @param {...any} sets
+ * @returns {Expr}
+ * */
 function difference() {
   return new Expr({ difference: Expr.wrap(varargs(arguments)) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#sets). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#sets).
+ *
+ * @param {any} set
+ * @returns {Expr}
+ * */
 function distinct(set) {
   return new Expr({ distinct: Expr.wrap(set) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#sets). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#sets).
+ *
+ * @param {any} source
+ * @param {any} target
+ * @returns {Expr}
+ */
 function join(source, target) {
   return new Expr({ join: Expr.wrap(source), with: Expr.wrap(toLambda(target)) });
 }
 
 // Authentication
 
-/** See the [docs](https://faunadb.com/documentation/queries#auth_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#auth_functions).
+ *
+ * @param {any} ref
+ * @param {any} params
+ * @returns {Expr}
+ * */
 function login(ref, params) {
   return new Expr({ login: Expr.wrap(ref), params: Expr.wrap(params) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#auth_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#auth_functions).
+ *
+ * @param {any} delete_tokens
+ * @returns {Expr}
+ */
 function logout(delete_tokens) {
   return new Expr({ logout: Expr.wrap(delete_tokens) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#auth_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#auth_functions).
+ *
+ * @param {any} ref
+ * @param {any} password
+ * @returns {Expr}
+ */
 function identify(ref, password) {
   return new Expr({ identify: Expr.wrap(ref), password: Expr.wrap(password) });
 }
 
 // String functions
 
-/** See the [docs](https://faunadb.com/documentation/queries#string_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#string_functions).
+ *
+ * @param {any} strings
+ * @param {?any} separator
+ * @returns {Expr}
+ */
 function concat(strings, separator) {
   separator = defaults(separator, null);
   return new Expr(params({ concat: Expr.wrap(strings) }, { separator: Expr.wrap(separator) }));
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#string_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#string_functions).
+ *
+ * @param {any} string
+ * @returns {Expr}
+ */
 function casefold(string) {
   return new Expr({ casefold: Expr.wrap(string) });
 }
 
 // Time and date functions
-
-/** See the [docs](https://faunadb.com/documentation/queries#time_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#time_functions).
+ *
+ * @param {any} string
+ * @returns {Expr}
+ */
 function time(string) {
   return new Expr({ time: Expr.wrap(string) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#time_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#time_functions).
+ *
+ * @param {any} number
+ * @param {any} unit
+ * @returns {Expr}
+ */
 function epoch(number, unit) {
   return new Expr({ epoch: Expr.wrap(number), unit: Expr.wrap(unit) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#time_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#time_functions).
+ *
+ * @param {any} string
+ * @returns {Expr}
+ */
 function date(string) {
   return new Expr({ date: Expr.wrap(string) });
 }
 
 // Miscellaneous functions
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @returns {Expr}
+ */
 function next_id() {
   return new Expr({ next_id: null });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @param {...any} terms
+ * @returns {Expr}
+ */
 function equals() {
   return new Expr({ equals: varargs(arguments) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @param {any} path
+ * @param {any} _in
+ * @returns {Expr}
+ */
 function contains(path, _in) {
   return new Expr({ contains: Expr.wrap(path), in: Expr.wrap(_in) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @param {any} path
+ * @param {any} from
+ * @returns {Expr}
+ */
 function select(path, from) {
   return new Expr({ select: Expr.wrap(path), from: Expr.wrap(from) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @param {any} path
+ * @param {any} from
+ * @param {any} _default
+ * @returns {Expr}
+ */
 function selectWithDefault(path, from, _default) {
   return new Expr({ select: Expr.wrap(path), from: Expr.wrap(from), default: Expr.wrapValues(_default) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @param {...any} terms
+ * @returns {Expr}
+ */
 function add() {
   return new Expr({ add: Expr.wrap(varargs(arguments)) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @param {...any} terms
+ * @returns {Expr}
+ */
 function multiply() {
   return new Expr({ multiply: Expr.wrap(varargs(arguments)) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @param {...any} terms
+ * @returns {Expr}
+ */
 function subtract() {
   return new Expr({ subtract: Expr.wrap(varargs(arguments)) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @param {...any} terms
+ * @returns {Expr}
+ */
 function divide() {
   return new Expr({ divide: Expr.wrap(varargs(arguments)) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @param {...any} terms
+ * @returns {Expr}
+ */
 function modulo() {
   return new Expr({ modulo: Expr.wrap(varargs(arguments)) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @param {...any} terms
+ * @returns {Expr}
+ */
 function lt() {
   return new Expr({ lt: Expr.wrap(varargs(arguments)) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @param {...any} terms
+ * @returns {Expr}
+ */
 function lte() {
   return new Expr({ lte: Expr.wrap(varargs(arguments)) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @param {...any} terms
+ * @returns {Expr}
+ */
 function gt() {
   return new Expr({ gt: Expr.wrap(varargs(arguments)) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @param {...any} terms
+ * @returns {Expr}
+ */
 function gte() {
   return new Expr({ gte: Expr.wrap(varargs(arguments)) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @param {...any} terms
+ * @returns {Expr}
+ */
 function and() {
   return new Expr({ and: Expr.wrap(varargs(arguments)) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @param {...any} terms
+ * @returns {Expr}
+ */
 function or() {
   return new Expr({ or: Expr.wrap(varargs(arguments)) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#misc_functions). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
+ *
+ * @param {any} boolean
+ * @returns {Expr}
+ */
 function not(boolean) {
   return new Expr({ not: Expr.wrap(boolean) });
 }
