@@ -5,6 +5,7 @@
  * Fills in defaults for options not provided.
  * Throws errors for provided options that aren't recognized.
  * A default value of `undefined` is used to indicate that the option must be provided.
+ * @private
  */
 function applyDefaults(provided, defaults) {
   var out = {};
@@ -25,7 +26,10 @@ function applyDefaults(provided, defaults) {
   return out;
 }
 
-/** Returns a new object without any keys where the value would be undefined. */
+/**
+ * Returns a new object without any keys where the value would be undefined.
+ * @private
+ * */
 function removeUndefinedValues(object) {
   var res = {};
   for (var key in object) {

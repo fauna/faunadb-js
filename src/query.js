@@ -4,29 +4,60 @@ var annotate = require('fn-annotate');
 var Expr = require('./Expr');
 var objectAssign = require('object-assign');
 
+/**
+ * @module query
+ */
+
 // Basic forms
 
-/** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#basic_forms).
+ *
+ * @param {any} vars
+ * @param {any} in_expr
+ * @return Expr
+ * */
 function let_expr(vars, in_expr) {
   return new Expr({ let: Expr.wrapValues(vars), in: Expr.wrap(in_expr) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#basic_form). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#basic_forms).
+ *
+ * @param {any} varName
+ * @return Expr
+ * */
 function variable(varName) {
   return new Expr({ var: Expr.wrap(varName) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#basic_forms).
+ *
+ * @param {any} condition
+ * @param {any} then
+ * @param {any} _else
+ * @return Expr
+ * */
 function if_expr(condition, then, _else) {
   return new Expr({ if: Expr.wrap(condition), then: Expr.wrap(then), else: Expr.wrap(_else) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#basic_form). */
+/**
+ * See the [docs](https://faunadb.com/documentation/queries#basic_form).
+ *
+ * @param {...any} args
+ * @return Expr
+ * */
 function do_expr() {
   return new Expr({ do: Expr.wrap(varargs(arguments)) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
+/** See the [docs](https://faunadb.com/documentation/queries#basic_forms).
+ *
+ * @param {any} fields
+ * @return Expr
+ * */
 function object(fields) {
   return new Expr({ object: Expr.wrapValues(fields) });
 }
@@ -45,9 +76,10 @@ function object(fields) {
  You can also use {@link lambda_expr} directly.
 
  @param {function} func
- Takes one or more {@link var} expressions and uses them to construct an expression.
- If this has more than one argument, the lambda destructures an array argument.
- (To destructure single-element arrays use {@link lambda_expr}.)
+   Takes one or more {@link var} expressions and uses them to construct an expression.
+   If this has more than one argument, the lambda destructures an array argument.
+   (To destructure single-element arrays use {@link lambda_expr}.)
+ @return Expr
  */
 function lambda(func) {
   var vars = annotate(func);
@@ -61,34 +93,61 @@ function lambda(func) {
   }
 }
 
-/** If `value` is a function converts it to a query using {@link lambda}. */
+/** If `value` is a function converts it to a query using {@link lambda}.
+ * @private
+ * */
 function toLambda(value) {
   return value instanceof Function ? lambda(value) : value;
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#basic_forms). */
+/** See the [docs](https://faunadb.com/documentation/queries#basic_forms).
+ *
+ * @param {any} var_name
+ * @param {any} expr
+ * @return Expr
+ * */
 function lambda_expr(var_name, expr) {
   return new Expr({ lambda: Expr.wrap(var_name), expr: Expr.wrap(expr) });
 }
 
 // Collection functions
 
-/** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
+/** See the [docs](https://faunadb.com/documentation/queries#collection_functions).
+ *
+ * @param {any} collection
+ * @param {any} lambda_expr
+ * @return {Expr}
+ * */
 function map(collection, lambda_expr) {
   return new Expr({ map: Expr.wrap(toLambda(lambda_expr)), collection: Expr.wrap(collection) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
+/** See the [docs](https://faunadb.com/documentation/queries#collection_functions).
+ *
+ * @param {any} collection
+ * @param {any} lambda_expr
+ * @return {Expr}
+ * */
 function foreach(collection, lambda_expr) {
   return new Expr({ foreach: Expr.wrap(toLambda(lambda_expr)), collection: Expr.wrap(collection) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
+/** See the [docs](https://faunadb.com/documentation/queries#collection_functions).
+ *
+ * @param {any} collection
+ * @param {any} lambda_expr
+ * @return {Expr}
+ * */
 function filter(collection, lambda_expr) {
   return new Expr({ filter: Expr.wrap(toLambda(lambda_expr)), collection: Expr.wrap(collection) });
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#collection_functions). */
+/** See the [docs](https://faunadb.com/documentation/queries#collection_functions).
+ *
+ * @param {any} collection
+ * @param {any} lambda_expr
+ * @return {Expr}
+ * */
 function take(number, collection) {
   return new Expr({ take: Expr.wrap(number), collection: Expr.wrap(collection) });
 }
