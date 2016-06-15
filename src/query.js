@@ -2,11 +2,25 @@
 
 var annotate = require('fn-annotate');
 var Expr = require('./Expr');
+var Value = require('./Value');
 var objectAssign = require('object-assign');
 
 /**
  * @module query
  */
+
+// Type helpers
+
+/**
+ * Constructs a Ref value.
+ *
+ * @param {string} ref
+ * @returns {Expr}
+ */
+function Ref() {
+  var args = argsToArray(arguments);
+  return new (Value.Ref.bind.apply(Value.Ref, [null].concat(args)));
+}
 
 // Basic forms
 
@@ -681,6 +695,7 @@ function defaults(param, def) {
 }
 
 module.exports = {
+  Ref: Ref,
   let_expr: let_expr,
   variable: variable,
   if_expr: if_expr,

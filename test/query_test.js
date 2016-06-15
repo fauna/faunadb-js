@@ -2,15 +2,16 @@
 
 var assert = require('chai').assert;
 var errors = require('../src/errors');
-var objects = require('../src/objects');
+var Value = require('../src/Value');
 var query = require('../src/query');
 var util = require('./util');
 var Promise = require('es6-promise').Promise;
 
-var FaunaDate = objects.FaunaDate,
-  FaunaTime = objects.FaunaTime,
-  Ref = objects.Ref,
-  SetRef = objects.SetRef;
+var Ref = query.Ref;
+
+var FaunaDate = Value.FaunaDate,
+  FaunaTime = Value.FaunaTime,
+  SetRef = Value.SetRef;
 
 var client;
 
@@ -25,19 +26,19 @@ describe('query', function () {
     return client.post('classes', { name: 'widgets' }).then(function (instance) {
       classRef = instance.ref;
 
-      var nIndexRefP = client.query(query.create(new Ref('indexes'), {
+      var nIndexRefP = client.query(query.create(Ref('indexes'), {
         name: 'widgets_by_n',
         source: classRef,
         terms: [ { 'field': ['data', 'n'] }]
       })).then(function(i) { nIndexRef = i.ref; });
 
-      var mIndexRefP = client.query(query.create(new Ref('indexes'), {
+      var mIndexRefP = client.query(query.create(Ref('indexes'), {
         name: 'widgets_by_m',
         source: classRef,
         terms: [ { 'field': ['data', 'm'] }]
       })).then(function(i) { mIndexRef = i.ref; });
 
-      var nCoveredIndexRefP = client.query(query.create(new Ref('indexes'), {
+      var nCoveredIndexRefP = client.query(query.create(Ref('indexes'), {
         name: 'widgets_cost_by_p',
         source: classRef,
         terms: [ { 'field': ['data', 'p' ] }],
@@ -351,7 +352,7 @@ describe('query', function () {
         var secret = result2.secret;
         var instanceClient = util.getClient({ secret: { user: secret } });
 
-        return instanceClient.query(query.select('ref', query.get(new Ref('classes/widgets/self')))).then(function (result3) {
+        return instanceClient.query(query.select('ref', query.get(Ref('classes/widgets/self')))).then(function (result3) {
           assert.deepEqual(result3, instanceRef);
 
           return instanceClient.query(query.logout(true));

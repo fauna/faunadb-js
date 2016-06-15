@@ -6,11 +6,12 @@
 
 module.exports = {
   Client: require('./src/Client'),
+  Expr: require('./src/Expr'),
+  Value: require('./src/Value'),
+  PageHelper: require('./src/PageHelper'),
+  RequestResult: require('./src/RequestResult'),
+
   clientLogger: require('./src/clientLogger'),
   errors: require('./src/errors'),
-  Expr: require('./src/Expr'),
-  objects: require('./src/objects'),
-  PageHelper: require('./src/PageHelper'),
-  query: require('./src/query'),
-  RequestResult: require('./src/RequestResult')
+  query: require('./src/query')
 };

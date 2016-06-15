@@ -1,7 +1,5 @@
 'use strict';
 
-var FaunaObject = require('./objects').FaunaObject;
-
 // TODO: link to query docs here?
 /**
  * A representation of a FaunaDB Query Expression. Generally, you shouldn't need
@@ -25,8 +23,6 @@ Expr.wrap = function(obj) {
   if (obj === null) {
     return null;
   } if (obj instanceof Expr) {
-    return obj;
-  } else if (obj instanceof FaunaObject) {
     return obj;
   } else if (obj instanceof Array) {
     return new Expr(obj.map(function (elem) {

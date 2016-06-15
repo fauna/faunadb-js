@@ -1,6 +1,6 @@
 'use strict';
 
-var objects = require('./objects');
+var objects = require('./Value');
 
 function toJSON(object, pretty) {
   pretty = typeof pretty !== 'undefined' ? pretty : false;

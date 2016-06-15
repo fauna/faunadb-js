@@ -2,19 +2,17 @@
 
 var assert = require('chai').assert;
 var errors = require('../src/errors');
-var Expr = require('../src/Expr');
-var objects = require('../src/objects');
-
-var FaunaDate = objects.FaunaDate,
-  FaunaTime = objects.FaunaTime,
-  Page = objects.Page,
-  Ref = objects.Ref,
-  SetRef = objects.SetRef;
-
 var json = require('../src/_json');
-var query = require('../src/query');
+var Expr = require('../src/Expr');
+var Value = require('../src/Value');
 
-describe('objects', function() {
+var FaunaDate = Value.FaunaDate,
+  FaunaTime = Value.FaunaTime,
+  Ref = Value.Ref,
+  SetRef = Value.SetRef;
+
+
+describe('Values', function() {
   var
     ref = new Ref('classes', 'frogs', '123'),
     jsonRef = '{"@ref":"classes/frogs/123"}';
