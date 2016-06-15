@@ -3,13 +3,13 @@
 var chai = require('chai');
 var Client = require('../src/Client');
 var Expr = require('../src/Expr');
+var Value = require('../src/Value');
 var query = require('../src/query');
 var objectAssign = require('object-assign');
-var objects = require('../src/objects');
 var util = require('../src/_util');
 
 var assert = chai.assert;
-var Ref = objects.Ref;
+var Ref = query.Ref;
 
 var env = process.env;
 
@@ -82,7 +82,9 @@ function randomString() {
 }
 
 function unwrapExpr(obj) {
-  if (obj instanceof Expr) {
+  if (obj instanceof Value) {
+    return obj;
+  } else if (obj instanceof Expr) {
     return unwrapExprValues(obj.raw);
   } else {
     return obj;
@@ -109,13 +111,13 @@ function unwrapExprValues(obj) {
 
 var rootClient = getClient({ secret: testConfig.auth });
 var dbName = 'faunadb-js-test-' + randomString();
-var dbRef = new Ref('databases', dbName);
+var dbRef = Ref('databases', dbName);
 
 // global before/after for every test
 
 before(function () {
-  return rootClient.query(query.create(new objects.Ref('databases'), { name: dbName })).then(function() {
-    return rootClient.query(query.create(new objects.Ref('keys'), { database: dbRef, role: 'server' }));
+  return rootClient.query(query.create(Ref('databases'), { name: dbName })).then(function() {
+    return rootClient.query(query.create(Ref('keys'), { database: dbRef, role: 'server' }));
   }).then(function(key) {
     clientSecret = { user: key.secret };
     _client = getClient();
