@@ -22,7 +22,7 @@ function PageHelper(client, set, params) {
   objectAssign(this.params, params);
 
   if ('before' in params && 'after' in params) {
-    throw 'Cursor directions "before" and "after"j are exclusive.';
+    throw 'Cursor directions "before" and "after" are exclusive.';
   }
 
   if ('before' in params) {
@@ -43,45 +43,45 @@ function PageHelper(client, set, params) {
    * @type {Array.<Function>}
    * @private
    */
-  this._fauna_functions = [];
+  this._faunaFunctions = [];
 }
 
 PageHelper.prototype.map = function(lambda) {
   var rv = this.clone();
-  rv._fauna_functions.push(function(q) { return query.map(q, lambda); });
+  rv._faunaFunctions.push(function(q) { return query.map(q, lambda); });
   return rv;
 };
 
 PageHelper.prototype.filter = function(lambda) {
   var rv = this.clone();
-  rv._fauna_functions.push(function(q) { return query.filter(q, lambda); });
+  rv._faunaFunctions.push(function(q) { return query.filter(q, lambda); });
   return rv;
 };
 
 PageHelper.prototype.eachPage = function(lambda) {
-  return this._next_page(this.cursor).then(this._handle_page(lambda));
+  return this._nextPage(this.cursor).then(this._handlePage(lambda));
 };
 
 PageHelper.prototype.eachItem = function(lambda) {
-  return this._next_page(this.cursor).then(this._handle_page(function(page) {
+  return this._nextPage(this.cursor).then(this._handlePage(function(page) {
     page.forEach(lambda);
   }));
 };
 
-PageHelper.prototype._handle_page = function(lambda) {
+PageHelper.prototype._handlePage = function(lambda) {
   var self = this;
   return function (page) {
     lambda(page.data);
 
-    var next_cursor;
+    var nextCursor;
     if (self.reverse) {
-      next_cursor = page.before;
+      nextCursor = page.before;
     } else {
-      next_cursor = page.after;
+      nextCursor = page.after;
     }
 
-    if (next_cursor !== undefined) {
-      return self._next_page(next_cursor).then(self._handle_page(lambda));
+    if (nextCursor !== undefined) {
+      return self._nextPage(nextCursor).then(self._handlePage(lambda));
     } else {
       return Promise.resolve();
     }
@@ -93,7 +93,7 @@ PageHelper.prototype._handle_page = function(lambda) {
  * @returns {Promise.<Object>}
  * @private
  */
-PageHelper.prototype._next_page = function(cursor) {
+PageHelper.prototype._nextPage = function(cursor) {
   var opts = {};
   objectAssign(opts, this.params);
 
@@ -111,8 +111,8 @@ PageHelper.prototype._next_page = function(cursor) {
 
   var q = query.paginate(this.set, opts);
 
-  if (this._fauna_functions.length > 0) {
-    this._fauna_functions.forEach(function(lambda) {
+  if (this._faunaFunctions.length > 0) {
+    this._faunaFunctions.forEach(function(lambda) {
       q = lambda(q);
     });
   }
@@ -124,7 +124,7 @@ PageHelper.prototype.clone = function() {
   return Object.create(PageHelper.prototype, {
     client: { value: this.client },
     set: { value: this.set },
-    _fauna_functions: { value: this._fauna_functions },
+    _faunaFunctions: { value: this._faunaFunctions },
     reverse: { value: this.reverse },
     cursor: { value: this.cursor }
   });
