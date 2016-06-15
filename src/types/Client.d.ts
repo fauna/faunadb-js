@@ -1,5 +1,5 @@
-import {Expr} from "./Expr";
-import {PageHelper} from "./PageHelper";
+import Expr from "./Expr";
+import PageHelper from "./PageHelper";
 import {RequestResult} from "./RequestResult";
 
 export interface ClientConfig {
@@ -11,7 +11,7 @@ export interface ClientConfig {
   observer?: (res: RequestResult) => void;
 }
 
-export class Client {
+export default class Client {
   constructor(opts?: ClientConfig);
 
   query(expr: Expr): Promise<Object>;

@@ -1,6 +1,6 @@
-import {Client} from "./Client";
+import Client from "./Client";
 
-export class RequestResult {
+export default class RequestResult {
   constructor(client: Client,
               method: string,
               path: string,
