@@ -3,7 +3,7 @@
 var btoa = require('btoa-lite');
 var request = require('superagent');
 var errors = require('./errors');
-var objects = require('./Value');
+var values = require('./values');
 var json = require('./_json');
 var RequestResult = require('./RequestResult');
 var util = require('./_util');
@@ -165,7 +165,7 @@ Client.prototype.ping = function (scope, timeout) {
 Client.prototype._execute = function (action, path, data, query) {
   query = defaults(query, null);
 
-  if (path instanceof objects.Ref) {
+  if (path instanceof values.Ref) {
     path = path.value;
   }
 
@@ -177,6 +177,8 @@ Client.prototype._execute = function (action, path, data, query) {
   var self = this;
   return this._performRequest(action, path, data, query).then(function (response) {
     var endTime = Date.now();
+    if (response === undefined)
+      console.log("HI");
     var responseObject = json.parseJSON(response.text);
     var requestResult = new RequestResult(
       self,
@@ -212,7 +214,9 @@ Client.prototype._performRequest = function (action, path, data, query) {
   return new Promise(function (resolve, reject) {
     rq.end(function (error, result) {
       // superagent treates 4xx and 5xx status codes as exceptions. We'll handle those ourselves.
-      if (error &&
+      if (error && error.response === undefined) {
+        reject(error);
+      } else if (error &&
           error.response &&
           !(error.response.status >= 400 && error.response.status <= 599)) {
         reject(error);

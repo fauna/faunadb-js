@@ -1,12 +1,10 @@
 import Expr from './Expr';
 
-// Objects
-export class Value extends Expr {
-  toJSON(): Object;
-  inspect(): string;
-}
-
-export module Value {
+export module values {
+  export class Value extends Expr {
+    toJSON(): Object;
+    inspect(): string;
+  }
   export class SetRef extends Value {
     constructor(value: string);
   }
@@ -25,5 +23,3 @@ export module Value {
     date: Date;
   }
 }
-
-export default Value;

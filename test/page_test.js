@@ -2,14 +2,14 @@
 
 var assert = require('chai').assert;
 var query = require('../src/query');
-var objects = require('../src/Value');
+var values = require('../src/values');
 var PageHelper = require('../src/PageHelper');
 var Promise = require('es6-promise').Promise;
 var util = require('./util');
 
-var Ref = objects.Ref;
-
 var client;
+
+var Ref = query.Ref;
 
 var NUM_INSTANCES = 100;
 
@@ -21,10 +21,10 @@ describe('page', function() {
   before(function() {
     client = util.client();
 
-    var p1 = client.query(query.create(new Ref('classes'), { 'name': 'timestamped_things' } )).then(function(resp) {
+    var p1 = client.query(query.create(Ref('classes'), { 'name': 'timestamped_things' } )).then(function(resp) {
       tsClassRef = resp.ref;
 
-      return client.query(query.create(new Ref('indexes'), {
+      return client.query(query.create(Ref('indexes'), {
         name: 'timestamped_things_by_class',
         source: tsClassRef
       })).then(function(resp) {
@@ -38,9 +38,9 @@ describe('page', function() {
       });
     });
 
-    var p2 = client.query(query.create(new Ref('classes'), { 'name': 'paged_things' } )).then(function(resp) {
+    var p2 = client.query(query.create(Ref('classes'), { 'name': 'paged_things' } )).then(function(resp) {
       classRef = resp.ref;
-      return client.query(query.create(new Ref('indexes'), {
+      return client.query(query.create(Ref('indexes'), {
         name: 'things_by_class',
         source: classRef,
         values: [{ 'field': [ 'data', 'i' ] }, { 'field': 'ref' }]
