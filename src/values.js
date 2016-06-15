@@ -106,7 +106,7 @@ Ref.prototype.inspect = function() {
  * @returns {boolean}
  */
 Ref.prototype.equals = function(other) {
-  return other instanceof Value.Ref && this.value === other.value;
+  return other instanceof Ref && this.value === other.value;
 };
 
 /**
