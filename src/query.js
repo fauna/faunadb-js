@@ -5,7 +5,6 @@ var Expr = require('./Expr');
 var Value = require('./Value');
 var objectAssign = require('object-assign');
 
-
 /**
  * @module query
  */

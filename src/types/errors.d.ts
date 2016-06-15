@@ -1,4 +1,4 @@
-import {RequestResult} from "./RequestResult";
+import RequestResult from "./RequestResult";
 
 export class FaunaError extends Error {
   constructor(message: String);
