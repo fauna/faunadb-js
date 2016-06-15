@@ -225,7 +225,7 @@ describe('query', function () {
     });
   });
 
-  // Write functinos
+  // Write functions
 
   it('create', function () {
     return create().then(function (instance) {

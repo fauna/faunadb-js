@@ -6,7 +6,7 @@
  *
  * @param {Client} client
  *   The FaunaDB client used to execute the request.
- * @param {'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' } method
+ * @param {'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'} method
  *   The HTTP method used in the request.
  * @param {string} path
  *   The path that was queried. Relative to the client's domain.
@@ -22,9 +22,9 @@
  *   The HTTP response status code.
  * @param {object} responseHeaders
  *   The HTTP headers returned in the response.
- * @param {Date} startTime
+ * @param {number} startTime
  *   The time the request was issued by the client.
- * @param {Date} endTime
+ * @param {number} endTime
  *   The time the response was received by the client.
  * @constructor
  */
@@ -64,10 +64,10 @@ function RequestResult(client, method, path, query, requestContent, responseRaw,
   /** @type {object} */
   this.responseHeaders = responseHeaders;
 
-  /** @type {Date} */
+  /** @type {number} */
   this.startTime = startTime;
 
-  /** @type {Date} */
+  /** @type {number} */
   this.endTime = endTime;
 }
 
