@@ -97,7 +97,7 @@ Client.prototype.paginate = function(expression, params) {
  * Issues a HTTP `GET` request via the legacy REST API.
  * See the [docs](https://faunadb.com/documentation/rest).
  * @deprecated Use the {@link Client#query} API where possible.
- * @param {string|Ref} path Path relative the `domain` from the constructor.
+ * @param {(string|Ref)} path Path relative the `domain` from the constructor.
  * @param {Object} query URL parameters.
  * @return {external:Promise<Object>} FaunaDB response object.
  */
@@ -110,7 +110,7 @@ Client.prototype.get = function (path, query) {
  * Issues a HTTP `POST` request via the legacy REST API.
  * See the [docs](https://faunadb.com/documentation/rest).
  * @deprecated Use the {@link Client#query} API where possible.
- * @param {string|Ref} path Path relative to the `domain` from the constructor.
+ * @param {(string|Ref)} path Path relative to the `domain` from the constructor.
  * @param {Object} data Object to be converted to request JSON.
  * @return {external:Promise<Object>} FaunaDB response object.
  */
@@ -122,7 +122,7 @@ Client.prototype.post = function (path, data) {
  * Issues a HTTP `PUT` request via the legacy REST API.
  * See the [docs](https://faunadb.com/documentation/rest).
  * @deprecated Use the {@link Client#query} API where possible.
- * @param {string:Ref} path Path relative to the `domain` from the constructor.
+ * @param {(string|Ref)} path Path relative to the `domain` from the constructor.
  * @param {Object} data Object to be converted to the request JSON.
  * @return {external:Promise<Object>} FaunaDB response object.
  */
@@ -134,7 +134,7 @@ Client.prototype.put = function (path, data) {
  * Issues a HTTP `PATCH` request via the legacy REST API.
  * See the [docs](https://faunadb.com/documentation/rest).
  * @deprecated Use the {@link Client#query} API where possible.
- * @param {string:Ref} path Path relative to the `domain` from the constructor.
+ * @param {(string|Ref)} path Path relative to the `domain` from the constructor.
  * @param {Object} data Object to be converted to the request JSON.
  * @return {external:Promise<Object>} FaunaDB response object.
  */
@@ -146,7 +146,7 @@ Client.prototype.patch = function (path, data) {
  * Issues a HTTP `DELETE` request via the legacy REST API.
  * See the [docs](https://faunadb.com/documentation/rest).
  * @deprecated Use the {@link Client#query} API where possible.
- * @param {string:Ref} path Path relative to the `domain` from the constructor.
+ * @param {(string|Ref)} path Path relative to the `domain` from the constructor.
  * @return {external:Promise<Object>} FaunaDB response object.
  */
 Client.prototype.delete = function (path) {
@@ -177,8 +177,6 @@ Client.prototype._execute = function (action, path, data, query) {
   var self = this;
   return this._performRequest(action, path, data, query).then(function (response) {
     var endTime = Date.now();
-    if (response === undefined)
-      console.log("HI");
     var responseObject = json.parseJSON(response.text);
     var requestResult = new RequestResult(
       self,

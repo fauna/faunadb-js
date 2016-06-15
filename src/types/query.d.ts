@@ -19,12 +19,12 @@ export function drop(number: ExprArg, collection: ExprArg): Expr;
 export function prepend(elements: ExprArg, collection: ExprArg): Expr;
 export function append(elements: ExprArg, collection: ExprArg): Expr;
 
-export function get(ref: ExprArg, ts: ExprArg): Expr;
-export function paginate(set: ExprArg, opts: Object): Expr;
-export function exists(ref: ExprArg, ts: ExprArg): Expr;
-export function count(set: ExprArg, events: ExprArg): Expr;
+export function get(ref: ExprArg, ts?: ExprArg): Expr;
+export function paginate(set: ExprArg, opts?: Object): Expr;
+export function exists(ref: ExprArg, ts?: ExprArg): Expr;
+export function count(set: ExprArg, events?: ExprArg): Expr;
 
-export function create(class_ref: ExprArg, params: ExprArg): Expr;
+export function create(class_ref: ExprArg, params?: ExprArg): Expr;
 export function update(ref: ExprArg, params: ExprArg): Expr;
 export function replace(ref: ExprArg, params: ExprArg): Expr;
 export function delete_expr(ref: ExprArg): Expr;
@@ -42,7 +42,7 @@ export function login(ref: ExprArg, params: ExprArg): Expr;
 export function logout(delete_tokens: ExprArg): Expr;
 export function identify(ref: ExprArg, password: ExprArg): Expr;
 
-export function concat(strings: ExprArg, separator: ExprArg): Expr;
+export function concat(strings: ExprArg, separator?: ExprArg): Expr;
 export function casefold(string: ExprArg): Expr;
 
 export function time(string: ExprArg): Expr;

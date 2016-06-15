@@ -37,7 +37,7 @@ var Promise = require('es6-promise').Promise;
  *   The FaunaDB client used to paginate.
  * @param {Object} set
  *   The set to paginate.
- * @param {Object} params
+ * @param {?Object} params
  *   Parameters to be passed to the FaunaDB Paginate function.
  * @constructor
  */

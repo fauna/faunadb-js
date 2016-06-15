@@ -169,8 +169,8 @@ function filter(collection, lambda_expr) {
 /**
  * See the [docs](https://faunadb.com/documentation/queries#collection_functions).
  *
+ * @param {module:query~ExprArg} number
  * @param {module:query~ExprArg} collection
- * @param {module:query~ExprArg} lambda_expr
  * @return {Expr}
  * */
 function take(number, collection) {
@@ -216,7 +216,7 @@ function append(elements, collection) {
  * See the [docs](https://faunadb.com/documentation/queries#read_functions).
  *
  * @param {module:query~ExprArg} ref
- * @param {module:query~ExprArg} ts
+ * @param {?module:query~ExprArg} ts
  * @return {Expr}
  */
 function get(ref, ts) {
@@ -231,7 +231,7 @@ function get(ref, ts) {
  * rather than using this query function directly.
  *
  * @param {module:query~ExprArg} set
- * @param {Object} opts
+ * @param {?Object} opts
  * @return {Expr}
  */
 function paginate(set, opts) {
@@ -244,7 +244,7 @@ function paginate(set, opts) {
  * See the [docs](https://faunadb.com/documentation/queries#read_functions).
  *
  * @param {module:query~ExprArg} ref
- * @param {module:query~ExprArg} ts
+ * @param {?module:query~ExprArg} ts
  * @return {Expr}
  */
 function exists(ref, ts) {
@@ -257,7 +257,7 @@ function exists(ref, ts) {
  * See the [docs](https://faunadb.com/documentation/queries#read_functions).
  *
  * @param {module:query~ExprArg} set
- * @param {module:query~ExprArg} events
+ * @param {?module:query~ExprArg} events
  * @return {Expr}
  */
 function count(set, events) {
@@ -272,7 +272,7 @@ function count(set, events) {
  * See the [docs](https://faunadb.com/documentation/queries#write_functions).
  *
  * @param {module:query~ExprArg} class_ref
- * @param {module:query~ExprArg} params
+ * @param {?module:query~ExprArg} params
  * @return {Expr}
  */
 function create(class_ref, params) {
