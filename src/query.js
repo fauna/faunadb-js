@@ -10,7 +10,11 @@ var objectAssign = require('object-assign');
  */
 
 /**
- * @typedef {(Expr|string|number|boolean|Object|Array)} module:query~ExprArg
+ * @typedef {(Expr|string|number|boolean|Object)} module:query~ExprTerm
+ */
+
+/**
+ * @typedef {(module:query~ExprTerm|Array<module:query~ExprTerm>)} module:query~ExprArg
  */
 
 // Type helpers
