@@ -5,6 +5,10 @@ var Expr = require('./Expr');
 var util = require('util');
 
 /**
+ * @module value
+ */
+
+/**
  * Base type for FaunaDB objects.
  *
  * @extends Expr
@@ -29,10 +33,10 @@ util.inherits(Value, Expr);
  * @param {?string} id
  *   The child portion of the ref.
  *
- * @extends Value
+ * @extends module:value~Value
  * @constructor
  */
-Value.Ref = function() {
+function Ref() {
   var parts = Array.prototype.slice.call(arguments);
   /**
    * The string value of the ref.
@@ -40,9 +44,9 @@ Value.Ref = function() {
    * @type {string}
    */
   this.value = parts.join('/');
-};
+}
 
-util.inherits(Value.Ref, Value);
+util.inherits(Ref, Value);
 
 /**
  * Gets the class part out of the Ref.
@@ -50,14 +54,14 @@ util.inherits(Value.Ref, Value);
  * So `new Ref('a', 'b/c').class` will be `new Ref('a/b')`.
  *
  * @member {string}
- * @name Value.Ref#class
+ * @name module:value~Ref#class
  */
-Object.defineProperty(Value.Ref.prototype, 'class', { get: function() {
+Object.defineProperty(Ref.prototype, 'class', { get: function() {
   var parts = this.value.split('/');
   if (parts.length === 1) {
     return this;
   } else {
-    return new Value.Ref(parts.slice(0, parts.length - 1).join('/'));
+    return new Ref(parts.slice(0, parts.length - 1).join('/'));
   }
 } });
 
@@ -66,9 +70,9 @@ Object.defineProperty(Value.Ref.prototype, 'class', { get: function() {
  * this is everything after the last `/`.
  *
  * @member {string}
- * @name Value.Ref#id
+ * @name module:value~Ref#id
  */
-Object.defineProperty(Value.Ref.prototype, 'id', { get: function() {
+Object.defineProperty(Ref.prototype, 'id', { get: function() {
   var parts = this.value.split('/');
   if (parts.length === 1) {
     throw new errors.InvalidValue('The Ref does not have an id.');
@@ -77,22 +81,22 @@ Object.defineProperty(Value.Ref.prototype, 'id', { get: function() {
 } });
 
 /** @ignore */
-Value.Ref.prototype.toJSON = function() {
+Ref.prototype.toJSON = function() {
   return { '@ref': this.value };
 };
 
 /** @ignore */
-Value.Ref.prototype.toString = function() {
+Ref.prototype.toString = function() {
   return this.value;
 };
 
 /** @ignore */
-Value.Ref.prototype.valueOf = function() {
+Ref.prototype.valueOf = function() {
   return this.value;
 };
 
 /** @ignore */
-Value.Ref.prototype.inspect = function() {
+Ref.prototype.inspect = function() {
   return 'Ref(' + JSON.stringify(this.value) + ')';
 };
 
@@ -101,7 +105,7 @@ Value.Ref.prototype.inspect = function() {
  * @param {any} other
  * @returns {boolean}
  */
-Value.Ref.prototype.equals = function(other) {
+Ref.prototype.equals = function(other) {
   return other instanceof Value.Ref && this.value === other.value;
 };
 
@@ -112,33 +116,33 @@ Value.Ref.prototype.equals = function(other) {
  * For query sets see {@link match}, {@link union},
  * {@link intersection}, {@link difference}, and {@link join}.
  *
- * @extends Value
+ * @extends module:value~Value
  * @constructor
  */
-Value.SetRef = function(value) {
+function SetRef(value) {
   /** Raw query object. */
   this.value = value;
-};
+}
 
-util.inherits(Value.SetRef, Value);
+util.inherits(SetRef, Value);
 
 /** @ignore */
-Value.SetRef.prototype.inspect = function() {
+SetRef.prototype.inspect = function() {
   return 'SetRef(' + JSON.stringify(this.value) + ')';
 };
 
 /** @ignore */
-Value.SetRef.prototype.toJSON = function() {
+SetRef.prototype.toJSON = function() {
   return { '@set': this.value };
 };
 
 /** FaunaDB time. See the [docs](https://faunadb.com/documentation/queries#values-special_types).
  *
  * @param {string|Date} value If a Date, this is converted to a string.
- * @extends Value
+ * @extends module:value~Value
  * @constructor
  */
-Value.FaunaTime = function(value) {
+function FaunaTime(value) {
   if (value instanceof Date) {
     value = value.toISOString();
   } else if (!(value.charAt(value.length - 1) === 'Z')) {
@@ -146,23 +150,23 @@ Value.FaunaTime = function(value) {
   }
 
   this.value = value;
-};
+}
 
-util.inherits(Value.FaunaTime, Value);
+util.inherits(FaunaTime, Value);
 
 /**
  * Returns the date wrapped by this object.
  * This is lossy as Dates have millisecond rather than nanosecond precision.
  *
  * @member {Date}
- * @name Value.FaunaTime#date
+ * @name module:value~FaunaTime#date
  */
-Object.defineProperty(Value.FaunaTime.prototype, 'date', { get: function() {
+Object.defineProperty(FaunaTime.prototype, 'date', { get: function() {
   return new Date(this.value);
 } });
 
 /** @ignore */
-Value.FaunaTime.prototype.toJSON = function() {
+FaunaTime.prototype.toJSON = function() {
   return { '@ts': this.value };
 };
 
@@ -170,10 +174,10 @@ Value.FaunaTime.prototype.toJSON = function() {
  *
  * @param {string|Date} value
  *   If a Date, this is converted to a string, with time-of-day discarded.
- * @extends Value
+ * @extends module:value~Value
  * @constructor
  */
-Value.FaunaDate = function(value) {
+function FaunaDate(value) {
   if (value instanceof Date) {
     // The first 10 characters 'YYYY-MM-DD' are the date portion.
     value = value.toISOString().slice(0, 10);
@@ -184,21 +188,27 @@ Value.FaunaDate = function(value) {
    * @type {string}
    */
   this.value = value;
-};
+}
 
-util.inherits(Value.FaunaDate, Value);
+util.inherits(FaunaDate, Value);
 
 /**
  * @member {Date}
- * @name Value.FaunaDate#date
+ * @name module:value~FaunaDate#date
  */
-Object.defineProperty(Value.FaunaDate.prototype, 'date', { get: function() {
+Object.defineProperty(FaunaDate.prototype, 'date', { get: function() {
   return new Date(this.value);
 } });
 
 /** @ignore */
-Value.FaunaDate.prototype.toJSON = function()  {
+FaunaDate.prototype.toJSON = function()  {
   return { '@date': this.value };
 };
 
-module.exports = Value;
+module.exports = {
+  Value: Value,
+  Ref: Ref,
+  SetRef: SetRef,
+  FaunaTime: FaunaTime,
+  FaunaDate: FaunaDate
+};

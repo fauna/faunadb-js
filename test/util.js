@@ -3,13 +3,14 @@
 var chai = require('chai');
 var Client = require('../src/Client');
 var Expr = require('../src/Expr');
-var Value = require('../src/Value');
+var values = require('../src/values');
 var query = require('../src/query');
 var objectAssign = require('object-assign');
 var util = require('../src/_util');
 
 var assert = chai.assert;
 var Ref = query.Ref;
+var Value = values.Value;
 
 var env = process.env;
 

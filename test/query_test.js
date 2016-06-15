@@ -2,7 +2,7 @@
 
 var assert = require('chai').assert;
 var errors = require('../src/errors');
-var Value = require('../src/Value');
+var Value = require('../src/values');
 var query = require('../src/query');
 var util = require('./util');
 var Promise = require('es6-promise').Promise;

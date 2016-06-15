@@ -4,12 +4,12 @@ var assert = require('chai').assert;
 var errors = require('../src/errors');
 var json = require('../src/_json');
 var Expr = require('../src/Expr');
-var Value = require('../src/Value');
+var values = require('../src/values');
 
-var FaunaDate = Value.FaunaDate,
-  FaunaTime = Value.FaunaTime,
-  Ref = Value.Ref,
-  SetRef = Value.SetRef;
+var FaunaDate = values.FaunaDate,
+  FaunaTime = values.FaunaTime,
+  Ref = values.Ref,
+  SetRef = values.SetRef;
 
 
 describe('Values', function() {

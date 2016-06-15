@@ -2,7 +2,7 @@
 
 var annotate = require('fn-annotate');
 var Expr = require('./Expr');
-var Value = require('./Value');
+var values = require('./values');
 var objectAssign = require('object-assign');
 
 /**
@@ -27,7 +27,7 @@ var objectAssign = require('object-assign');
  */
 function Ref() {
   var args = argsToArray(arguments);
-  return new (Value.Ref.bind.apply(Value.Ref, [null].concat(args)));
+  return new (values.Ref.bind.apply(values.Ref, [null].concat(args)));
 }
 
 // Basic forms
