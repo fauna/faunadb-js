@@ -50,7 +50,7 @@ util.inherits(Value.Ref, Value);
  * So `new Ref('a', 'b/c').class` will be `new Ref('a/b')`.
  *
  * @member {string}
- * @name Ref#class
+ * @name Value.Ref#class
  */
 Object.defineProperty(Value.Ref.prototype, 'class', { get: function() {
   var parts = this.value.split('/');
@@ -190,7 +190,7 @@ util.inherits(Value.FaunaDate, Value);
 
 /**
  * @member {Date}
- * @name FaunaDate#date
+ * @name Value.FaunaDate#date
  */
 Object.defineProperty(Value.FaunaDate.prototype, 'date', { get: function() {
   return new Date(this.value);
