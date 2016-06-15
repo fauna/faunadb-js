@@ -2,16 +2,16 @@
 
 var assert = require('chai').assert;
 var errors = require('../src/errors');
-var Value = require('../src/values');
+var values = require('../src/values');
 var query = require('../src/query');
 var util = require('./util');
 var Promise = require('es6-promise').Promise;
 
 var Ref = query.Ref;
 
-var FaunaDate = Value.FaunaDate,
-  FaunaTime = Value.FaunaTime,
-  SetRef = Value.SetRef;
+var FaunaDate = values.FaunaDate,
+  FaunaTime = values.FaunaTime,
+  SetRef = values.SetRef;
 
 var client;
 
