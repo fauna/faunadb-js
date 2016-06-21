@@ -1,6 +1,6 @@
 import Expr from "./Expr";
 import PageHelper from "./PageHelper";
-import {RequestResult} from "./RequestResult";
+import RequestResult from "./RequestResult";
 
 export interface ClientConfig {
   domain?: string;
