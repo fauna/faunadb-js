@@ -15,7 +15,7 @@ export default class Client {
   constructor(opts?: ClientConfig);
 
   query(expr: Expr): Promise<Object>;
-  paginate(expr: Expr): Promise<PageHelper>;
+  paginate(expr: Expr): PageHelper;
 
   get(path: string, query?: Object): Promise<Object>;
   post(path: string, data: Object): Promise<Object>;

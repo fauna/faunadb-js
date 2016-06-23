@@ -32,7 +32,7 @@ export module query {
   export function insert(ref: ExprArg, ts: ExprArg, action: ExprArg, params: ExprArg): Expr;
   export function remove(ref: ExprArg, ts: ExprArg, action: ExprArg): Expr;
 
-  export function match(index: ExprArg): Expr;
+  export function match(index: ExprArg, ...terms: ExprArg[]): Expr;
   export function union(...sets: ExprArg[]): Expr;
   export function intersection(...sets: ExprArg[]): Expr;
   export function difference(...sets: ExprArg[]): Expr;
