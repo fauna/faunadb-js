@@ -350,7 +350,7 @@ describe('query', function () {
       var instanceRef = result.ref;
       return client.query(query.login(instanceRef, { password: 'sekrit' })).then(function (result2) {
         var secret = result2.secret;
-        var instanceClient = util.getClient({ secret: { user: secret } });
+        var instanceClient = util.getClient({ secret: secret });
 
         return instanceClient.query(query.select('ref', query.get(Ref('classes/widgets/self')))).then(function (result3) {
           assert.deepEqual(result3, instanceRef);

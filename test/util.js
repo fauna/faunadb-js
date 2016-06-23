@@ -31,16 +31,8 @@ try {
     domain: env.FAUNA_DOMAIN,
     scheme: env.FAUNA_SCHEME,
     port: env.FAUNA_PORT,
-    auth: parseAuth(env.FAUNA_ROOT_KEY)
+    auth: env.FAUNA_ROOT_KEY
   };
-}
-
-function parseAuth(authStr) {
-  // Split on first ':' to get user:pass
-  var parts = authStr.split(':');
-  var user = parts.shift();
-  var pass = parts.join(':');
-  return { user: user, pass: pass };
 }
 
 function takeObjectKeys(object) {
@@ -120,7 +112,7 @@ before(function () {
   return rootClient.query(query.create(Ref('databases'), { name: dbName })).then(function() {
     return rootClient.query(query.create(Ref('keys'), { database: dbRef, role: 'server' }));
   }).then(function(key) {
-    clientSecret = { user: key.secret };
+    clientSecret = key.secret;
     _client = getClient();
   }).catch(function(exception) {
     console.log('failed: ' + exception);

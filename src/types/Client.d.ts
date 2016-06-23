@@ -6,7 +6,7 @@ export interface ClientConfig {
   domain?: string;
   scheme?: "http" | "https";
   port?: number;
-  secret?: { user: string, pass?: string };
+  secret: string;
   timeout?: number;
   observer?: (res: RequestResult) => void;
 }
