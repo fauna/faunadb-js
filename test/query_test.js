@@ -238,11 +238,11 @@ describe('query', function () {
   it('update', function () {
     return create().then(function (i) {
       var ref = i.ref;
-      return client.query(query.update(ref, {data: {m: 9}})).then(function (got) {
-        assert.deepEqual(got.data, {n: 0, m: 9});
-        return client.query(query.update(ref, {data: {m: null}}));
+      return client.query(query.update(ref, { data: { m: 9 } })).then(function (got) {
+        assert.deepEqual(got.data, { n: 0, m: 9 });
+        return client.query(query.update(ref, { data: { m: null } }));
       }).then(function (got) {
-        assert.deepEqual(got.data, {n: 0});
+        assert.deepEqual(got.data, { n: 0 });
       });
     });
   });
@@ -317,7 +317,7 @@ describe('query', function () {
     var nonDistinctP = assertSet(query.match(nCoveredIndexRef, 1), [10, 10, 15]);
     var distinctP = assertSet(query.distinct(query.match(nCoveredIndexRef, 1)), [10, 15]);
 
-    return Promise.all([nonDistinctP, distinctP])
+    return Promise.all([nonDistinctP, distinctP]);
   });
 
   it('join', function () {

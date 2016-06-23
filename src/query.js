@@ -342,6 +342,7 @@ function remove(ref, ts, action) {
  * See the [docs](https://faunadb.com/documentation/queries#sets).
  *
  * @param {module:query~ExprArg} index
+ * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
 function match(index) {
