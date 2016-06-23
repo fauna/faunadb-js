@@ -37,11 +37,7 @@ var Promise = require('es6-promise').Promise;
  *   HTTP scheme to use.
  * @param {?number} options.port
  *   Port of the FaunaDB server.
- * @param {?Object} options.secret
- *   Auth token for the FaunaDB server.
- *   Uses the same format as [request](https://github.com/request/request#http-authentication).
- * @param {?string} options.secret.user Username, or FaunaDB secret.
- * @param {?string} options.secret.pass If `user` is a username, the corresponding password.
+ * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://faunadb.com/documentation/objects#keys))
  * @param {?number} options.timeout Read timeout in seconds.
  * @param {?Client~observerCallback} options.observer
  *   Callback that will be called after every completed request.
@@ -234,8 +230,7 @@ function defaults(obj, def) {
 }
 
 function secretHeader(secret) {
-  var str = 'pass' in secret ? secret.user + ':' + secret.pass : secret.user;
-  return 'Basic ' + btoa(str);
+  return 'Basic ' + btoa(secret + ':');
 }
 
 module.exports = Client;

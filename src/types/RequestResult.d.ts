@@ -14,6 +14,6 @@ export default class RequestResult {
               endTime: Date
   );
 
-  auth: {user: string, pass: string};
-  timeTaken: number
+  auth: string;
+  timeTaken: number;
 }
