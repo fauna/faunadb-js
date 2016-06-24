@@ -109,8 +109,8 @@ var dbRef = Ref('databases', dbName);
 // global before/after for every test
 
 before(function () {
-  return rootClient.query(query.create(Ref('databases'), { name: dbName })).then(function() {
-    return rootClient.query(query.create(Ref('keys'), { database: dbRef, role: 'server' }));
+  return rootClient.query(query.Create(Ref('databases'), { name: dbName })).then(function() {
+    return rootClient.query(query.Create(Ref('keys'), { database: dbRef, role: 'server' }));
   }).then(function(key) {
     clientSecret = key.secret;
     _client = getClient();
