@@ -109,9 +109,9 @@ function Lambda(func) {
     case 0:
       throw new Error('Function must take at least 1 argument.');
     case 1:
-      return Lambda_expr(vars[0], func(Var(vars[0])));
+      return LambdaExpr(vars[0], func(Var(vars[0])));
     default:
-      return Lambda_expr(vars, func.apply(null, vars.map(Var)));
+      return LambdaExpr(vars, func.apply(null, vars.map(Var)));
   }
 }
 
@@ -128,7 +128,7 @@ function toLambda(value) {
  * @param {module:query~ExprArg} expr
  * @return {Expr}
  * */
-function Lambda_expr(var_name, expr) {
+function LambdaExpr(var_name, expr) {
   return new Expr({ lambda: Expr.wrap(var_name), expr: Expr.wrap(expr) });
 }
 
@@ -705,7 +705,7 @@ module.exports = {
   Do: Do,
   Object: Object,
   Lambda: Lambda,
-  Lambda_expr: Lambda_expr,
+  LambdaExpr: LambdaExpr,
   Map: Map,
   Foreach: Foreach,
   Filter: Filter,
