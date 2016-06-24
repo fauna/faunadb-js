@@ -111,7 +111,7 @@ describe('query', function () {
     var p1 = assertQuery(query.Map([1, 2, 3], function (a) { return query.Multiply([2, a]); } ), [2, 4, 6]);
     // Should work for manually constructed lambda too.
     var p2 = assertQuery(
-      query.Map([1, 2, 3], query.Lambda_expr('a', query.Multiply([2, query.Var('a')]))),
+      query.Map([1, 2, 3], query.LambdaExpr('a', query.Multiply([2, query.Var('a')]))),
       [2, 4, 6]);
 
     var page = query.Paginate(nSet(1));
