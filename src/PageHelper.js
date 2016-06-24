@@ -89,7 +89,7 @@ function PageHelper(client, set, params) {
  */
 PageHelper.prototype.map = function(lambda) {
   var rv = this.clone();
-  rv._faunaFunctions.push(function(q) { return query.map(q, lambda); });
+  rv._faunaFunctions.push(function(q) { return query.Map(q, lambda); });
   return rv;
 };
 
@@ -104,7 +104,7 @@ PageHelper.prototype.map = function(lambda) {
  */
 PageHelper.prototype.filter = function(lambda) {
   var rv = this.clone();
-  rv._faunaFunctions.push(function(q) { return query.filter(q, lambda); });
+  rv._faunaFunctions.push(function(q) { return query.Filter(q, lambda); });
   return rv;
 };
 
@@ -173,7 +173,7 @@ PageHelper.prototype._nextPage = function(cursor) {
     }
   }
 
-  var q = query.paginate(this.set, opts);
+  var q = query.Paginate(this.set, opts);
 
   if (this._faunaFunctions.length > 0) {
     this._faunaFunctions.forEach(function(lambda) {

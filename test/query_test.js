@@ -26,19 +26,19 @@ describe('query', function () {
     return client.post('classes', { name: 'widgets' }).then(function (instance) {
       classRef = instance.ref;
 
-      var nIndexRefP = client.query(query.create(Ref('indexes'), {
+      var nIndexRefP = client.query(query.Create(Ref('indexes'), {
         name: 'widgets_by_n',
         source: classRef,
         terms: [ { 'field': ['data', 'n'] }]
       })).then(function(i) { nIndexRef = i.ref; });
 
-      var mIndexRefP = client.query(query.create(Ref('indexes'), {
+      var mIndexRefP = client.query(query.Create(Ref('indexes'), {
         name: 'widgets_by_m',
         source: classRef,
         terms: [ { 'field': ['data', 'm'] }]
       })).then(function(i) { mIndexRef = i.ref; });
 
-      var nCoveredIndexRefP = client.query(query.create(Ref('indexes'), {
+      var nCoveredIndexRefP = client.query(query.Create(Ref('indexes'), {
         name: 'widgets_cost_by_p',
         source: classRef,
         terms: [ { 'field': ['data', 'p' ] }],
@@ -63,59 +63,59 @@ describe('query', function () {
   // Basic forms
 
   it('let/var', function () {
-    return assertQuery(query.let_expr({ x: 1 }, query.variable('x')), 1);
+    return assertQuery(query.Let({ x: 1 }, query.Var('x')), 1);
   });
 
   it('if', function () {
-    var p1 = assertQuery(query.if_expr(true, 't', 'f'), 't');
-    var p2 = assertQuery(query.if_expr(false, 't', 'f'), 'f');
+    var p1 = assertQuery(query.If(true, 't', 'f'), 't');
+    var p2 = assertQuery(query.If(false, 't', 'f'), 'f');
     return Promise.all([p1, p2]);
   });
 
   it('do', function () {
     return create().then(function (i) {
       var ref = i.ref;
-      return assertQuery(query.do_expr(query.delete_expr(ref), 1), 1).then(function () {
-        assertQuery(query.exists(ref), false);
+      return assertQuery(query.Do(query.Delete(ref), 1), 1).then(function () {
+        assertQuery(query.Exists(ref), false);
       });
     });
   });
 
   it('object', function () {
-    var obj = query.object({ x: query.let_expr({ x: 1 }, query.variable('x')) });
+    var obj = query.Object({ x: query.Let({ x: 1 }, query.Var('x')) });
     return assertQuery(obj, { x: 1 });
   });
 
   it('lambda', function () {
-    assert.throws(function () { query.lambda(function () { return 0; } ); });
+    assert.throws(function () { query.Lambda(function () { return 0; } ); });
 
     assert.deepEqual(
-      util.unwrapExpr(query.lambda(function (a) { return query.add(a, a); })),
+      util.unwrapExpr(query.Lambda(function (a) { return query.Add(a, a); })),
       { lambda: 'a', expr: { add: [{ var: 'a' }, { var: 'a' }] } });
 
-    var multi_args = query.lambda(function (a, b) { return [b, a]; });
+    var multi_args = query.Lambda(function (a, b) { return [b, a]; });
     assert.deepEqual(util.unwrapExpr(multi_args), {
       lambda: ['a', 'b'],
       expr: [{ var: 'b' }, { var: 'a' }]
     });
 
     // function() works too
-    assert.deepEqual(multi_args, query.lambda(function (a, b) { return [b, a]; }));
+    assert.deepEqual(multi_args, query.Lambda(function (a, b) { return [b, a]; }));
 
-    return assertQuery(query.map([[1, 2], [3, 4]], multi_args), [[2, 1], [4, 3]]);
+    return assertQuery(query.Map([[1, 2], [3, 4]], multi_args), [[2, 1], [4, 3]]);
   });
 
   // Collection functions
 
   it('map', function () {
-    var p1 = assertQuery(query.map([1, 2, 3], function (a) { return query.multiply([2, a]); } ), [2, 4, 6]);
+    var p1 = assertQuery(query.Map([1, 2, 3], function (a) { return query.Multiply([2, a]); } ), [2, 4, 6]);
     // Should work for manually constructed lambda too.
     var p2 = assertQuery(
-      query.map([1, 2, 3], query.lambda_expr('a', query.multiply([2, query.variable('a')]))),
+      query.Map([1, 2, 3], query.Lambda_expr('a', query.Multiply([2, query.Var('a')]))),
       [2, 4, 6]);
 
-    var page = query.paginate(nSet(1));
-    var ns = query.map(page, function (a) { return query.select(['data', 'n'], query.get(a)); });
+    var page = query.Paginate(nSet(1));
+    var ns = query.Map(page, function (a) { return query.Select(['data', 'n'], query.Get(a)); });
     var p3 = assertQuery(ns, { data: [1, 1] });
     return Promise.all([p1, p2, p3]);
   });
@@ -124,10 +124,10 @@ describe('query', function () {
     return Promise.all([create(), create()]).then(function (results) {
       return [results[0].ref, results[1].ref];
     }).then(function (refs) {
-      return client.query(query.foreach(refs, query.delete_expr)).then(function() {
+      return client.query(query.Foreach(refs, query.Delete)).then(function() {
         var rv = [];
         refs.forEach(function(ref) {
-          rv.push(assertQuery(query.exists(ref), false));
+          rv.push(assertQuery(query.Exists(ref), false));
         });
 
         return Promise.all(rv);
@@ -136,12 +136,12 @@ describe('query', function () {
   });
 
   it('filter', function () {
-    var p1 = assertQuery(query.filter([1, 2, 3, 4], function (a) { return query.equals(query.modulo(a, 2), 0); } ), [2, 4]);
+    var p1 = assertQuery(query.Filter([1, 2, 3, 4], function (a) { return query.Equals(query.Modulo(a, 2), 0); } ), [2, 4]);
 
     // Works on page too
-    var page = query.paginate(nSet(1));
-    var refsWithM = query.filter(page, function (a) {
-      return query.contains(['data', 'm'], query.get(a));
+    var page = query.Paginate(nSet(1));
+    var refsWithM = query.Filter(page, function (a) {
+      return query.Contains(['data', 'm'], query.Get(a));
     });
     var p2 = assertQuery(refsWithM, { data: [refN1M1] });
 
@@ -149,33 +149,33 @@ describe('query', function () {
   });
 
   it('take', function () {
-    var p1 = assertQuery(query.take(1, [1, 2]), [1]);
-    var p2 = assertQuery(query.take(3, [1, 2]), [1, 2]);
-    var p3 = assertQuery(query.take(-1, [1, 2]), []);
+    var p1 = assertQuery(query.Take(1, [1, 2]), [1]);
+    var p2 = assertQuery(query.Take(3, [1, 2]), [1, 2]);
+    var p3 = assertQuery(query.Take(-1, [1, 2]), []);
 
     return Promise.all([p1, p2, p3]);
   });
 
   it('drop', function () {
-    var p1 = assertQuery(query.drop(1, [1, 2]), [2]);
-    var p2 = assertQuery(query.drop(3, [1, 2]), []);
-    var p3 = assertQuery(query.drop(-1, [1, 2]), [1, 2]);
+    var p1 = assertQuery(query.Drop(1, [1, 2]), [2]);
+    var p2 = assertQuery(query.Drop(3, [1, 2]), []);
+    var p3 = assertQuery(query.Drop(-1, [1, 2]), [1, 2]);
 
     return Promise.all([p1, p2, p3]);
   });
 
   it('prepend', function () {
-    var p1 = assertQuery(query.prepend([1, 2, 3], [4, 5, 6]), [1, 2, 3, 4, 5, 6]);
+    var p1 = assertQuery(query.Prepend([1, 2, 3], [4, 5, 6]), [1, 2, 3, 4, 5, 6]);
     // Fails for non-array.
-    var p2 = assertBadQuery(query.prepend([1, 2], 'foo'));
+    var p2 = assertBadQuery(query.Prepend([1, 2], 'foo'));
 
     return Promise.all([p1, p2]);
   });
 
   it('append', function () {
-    var p1 = assertQuery(query.append([4, 5, 6], [1, 2, 3]), [1, 2, 3, 4, 5, 6]);
+    var p1 = assertQuery(query.Append([4, 5, 6], [1, 2, 3]), [1, 2, 3, 4, 5, 6]);
     // Fails for non-array.
-    var p2 = assertBadQuery(query.append([1, 2], 'foo'));
+    var p2 = assertBadQuery(query.Append([1, 2], 'foo'));
 
     return Promise.all([p1, p2]);
   });
@@ -184,15 +184,15 @@ describe('query', function () {
 
   it('get', function () {
     return create().then(function (instance) {
-      return assertQuery(query.get(instance.ref), instance);
+      return assertQuery(query.Get(instance.ref), instance);
     });
   });
 
   it('paginate', function () {
     var testSet = nSet(1);
-    var p1 = assertQuery(query.paginate(testSet), { data: [refN1, refN1M1] });
-    var p2 = assertQuery(query.paginate(testSet, { size: 1 }), { data: [refN1], after: [refN1M1] });
-    var p3 = assertQuery(query.paginate(testSet, { sources: true }), {
+    var p1 = assertQuery(query.Paginate(testSet), { data: [refN1, refN1M1] });
+    var p2 = assertQuery(query.Paginate(testSet, { size: 1 }), { data: [refN1], after: [refN1M1] });
+    var p3 = assertQuery(query.Paginate(testSet, { sources: true }), {
       data: [
         { sources: [new SetRef(util.unwrapExpr(testSet))], value: refN1 },
         { sources: [new SetRef(util.unwrapExpr(testSet))], value: refN1M1 }
@@ -205,10 +205,10 @@ describe('query', function () {
   it('exists', function () {
     return create().then(function (i) {
       var ref = i.ref;
-      return assertQuery(query.exists(ref), true).then(function() {
-        return client.query(query.delete_expr(ref));
+      return assertQuery(query.Exists(ref), true).then(function() {
+        return client.query(query.Delete(ref));
       }).then(function() {
-        return assertQuery(query.exists(ref), false);
+        return assertQuery(query.Exists(ref), false);
       });
     });
   });
@@ -219,7 +219,7 @@ describe('query', function () {
     var instances = nSet(123);
     // `count` is currently only approximate. Should be 2.
     return Promise.all([p1, p2]).then(function() {
-      return client.query(query.count(instances)).then(function (count) {
+      return client.query(query.Count(instances)).then(function (count) {
         assert.typeOf(count, 'number');
       });
     });
@@ -238,9 +238,9 @@ describe('query', function () {
   it('update', function () {
     return create().then(function (i) {
       var ref = i.ref;
-      return client.query(query.update(ref, { data: { m: 9 } })).then(function (got) {
+      return client.query(query.Update(ref, { data: { m: 9 } })).then(function (got) {
         assert.deepEqual(got.data, { n: 0, m: 9 });
-        return client.query(query.update(ref, { data: { m: null } }));
+        return client.query(query.Update(ref, { data: { m: null } }));
       }).then(function (got) {
         assert.deepEqual(got.data, { n: 0 });
       });
@@ -250,7 +250,7 @@ describe('query', function () {
   it('replace', function () {
     return create().then(function (i) {
       var ref = i.ref;
-      return client.query(query.replace(ref, { data: { m: 9 } }));
+      return client.query(query.Replace(ref, { data: { m: 9 } }));
     }).then(function (got) {
       assert.deepEqual(got.data, { m: 9 });
     });
@@ -259,8 +259,8 @@ describe('query', function () {
   it('delete', function () {
     return create().then(function (i) {
       var ref = i.ref;
-      client.query(query.delete_expr(ref)).then(function () {
-        assertQuery(query.exists(ref), false);
+      client.query(query.Delete(ref)).then(function () {
+        assertQuery(query.Exists(ref), false);
       });
     });
   });
@@ -273,8 +273,8 @@ describe('query', function () {
 
       var inserted = { data: { weight: 0 } };
 
-      return client.query(query.insert(ref, prevTs, 'create', inserted)).then(function () {
-        return client.query(query.get(ref, prevTs));
+      return client.query(query.Insert(ref, prevTs, 'create', inserted)).then(function () {
+        return client.query(query.Get(ref, prevTs));
       }).then(function (old) {
         assert.deepEqual(old.data, { weight: 0 });
       });
@@ -285,11 +285,11 @@ describe('query', function () {
     return createThimble({ weight: 0 }).then(function (instance) {
       var ref = instance.ref;
 
-      return client.query(query.replace(ref, { data: { weight: 1 } })).then(function (newInstance) {
-        return assertQuery(query.get(ref), newInstance).then(function () {
-          return client.query(query.remove(ref, newInstance.ts, 'create'));
+      return client.query(query.Replace(ref, { data: { weight: 1 } })).then(function (newInstance) {
+        return assertQuery(query.Get(ref), newInstance).then(function () {
+          return client.query(query.Remove(ref, newInstance.ts, 'create'));
         }).then(function () {
-          return assertQuery(query.get(ref), instance);
+          return assertQuery(query.Get(ref), instance);
         });
       });
     });
@@ -302,20 +302,20 @@ describe('query', function () {
   });
 
   it('union', function () {
-    return assertSet(query.union(nSet(1), mSet(1)), [refN1, refM1, refN1M1]);
+    return assertSet(query.Union(nSet(1), mSet(1)), [refN1, refM1, refN1M1]);
   });
 
   it('intersection', function () {
-    return assertSet(query.intersection(nSet(1), mSet(1)), [refN1M1]);
+    return assertSet(query.Intersection(nSet(1), mSet(1)), [refN1M1]);
   });
 
   it('difference', function () {
-    return assertSet(query.difference(nSet(1), mSet(1)), [refN1]); // but not refN1M1
+    return assertSet(query.Difference(nSet(1), mSet(1)), [refN1]); // but not refN1M1
   });
 
   it('distinct', function() {
-    var nonDistinctP = assertSet(query.match(nCoveredIndexRef, 1), [10, 10, 15]);
-    var distinctP = assertSet(query.distinct(query.match(nCoveredIndexRef, 1)), [10, 15]);
+    var nonDistinctP = assertSet(query.Match(nCoveredIndexRef, 1), [10, 10, 15]);
+    var distinctP = assertSet(query.Distinct(query.Match(nCoveredIndexRef, 1)), [10, 15]);
 
     return Promise.all([nonDistinctP, distinctP]);
   });
@@ -336,7 +336,7 @@ describe('query', function () {
         var p1 = assertSet(source, referenced);
 
         // For each obj with n=12, get the set of elements whose data.m refers to it.
-        var joined = query.join(source, function (a) { return query.match(mIndexRef, a); });
+        var joined = query.Join(source, function (a) { return query.Match(mIndexRef, a); });
         var p2 = assertSet(joined, referencers);
         return Promise.all([p1, p2]);
       });
@@ -346,16 +346,16 @@ describe('query', function () {
   // Authentication
 
   it('login/logout', function () {
-    return client.query(query.create(classRef, { credentials: { password: 'sekrit' } })).then(function (result) {
+    return client.query(query.Create(classRef, { credentials: { password: 'sekrit' } })).then(function (result) {
       var instanceRef = result.ref;
-      return client.query(query.login(instanceRef, { password: 'sekrit' })).then(function (result2) {
+      return client.query(query.Login(instanceRef, { password: 'sekrit' })).then(function (result2) {
         var secret = result2.secret;
         var instanceClient = util.getClient({ secret: secret });
 
-        return instanceClient.query(query.select('ref', query.get(Ref('classes/widgets/self')))).then(function (result3) {
+        return instanceClient.query(query.Select('ref', query.Get(Ref('classes/widgets/self')))).then(function (result3) {
           assert.deepEqual(result3, instanceRef);
 
-          return instanceClient.query(query.logout(true));
+          return instanceClient.query(query.Logout(true));
         }).then(function (logoutResult) {
           assert.isTrue(logoutResult);
         });
@@ -364,33 +364,33 @@ describe('query', function () {
   });
 
   it('identify', function () {
-    return client.query(query.create(classRef, { credentials: { password: 'sekrit' } })).then(function (result) {
+    return client.query(query.Create(classRef, { credentials: { password: 'sekrit' } })).then(function (result) {
       var instanceRef = result.ref;
-      return assertQuery(query.identify(instanceRef, 'sekrit'), true);
+      return assertQuery(query.Identify(instanceRef, 'sekrit'), true);
     });
   });
 
   // String functions
 
   it('concat', function () {
-    var p1 = assertQuery(query.concat(['a', 'b', 'c']), 'abc');
-    var p2 = assertQuery(query.concat([]), '');
-    var p3 = assertQuery(query.concat(['a', 'b', 'c'], '.'), 'a.b.c');
+    var p1 = assertQuery(query.Concat(['a', 'b', 'c']), 'abc');
+    var p2 = assertQuery(query.Concat([]), '');
+    var p3 = assertQuery(query.Concat(['a', 'b', 'c'], '.'), 'a.b.c');
 
     return Promise.all([p1, p2, p3]);
   });
 
   it('casefold', function () {
-    return assertQuery(query.casefold('Hen Wen'), 'hen wen');
+    return assertQuery(query.Casefold('Hen Wen'), 'hen wen');
   });
 
   // Time and date functions
 
   it('time', function () {
     var time = '1970-01-01T00:00:00.123456789Z';
-    var p1 = assertQuery(query.time(time), new FaunaTime(time));
+    var p1 = assertQuery(query.Time(time), new FaunaTime(time));
     // 'now' refers to the current time.
-    var p2 = client.query(query.time('now')).then(function (result) {
+    var p2 = client.query(query.Time('now')).then(function (result) {
       assert.instanceOf(result, FaunaTime);
     });
 
@@ -398,19 +398,19 @@ describe('query', function () {
   });
 
   it('epoch', function () {
-    var p1 = assertQuery(query.epoch(12, 'second'), new FaunaTime('1970-01-01T00:00:12Z'));
+    var p1 = assertQuery(query.Epoch(12, 'second'), new FaunaTime('1970-01-01T00:00:12Z'));
     var nanoTime = new FaunaTime('1970-01-01T00:00:00.123456789Z');
-    var p2 = assertQuery(query.epoch(123456789, 'nanosecond'), nanoTime);
+    var p2 = assertQuery(query.Epoch(123456789, 'nanosecond'), nanoTime);
     return Promise.all([p1, p2]);
   });
 
   it('date', function () {
-    return assertQuery(query.date('1970-01-01'), new FaunaDate('1970-01-01'));
+    return assertQuery(query.Date('1970-01-01'), new FaunaDate('1970-01-01'));
   });
 
   // Miscellaneous functions
   it('next_id', function() {
-    return client.query(query.next_id()).then(function(res) {
+    return client.query(query.NextId()).then(function(res) {
       var parsed = parseInt(res);
       assert.isNotNaN(parsed);
       assert.isNumber(parsed);
@@ -418,112 +418,112 @@ describe('query', function () {
   });
 
   it('equals', function () {
-    var p1 = assertQuery(query.equals(1, 1, 1), true);
-    var p2 = assertQuery(query.equals(1, 1, 2), false);
-    var p3 = assertQuery(query.equals(1), true);
-    var p4 = assertBadQuery(query.equals());
+    var p1 = assertQuery(query.Equals(1, 1, 1), true);
+    var p2 = assertQuery(query.Equals(1, 1, 2), false);
+    var p3 = assertQuery(query.Equals(1), true);
+    var p4 = assertBadQuery(query.Equals());
     return Promise.all([p1, p2, p3, p4]);
   });
 
   it('contains', function () {
     var obj = { a: { b: 1 } };
-    var p1 = assertQuery(query.contains(['a', 'b'], obj), true);
-    var p2 = assertQuery(query.contains('a', obj), true);
-    var p3 = assertQuery(query.contains(['a', 'c'], obj), false);
+    var p1 = assertQuery(query.Contains(['a', 'b'], obj), true);
+    var p2 = assertQuery(query.Contains('a', obj), true);
+    var p3 = assertQuery(query.Contains(['a', 'c'], obj), false);
     return Promise.all([p1, p2, p3]);
   });
 
   it('select', function () {
     var obj = { a: { b: 1 } };
-    var p1 = assertQuery(query.select('a', obj), { b: 1 });
-    var p2 = assertQuery(query.select(['a', 'b'], obj), 1);
-    var p3 = assertQuery(query.selectWithDefault('c', obj, null), null);
-    var p4 = assertBadQuery(query.select('c', obj), errors.NotFound);
+    var p1 = assertQuery(query.Select('a', obj), { b: 1 });
+    var p2 = assertQuery(query.Select(['a', 'b'], obj), 1);
+    var p3 = assertQuery(query.Select('c', obj, null), null);
+    var p4 = assertBadQuery(query.Select('c', obj), errors.NotFound);
     return Promise.all([p1, p2, p3, p4]);
   });
 
   it('select for array', function () {
     var arr = [1, 2, 3];
-    var p1 = assertQuery(query.select(2, arr), 3);
-    var p2 = assertBadQuery(query.select(3, arr), errors.NotFound);
+    var p1 = assertQuery(query.Select(2, arr), 3);
+    var p2 = assertBadQuery(query.Select(3, arr), errors.NotFound);
     return Promise.all([p1, p2]);
   });
 
   it('add', function () {
-    var p1 = assertQuery(query.add(2, 3, 5), 10);
-    var p2 = assertBadQuery(query.add());
+    var p1 = assertQuery(query.Add(2, 3, 5), 10);
+    var p2 = assertBadQuery(query.Add());
     return Promise.all([p1, p2]);
   });
 
   it('multiply', function () {
-    var p1 = assertQuery(query.multiply(2, 3, 5), 30);
-    var p2 = assertBadQuery(query.multiply());
+    var p1 = assertQuery(query.Multiply(2, 3, 5), 30);
+    var p2 = assertBadQuery(query.Multiply());
     return Promise.all([p1, p2]);
   });
 
   it('subtract', function () {
-    var p1 = assertQuery(query.subtract(2, 3, 5), -6);
-    var p2 = assertQuery(query.subtract(2), 2);
-    var p3 = assertBadQuery(query.subtract());
+    var p1 = assertQuery(query.Subtract(2, 3, 5), -6);
+    var p2 = assertQuery(query.Subtract(2), 2);
+    var p3 = assertBadQuery(query.Subtract());
     return Promise.all([p1, p2, p3]);
   });
 
   it('divide', function () {
     // TODO: can't make this query because 2.0 === 2
-    // await assertQuery(query.divide(2, 3, 5), 2/15)
-    var p1 = assertQuery(query.divide(2), 2);
-    var p2 = assertBadQuery(query.divide(1, 0));
-    var p3 = assertBadQuery(query.divide());
+    // await assertQuery(query.Divide(2, 3, 5), 2/15)
+    var p1 = assertQuery(query.Divide(2), 2);
+    var p2 = assertBadQuery(query.Divide(1, 0));
+    var p3 = assertBadQuery(query.Divide());
     return Promise.all([p1, p2, p3]);
   });
 
   it('modulo', function () {
-    var p1 = assertQuery(query.modulo(5, 2), 1);
+    var p1 = assertQuery(query.Modulo(5, 2), 1);
     // This is (15 % 10) % 2
-    var p2 = assertQuery(query.modulo(15, 10, 2), 1);
-    var p3 = assertQuery(query.modulo(2), 2);
-    var p4 = assertBadQuery(query.modulo(1, 0));
-    var p5 = assertBadQuery(query.modulo());
+    var p2 = assertQuery(query.Modulo(15, 10, 2), 1);
+    var p3 = assertQuery(query.Modulo(2), 2);
+    var p4 = assertBadQuery(query.Modulo(1, 0));
+    var p5 = assertBadQuery(query.Modulo());
     return Promise.all([p1, p2, p3, p4, p5]);
   });
 
   it('lt', function () {
-    return assertQuery(query.lt(1, 2), true);
+    return assertQuery(query.Lt(1, 2), true);
   });
 
   it('lte', function () {
-    return assertQuery(query.lte(1, 1), true);
+    return assertQuery(query.Lte(1, 1), true);
   });
 
   it('gt', function () {
-    return assertQuery(query.gt(2, 1), true);
+    return assertQuery(query.Gt(2, 1), true);
   });
 
   it('gte', function () {
-    return assertQuery(query.gte(1, 1), true);
+    return assertQuery(query.Gte(1, 1), true);
   });
 
   it('and', function () {
-    var p1 = assertQuery(query.and(true, true, false), false);
-    var p2 = assertQuery(query.and(true, true, true), true);
-    var p3 = assertQuery(query.and(true), true);
-    var p4 = assertQuery(query.and(false), false);
-    var p5 = assertBadQuery(query.and());
+    var p1 = assertQuery(query.And(true, true, false), false);
+    var p2 = assertQuery(query.And(true, true, true), true);
+    var p3 = assertQuery(query.And(true), true);
+    var p4 = assertQuery(query.And(false), false);
+    var p5 = assertBadQuery(query.And());
     return Promise.all([p1, p2, p3, p4, p5]);
   });
 
   it('or', function () {
-    var p1 = assertQuery(query.or(false, false, true), true);
-    var p2 = assertQuery(query.or(false, false, false), false);
-    var p3 = assertQuery(query.or(true), true);
-    var p4 = assertQuery(query.or(false), false);
-    var p5 = assertBadQuery(query.or());
+    var p1 = assertQuery(query.Or(false, false, true), true);
+    var p2 = assertQuery(query.Or(false, false, false), false);
+    var p3 = assertQuery(query.Or(true), true);
+    var p4 = assertQuery(query.Or(false), false);
+    var p5 = assertBadQuery(query.Or());
     return Promise.all([p1, p2, p3, p4, p5]);
   });
 
   it('not', function () {
-    var p1 = assertQuery(query.not(true), false);
-    var p2 = assertQuery(query.not(false), true);
+    var p1 = assertQuery(query.Not(true), false);
+    var p2 = assertQuery(query.Not(false), true);
     return Promise.all([p1, p2]);
   });
 
@@ -531,9 +531,9 @@ describe('query', function () {
 
   it('varargs', function () {
     // Works for lists too
-    var p1 = assertQuery(query.add([2, 3, 5]), 10);
+    var p1 = assertQuery(query.Add([2, 3, 5]), 10);
     // Works for a variable equal to a list
-    var p2 = assertQuery(query.let_expr({ x: [2, 3, 5] }, query.add(query.variable('x'))), 10);
+    var p2 = assertQuery(query.Let({ x: [2, 3, 5] }, query.Add(query.Var('x'))), 10);
     return Promise.all([p1, p2]);
   });
 });
@@ -547,19 +547,19 @@ function create(data) {
     data.n = 0;
   }
 
-  return client.query(query.create(classRef, { data: data }));
+  return client.query(query.Create(classRef, { data: data }));
 }
 
 function createThimble(data) {
-  return client.query(query.create(thimbleClassRef, { data: data }));
+  return client.query(query.Create(thimbleClassRef, { data: data }));
 }
 
 function nSet(n) {
-  return query.match(nIndexRef, n);
+  return query.Match(nIndexRef, n);
 }
 
 function mSet(m) {
-  return query.match(mIndexRef, m);
+  return query.Match(mIndexRef, m);
 }
 
 function assertQuery(query, expected) {
@@ -583,7 +583,7 @@ function assertSet(set, expected) {
 }
 
 function getSetContents(set) {
-  return client.query(query.paginate(set, { size: 1000 })).then(function (result) {
+  return client.query(query.Paginate(set, { size: 1000 })).then(function (result) {
     return result.data;
   });
 }

@@ -39,7 +39,7 @@ function Ref() {
  * @param {module:query~ExprArg} in_expr
  * @return {Expr}
  * */
-function let_expr(vars, in_expr) {
+function Let(vars, in_expr) {
   return new Expr({ let: Expr.wrapValues(vars), in: Expr.wrap(in_expr) });
 }
 
@@ -49,7 +49,7 @@ function let_expr(vars, in_expr) {
  * @param {module:query~ExprArg} varName
  * @return {Expr}
  * */
-function variable(varName) {
+function Var(varName) {
   return new Expr({ var: Expr.wrap(varName) });
 }
 
@@ -61,7 +61,7 @@ function variable(varName) {
  * @param {module:query~ExprArg} _else
  * @return {Expr}
  * */
-function if_expr(condition, then, _else) {
+function If(condition, then, _else) {
   return new Expr({ if: Expr.wrap(condition), then: Expr.wrap(then), else: Expr.wrap(_else) });
 }
 
@@ -71,7 +71,7 @@ function if_expr(condition, then, _else) {
  * @param {...module:query~ExprArg} args
  * @return {Expr}
  * */
-function do_expr() {
+function Do() {
   return new Expr({ do: Expr.wrap(varargs(arguments)) });
 }
 
@@ -80,7 +80,7 @@ function do_expr() {
  * @param {...module:query~ExprArg} fields
  * @return {Expr}
  * */
-function object(fields) {
+function Object(fields) {
   return new Expr({ object: Expr.wrapValues(fields) });
 }
 
@@ -103,15 +103,15 @@ function object(fields) {
    (To destructure single-element arrays use {@link lambda_expr}.)
  @return {Expr}
  */
-function lambda(func) {
+function Lambda(func) {
   var vars = annotate(func);
   switch (vars.length) {
     case 0:
       throw new Error('Function must take at least 1 argument.');
     case 1:
-      return lambda_expr(vars[0], func(variable(vars[0])));
+      return Lambda_expr(vars[0], func(Var(vars[0])));
     default:
-      return lambda_expr(vars, func.apply(null, vars.map(variable)));
+      return Lambda_expr(vars, func.apply(null, vars.map(Var)));
   }
 }
 
@@ -119,7 +119,7 @@ function lambda(func) {
  * @private
  * */
 function toLambda(value) {
-  return value instanceof Function ? lambda(value) : value;
+  return value instanceof Function ? Lambda(value) : value;
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#basic_forms).
@@ -128,7 +128,7 @@ function toLambda(value) {
  * @param {module:query~ExprArg} expr
  * @return {Expr}
  * */
-function lambda_expr(var_name, expr) {
+function Lambda_expr(var_name, expr) {
   return new Expr({ lambda: Expr.wrap(var_name), expr: Expr.wrap(expr) });
 }
 
@@ -140,7 +140,7 @@ function lambda_expr(var_name, expr) {
  * @param {module:query~ExprArg} lambda_expr
  * @return {Expr}
  * */
-function map(collection, lambda_expr) {
+function Map(collection, lambda_expr) {
   return new Expr({ map: Expr.wrap(toLambda(lambda_expr)), collection: Expr.wrap(collection) });
 }
 
@@ -151,7 +151,7 @@ function map(collection, lambda_expr) {
  * @param {module:query~ExprArg} lambda_expr
  * @return {Expr}
  * */
-function foreach(collection, lambda_expr) {
+function Foreach(collection, lambda_expr) {
   return new Expr({ foreach: Expr.wrap(toLambda(lambda_expr)), collection: Expr.wrap(collection) });
 }
 
@@ -162,7 +162,7 @@ function foreach(collection, lambda_expr) {
  * @param {module:query~ExprArg} lambda_expr
  * @return {Expr}
  * */
-function filter(collection, lambda_expr) {
+function Filter(collection, lambda_expr) {
   return new Expr({ filter: Expr.wrap(toLambda(lambda_expr)), collection: Expr.wrap(collection) });
 }
 
@@ -173,7 +173,7 @@ function filter(collection, lambda_expr) {
  * @param {module:query~ExprArg} collection
  * @return {Expr}
  * */
-function take(number, collection) {
+function Take(number, collection) {
   return new Expr({ take: Expr.wrap(number), collection: Expr.wrap(collection) });
 }
 
@@ -184,7 +184,7 @@ function take(number, collection) {
  * @param {module:query~ExprArg} collection
  * @return {Expr}
  * */
-function drop(number, collection) {
+function Drop(number, collection) {
   return new Expr({ drop: Expr.wrap(number), collection: Expr.wrap(collection) });
 }
 
@@ -195,7 +195,7 @@ function drop(number, collection) {
  * @param {module:query~ExprArg} collection
  * @return {Expr}
  */
-function prepend(elements, collection) {
+function Prepend(elements, collection) {
   return new Expr({ prepend: Expr.wrap(elements), collection: Expr.wrap(collection) });
 }
 
@@ -206,7 +206,7 @@ function prepend(elements, collection) {
  * @param {module:query~ExprArg} collection
  * @return {Expr}
  */
-function append(elements, collection) {
+function Append(elements, collection) {
   return new Expr({ append: Expr.wrap(elements), collection: Expr.wrap(collection) });
 }
 
@@ -219,7 +219,7 @@ function append(elements, collection) {
  * @param {?module:query~ExprArg} ts
  * @return {Expr}
  */
-function get(ref, ts) {
+function Get(ref, ts) {
   ts = defaults(ts, null);
 
   return new Expr(params({ get: Expr.wrap(ref) }, { ts: Expr.wrap(ts) }));
@@ -234,7 +234,7 @@ function get(ref, ts) {
  * @param {?Object} opts
  * @return {Expr}
  */
-function paginate(set, opts) {
+function Paginate(set, opts) {
   opts = defaults(opts, {});
 
   return new Expr(objectAssign({ paginate: Expr.wrap(set) }, Expr.wrapValues(opts)));
@@ -247,7 +247,7 @@ function paginate(set, opts) {
  * @param {?module:query~ExprArg} ts
  * @return {Expr}
  */
-function exists(ref, ts) {
+function Exists(ref, ts) {
   ts = defaults(ts, null);
 
   return new Expr(params({ exists: Expr.wrap(ref) }, { ts: Expr.wrap(ts) }));
@@ -260,7 +260,7 @@ function exists(ref, ts) {
  * @param {?module:query~ExprArg} events
  * @return {Expr}
  */
-function count(set, events) {
+function Count(set, events) {
   events = defaults(events, null);
 
   return new Expr(params({ count: Expr.wrap(set) }, { events: Expr.wrapValues(events) }));
@@ -275,7 +275,7 @@ function count(set, events) {
  * @param {?module:query~ExprArg} params
  * @return {Expr}
  */
-function create(class_ref, params) {
+function Create(class_ref, params) {
   return new Expr({ create: Expr.wrap(class_ref), params: Expr.wrap(params) });
 }
 
@@ -286,7 +286,7 @@ function create(class_ref, params) {
  * @param {module:query~ExprArg} params
  * @return {Expr}
  */
-function update(ref, params) {
+function Update(ref, params) {
   return new Expr({ update: Expr.wrap(ref), params: Expr.wrap(params) });
 }
 
@@ -297,7 +297,7 @@ function update(ref, params) {
  * @param {module:query~ExprArg} params
  * @return {Expr}
  */
-function replace(ref, params) {
+function Replace(ref, params) {
   return new Expr({ replace: Expr.wrap(ref), params: Expr.wrap(params) });
 }
 
@@ -307,7 +307,7 @@ function replace(ref, params) {
  * @param {module:query~ExprArg} ref
  * @return {Expr}
  */
-function delete_expr(ref) {
+function Delete(ref) {
   return new Expr({ delete: Expr.wrap(ref) });
 }
 
@@ -320,7 +320,7 @@ function delete_expr(ref) {
  * @param {module:query~ExprArg} params
  * @return {Expr}
  */
-function insert(ref, ts, action, params) {
+function Insert(ref, ts, action, params) {
   return new Expr({ insert: Expr.wrap(ref), ts: Expr.wrap(ts), action: Expr.wrap(action), params: Expr.wrap(params) });
 }
 
@@ -332,7 +332,7 @@ function insert(ref, ts, action, params) {
  * @param {module:query~ExprArg} action
  * @return {Expr}
  */
-function remove(ref, ts, action) {
+function Remove(ref, ts, action) {
   return new Expr({ remove: Expr.wrap(ref), ts: Expr.wrap(ts), action: Expr.wrap(action) });
 }
 
@@ -345,7 +345,7 @@ function remove(ref, ts, action) {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function match(index) {
+function Match(index) {
   var args = argsToArray(arguments);
   args.shift();
   return new Expr({ match: Expr.wrap(index), terms: Expr.wrap(varargs(args)) });
@@ -357,7 +357,7 @@ function match(index) {
  * @param {...module:query~ExprArg} sets
  * @return {Expr}
  */
-function union() {
+function Union() {
   return new Expr({ union: Expr.wrap(varargs(arguments)) });
 }
 
@@ -367,7 +367,7 @@ function union() {
  * @param {...module:query~ExprArg} sets
  * @return {Expr}
  * */
-function intersection() {
+function Intersection() {
   return new Expr({ intersection: Expr.wrap(varargs(arguments)) });
 }
 
@@ -377,7 +377,7 @@ function intersection() {
  * @param {...module:query~ExprArg} sets
  * @return {Expr}
  * */
-function difference() {
+function Difference() {
   return new Expr({ difference: Expr.wrap(varargs(arguments)) });
 }
 
@@ -387,7 +387,7 @@ function difference() {
  * @param {module:query~ExprArg} set
  * @return {Expr}
  * */
-function distinct(set) {
+function Distinct(set) {
   return new Expr({ distinct: Expr.wrap(set) });
 }
 
@@ -398,7 +398,7 @@ function distinct(set) {
  * @param {module:query~ExprArg} target
  * @return {Expr}
  */
-function join(source, target) {
+function Join(source, target) {
   return new Expr({ join: Expr.wrap(source), with: Expr.wrap(toLambda(target)) });
 }
 
@@ -411,7 +411,7 @@ function join(source, target) {
  * @param {module:query~ExprArg} params
  * @return {Expr}
  * */
-function login(ref, params) {
+function Login(ref, params) {
   return new Expr({ login: Expr.wrap(ref), params: Expr.wrap(params) });
 }
 
@@ -421,7 +421,7 @@ function login(ref, params) {
  * @param {module:query~ExprArg} delete_tokens
  * @return {Expr}
  */
-function logout(delete_tokens) {
+function Logout(delete_tokens) {
   return new Expr({ logout: Expr.wrap(delete_tokens) });
 }
 
@@ -432,7 +432,7 @@ function logout(delete_tokens) {
  * @param {module:query~ExprArg} password
  * @return {Expr}
  */
-function identify(ref, password) {
+function Identify(ref, password) {
   return new Expr({ identify: Expr.wrap(ref), password: Expr.wrap(password) });
 }
 
@@ -445,7 +445,7 @@ function identify(ref, password) {
  * @param {?module:query~ExprArg} separator
  * @return {Expr}
  */
-function concat(strings, separator) {
+function Concat(strings, separator) {
   separator = defaults(separator, null);
   return new Expr(params({ concat: Expr.wrap(strings) }, { separator: Expr.wrap(separator) }));
 }
@@ -456,7 +456,7 @@ function concat(strings, separator) {
  * @param {module:query~ExprArg} string
  * @return {Expr}
  */
-function casefold(string) {
+function Casefold(string) {
   return new Expr({ casefold: Expr.wrap(string) });
 }
 
@@ -467,7 +467,7 @@ function casefold(string) {
  * @param {module:query~ExprArg} string
  * @return {Expr}
  */
-function time(string) {
+function Time(string) {
   return new Expr({ time: Expr.wrap(string) });
 }
 
@@ -478,7 +478,7 @@ function time(string) {
  * @param {module:query~ExprArg} unit
  * @return {Expr}
  */
-function epoch(number, unit) {
+function Epoch(number, unit) {
   return new Expr({ epoch: Expr.wrap(number), unit: Expr.wrap(unit) });
 }
 
@@ -488,7 +488,7 @@ function epoch(number, unit) {
  * @param {module:query~ExprArg} string
  * @return {Expr}
  */
-function date(string) {
+function Date(string) {
   return new Expr({ date: Expr.wrap(string) });
 }
 
@@ -499,7 +499,7 @@ function date(string) {
  *
  * @return {Expr}
  */
-function next_id() {
+function NextId() {
   return new Expr({ next_id: null });
 }
 
@@ -509,7 +509,7 @@ function next_id() {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function equals() {
+function Equals() {
   return new Expr({ equals: varargs(arguments) });
 }
 
@@ -520,7 +520,7 @@ function equals() {
  * @param {module:query~ExprArg} _in
  * @return {Expr}
  */
-function contains(path, _in) {
+function Contains(path, _in) {
   return new Expr({ contains: Expr.wrap(path), in: Expr.wrap(_in) });
 }
 
@@ -529,22 +529,15 @@ function contains(path, _in) {
  *
  * @param {module:query~ExprArg} path
  * @param {module:query~ExprArg} from
+ * @param {?module:query~ExprArg} _default
  * @return {Expr}
  */
-function select(path, from) {
-  return new Expr({ select: Expr.wrap(path), from: Expr.wrap(from) });
-}
-
-/**
- * See the [docs](https://faunadb.com/documentation/queries#misc_functions).
- *
- * @param {module:query~ExprArg} path
- * @param {module:query~ExprArg} from
- * @param {module:query~ExprArg} _default
- * @return {Expr}
- */
-function selectWithDefault(path, from, _default) {
-  return new Expr({ select: Expr.wrap(path), from: Expr.wrap(from), default: Expr.wrapValues(_default) });
+function Select(path, from, _default) {
+  var exprObj = { select: Expr.wrap(path), from: Expr.wrap(from) };
+  if (_default !== undefined) {
+    exprObj.default = Expr.wrapValues(_default);
+  }
+  return new Expr(exprObj);
 }
 
 /**
@@ -553,7 +546,7 @@ function selectWithDefault(path, from, _default) {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function add() {
+function Add() {
   return new Expr({ add: Expr.wrap(varargs(arguments)) });
 }
 
@@ -563,7 +556,7 @@ function add() {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function multiply() {
+function Multiply() {
   return new Expr({ multiply: Expr.wrap(varargs(arguments)) });
 }
 
@@ -573,7 +566,7 @@ function multiply() {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function subtract() {
+function Subtract() {
   return new Expr({ subtract: Expr.wrap(varargs(arguments)) });
 }
 
@@ -583,7 +576,7 @@ function subtract() {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function divide() {
+function Divide() {
   return new Expr({ divide: Expr.wrap(varargs(arguments)) });
 }
 
@@ -593,7 +586,7 @@ function divide() {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function modulo() {
+function Modulo() {
   return new Expr({ modulo: Expr.wrap(varargs(arguments)) });
 }
 
@@ -603,7 +596,7 @@ function modulo() {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function lt() {
+function Lt() {
   return new Expr({ lt: Expr.wrap(varargs(arguments)) });
 }
 
@@ -613,7 +606,7 @@ function lt() {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function lte() {
+function Lte() {
   return new Expr({ lte: Expr.wrap(varargs(arguments)) });
 }
 
@@ -623,7 +616,7 @@ function lte() {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function gt() {
+function Gt() {
   return new Expr({ gt: Expr.wrap(varargs(arguments)) });
 }
 
@@ -633,7 +626,7 @@ function gt() {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function gte() {
+function Gte() {
   return new Expr({ gte: Expr.wrap(varargs(arguments)) });
 }
 
@@ -643,7 +636,7 @@ function gte() {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function and() {
+function And() {
   return new Expr({ and: Expr.wrap(varargs(arguments)) });
 }
 
@@ -653,7 +646,7 @@ function and() {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function or() {
+function Or() {
   return new Expr({ or: Expr.wrap(varargs(arguments)) });
 }
 
@@ -663,7 +656,7 @@ function or() {
  * @param {module:query~ExprArg} boolean
  * @return {Expr}
  */
-function not(boolean) {
+function Not(boolean) {
   return new Expr({ not: Expr.wrap(boolean) });
 }
 
@@ -706,59 +699,58 @@ function defaults(param, def) {
 
 module.exports = {
   Ref: Ref,
-  let_expr: let_expr,
-  variable: variable,
-  if_expr: if_expr,
-  do_expr: do_expr,
-  object: object,
-  lambda: lambda,
-  lambda_expr: lambda_expr,
-  map: map,
-  foreach: foreach,
-  filter: filter,
-  take: take,
-  drop: drop,
-  prepend: prepend,
-  append: append,
-  get: get,
-  paginate: paginate,
-  exists: exists,
-  count: count,
-  create: create,
-  update: update,
-  replace: replace,
-  delete_expr: delete_expr,
-  insert: insert,
-  remove: remove,
-  match: match,
-  union: union,
-  intersection: intersection,
-  difference: difference,
-  distinct: distinct,
-  join: join,
-  login: login,
-  logout: logout,
-  identify: identify,
-  concat: concat,
-  casefold: casefold,
-  time: time,
-  epoch: epoch,
-  date: date,
-  next_id: next_id,
-  equals: equals,
-  contains: contains,
-  select: select,
-  selectWithDefault: selectWithDefault,
-  add: add,
-  multiply: multiply,
-  subtract: subtract,
-  divide: divide,
-  modulo: modulo,
-  lt: lt,
-  lte: lte,
-  gt: gt,
-  gte: gte,
-  and: and,
-  or: or,
-  not: not
+  Let: Let,
+  Var: Var,
+  If: If,
+  Do: Do,
+  Object: Object,
+  Lambda: Lambda,
+  Lambda_expr: Lambda_expr,
+  Map: Map,
+  Foreach: Foreach,
+  Filter: Filter,
+  Take: Take,
+  Drop: Drop,
+  Prepend: Prepend,
+  Append: Append,
+  Get: Get,
+  Paginate: Paginate,
+  Exists: Exists,
+  Count: Count,
+  Create: Create,
+  Update: Update,
+  Replace: Replace,
+  Delete: Delete,
+  Insert: Insert,
+  Remove: Remove,
+  Match: Match,
+  Union: Union,
+  Intersection: Intersection,
+  Difference: Difference,
+  Distinct: Distinct,
+  Join: Join,
+  Login: Login,
+  Logout: Logout,
+  Identify: Identify,
+  Concat: Concat,
+  Casefold: Casefold,
+  Time: Time,
+  Epoch: Epoch,
+  Date: Date,
+  NextId: NextId,
+  Equals: Equals,
+  Contains: Contains,
+  Select: Select,
+  Add: Add,
+  Multiply: Multiply,
+  Subtract: Subtract,
+  Divide: Divide,
+  Modulo: Modulo,
+  Lt: Lt,
+  Lte: Lte,
+  Gt: Gt,
+  Gte: Gte,
+  And: And,
+  Or: Or,
+  Not: Not
 };
