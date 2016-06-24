@@ -59,10 +59,10 @@ export module query {
   export function Subtract(...args: ExprArg[]): Expr;
   export function Divide(...args: ExprArg[]): Expr;
   export function Modulo(...args: ExprArg[]): Expr;
-  export function Lt(...args: ExprArg[]): Expr;
-  export function Lte(...args: ExprArg[]): Expr;
-  export function Gt(...args: ExprArg[]): Expr;
-  export function Gte(...args: ExprArg[]): Expr;
+  export function LT(...args: ExprArg[]): Expr;
+  export function LTE(...args: ExprArg[]): Expr;
+  export function GT(...args: ExprArg[]): Expr;
+  export function GTE(...args: ExprArg[]): Expr;
   export function And(...args: ExprArg[]): Expr;
   export function Or(...args: ExprArg[]): Expr;
   export function Not(bool: ExprArg): Expr;
