@@ -596,7 +596,7 @@ function Modulo() {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function Lt() {
+function LT() {
   return new Expr({ lt: Expr.wrap(varargs(arguments)) });
 }
 
@@ -606,7 +606,7 @@ function Lt() {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function Lte() {
+function LTE() {
   return new Expr({ lte: Expr.wrap(varargs(arguments)) });
 }
 
@@ -616,7 +616,7 @@ function Lte() {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function Gt() {
+function GT() {
   return new Expr({ gt: Expr.wrap(varargs(arguments)) });
 }
 
@@ -626,7 +626,7 @@ function Gt() {
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
-function Gte() {
+function GTE() {
   return new Expr({ gte: Expr.wrap(varargs(arguments)) });
 }
 
@@ -746,10 +746,10 @@ module.exports = {
   Subtract: Subtract,
   Divide: Divide,
   Modulo: Modulo,
-  Lt: Lt,
-  Lte: Lte,
-  Gt: Gt,
-  Gte: Gte,
+  LT: LT,
+  LTE: LTE,
+  GT: GT,
+  GTE: GTE,
   And: And,
   Or: Or,
   Not: Not

@@ -488,19 +488,19 @@ describe('query', function () {
   });
 
   it('lt', function () {
-    return assertQuery(query.Lt(1, 2), true);
+    return assertQuery(query.LT(1, 2), true);
   });
 
   it('lte', function () {
-    return assertQuery(query.Lte(1, 1), true);
+    return assertQuery(query.LTE(1, 1), true);
   });
 
   it('gt', function () {
-    return assertQuery(query.Gt(2, 1), true);
+    return assertQuery(query.GT(2, 1), true);
   });
 
   it('gte', function () {
-    return assertQuery(query.Gte(1, 1), true);
+    return assertQuery(query.GTE(1, 1), true);
   });
 
   it('and', function () {
