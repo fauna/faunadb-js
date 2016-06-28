@@ -1,8 +1,8 @@
 'use strict';
 
 /**
- * A structure containing the request and response context for a given FaunaDB request. Provided to an observer
- * registered in the {@link Client} constructor.
+ * A structure containing the request and response context for a given FaunaDB request.
+ * Provided to an observer function optionally defined in the {@link Client} constructor.
  *
  * @param {Client} client
  *   The FaunaDB client used to execute the request.

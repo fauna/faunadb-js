@@ -7,6 +7,11 @@ var values = require('./values');
 var objectAssign = require('object-assign');
 
 /**
+ * This module contains functions used to construct FaunaDB Queries.
+ *
+ * See the [FaunaDB Query API Documentation](https://faunadb.com/documentation/queries)
+ * for per-function documentation.
+ *
  * @module query
  */
 
@@ -164,7 +169,7 @@ function _lambdaExpr(var_name, expr) {
 /** See the [docs](https://faunadb.com/documentation/queries#collection_functions).
  *
  * @param {module:query~ExprArg} collection
- * @param {module:query~ExprArg} lambda_expr
+ * @param {module:query~ExprArg|function} lambda_expr
  * @return {Expr}
  * */
 function Map(collection, lambda_expr) {
@@ -175,7 +180,7 @@ function Map(collection, lambda_expr) {
  * See the [docs](https://faunadb.com/documentation/queries#collection_functions).
  *
  * @param {module:query~ExprArg} collection
- * @param {module:query~ExprArg} lambda_expr
+ * @param {module:query~ExprArg|function} lambda_expr
  * @return {Expr}
  * */
 function Foreach(collection, lambda_expr) {
@@ -186,7 +191,7 @@ function Foreach(collection, lambda_expr) {
  * See the [docs](https://faunadb.com/documentation/queries#collection_functions).
  *
  * @param {module:query~ExprArg} collection
- * @param {module:query~ExprArg} lambda_expr
+ * @param {module:query~ExprArg|function} lambda_expr
  * @return {Expr}
  * */
 function Filter(collection, lambda_expr) {

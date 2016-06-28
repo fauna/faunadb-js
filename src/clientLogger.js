@@ -2,7 +2,8 @@
 
 var json = require('./_json');
 
-/** Functions to assist with debug logging.
+/**
+ * Functions to assist with debug logging.
  * @module clientLogger
  */
 
@@ -15,7 +16,32 @@ var json = require('./_json');
 
 /**
  * Function that can be the `observer` for a {@link Client}.
- * Will call `loggerFunction` on a string representation of each {@link RequestResult}.
+ * Will call `loggerFunction` with a string representation of each {@link RequestResult}.
+ *
+ * An example logging string:
+ * ```plain
+ * Fauna POST /
+ * Credentials: ...
+ * Request JSON: {
+ *   "data": ...
+ * }
+ * Response headers: {
+ *    "x-faunadb-host": ...,
+ *    "x-faunadb-build": ...,
+ *    "connection": "close",
+ *    "content-length": ...,
+ *    "content-type": "application/json;charset=utf-8"
+ *  }
+ * Response JSON: {
+ *    "resource": {
+ *      "ref": { ... },
+ *      "class": { ... },
+ *      "ts": ...
+ *    }
+ *  }
+ * Response (201): Network latency 13ms
+ * ```
+ *
  * @param {loggerCallback} loggerFunction
  * @return {Client~observerCallback}
  * @example
@@ -31,7 +57,6 @@ function logger(loggerFunction) {
   };
 }
 
-// TODO: Example
 /**
  * Convenience function used by {@link logger} to transform a {@link RequestResult}
  * to a string for logging.

@@ -7,8 +7,13 @@ var util = require('util');
  */
 
 /**
- * The base exception type for all FaunaDB errors,
- * whether from the client or the FaunaDB server.
+ * The base exception type for all FaunaDB errors. Errors can originate from
+ * the client (e.g. bad method parameters), or, from the FaunaDB Server (e.g.
+ * invalid queries, timeouts.) Server errors will subclass
+ * {@link module:errors~FaunaHTTPError}.
+ *
+ * See the [FaunaDB Error Documentation](https://faunadb.com/documentation/dev#errors)
+ * for more information on server errors.
  *
  * @param {string} message
  * @extends Error
@@ -35,7 +40,7 @@ util.inherits(FaunaError, Error);
 
 /**
  * Exception thrown by this client library when an invalid
- * value is provided to a function.
+ * value is provided as a function argument.
  *
  * @extends module:errors~FaunaError
  * @constructor
@@ -72,7 +77,7 @@ function FaunaHTTPError(requestResult) {
 util.inherits(FaunaHTTPError, FaunaError);
 
 /**
- * Convenience method to return the errors from the response.
+ * Convenience method to return the errors from the response object.
  *
  * @returns {Object}
  */

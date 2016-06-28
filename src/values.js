@@ -5,13 +5,24 @@ var Expr = require('./Expr');
 var util = require('util');
 
 /**
- * @module value
+ * FaunaDB value types. Generally, these classes do not need to be instantiated
+ * directly; they can be constructed through helper methods in {@link module:query}.
+ *
+ * Instances of these classes will be returned in responses if the response object
+ * contains these values. For example, a FaunaDB response containing
+ *`{ "@ref": "classes/frogs/123" }` will be returned as `new Ref("classes/frogs/123")`.
+ *
+ * See the [FaunaDB Query API Documentation](https://faunadb.com/documentation/queries#values)
+ * for more information.
+ *
+ * @module values
  */
 
 /**
- * Base type for FaunaDB objects.
+ * Base type for FaunaDB value objects.
  *
  * @extends Expr
+ * @abstract
  * @constructor
  */
 function Value() { }
@@ -33,7 +44,7 @@ util.inherits(Value, Expr);
  * @param {?string} id
  *   The child portion of the ref.
  *
- * @extends module:value~Value
+ * @extends module:values~Value
  * @constructor
  */
 function Ref() {
@@ -54,7 +65,7 @@ util.inherits(Ref, Value);
  * So `new Ref('a', 'b/c').class` will be `new Ref('a/b')`.
  *
  * @member {string}
- * @name module:value~Ref#class
+ * @name module:values~Ref#class
  */
 Object.defineProperty(Ref.prototype, 'class', { get: function() {
   var parts = this.value.split('/');
@@ -70,7 +81,7 @@ Object.defineProperty(Ref.prototype, 'class', { get: function() {
  * this is everything after the last `/`.
  *
  * @member {string}
- * @name module:value~Ref#id
+ * @name module:values~Ref#id
  */
 Object.defineProperty(Ref.prototype, 'id', { get: function() {
   var parts = this.value.split('/');
@@ -116,7 +127,7 @@ Ref.prototype.equals = function(other) {
  * For query sets see {@link match}, {@link union},
  * {@link intersection}, {@link difference}, and {@link join}.
  *
- * @extends module:value~Value
+ * @extends module:values~Value
  * @constructor
  */
 function SetRef(value) {
@@ -139,7 +150,7 @@ SetRef.prototype.toJSON = function() {
 /** FaunaDB time. See the [docs](https://faunadb.com/documentation/queries#values-special_types).
  *
  * @param {string|Date} value If a Date, this is converted to a string.
- * @extends module:value~Value
+ * @extends module:values~Value
  * @constructor
  */
 function FaunaTime(value) {
@@ -159,7 +170,7 @@ util.inherits(FaunaTime, Value);
  * This is lossy as Dates have millisecond rather than nanosecond precision.
  *
  * @member {Date}
- * @name module:value~FaunaTime#date
+ * @name module:values~FaunaTime#date
  */
 Object.defineProperty(FaunaTime.prototype, 'date', { get: function() {
   return new Date(this.value);
@@ -174,7 +185,7 @@ FaunaTime.prototype.toJSON = function() {
  *
  * @param {string|Date} value
  *   If a Date, this is converted to a string, with time-of-day discarded.
- * @extends module:value~Value
+ * @extends module:values~Value
  * @constructor
  */
 function FaunaDate(value) {
@@ -194,7 +205,7 @@ util.inherits(FaunaDate, Value);
 
 /**
  * @member {Date}
- * @name module:value~FaunaDate#date
+ * @name module:values~FaunaDate#date
  */
 Object.defineProperty(FaunaDate.prototype, 'date', { get: function() {
   return new Date(this.value);
