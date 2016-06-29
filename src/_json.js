@@ -1,5 +1,6 @@
 'use strict';
 
+var Expr = require('./Expr');
 var objects = require('./objects');
 
 function toJSON(object, pretty) {

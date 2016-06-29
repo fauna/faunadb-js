@@ -14,7 +14,7 @@ var FaunaDate = objects.FaunaDate,
 
 var client;
 
-var classRef, nIndexRef, mIndexRef, refN1, refM1, refN1M1, thimbleClassRef;
+var classRef, nIndexRef, mIndexRef, nCoveredIndexRef, refN1, refM1, refN1M1, thimbleClassRef;
 
 describe('query', function () {
   this.timeout(10000);
@@ -25,25 +25,32 @@ describe('query', function () {
     return client.post('classes', { name: 'widgets' }).then(function (instance) {
       classRef = instance.ref;
 
-      var nIndexRefP = client.query(query.create(new Ref('indexes'), query.quote({
+      var nIndexRefP = client.query(query.create(new Ref('indexes'), {
         name: 'widgets_by_n',
         source: classRef,
         terms: [ { 'field': ['data', 'n'] }]
-      }))).then(function(i) { nIndexRef = i.ref; });
+      })).then(function(i) { nIndexRef = i.ref; });
 
-      var mIndexRefP = client.query(query.create(new Ref('indexes'), query.quote({
+      var mIndexRefP = client.query(query.create(new Ref('indexes'), {
         name: 'widgets_by_m',
         source: classRef,
         terms: [ { 'field': ['data', 'm'] }]
-      }))).then(function(i) { mIndexRef = i.ref; });
+      })).then(function(i) { mIndexRef = i.ref; });
 
-      return Promise.all([nIndexRefP, mIndexRefP]).then(function() {
-        var createP = create({ n: 1 }).then(function (i) {
+      var nCoveredIndexRefP = client.query(query.create(new Ref('indexes'), {
+        name: 'widgets_cost_by_p',
+        source: classRef,
+        terms: [ { 'field': ['data', 'p' ] }],
+        values: [ { 'field': ['data', 'cost' ] }]
+      })).then(function(i) { nCoveredIndexRef = i.ref });
+
+      return Promise.all([nIndexRefP, mIndexRefP, nCoveredIndexRefP]).then(function() {
+        var createP = create({ n: 1, p: 1, cost: 10 }).then(function (i) {
           refN1 = i.ref;
-          return create({ m: 1 });
+          return create({ m: 1, p: 1, cost: 15 });
         }).then(function (i) {
           refM1 = i.ref;
-          return create({ n: 1, m: 1 });
+          return create({ n: 1, m: 1, p: 1, cost: 10 });
         }).then(function (i) { refN1M1 = i.ref; });
         var thimbleClassRefP = client.post('classes', { name: 'thimbles' }).then(function (i) { thimbleClassRef = i.ref; });
 
@@ -78,20 +85,15 @@ describe('query', function () {
     return assertQuery(obj, { x: 1 });
   });
 
-  it('quote', function () {
-    var quoted = query.let_expr({ x: 1 }, query.variable('x'));
-    return assertQuery(query.quote(quoted), quoted);
-  });
-
   it('lambda', function () {
     assert.throws(function () { query.lambda(function () { return 0; } ); });
 
     assert.deepEqual(
-      query.lambda(function (a) { return query.add(a, a); }),
+      util.unwrapExpr(query.lambda(function (a) { return query.add(a, a); })),
       { lambda: 'a', expr: { add: [{ var: 'a' }, { var: 'a' }] } });
 
     var multi_args = query.lambda(function (a, b) { return [b, a]; });
-    assert.deepEqual(multi_args, {
+    assert.deepEqual(util.unwrapExpr(multi_args), {
       lambda: ['a', 'b'],
       expr: [{ var: 'b' }, { var: 'a' }]
     });
@@ -191,8 +193,8 @@ describe('query', function () {
     var p2 = assertQuery(query.paginate(testSet, { size: 1 }), { data: [refN1], after: [refN1M1] });
     var p3 = assertQuery(query.paginate(testSet, { sources: true }), {
       data: [
-        { sources: [new SetRef(testSet)], value: refN1 },
-        { sources: [new SetRef(testSet)], value: refN1M1 }
+        { sources: [new SetRef(util.unwrapExpr(testSet))], value: refN1 },
+        { sources: [new SetRef(util.unwrapExpr(testSet))], value: refN1M1 }
       ]
     });
 
@@ -235,16 +237,19 @@ describe('query', function () {
   it('update', function () {
     return create().then(function (i) {
       var ref = i.ref;
-      return client.query(query.update(ref, query.quote({ data: { m: 9 } })));
-    }).then(function (got) {
-      assert.deepEqual(got.data, { n: 0, m: 9 });
+      return client.query(query.update(ref, {data: {m: 9}})).then(function (got) {
+        assert.deepEqual(got.data, {n: 0, m: 9});
+        return client.query(query.update(ref, {data: {m: null}}));
+      }).then(function (got) {
+        assert.deepEqual(got.data, {n: 0});
+      });
     });
   });
 
   it('replace', function () {
     return create().then(function (i) {
       var ref = i.ref;
-      return client.query(query.replace(ref, query.quote({ data: { m: 9 } })));
+      return client.query(query.replace(ref, { data: { m: 9 } }));
     }).then(function (got) {
       assert.deepEqual(got.data, { m: 9 });
     });
@@ -265,7 +270,7 @@ describe('query', function () {
       var ts = instance.ts;
       var prevTs = ts - 1;
 
-      var inserted = query.quote({ data: { weight: 0 } });
+      var inserted = { data: { weight: 0 } };
 
       return client.query(query.insert(ref, prevTs, 'create', inserted)).then(function () {
         return client.query(query.get(ref, prevTs));
@@ -279,7 +284,7 @@ describe('query', function () {
     return createThimble({ weight: 0 }).then(function (instance) {
       var ref = instance.ref;
 
-      return client.query(query.replace(ref, query.quote({ data: { weight: 1 } }))).then(function (newInstance) {
+      return client.query(query.replace(ref, { data: { weight: 1 } })).then(function (newInstance) {
         return assertQuery(query.get(ref), newInstance).then(function () {
           return client.query(query.remove(ref, newInstance.ts, 'create'));
         }).then(function () {
@@ -305,6 +310,13 @@ describe('query', function () {
 
   it('difference', function () {
     return assertSet(query.difference(nSet(1), mSet(1)), [refN1]); // but not refN1M1
+  });
+
+  it('distinct', function() {
+    var nonDistinctP = assertSet(query.match(nCoveredIndexRef, 1), [10, 10, 15]);
+    var distinctP = assertSet(query.distinct(query.match(nCoveredIndexRef, 1)), [10, 15]);
+
+    return Promise.all([nonDistinctP, distinctP])
   });
 
   it('join', function () {
@@ -333,9 +345,9 @@ describe('query', function () {
   // Authentication
 
   it('login/logout', function () {
-    return client.query(query.create(classRef, query.quote({ credentials: { password: 'sekrit' } }))).then(function (result) {
+    return client.query(query.create(classRef, { credentials: { password: 'sekrit' } })).then(function (result) {
       var instanceRef = result.ref;
-      return client.query(query.login(instanceRef, query.quote({ password: 'sekrit' }))).then(function (result2) {
+      return client.query(query.login(instanceRef, { password: 'sekrit' })).then(function (result2) {
         var secret = result2.secret;
         var instanceClient = util.getClient({ secret: { user: secret } });
 
@@ -351,7 +363,7 @@ describe('query', function () {
   });
 
   it('identify', function () {
-    return client.query(query.create(classRef, query.quote({ credentials: { password: 'sekrit' } }))).then(function (result) {
+    return client.query(query.create(classRef, { credentials: { password: 'sekrit' } })).then(function (result) {
       var instanceRef = result.ref;
       return assertQuery(query.identify(instanceRef, 'sekrit'), true);
     });
@@ -396,6 +408,13 @@ describe('query', function () {
   });
 
   // Miscellaneous functions
+  it('next_id', function() {
+    return client.query(query.next_id()).then(function(res) {
+      var parsed = parseInt(res);
+      assert.isNotNaN(parsed);
+      assert.isNumber(parsed);
+    });
+  });
 
   it('equals', function () {
     var p1 = assertQuery(query.equals(1, 1, 1), true);
@@ -406,7 +425,7 @@ describe('query', function () {
   });
 
   it('contains', function () {
-    var obj = query.quote({ a: { b: 1 } });
+    var obj = { a: { b: 1 } };
     var p1 = assertQuery(query.contains(['a', 'b'], obj), true);
     var p2 = assertQuery(query.contains('a', obj), true);
     var p3 = assertQuery(query.contains(['a', 'c'], obj), false);
@@ -414,7 +433,7 @@ describe('query', function () {
   });
 
   it('select', function () {
-    var obj = query.quote({ a: { b: 1 } });
+    var obj = { a: { b: 1 } };
     var p1 = assertQuery(query.select('a', obj), { b: 1 });
     var p2 = assertQuery(query.select(['a', 'b'], obj), 1);
     var p3 = assertQuery(query.selectWithDefault('c', obj, null), null);
@@ -527,15 +546,17 @@ function create(data) {
     data.n = 0;
   }
 
-  return client.query(query.create(classRef, query.quote({ data: data })));
+  return client.query(query.create(classRef, { data: data }));
 }
+
 function createThimble(data) {
-  return client.query(query.create(thimbleClassRef, query.quote({ data: data })));
+  return client.query(query.create(thimbleClassRef, { data: data }));
 }
 
 function nSet(n) {
   return query.match(nIndexRef, n);
 }
+
 function mSet(m) {
   return query.match(mIndexRef, m);
 }
