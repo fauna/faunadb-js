@@ -128,7 +128,7 @@ function Lambda() {
       } else if (value instanceof Expr) {
         return value;
       } else {
-        throw new errors.InvalidValue("Lambda function takes either a Function or an Expr.");
+        throw new errors.InvalidValue('Lambda function takes either a Function or an Expr.');
       }
 
       return value instanceof Function ? _lambdaFunc(value) : value;
@@ -138,7 +138,7 @@ function Lambda() {
 
       return _lambdaExpr(var_name, expr);
     default:
-      throw new errors.InvalidValue("Lambda function takes either 1 or 2 arguments.")
+      throw new errors.InvalidValue('Lambda function takes either 1 or 2 arguments.');
   }
 }
 
