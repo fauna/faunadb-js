@@ -86,23 +86,33 @@ function Object(fields) {
 }
 
 /**
- See the [docs](https://faunadb.com/documentation/queries#basic_forms).
- This form generates `var` objects for you, and is called like:
-
- query.lambda(a => query.add(a, a))
- // Produces: {lambda: 'a', expr: {add: [{var: a}, {var: a}]}}
-
- Query functions require lambdas can be passed functions
- without explicitly calling `lambda`.
- For example: `query.map(collection, a => query.add(a, 1))`.
-
- You can also use {@link lambda_expr} directly.
-
- @param {function} func
-   Takes one or more {@link var} expressions and uses them to construct an expression.
-   If this has more than one argument, the lambda destructures an array argument.
-   (To destructure single-element arrays use {@link lambda_expr}.)
- @return {Expr}
+ * See the [docs](https://faunadb.com/documentation/queries#basic_forms).
+ *
+ * Takes a Javascript function, and will transform it
+ * into the appropriate FaunaDB query. For example:
+ *
+ * ```
+ * Lambda(function(a) { return Add(a, a); });
+ * // Returns { lambda: 'a', expr: { add: [{ var: a }, { var: a }] } }
+ * ```
+ * Note that the driver will handle wrapping all usages of the lambda's bound
+ * variables with the {@link modules:query~Var} function.
+ *
+ * @param {function} func
+ *   Takes the provided function and produces the appropriate FaunaDB query expression.
+ * @return {Expr}
+ *
+ *//**
+ * See the [docs](https://faunadb.com/documentation/queries#basic_forms).
+ *
+ * Directly produces a FaunaDB Lambda expression as described in the FaunaDB reference
+ * documentation.
+ *
+ * @param {module:query~ExprArg} var_name
+ *   The names of the variables to be bound in this lambda expression.
+ * @param {module:query~ExprArg} expr
+ *   The lambda expression.
+ * @return {Expr}
  */
 function Lambda() {
   switch(arguments.length) {
