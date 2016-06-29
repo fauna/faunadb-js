@@ -11,9 +11,10 @@ and a complete database API reference.
 
 This Driver supports and is tested on:
 
-* NodeJS
+* Node.js
   * LTS (v4)
   * Stable (v6)
+  * v0.12.x
 * Chrome
 * Firefox
 * Safari
@@ -23,11 +24,18 @@ This Driver supports and is tested on:
 
 ### Installation
 
+#### Node.js
+
 TODO: NPM
+
+#### Browsers
+
+TODO: Browser source
 
 ### Use
 
-General FaunaDB tutorials can be found in the [Official Documentation](http://faunadb.com/documentation/tutorials).
+The [tutorials](http://faunadb.com/documentation/tutorials) in the FaunaDB documentation contain
+driver-specific examples.
 
 #### Requiring the Driver
 
@@ -117,12 +125,12 @@ to provide Promise support.
 
 ### Testing
 
-* `npm run test`: This will run tests against the current version of NodeJS. [nvm](https://github.com/creationix/nvm)
-  is useful for managing multiple versions of Node for testing.
+* `npm run test`: This will run tests against the current version of Node.js. [nvm](https://github.com/creationix/nvm)
+  is useful for managing multiple versions of Node.js for testing.
 * `npm run browser-test-{mac|linux|win}`: This will run tests against platform-specific browsers.
   [Karma](https://karma-runner.github.io/1.0/index.html) is used as the test runner.
 
-Both NodeJS and browser tests will read a `testConfig.json` file located in the root
+Both Node.js and browser tests will read a `testConfig.json` file located in the root
 directory of this project for Fauna client configuration. A minimal `testConfig.json` file
 would contain your FaunaDB key:
 
