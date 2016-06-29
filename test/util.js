@@ -1,72 +1,116 @@
-import {assert} from 'chai'
-import {join} from 'path'
-import Client from '../src/Client'
-import {Ref} from '../src/objects'
-import {removeUndefinedValues} from '../src/_util'
-const env = process.env
+'use strict';
 
-let testConfig
+var chai = require('chai');
+var path = require('path');
+var Client = require('../src/Client');
+var objects = require('../src/objects');
+var util = require('../src/_util');
+var errors = require('../src/errors');
+var query = require('../src/query');
+
+var assert = chai.assert;
+var Ref = objects.Ref;
+
+var env = process.env;
+
+var testConfig;
 try {
-  testConfig = require(join(__dirname, '../testConfig'))
+  testConfig = require(path.join(__dirname, '../testConfig'));
 } catch (err) {
-  console.log('testConfig.json not found, defaulting to environment variables')
+  console.log('testConfig.json not found, defaulting to environment variables');
+  if (typeof env.FAUNA_DOMAIN === 'undefined' ||
+      typeof env.FAUNA_SCHEME === 'undefined' ||
+      typeof env.FAUNA_PORT === 'undefined' ||
+      typeof env.FAUNA_ROOT_KEY === 'undefined') {
+    console.log('Environment variables not defined. Please create a config file or set env vars.');
+    process.exit();
+  }
+
   testConfig = {
     domain: env.FAUNA_DOMAIN,
     scheme: env.FAUNA_SCHEME,
     port: env.FAUNA_PORT,
     auth: parseAuth(env.FAUNA_ROOT_KEY)
-  }
+  };
 }
 
 function parseAuth(authStr) {
   // Split on first ':' to get user:pass
-  const parts = authStr.split(':')
-  const user = parts.shift()
-  const pass = parts.join(':')
-  return {user, pass}
+  var parts = authStr.split(':');
+  var user = parts.shift();
+  var pass = parts.join(':');
+  return { user: user, pass: pass };
 }
 
-function takeObjectKeys(object, ...keys) {
-  const out = {}
-  for (const key of keys)
-    out[key] = object[key]
-  return out
-}
-
-export function getClient(opts) {
-  const cfg = removeUndefinedValues(takeObjectKeys(testConfig, 'domain', 'scheme', 'port'))
-  return new Client(Object.assign({secret: clientSecret}, cfg, opts))
-}
-
-export async function assertRejected(promise, errorType) {
-  let succeeded = false
-  try {
-    await promise
-    succeeded = true
-  } catch (error) {
-    if (!(error instanceof errorType))
-      throw error
+function takeObjectKeys(object) {
+  var out = {};
+  for (var i = 0; i < arguments.length; ++i) {
+    var key = arguments[i];
+    out[key] = object[key];
   }
+  return out;
+}
 
-  assert(!succeeded, 'Expected promise to fail.')
+function getClient(opts) {
+  var cfg = util.removeUndefinedValues(takeObjectKeys(testConfig, 'domain', 'scheme', 'port'));
+  return new Client(Object.assign({ secret: clientSecret }, cfg, opts));
+}
+
+function assertRejected(promise, errorType) {
+  var succeeded = false;
+  
+  return promise.then(function() {
+    succeeded = true;
+    assert(!succeeded, 'Expected promise to fail.');
+  }, function(error) {
+    if (!(error instanceof errorType)) {
+      throw error;
+    }
+  });
 }
 
 // Set in before hook, so won't be null during tests
-export let client = null
-export let clientSecret = null
+var _client = null;
+var clientSecret = null;
 
-export const rootClient = getClient({secret: testConfig.auth})
-const dbName = 'faunadb-js-test'
-export const dbRef = new Ref('databases', dbName)
+function client() {
+  return _client;
+}
+
+var rootClient = getClient({ secret: testConfig.auth });
+var dbName = 'faunadb-js-test';
+var dbRef = new Ref('databases', dbName);
 
 // global before/after for every test
 
-before(async () => {
-  try { await rootClient.delete(dbRef) } catch (err) { }
-  await rootClient.post('databases', {name: dbName})
-  const key = await rootClient.post('keys', {database: dbRef, role: 'server'})
-  clientSecret = {user: key.secret}
-  client = getClient()
-})
+before(function () {
+  return rootClient.query(query.delete_expr(dbRef)).catch(function(exception) {
+    if (exception instanceof errors.BadRequest) {
+      return;
+    } else {
+      throw exception;
+    }
+  }).then(function() {
+    return rootClient.query(query.create(new objects.Ref('databases'), query.object({ name: dbName })));
+  }).then(function() {
+    return rootClient.query(query.create(new objects.Ref('keys'), query.quote({ database: dbRef, role: 'server' })));
+  }).then(function(key) {
+    clientSecret = { user: key.secret };
+    _client = getClient();
+  }).catch(function(exception) {
+    console.log('failed: ' + exception);
+  });
+});
 
-after(() => rootClient.delete(dbRef))
+after(function () {
+  rootClient.delete(dbRef);
+});
+
+module.exports = {
+  getClient: getClient,
+  assertRejected: assertRejected,
+  client: client,
+  clientSecret: clientSecret,
+  rootClient: rootClient,
+  dbRef: dbRef
+};

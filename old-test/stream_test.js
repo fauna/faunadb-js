@@ -2,7 +2,7 @@ import {assert} from 'chai'
 import AsyncStream from '../src/AsyncStream'
 import PageStream from '../src/PageStream'
 import * as query from '../src/query'
-import {client} from './util'
+import {client} from '../test/util'
 
 const countToFour = () =>
   AsyncStream.fromIterable([0, 1, 2, 3, 4])
