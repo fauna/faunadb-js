@@ -234,6 +234,5 @@ describe('page', function() {
       assert.equal(96, refsToIndex[p[0][1]]);
       assert.equal(97, refsToIndex[p[1][1]]);
     });
-
   });
 });
