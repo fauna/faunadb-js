@@ -206,12 +206,27 @@ describe('page', function() {
     });
   });
 
-  it('paginates eachPage item', function() {
+  it('paginates eachItem', function() {
     var i = 0;
     var page = new PageHelper(client, query.Match(indexRef));
     return page.eachItem(function(item) {
       assert.equal(i, refsToIndex[item[1]]);
       i += 1;
+    });
+  });
+
+  it('iteratively paginates pages', function() {
+    var page = new PageHelper(client, query.match(indexRef), { size: 2 });
+
+    return page.nextPage().then(function(p) {
+      assert.equal(p.length, 2);
+      assert.equal(0, refsToIndex[p[0][1]]);
+      assert.equal(1, refsToIndex[p[1][1]]);
+      return page.nextPage();
+    }).then(function(p) {
+      assert.equal(p.length, 2);
+      assert.equal(2, refsToIndex[p[0][1]]);
+      assert.equal(3, refsToIndex[p[1][1]]);
     });
   });
 });

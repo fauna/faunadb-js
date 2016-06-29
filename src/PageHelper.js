@@ -132,6 +132,24 @@ PageHelper.prototype.eachItem = function(lambda) {
   }));
 };
 
+PageHelper.prototype.nextPage = function() {
+  var self = this;
+  return this._nextPage(this.cursor).then(function(page) {
+    var nextCursor;
+    if (self.reverse) {
+      nextCursor = page.before;
+    } else {
+      nextCursor = page.after;
+    }
+
+    if (nextCursor !== undefined) {
+      self.cursor = nextCursor;
+    }
+
+    return page.data;
+  });
+};
+
 PageHelper.prototype._handlePage = function(lambda) {
   var self = this;
   return function (page) {
