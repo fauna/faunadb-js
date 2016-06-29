@@ -1,12 +1,12 @@
 'use strict';
 
 var chai = require('chai');
-var path = require('path');
 var Client = require('../src/Client');
-var objects = require('../src/objects');
-var util = require('../src/_util');
 var errors = require('../src/errors');
 var query = require('../src/query');
+var objectAssign = require('object-assign');
+var objects = require('../src/objects');
+var util = require('../src/_util');
 
 var assert = chai.assert;
 var Ref = objects.Ref;
@@ -15,7 +15,7 @@ var env = process.env;
 
 var testConfig;
 try {
-  testConfig = require(path.join(__dirname, '../testConfig'));
+  testConfig = require('../testConfig.json');
 } catch (err) {
   console.log('testConfig.json not found, defaulting to environment variables');
   if (typeof env.FAUNA_DOMAIN === 'undefined' ||
@@ -53,12 +53,12 @@ function takeObjectKeys(object) {
 
 function getClient(opts) {
   var cfg = util.removeUndefinedValues(takeObjectKeys(testConfig, 'domain', 'scheme', 'port'));
-  return new Client(Object.assign({ secret: clientSecret }, cfg, opts));
+  return new Client(objectAssign({ secret: clientSecret }, cfg, opts));
 }
 
 function assertRejected(promise, errorType) {
   var succeeded = false;
-  
+
   return promise.then(function() {
     succeeded = true;
     assert(!succeeded, 'Expected promise to fail.');
@@ -77,22 +77,18 @@ function client() {
   return _client;
 }
 
+function randomString() {
+  return (Math.random() * 0xFFFFFF << 0).toString(16);
+}
+
 var rootClient = getClient({ secret: testConfig.auth });
-var dbName = 'faunadb-js-test';
+var dbName = 'faunadb-js-test-' + randomString();
 var dbRef = new Ref('databases', dbName);
 
 // global before/after for every test
 
 before(function () {
-  return rootClient.query(query.delete_expr(dbRef)).catch(function(exception) {
-    if (exception instanceof errors.BadRequest) {
-      return;
-    } else {
-      throw exception;
-    }
-  }).then(function() {
-    return rootClient.query(query.create(new objects.Ref('databases'), query.object({ name: dbName })));
-  }).then(function() {
+  return rootClient.query(query.create(new objects.Ref('databases'), query.object({ name: dbName }))).then(function() {
     return rootClient.query(query.create(new objects.Ref('keys'), query.quote({ database: dbRef, role: 'server' })));
   }).then(function(key) {
     clientSecret = { user: key.secret };

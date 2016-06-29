@@ -17,6 +17,7 @@ var client;
 var classRef, nIndexRef, mIndexRef, refN1, refM1, refN1M1, thimbleClassRef;
 
 describe('query', function () {
+  this.timeout(10000);
   before(function () {
     // Hideous way to ensure that the client is initialized.
     client = util.client();
@@ -37,14 +38,16 @@ describe('query', function () {
       }))).then(function(i) { mIndexRef = i.ref; });
 
       return Promise.all([nIndexRefP, mIndexRefP]).then(function() {
-        var instanceP = create({ n: 1 }).then(function (i) { refN1 = i.ref; }).then(function () {
-         return create({ m: 1 });
-        }).then(function (i) { refM1 = i.ref; }).then(function() {
-          return create({ n: 1, m: 1 })
+        var createP = create({ n: 1 }).then(function (i) {
+          refN1 = i.ref;
+          return create({ m: 1 });
+        }).then(function (i) {
+          refM1 = i.ref;
+          return create({ n: 1, m: 1 });
         }).then(function (i) { refN1M1 = i.ref; });
-        
         var thimbleClassRefP = client.post('classes', { name: 'thimbles' }).then(function (i) { thimbleClassRef = i.ref; });
-        return Promise.all([instanceP, thimbleClassRefP]);
+
+        return Promise.all([createP, thimbleClassRefP]);
       });
     });
   });

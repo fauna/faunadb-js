@@ -1,6 +1,7 @@
 'use strict';
 
 var annotate = require('fn-annotate');
+var objectAssign = require('object-assign');
 
 // Basic forms
 
@@ -126,7 +127,7 @@ function get(ref, ts) {
 function paginate(set, opts) {
   opts = defaults(opts, {});
 
-  return Object.assign({ paginate: set }, opts);
+  return objectAssign({ paginate: set }, opts);
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#read_functions). */
