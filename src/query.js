@@ -2,6 +2,7 @@
 
 var annotate = require('fn-annotate');
 var Expr = require('./Expr');
+var errors = require('./errors');
 var values = require('./values');
 var objectAssign = require('object-assign');
 
@@ -86,7 +87,7 @@ function Object(fields) {
 
 /**
  See the [docs](https://faunadb.com/documentation/queries#basic_forms).
- This form generates `var` objects for you, and is called like::
+ This form generates `var` objects for you, and is called like:
 
  query.lambda(a => query.add(a, a))
  // Produces: {lambda: 'a', expr: {add: [{var: a}, {var: a}]}}
@@ -103,32 +104,48 @@ function Object(fields) {
    (To destructure single-element arrays use {@link lambda_expr}.)
  @return {Expr}
  */
-function Lambda(func) {
-  var vars = annotate(func);
-  switch (vars.length) {
-    case 0:
-      throw new Error('Function must take at least 1 argument.');
+function Lambda() {
+  switch(arguments.length) {
     case 1:
-      return LambdaExpr(vars[0], func(Var(vars[0])));
+      var value = arguments[0];
+      if (value instanceof Function) {
+        return _lambdaFunc(value);
+      } else if (value instanceof Expr) {
+        return value;
+      } else {
+        throw new errors.InvalidValue("Lambda function takes either a Function or an Expr.");
+      }
+
+      return value instanceof Function ? _lambdaFunc(value) : value;
+    case 2:
+      var var_name = arguments[0];
+      var expr = arguments[1];
+
+      return _lambdaExpr(var_name, expr);
     default:
-      return LambdaExpr(vars, func.apply(null, vars.map(Var)));
+      throw new errors.InvalidValue("Lambda function takes either 1 or 2 arguments.")
   }
 }
 
-/** If `value` is a function converts it to a query using {@link lambda}.
+/**
  * @private
- * */
-function toLambda(value) {
-  return value instanceof Function ? Lambda(value) : value;
+ */
+function _lambdaFunc(func) {
+  var vars = annotate(func);
+  switch (vars.length) {
+    case 0:
+      throw new errors.InvalidValue('Provided Function must take at least 1 argument.');
+    case 1:
+      return _lambdaExpr(vars[0], func(Var(vars[0])));
+    default:
+      return _lambdaExpr(vars, func.apply(null, vars.map(Var)));
+  }
 }
 
-/** See the [docs](https://faunadb.com/documentation/queries#basic_forms).
- *
- * @param {module:query~ExprArg} var_name
- * @param {module:query~ExprArg} expr
- * @return {Expr}
- * */
-function LambdaExpr(var_name, expr) {
+/**
+ * @private
+ */
+function _lambdaExpr(var_name, expr) {
   return new Expr({ lambda: Expr.wrap(var_name), expr: Expr.wrap(expr) });
 }
 
@@ -141,7 +158,7 @@ function LambdaExpr(var_name, expr) {
  * @return {Expr}
  * */
 function Map(collection, lambda_expr) {
-  return new Expr({ map: Expr.wrap(toLambda(lambda_expr)), collection: Expr.wrap(collection) });
+  return new Expr({ map: Expr.wrap(Lambda(lambda_expr)), collection: Expr.wrap(collection) });
 }
 
 /**
@@ -152,7 +169,7 @@ function Map(collection, lambda_expr) {
  * @return {Expr}
  * */
 function Foreach(collection, lambda_expr) {
-  return new Expr({ foreach: Expr.wrap(toLambda(lambda_expr)), collection: Expr.wrap(collection) });
+  return new Expr({ foreach: Expr.wrap(Lambda(lambda_expr)), collection: Expr.wrap(collection) });
 }
 
 /**
@@ -163,7 +180,7 @@ function Foreach(collection, lambda_expr) {
  * @return {Expr}
  * */
 function Filter(collection, lambda_expr) {
-  return new Expr({ filter: Expr.wrap(toLambda(lambda_expr)), collection: Expr.wrap(collection) });
+  return new Expr({ filter: Expr.wrap(Lambda(lambda_expr)), collection: Expr.wrap(collection) });
 }
 
 /**
@@ -399,7 +416,7 @@ function Distinct(set) {
  * @return {Expr}
  */
 function Join(source, target) {
-  return new Expr({ join: Expr.wrap(source), with: Expr.wrap(toLambda(target)) });
+  return new Expr({ join: Expr.wrap(source), with: Expr.wrap(Lambda(target)) });
 }
 
 // Authentication
@@ -705,7 +722,6 @@ module.exports = {
   Do: Do,
   Object: Object,
   Lambda: Lambda,
-  LambdaExpr: LambdaExpr,
   Map: Map,
   Foreach: Foreach,
   Filter: Filter,
