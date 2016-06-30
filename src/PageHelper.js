@@ -119,19 +119,6 @@ PageHelper.prototype.eachPage = function(lambda) {
   return this._nextPage(this.cursor).then(this._handlePage(lambda));
 };
 
-/**
- * Executes the provided function for each item in each page.
- *
- * @param {PageHelper~eachItemFunction} lambda
- *   A function to be executed for each item in each page.
- * @returns {external:Promise.<void>}
- */
-PageHelper.prototype.eachItem = function(lambda) {
-  return this._nextPage(this.cursor).then(this._handlePage(function(page) {
-    page.forEach(lambda);
-  }));
-};
-
 PageHelper.prototype.nextPage = function() {
   var self = this;
   return this._nextPage(this.cursor).then(function(page) {

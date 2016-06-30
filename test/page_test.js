@@ -206,15 +206,6 @@ describe('page', function() {
     });
   });
 
-  it('paginates eachItem', function() {
-    var i = 0;
-    var page = new PageHelper(client, query.Match(indexRef));
-    return page.eachItem(function(item) {
-      assert.equal(i, refsToIndex[item[1]]);
-      i += 1;
-    });
-  });
-
   it('iteratively paginates pages', function() {
     var page = new PageHelper(client, query.match(indexRef), { size: 2 });
 
