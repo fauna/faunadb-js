@@ -65,7 +65,7 @@ describe('page', function() {
 
   it('pages', function() {
     var page = new PageHelper(client, query.Match(indexRef));
-    return page.eachPage(function(p) {
+    return page.each(function(p) {
       p.forEach(function(item) {
         var i = item[0];
         var ref = item[1];
@@ -77,7 +77,7 @@ describe('page', function() {
   it('maps pagination', function() {
     var i = 0;
     var page = new PageHelper(client, query.Match(indexRef));
-    return page.map(function(i) { return query.Select([1], i); }).eachPage(function(p) {
+    return page.map(function(i) { return query.Select([1], i); }).each(function(p) {
       p.forEach(function(item) {
         assert.equal(i, refsToIndex[item]);
         i += 1;
@@ -90,7 +90,7 @@ describe('page', function() {
   it('filters pagination', function() {
     var i = 0;
     var page = new PageHelper(client, query.Match(indexRef));
-    return page.filter(function(i) { return query.Equals(query.Modulo([query.Select(0, i), 2]), 0); }).eachPage(function(p) {
+    return page.filter(function(i) { return query.Equals(query.Modulo([query.Select(0, i), 2]), 0); }).each(function(p) {
       p.forEach(function(item) {
         assert.equal(i, refsToIndex[item[1]]);
         i += 2;
@@ -103,7 +103,7 @@ describe('page', function() {
   it('reverses pagination', function() {
     var i = NUM_INSTANCES - 1;
     var page = new PageHelper(client, query.Match(indexRef), { before: null });
-    return page.eachPage(function(p) {
+    return page.eachReverse(function(p) {
       p.reverse().forEach(function(item) {
         assert.equal(i, refsToIndex[item[1]]);
         i -= 1;
@@ -116,7 +116,7 @@ describe('page', function() {
   it('honors passed in cursor', function() {
     var i = 50;
     var page = new PageHelper(client, query.Match(indexRef), { after: 50 });
-    return page.eachPage(function(p) {
+    return page.each(function(p) {
       p.forEach(function(item) {
         assert.equal(i, refsToIndex[item[1]]);
         i += 1;
@@ -129,7 +129,7 @@ describe('page', function() {
   it('honors passed in cursor in the reverse direction', function() {
     var i = 50;
     var page = new PageHelper(client, query.Match(indexRef), { before: 51 });
-    return page.eachPage(function(p) {
+    return page.eachReverse(function(p) {
       p.reverse().forEach(function(item) {
         assert.equal(i, refsToIndex[item[1]]);
         i -= 1;
@@ -145,7 +145,7 @@ describe('page', function() {
     var pageSize = NUM_INSTANCES / numPages;
 
     var page = new PageHelper(client, query.Match(indexRef), { size: pageSize });
-    return page.eachPage(function(item) {
+    return page.each(function(item) {
       // Note that this relies on numPages being a factor of NUM_INSTANCES
       assert.equal(item.length, pageSize);
       i += 1;
@@ -156,12 +156,12 @@ describe('page', function() {
 
   it('honors ts', function() {
     var page = new PageHelper(client, query.Match(tsIndexRef));
-    var p1 = page.eachPage(function(item) {
+    var p1 = page.each(function(item) {
       assert.equal(item.length, 2);
     });
 
     var page2 = new PageHelper(client, query.Match(tsIndexRef), { ts: tsInstance1Ts });
-    var p2 = page2.eachPage(function(item) {
+    var p2 = page2.each(function(item) {
       assert.equal(item.length, 1);
       assert.deepEqual(item[0], tsInstance1Ref);
     });
@@ -171,7 +171,7 @@ describe('page', function() {
 
   it('honors events', function() {
     var page = new PageHelper(client, query.Match(indexRef), { events: true });
-    return page.eachPage(function(p) {
+    return page.each(function(p) {
       p.forEach(function(item) {
         assert.property(item, 'ts');
         assert.property(item, 'action');
@@ -183,7 +183,7 @@ describe('page', function() {
 
   it('honors sources', function() {
     var page = new PageHelper(client, query.Match(indexRef), { sources: true });
-    return page.eachPage(function(p) {
+    return page.each(function(p) {
       p.forEach(function(item) {
         assert.property(item, 'sources');
       });
@@ -192,7 +192,7 @@ describe('page', function() {
 
   it('honors a combination of parameters', function() {
     var page = new PageHelper(client, query.Match(indexRef), { before: null, events: true, sources: true } );
-    return page.eachPage(function(p) {
+    return page.each(function(p) {
       p.forEach(function(item) {
         assert.property(item, 'value');
         assert.property(item, 'sources');
@@ -207,7 +207,7 @@ describe('page', function() {
   });
 
   it('iteratively paginates pages', function() {
-    var page = new PageHelper(client, query.match(indexRef), { size: 2 });
+    var page = new PageHelper(client, query.Match(indexRef), { size: 2 });
 
     return page.nextPage().then(function(p) {
       assert.equal(p.length, 2);
@@ -219,5 +219,21 @@ describe('page', function() {
       assert.equal(2, refsToIndex[p[0][1]]);
       assert.equal(3, refsToIndex[p[1][1]]);
     });
+  });
+
+  it('iteratively paginates pages in the reverse direction', function() {
+    var page = new PageHelper(client, query.Match(indexRef), { before: null, size: 2 });
+
+    return page.previousPage().then(function(p) {
+      assert.equal(p.length, 2);
+      assert.equal(98, refsToIndex[p[0][1]]);
+      assert.equal(99, refsToIndex[p[1][1]]);
+      return page.previousPage();
+    }).then(function(p) {
+      assert.equal(p.length, 2);
+      assert.equal(96, refsToIndex[p[0][1]]);
+      assert.equal(97, refsToIndex[p[1][1]]);
+    });
+
   });
 });
