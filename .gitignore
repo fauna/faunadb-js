@@ -7,3 +7,5 @@ typings/
 *.iml
 .idea/
 .vscode/
+faunadb*.tgz
+doc/

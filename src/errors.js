@@ -2,36 +2,90 @@
 
 var util = require('util');
 
-function FaunaError(message) { 
+/**
+ * @module errors
+ */
+
+/**
+ * The base exception type for all FaunaDB errors,
+ * whether from the client or the FaunaDB server.
+ *
+ * @param {string} message
+ * @extends Error
+ * @constructor
+ */
+function FaunaError(message) {
   Error.call(this);
+
+  /**
+   * Name of this exception.
+   * @type {string}
+   */
   this.name = this.constructor.name;
+
+  /**
+   * Message for this exception.
+   * @type {string}
+   */
   this.message = message;
 }
 
-/** Thrown when a query is malformed */
-function InvalidQuery() {
-  FaunaError.call(this, arguments);
-}
+util.inherits(FaunaError, Error);
 
-/** Thrown when a value can not be accepted. */
+
+/**
+ * Exception thrown by this client library when an invalid
+ * value is provided to a function.
+ *
+ * @extends module:errors~FaunaError
+ * @constructor
+ */
 function InvalidValue() {
   FaunaError.call(this, arguments);
 }
 
-/** Thrown when the FaunaDB server responds with an error. */
+util.inherits(InvalidValue, FaunaError);
+
+/**
+ * Base exception type for errors returned by the FaunaDB server.
+ *
+ * @param {RequestResult} requestResult
+ *
+ * @extends module:errors~FaunaError
+ * @constructor
+ */
 function FaunaHTTPError(requestResult) {
   var response = requestResult.responseContent;
   var errors = response.errors;
   var message = errors.length === 0 ? '(empty "errors")' : errors[0].code;
   FaunaError.call(this, message);
-  
+
+  /**
+   * A wrapped {@link RequestResult} object, containing the request and response
+   * context of the failed request.
+   *
+   * @type {RequestResult}
+   */
   this.requestResult = requestResult;
 }
 
+util.inherits(FaunaHTTPError, FaunaError);
+
+/**
+ * Convenience method to return the errors from the response.
+ *
+ * @returns {Object}
+ */
 FaunaHTTPError.prototype.errors = function() {
   return this.requestResult.responseContent.errors;
 };
 
+/**
+ * Takes a {@link RequestResult} and throws an appropriate exception if
+ * it contains a failed request.
+ *
+ * @param requestResult {RequestResult}
+ */
 FaunaHTTPError.raiseForStatusCode = function (requestResult) {
   var code = requestResult.statusCode;
   if (code < 200 || code >= 300) {
@@ -56,57 +110,94 @@ FaunaHTTPError.raiseForStatusCode = function (requestResult) {
   }
 };
 
-/** HTTP 400 error. */
+/**
+ * A HTTP 400 error.
+ *
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
 function BadRequest(requestResult) {
   FaunaHTTPError.call(this, requestResult);
 }
 
-/** HTTP 401 error. */
+util.inherits(BadRequest, FaunaHTTPError);
+
+/**
+ * A HTTP 401 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
 function Unauthorized(requestResult) {
   FaunaHTTPError.call(this, requestResult);
 }
 
-/** HTTP 403 error. */
+util.inherits(Unauthorized, FaunaHTTPError);
+
+/**
+ * A HTTP 403 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
 function PermissionDenied(requestResult) {
   FaunaHTTPError.call(this, requestResult);
 }
 
-/** HTTP 404 error. */
+util.inherits(PermissionDenied, FaunaHTTPError);
+
+/**
+ * A HTTP 404 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
 function NotFound(requestResult) {
   FaunaHTTPError.call(this, requestResult);
 }
 
-/** HTTP 405 error. */
+util.inherits(NotFound, FaunaHTTPError);
+
+/**
+ * A HTTP 405 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
 function MethodNotAllowed(requestResult) {
   FaunaHTTPError.call(this, requestResult);
 }
 
-/** HTTP 500 error. */
+util.inherits(MethodNotAllowed, FaunaHTTPError);
+
+/**
+ * A HTTP 500 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
 function InternalError(requestResult) {
   FaunaHTTPError.call(this, requestResult);
 }
 
-/** HTTP 503 error. */
+util.inherits(InternalError, FaunaHTTPError);
+
+/**
+ * A HTTP 503 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
 function UnavailableError(requestResult) {
   FaunaHTTPError.call(this, requestResult);
 }
 
-util.inherits(FaunaError, Error);
-util.inherits(InvalidQuery, FaunaError);
-util.inherits(InvalidValue, FaunaError);
-util.inherits(FaunaHTTPError, FaunaError);
-util.inherits(BadRequest, FaunaHTTPError);
-util.inherits(Unauthorized, FaunaHTTPError);
-util.inherits(PermissionDenied, FaunaHTTPError);
-util.inherits(NotFound, FaunaHTTPError);
-util.inherits(MethodNotAllowed, FaunaHTTPError);
-util.inherits(InternalError, FaunaHTTPError);
 util.inherits(UnavailableError, FaunaHTTPError);
 
 module.exports = {
   FaunaHTTPError: FaunaHTTPError,
   InvalidValue: InvalidValue,
-  InvalidQuery: InvalidQuery,
   BadRequest: BadRequest,
   Unauthorized: Unauthorized,
   PermissionDenied: PermissionDenied,

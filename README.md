@@ -47,17 +47,17 @@ that looks like this:
       "domain": "localhost",
       "scheme": "http",
       "port": 8443,
-      "auth": {"user": "secret"}
+      "auth": "secret"
     }
 
 `domain`, `scheme`, and `port` are optional and will default to FaunaDB cloud.
 So to test with cloud, `testConfig.json` is as simple as:
 
     {
-      "auth": {"user": "me@example.com", "pass": "swordfish"}
+      "auth": "your_fauna_key"
     }
 
-You can also set the `FAUNA_DOMAIN`, `FAUNA_SCHEME`, `FAUNA_PORT`, and `FAUNA_ROOT_KEY` environment variables. `FAUNA_ROOT_KEY` may look like `me@example.com:swordfish` for cloud accounts.
+You can also set the `FAUNA_DOMAIN`, `FAUNA_SCHEME`, `FAUNA_PORT`, and `FAUNA_ROOT_KEY` environment variables.
 
 Note that when testing in cloud, builtin tests for database, key, and custom field will fail as cloud accounts do not have access to that functionality.
 

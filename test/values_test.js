@@ -2,19 +2,17 @@
 
 var assert = require('chai').assert;
 var errors = require('../src/errors');
-var Expr = require('../src/Expr');
-var objects = require('../src/objects');
-
-var FaunaDate = objects.FaunaDate,
-  FaunaTime = objects.FaunaTime,
-  Page = objects.Page,
-  Ref = objects.Ref,
-  SetRef = objects.SetRef;
-
 var json = require('../src/_json');
-var query = require('../src/query');
+var Expr = require('../src/Expr');
+var values = require('../src/values');
 
-describe('objects', function() {
+var FaunaDate = values.FaunaDate,
+  FaunaTime = values.FaunaTime,
+  Ref = values.Ref,
+  SetRef = values.SetRef;
+
+
+describe('Values', function() {
   var
     ref = new Ref('classes', 'frogs', '123'),
     jsonRef = '{"@ref":"classes/frogs/123"}';
@@ -54,11 +52,6 @@ describe('objects', function() {
       jsonMatch = '{"@set":{"match":' + jsonIndex + ',"terms":' + jsonRef + '}}';
     assert.deepEqual(json.parseJSON(jsonMatch), match);
     assert.equal(json.toJSON(match), jsonMatch);
-  });
-
-  it('page', function () {
-    assert.deepEqual(Page.fromRaw({ data: 1, before: 2, after: 3 }), new Page(1, 2, 3));
-    assert.deepEqual(new Page([1, 2, 3], 2, 3).mapData(function(x) { return x + 1;}), new Page([2, 3, 4], 2, 3));
   });
 
   it('time conversion', function () {

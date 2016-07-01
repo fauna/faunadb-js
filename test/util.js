@@ -3,13 +3,14 @@
 var chai = require('chai');
 var Client = require('../src/Client');
 var Expr = require('../src/Expr');
+var values = require('../src/values');
 var query = require('../src/query');
 var objectAssign = require('object-assign');
-var objects = require('../src/objects');
 var util = require('../src/_util');
 
 var assert = chai.assert;
-var Ref = objects.Ref;
+var Ref = query.Ref;
+var Value = values.Value;
 
 var env = process.env;
 
@@ -30,16 +31,8 @@ try {
     domain: env.FAUNA_DOMAIN,
     scheme: env.FAUNA_SCHEME,
     port: env.FAUNA_PORT,
-    auth: parseAuth(env.FAUNA_ROOT_KEY)
+    auth: env.FAUNA_ROOT_KEY
   };
-}
-
-function parseAuth(authStr) {
-  // Split on first ':' to get user:pass
-  var parts = authStr.split(':');
-  var user = parts.shift();
-  var pass = parts.join(':');
-  return { user: user, pass: pass };
 }
 
 function takeObjectKeys(object) {
@@ -82,7 +75,9 @@ function randomString() {
 }
 
 function unwrapExpr(obj) {
-  if (obj instanceof Expr) {
+  if (obj instanceof Value) {
+    return obj;
+  } else if (obj instanceof Expr) {
     return unwrapExprValues(obj.raw);
   } else {
     return obj;
@@ -109,15 +104,15 @@ function unwrapExprValues(obj) {
 
 var rootClient = getClient({ secret: testConfig.auth });
 var dbName = 'faunadb-js-test-' + randomString();
-var dbRef = new Ref('databases', dbName);
+var dbRef = Ref('databases', dbName);
 
 // global before/after for every test
 
 before(function () {
-  return rootClient.query(query.create(new objects.Ref('databases'), { name: dbName })).then(function() {
-    return rootClient.query(query.create(new objects.Ref('keys'), { database: dbRef, role: 'server' }));
+  return rootClient.query(query.Create(Ref('databases'), { name: dbName })).then(function() {
+    return rootClient.query(query.Create(Ref('keys'), { database: dbRef, role: 'server' }));
   }).then(function(key) {
-    clientSecret = { user: key.secret };
+    clientSecret = key.secret;
     _client = getClient();
   }).catch(function(exception) {
     console.log('failed: ' + exception);
@@ -125,7 +120,7 @@ before(function () {
 });
 
 after(function () {
-  rootClient.delete(dbRef);
+  return rootClient.delete(dbRef);
 });
 
 module.exports = {
