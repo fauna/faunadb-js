@@ -2,7 +2,7 @@
 
 A Javascript driver for [FaunaDB](https://faunadb.com).
 
-View JSDocs here. (TODO: JSDOC LINK)
+[View reference JSDocs here](https://faunadb.github.com/faunadb-js).
 
 See the [FaunaDB Documentation](https://faunadb.com/documentation) for tutorials
 and a complete database API reference.
@@ -110,8 +110,7 @@ helper.map(function(ref) { return q.Get(ref); }).eachPage(function(page) {
 });
 ```
 
-See the JSDocs for more information on the pagination helper.
-TODO: LINK TO JSDOCS
+[See the JSDocs](https://faunadb.github.com/faunadb-js/PageHelper.html) for more information on the pagination helper.
 
 ## Client Development
 
