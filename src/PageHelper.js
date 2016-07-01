@@ -17,15 +17,9 @@ var Promise = require('es6-promise').Promise;
  */
 
 /**
- * @callback PageHelper~eachPageFunction
+ * @callback PageHelper~eachFunction
  * @param {Object} page
  *   A page returned by FaunaDB's Paginate function.
- */
-
-/**
- * @callback PageHelper~eachItemFunction
- * @param {Object} item
- *   An item contained in a page returned by FaunaDB's Paginate function.
  */
 
 /**
@@ -107,7 +101,7 @@ PageHelper.prototype.filter = function(lambda) {
 /**
  * Executes the provided function for each page.
  *
- * @param {PageHelper~eachPageFunction} lambda
+ * @param {PageHelper~eachFunction} lambda
  *   A function to be executed for each page.
  * @returns {external:Promise.<void>}
  */
@@ -115,15 +109,34 @@ PageHelper.prototype.each = function(lambda) {
   return this._retrieveNextPage(this.after, false).then(this._consumePages(lambda, false));
 };
 
+/**
+ * Executes the provided function for each page, in the reverse direction.
+ * @param {PageHelper~eachFunction} lambda
+ * @returns {external:Promise.<void>}
+ */
 PageHelper.prototype.eachReverse = function(lambda) {
   return this._retrieveNextPage(this.before, true).then(this._consumePages(lambda, true));
 };
 
+/**
+ * Queries for the previous page from the current cursor point; this mutates
+ * the state of the PageHelper when the query completes, updating the internal
+ * cursor state to that of the returned page.
+ *
+ * @returns {external:Promise.<object>}
+ */
 PageHelper.prototype.previousPage = function() {
   var self = this;
   return this._retrieveNextPage(this.before, true).then(this._adjustCursors.bind(self));
 };
 
+/**
+ * Queries for the next page from the current cursor point; this mutates
+ * the state of the PageHelper when the query completes, updating the internal
+ * cursor state to that of the returned page.
+ *
+ * @returns {external:Promise.<object>}
+ */
 PageHelper.prototype.nextPage = function() {
   var self = this;
   return this._retrieveNextPage(this.after, false).then(this._adjustCursors.bind(self));
