@@ -1,9 +1,22 @@
 'use strict';
 
 var errors = require('./errors');
+var Expr = require('./Expr');
 var util = require('util');
 
-function FaunaObject() { }
+/**
+ * @module value
+ */
+
+/**
+ * Base type for FaunaDB objects.
+ *
+ * @extends Expr
+ * @constructor
+ */
+function Value() { }
+
+util.inherits(Value, Expr);
 
 /**
  * FaunaDB ref.
@@ -11,23 +24,37 @@ function FaunaObject() { }
  *
  * A simple wrapper around a string which can be extracted using `ref.value`.
  * Queries that require a Ref will not work if you just pass in a string.
+ *
+ * You can create a Ref from a string, such as `new Ref('databases/prydain')`.
+ * You can also call `new Ref('databases', 'prydain')` or `new Ref(new Ref('databases'), 'prydain').
+ *
+ * @param {string|Ref} valueOrParent
+ *   The string value of the Ref, or the parent portion of the Ref if child is specified.
+ * @param {?string} id
+ *   The child portion of the ref.
+ *
+ * @extends module:value~Value
+ * @constructor
  */
 function Ref() {
-  // TODO: Constructor documentation
-  /**
-   * Create a Ref from a string, such as `new Ref('databases/prydain')`.
-   * Can also call `new Ref('databases', 'prydain')` or `new Ref(new Ref('databases'), 'prydain').
-   */
   var parts = Array.prototype.slice.call(arguments);
+  /**
+   * The string value of the ref.
+   *
+   * @type {string}
+   */
   this.value = parts.join('/');
 }
 
-util.inherits(Ref, FaunaObject);
+util.inherits(Ref, Value);
 
 /**
  * Gets the class part out of the Ref.
  * This is done by removing the id.
  * So `new Ref('a', 'b/c').class` will be `new Ref('a/b')`.
+ *
+ * @member {string}
+ * @name module:value~Ref#class
  */
 Object.defineProperty(Ref.prototype, 'class', { get: function() {
   var parts = this.value.split('/');
@@ -41,6 +68,9 @@ Object.defineProperty(Ref.prototype, 'class', { get: function() {
 /**
  * Removes the class part of the Ref, leaving only the id.
  * this is everything after the last `/`.
+ *
+ * @member {string}
+ * @name module:value~Ref#id
  */
 Object.defineProperty(Ref.prototype, 'id', { get: function() {
   var parts = this.value.split('/');
@@ -70,7 +100,11 @@ Ref.prototype.inspect = function() {
   return 'Ref(' + JSON.stringify(this.value) + ')';
 };
 
-/** Whether these are both Refs and have the same value. */
+/**
+ * Whether these are both Refs and have the same value.
+ * @param {any} other
+ * @returns {boolean}
+ */
 Ref.prototype.equals = function(other) {
   return other instanceof Ref && this.value === other.value;
 };
@@ -78,16 +112,19 @@ Ref.prototype.equals = function(other) {
 /**
  * FaunaDB Set.
  * This represents a set returned as part of a response.
- * This looks like This looks like `{"@set": set_query}`.
+ * This looks like `{"@set": set_query}`.
  * For query sets see {@link match}, {@link union},
  * {@link intersection}, {@link difference}, and {@link join}.
+ *
+ * @extends module:value~Value
+ * @constructor
  */
-function SetRef(query) {
+function SetRef(value) {
   /** Raw query object. */
-  this.query = query;
+  this.value = value;
 }
 
-util.inherits(SetRef, FaunaObject);
+util.inherits(SetRef, Value);
 
 /** @ignore */
 SetRef.prototype.inspect = function() {
@@ -96,39 +133,14 @@ SetRef.prototype.inspect = function() {
 
 /** @ignore */
 SetRef.prototype.toJSON = function() {
-  return { '@set': this.query };
+  return { '@set': this.value };
 };
 
-/**
- * A single pagination result.
- * See `paginate` in the [docs](https://faunadb.com/documentation/queries#read_functions).
- */
-function Page(data, before, after) {
-  /**
-   * Always a list.
-   * Elements could be raw data; some methods may convert data.
-   */
-  this.data = data;
-  /** Optional {@link Ref} for an instance that comes before this page. */
-  this.before = before;
-  /** Optional {@link Ref} for an instance that comes after this page. */
-  this.after = after;
-}
-
-util.inherits(Page, FaunaObject);
-
-/** Use this on an object that you know represents a Page. */
-Page.fromRaw = function(object) {
-  return new Page(object.data, object.before, object.after);
-};
-
-Page.prototype.mapData = function(func) {
-  return new Page(this.data.map(func), this.before, this.after);
-};
-
-/** FaunaDB time. See the [docs](https://faunadb.com/documentation/queries#values-special_types). */
-/**
+/** FaunaDB time. See the [docs](https://faunadb.com/documentation/queries#values-special_types).
+ *
  * @param {string|Date} value If a Date, this is converted to a string.
+ * @extends module:value~Value
+ * @constructor
  */
 function FaunaTime(value) {
   if (value instanceof Date) {
@@ -140,11 +152,14 @@ function FaunaTime(value) {
   this.value = value;
 }
 
-util.inherits(FaunaTime, FaunaObject);
+util.inherits(FaunaTime, Value);
 
 /**
+ * Returns the date wrapped by this object.
  * This is lossy as Dates have millisecond rather than nanosecond precision.
- * @return {Date}
+ *
+ * @member {Date}
+ * @name module:value~FaunaTime#date
  */
 Object.defineProperty(FaunaTime.prototype, 'date', { get: function() {
   return new Date(this.value);
@@ -155,11 +170,13 @@ FaunaTime.prototype.toJSON = function() {
   return { '@ts': this.value };
 };
 
-/** FaunaDB date. See the [docs](https://faunadb.com/documentation/queries#values-special_types). */
-  /**
-   * @param {string|Date} value
-   *   If a Date, this is converted to a string, with time-of-day discarded.
-   */
+/** FaunaDB date. See the [docs](https://faunadb.com/documentation/queries#values-special_types).
+ *
+ * @param {string|Date} value
+ *   If a Date, this is converted to a string, with time-of-day discarded.
+ * @extends module:value~Value
+ * @constructor
+ */
 function FaunaDate(value) {
   if (value instanceof Date) {
     // The first 10 characters 'YYYY-MM-DD' are the date portion.
@@ -173,9 +190,12 @@ function FaunaDate(value) {
   this.value = value;
 }
 
-util.inherits(FaunaDate, FaunaObject);
+util.inherits(FaunaDate, Value);
 
-/** @return {Date} */
+/**
+ * @member {Date}
+ * @name module:value~FaunaDate#date
+ */
 Object.defineProperty(FaunaDate.prototype, 'date', { get: function() {
   return new Date(this.value);
 } });
@@ -186,10 +206,9 @@ FaunaDate.prototype.toJSON = function()  {
 };
 
 module.exports = {
-  FaunaObject: FaunaObject,
+  Value: Value,
   Ref: Ref,
   SetRef: SetRef,
-  Page: Page,
   FaunaTime: FaunaTime,
   FaunaDate: FaunaDate
 };
