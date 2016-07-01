@@ -73,8 +73,10 @@ describe('Client', function () {
 
   it('paginates', function() {
     return createInstance().then(function(instance) {
-      return client.paginate(instance.ref).eachItem(function(i) {
-        assert.deepEqual(instance.ref, i);
+      return client.paginate(instance.ref).each(function(page) {
+        page.forEach(function(i) {
+          assert.deepEqual(instance.ref, i);
+        });
       });
     });
   });
