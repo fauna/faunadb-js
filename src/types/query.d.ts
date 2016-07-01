@@ -11,6 +11,7 @@ export module query {
   export function Do(...args: ExprArg[]): Expr;
   export function Object(fields: ExprArg): Expr;
   export function Lambda(f: Lambda): Expr;
+  export function Lambda(var_name: ExprArg, expr: ExprArg): Expr;
   export function Map(collection: ExprArg, lambda_expr: Lambda): Expr;
   export function Foreach(collection: ExprArg, lambda_expr: Lambda): Expr;
   export function Filter(collection: ExprArg, lambda_expr: Lambda): Expr;
