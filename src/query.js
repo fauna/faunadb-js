@@ -422,7 +422,7 @@ function Distinct(set) {
  * See the [docs](https://faunadb.com/documentation/queries#sets).
  *
  * @param {module:query~ExprArg} source
- * @param {module:query~ExprArg} target
+ * @param {module:query~ExprArg|function} target
  * @return {Expr}
  */
 function Join(source, target) {

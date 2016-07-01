@@ -338,7 +338,10 @@ describe('query', function () {
         // For each obj with n=12, get the set of elements whose data.m refers to it.
         var joined = query.Join(source, function (a) { return query.Match(mIndexRef, a); });
         var p2 = assertSet(joined, referencers);
-        return Promise.all([p1, p2]);
+
+        var joinedNonLambda = query.Join(source, mIndexRef);
+        var p3 = assertSet(joinedNonLambda, referencers);
+        return Promise.all([p1, p2, p3]);
       });
     });
   });

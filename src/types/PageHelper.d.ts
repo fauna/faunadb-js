@@ -8,6 +8,9 @@ export default class PageHelper {
   map(lambda: Lambda): PageHelper;
   filter(lambda: Lambda): PageHelper;
 
-  eachPage(lambda: (Object) => void): Promise<void>;
-  eachItem(lambda: (Object) => void): Promise<void>;
+  each(lambda: (Object) => void): Promise<void>;
+  eachReverse(lambda: (Object) => void): Promise<void>;
+
+  previousPage(): Promise<Object>;
+  nextPage(): Promise<Object>;
 }

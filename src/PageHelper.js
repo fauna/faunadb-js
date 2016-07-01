@@ -17,15 +17,9 @@ var Promise = require('es6-promise').Promise;
  */
 
 /**
- * @callback PageHelper~eachPageFunction
+ * @callback PageHelper~eachFunction
  * @param {Object} page
  *   A page returned by FaunaDB's Paginate function.
- */
-
-/**
- * @callback PageHelper~eachItemFunction
- * @param {Object} item
- *   An item contained in a page returned by FaunaDB's Paginate function.
  */
 
 /**
@@ -48,21 +42,17 @@ function PageHelper(client, set, params) {
 
   this.reverse = false;
   this.params = {};
-  this.cursor = undefined;
+
+  this.before = undefined;
+  this.after = undefined;
+
   objectAssign(this.params, params);
 
-  if ('before' in params && 'after' in params) {
-    throw 'Cursor directions "before" and "after" are exclusive.';
-  }
-
   if ('before' in params) {
-    this.cursor = params.before;
-    this.reverse = true;
-
+    this.before = params.before;
     delete this.params.before;
   } else if ('after' in params) {
-    this.cursor = params.after;
-
+    this.after = params.after;
     delete this.params.after;
   }
 
@@ -111,41 +101,73 @@ PageHelper.prototype.filter = function(lambda) {
 /**
  * Executes the provided function for each page.
  *
- * @param {PageHelper~eachPageFunction} lambda
+ * @param {PageHelper~eachFunction} lambda
  *   A function to be executed for each page.
  * @returns {external:Promise.<void>}
  */
-PageHelper.prototype.eachPage = function(lambda) {
-  return this._nextPage(this.cursor).then(this._handlePage(lambda));
+PageHelper.prototype.each = function(lambda) {
+  return this._retrieveNextPage(this.after, false).then(this._consumePages(lambda, false));
 };
 
 /**
- * Executes the provided function for each item in each page.
- *
- * @param {PageHelper~eachItemFunction} lambda
- *   A function to be executed for each item in each page.
+ * Executes the provided function for each page, in the reverse direction.
+ * @param {PageHelper~eachFunction} lambda
  * @returns {external:Promise.<void>}
  */
-PageHelper.prototype.eachItem = function(lambda) {
-  return this._nextPage(this.cursor).then(this._handlePage(function(page) {
-    page.forEach(lambda);
-  }));
+PageHelper.prototype.eachReverse = function(lambda) {
+  return this._retrieveNextPage(this.before, true).then(this._consumePages(lambda, true));
 };
 
-PageHelper.prototype._handlePage = function(lambda) {
+/**
+ * Queries for the previous page from the current cursor point; this mutates
+ * the state of the PageHelper when the query completes, updating the internal
+ * cursor state to that of the returned page.
+ *
+ * @returns {external:Promise.<object>}
+ */
+PageHelper.prototype.previousPage = function() {
+  var self = this;
+  return this._retrieveNextPage(this.before, true).then(this._adjustCursors.bind(self));
+};
+
+/**
+ * Queries for the next page from the current cursor point; this mutates
+ * the state of the PageHelper when the query completes, updating the internal
+ * cursor state to that of the returned page.
+ *
+ * @returns {external:Promise.<object>}
+ */
+PageHelper.prototype.nextPage = function() {
+  var self = this;
+  return this._retrieveNextPage(this.after, false).then(this._adjustCursors.bind(self));
+};
+
+PageHelper.prototype._adjustCursors = function(page) {
+  if (page.after !== undefined) {
+    this.after = page.after;
+  }
+
+  if (page.before !== undefined) {
+    this.before = page.before;
+  }
+
+  return page.data;
+};
+
+PageHelper.prototype._consumePages = function(lambda, reverse) {
   var self = this;
   return function (page) {
     lambda(page.data);
 
     var nextCursor;
-    if (self.reverse) {
+    if (reverse) {
       nextCursor = page.before;
     } else {
       nextCursor = page.after;
     }
 
     if (nextCursor !== undefined) {
-      return self._nextPage(nextCursor).then(self._handlePage(lambda));
+      return self._retrieveNextPage(nextCursor, reverse).then(self._consumePages(lambda, reverse));
     } else {
       return Promise.resolve();
     }
@@ -157,18 +179,18 @@ PageHelper.prototype._handlePage = function(lambda) {
  * @returns {external:Promise.<Object>}
  * @private
  */
-PageHelper.prototype._nextPage = function(cursor) {
+PageHelper.prototype._retrieveNextPage = function(cursor, reverse) {
   var opts = {};
   objectAssign(opts, this.params);
 
   if (cursor !== undefined) {
-    if (this.reverse) {
+    if (reverse) {
       opts.before = cursor;
     } else {
       opts.after = cursor;
     }
   } else {
-    if (this.reverse) {
+    if (reverse) {
       opts.before = null;
     }
   }
@@ -193,8 +215,8 @@ PageHelper.prototype.clone = function() {
     client: { value: this.client },
     set: { value: this.set },
     _faunaFunctions: { value: this._faunaFunctions },
-    reverse: { value: this.reverse },
-    cursor: { value: this.cursor }
+    before: { value: this.before },
+    after: { value: this.after }
   });
 };
 
