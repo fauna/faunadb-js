@@ -139,9 +139,12 @@ would contain your FaunaDB key:
 
 Each test run will create a new database, and will attempt to clean it up when done. If the
 tests are cancelled, the test database will not get cleaned up. Therefore it is recommended
-to use a FaunaDB key scoped to a database for easy cleanup, rather than your account's root key.
+to use a FaunaDB key scoped to an empty parent database created for this purpose, rather than
+your account's root key. This will make cleanup of test databases as easy as removing the
+parent database.
 
-TODO: LINK TO DOCS FOR THIS
+See the [FaunaDB Multitenancy Tutorial](https://faunadb.com/tutorials/multitenant) for more
+information about nested databases.
 
 ### Documentation
 
