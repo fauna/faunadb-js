@@ -34,7 +34,7 @@ TODO: Browser source
 
 ### Use
 
-The [tutorials](http://faunadb.com/documentation/tutorials) in the FaunaDB documentation contain
+The [tutorials](http://faunadb.com/tutorials) in the FaunaDB documentation contain
 driver-specific examples.
 
 #### Requiring the Driver
@@ -89,19 +89,21 @@ Using the helper to page over sets lets the driver handle cursoring and paginati
 var helper = client.paginate(q.Match(Ref('indexes/test_index'), 'example-term'));
 ```
 
-Here, `helper` is an instance of `PageHelper`. The methods `eachPage` and `eachItem`
-will execute a callback function on each consumed page, or each item in each page, respectively.
+Here, `helper` is an instance of `PageHelper`. The `each` method
+will execute a callback function on each consumed page.
 
 ```javascript
-helper.eachPage(function(page) {
+helper.each(function(page) {
   console.log(page); // Will log the page's contents, for example: [ Ref("classes/test/1234"), ... ]
 });
 ```
 
-Note that `eachPage` and `eachItem` return a `Promise<void>` that is fulfilled on the completion
+Note that `each` returns a `Promise<void>` that is fulfilled on the completion
 of pagination.
 
-The pagination can be transformed server-side via the FaunaDB query language.
+The pagination can be transformed server-side via the FaunaDB query language via the
+`map` and `filter` functions.
+
 For example, to retrieve the matched instances:
 
 ```javascript
