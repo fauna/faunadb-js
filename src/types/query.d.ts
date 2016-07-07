@@ -37,7 +37,7 @@ export module query {
   export function Intersection(...sets: ExprArg[]): Expr;
   export function Difference(...sets: ExprArg[]): Expr;
   export function Distinct(set: ExprArg): Expr;
-  export function Join(source: ExprArg, target: ExprArg): Expr;
+  export function Join(source: ExprArg, target: (ExprArg|Lambda)): Expr;
 
   export function Login(ref: ExprArg, params: ExprArg): Expr;
   export function Logout(delete_tokens: ExprArg): Expr;
