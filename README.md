@@ -4,8 +4,8 @@ A Javascript driver for [FaunaDB](https://faunadb.com).
 
 [View reference JSDocs here](https://faunadb.github.com/faunadb-js).
 
-See the [FaunaDB Documentation](https://faunadb.com/documentation) for tutorials
-and a complete database API reference.
+See the [FaunaDB Documentation](https://faunadb.com/documentation) and
+[Tutorials](https://faunadb.com/tutorials) for guides and a complete database API reference.
 
 ## Supported Runtimes
 
@@ -65,11 +65,11 @@ var createP = client.query(q.Create(Ref('classes/test'), { testField: 'testValue
 Note that we are using the `Ref` alias defined above here.
 
 All methods on `faunadb.Client` return [ES6 Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
-So, if we wanted to transform the Promise to return the `Ref` of the newly created instance:
+So, if we wanted to handle the Promise to access the `Ref` of the newly created instance:
 
 ```javascript
 createP.then(function(res) {
-  return res.ref;
+  console.log(res.ref); // Would log the ref to console.
 });
 ```
 
