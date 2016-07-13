@@ -27,6 +27,17 @@ var Promise = require('es6-promise').Promise;
  *
  * Generally this is constructed through the {@link Client#paginate} method.
  *
+ * The {@link PageHelper#map} and {@link PageHelper#filter} methods will wrap the underlying query with a Map
+ * and Filter query function, respectively. These will be executed on the server when a promise-returning function
+ * is called.
+ *
+ * The {@link PageHelper#each} and {@link PageHelper#eachReverse} functions dispatch queries to FaunaDB, and return Promises
+ * representing the completion of those queries. The callbacks provided to these functions are executed locally when the
+ * queries return.
+ *
+ * The {@link PageHelper#nextPage} and {@link PageHelper#previousPage} functions also dispatch queries to FaunaDB,
+ * but return their responses in a wrapped Promise.
+ *
  * @param {Client} client
  *   The FaunaDB client used to paginate.
  * @param {Object} set

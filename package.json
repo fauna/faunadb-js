@@ -33,6 +33,7 @@
     "browserify": "^13.0.1",
     "chai": "^3.5.0",
     "eslint": "^2.10.2",
+    "ink-docstrap": "^1.2.1",
     "jsdoc": "^3.4.0",
     "karma": "^0.13.22",
     "karma-browserify": "^5.0.5",

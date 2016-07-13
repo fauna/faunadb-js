@@ -20,13 +20,17 @@ var Promise = require('es6-promise').Promise;
 /**
  * A client for interacting with FaunaDB.
  *
- * All methods return a typed JSON object representing a FaunaDB response.
+ * Users will mainly call the {@link Client#query} method to execute queries.
+ *
+ * See the [FaunaDB Documentation](https://faunadb.com/documentation) for detailed examples.
+ *
+ * All methods return promises containing a JSON object that represents the FaunaDB response.
  * Literal types in the response object will remain as strings, Arrays, and objects.
  * FaunaDB types, such as {@link Ref}, {@link SetRef}, {@link FaunaTime}, and {@link FaunaDate} will
- * be converted into the appropriate type.
+ * be converted into the appropriate object.
  *
- * (So instead of `{ "@ref": "classes/frogs/123" }`,
- * you will get `new Ref("classes/frogs/123")`.)
+ * (So if a response contains `{ "@ref": "classes/frogs/123" }`,
+ * it will be returned as `new Ref("classes/frogs/123")`.)
  *
  * @constructor
  * @param {?Object} options
