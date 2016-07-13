@@ -113,7 +113,7 @@ via the `map` and `filter` functions.
 For example, to retrieve the matched instances:
 
 ```javascript
-helper.map(function(ref) { return q.Get(ref); }).eachPage(function(page) {
+helper.map(function(ref) { return q.Get(ref); }).each(function(page) {
   console.log(page); // Will now log the retrieved instances.
 });
 ```

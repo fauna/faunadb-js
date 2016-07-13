@@ -531,7 +531,7 @@ function Date(string) {
  *
  * @return {Expr}
  */
-function NextId() {
+function NextID() {
   return new Expr({ next_id: null });
 }
 
@@ -768,7 +768,7 @@ module.exports = {
   Time: Time,
   Epoch: Epoch,
   Date: Date,
-  NextId: NextId,
+  NextId: NextID,
   Equals: Equals,
   Contains: Contains,
   Select: Select,

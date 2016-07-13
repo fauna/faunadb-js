@@ -89,7 +89,7 @@ function PageHelper(client, set, params) {
  *
  */
 PageHelper.prototype.map = function(lambda) {
-  var rv = this.clone();
+  var rv = this._clone();
   rv._faunaFunctions.push(function(q) { return query.Map(q, lambda); });
   return rv;
 };
@@ -104,7 +104,7 @@ PageHelper.prototype.map = function(lambda) {
  * @return {PageHelper}
  */
 PageHelper.prototype.filter = function(lambda) {
-  var rv = this.clone();
+  var rv = this._clone();
   rv._faunaFunctions.push(function(q) { return query.Filter(q, lambda); });
   return rv;
 };
@@ -221,7 +221,7 @@ PageHelper.prototype._retrieveNextPage = function(cursor, reverse) {
  * @private
  * @returns {PageHelper}
  */
-PageHelper.prototype.clone = function() {
+PageHelper.prototype._clone = function() {
   return Object.create(PageHelper.prototype, {
     client: { value: this.client },
     set: { value: this.set },
