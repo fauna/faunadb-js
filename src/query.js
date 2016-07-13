@@ -130,8 +130,6 @@ function Lambda() {
       } else {
         throw new errors.InvalidValue('Lambda function takes either a Function or an Expr.');
       }
-
-      return value instanceof Function ? _lambdaFunc(value) : value;
     case 2:
       var var_name = arguments[0];
       var expr = arguments[1];
@@ -694,7 +692,10 @@ function Not(boolean) {
 
 // Helpers
 
-/** Adds optional parameters to the query. */
+/** Adds optional parameters to the query.
+ *
+ * @ignore
+ * */
 function params(mainParams, optionalParams) {
   for (var key in optionalParams) {
     var val = optionalParams[key];
@@ -709,18 +710,26 @@ function params(mainParams, optionalParams) {
  * Called on rest arguments.
  * This ensures that a single value passed is not put in an array, so
  * `query.add([1, 2])` will work as well as `query.add(1, 2)`.
+ *
+ * @ignore
  */
 function varargs(values) {
   var valuesAsArr = Array.isArray(values) ? values : Array.prototype.slice.call(values);
   return values.length === 1 ? values[0] : valuesAsArr;
 }
 
+/**
+ * @ignore
+ */
 function argsToArray(args) {
   var rv = [];
   rv.push.apply(rv, args);
   return rv;
 }
 
+/**
+ * @ignore
+ */
 function defaults(param, def) {
   if (param === undefined) {
     return def;
