@@ -35,6 +35,10 @@ See [faunadb on NPM](https://npmjs.com/package/faunadb) for more information.
 
 The browser release can be found in the [faunadb/faunadb-js-release](https://github.com/faunadb/faunadb-js-release) repository.
 
+This release can be installed via bower:
+
+`bower install faunadb`
+
 ### Use
 
 The [tutorials](http://faunadb.com/tutorials) in the FaunaDB documentation
