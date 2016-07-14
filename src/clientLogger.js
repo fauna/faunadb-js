@@ -21,7 +21,6 @@ var json = require('./_json');
  * An example logging string:
  * ```plain
  * Fauna POST /
- * Credentials: ...
  * Request JSON: {
  *   "data": ...
  * }
@@ -67,7 +66,6 @@ function showRequestResult(requestResult) {
   var query = requestResult.query,
     method = requestResult.method,
     path = requestResult.path,
-    auth = requestResult.auth,
     requestContent = requestResult.requestContent,
     responseHeaders = requestResult.responseHeaders,
     responseContent = requestResult.responseContent,
@@ -81,7 +79,6 @@ function showRequestResult(requestResult) {
   }
 
   log('Fauna ' + method + ' /' + path + _queryString(query) + '\n');
-  log('  Credentials: ' + (auth == null ? 'null' : (auth.user + ':' + auth.pass)) + '\n');
   if (requestContent != null) {
     log('  Request JSON: ' + _showJSON(requestContent) + '\n');
   }

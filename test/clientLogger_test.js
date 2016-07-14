@@ -31,7 +31,6 @@ describe('clientLogger', function () {
     }).then(function (res) {
       var readLine = lineReader(res);
       assert.equal(readLine(), 'Fauna GET /ping');
-      assert.match(readLine(), /^  Credentials:/);
       assert.equal(readLine(), '  Response headers: {');
 
       // Skip through headers
@@ -56,21 +55,10 @@ describe('clientLogger', function () {
     }).then(function (res) {
       var readLine = lineReader(res);
       assert.equal(readLine(), 'Fauna POST /classes/logging_tests');
-      assert.match(readLine(), /^  Credentials:/);
       assert.equal(readLine(), '  Request JSON: {');
       assert.equal(readLine(), '    "data": {}');
       assert.equal(readLine(), '  }');
       // Ignore the rest
-    });
-  });
-
-  it('no auth', function () {
-    return captureLogged(function (client) {
-      return client.ping();
-    }, { secret: null }).then(function (res) {
-      var readLine = lineReader(res);
-      readLine();
-      assert.equal(readLine(), '  Credentials: null');
     });
   });
 
