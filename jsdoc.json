@@ -1,0 +1,11 @@
+{
+  "opts": {
+    "destination": "./doc/",
+    "template": "./node_modules/ink-docstrap/template",
+    "readme": "overview.md"
+  },
+  "plugins": [ "plugins/markdown" ],
+  "source": {
+    "include": [ "./index.js", "./src" ]
+  }
+}

@@ -1,80 +1,120 @@
-import {assert} from 'chai'
-import {logger} from '../src/clientLogger'
-import {client, getClient} from './util'
+'use strict';
 
-let classRef
+var assert = require('chai').assert;
+var logger = require('../src/clientLogger').logger;
+var objectAssign = require('object-assign');
+var util = require('./util');
 
-describe('clientLogger', () => {
-  before(async () => {
-    classRef = (await client.post('classes', {name: 'logging_tests'}))['ref']
-  })
+var client;
+var classRef;
 
-  it('logging', async () => {
-    const readLine = lineReader(await captureLogged(client => client.ping()))
+// Polyfill for startsWith, which IE11 does not support
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function(searchString, position) {
+    position = position || 0;
+    return this.indexOf(searchString, position) === position;
+  };
+}
 
-    assert.equal(readLine(), 'Fauna GET /ping')
-    assert.match(readLine(), /^  Credentials:/)
-    assert.equal(readLine(), '  Response headers: {')
-    // Skip through headers
-    while (true) {
-      const line = readLine()
-      if (!line.startsWith('    ')) {
-        assert.equal(line, '  }')
-        break
+describe('clientLogger', function () {
+  before(function () {
+    // Hideous way to ensure the client is initialized.
+    client = util.client();
+    return client.post('classes', { name: 'logging_tests' }).then(function (res) {
+      classRef = res['ref'];
+    });
+  });
+
+  it('logging', function () {
+    return captureLogged(function (loggingClient) {
+      return loggingClient.ping();
+    }).then(function (res) {
+      var readLine = lineReader(res);
+      assert.equal(readLine(), 'Fauna GET /ping');
+      assert.match(readLine(), /^  Credentials:/);
+      assert.equal(readLine(), '  Response headers: {');
+
+      // Skip through headers
+      while (true) {
+        var line = readLine();
+        if (!line.startsWith('    ')) {
+          assert.equal(line, '  }');
+          break;
+        }
       }
-    }
-    assert.equal(readLine(), '  Response JSON: {')
-    assert.equal(readLine(), '    "resource": "Scope global is OK"')
-    assert.equal(readLine(), '  }')
-    assert.match(readLine(), /^  Response \(200\): Network latency \d+ms$/)
-  })
 
-  it('request content', async () => {
-    const readLine = lineReader(await captureLogged(client => client.post(classRef, {data: {}})))
+      assert.equal(readLine(), '  Response JSON: {');
+      assert.equal(readLine(), '    "resource": "Scope global is OK"');
+      assert.equal(readLine(), '  }');
+      assert.match(readLine(), /^  Response \(200\): Network latency \d+ms$/);
+    });
+  });
 
-    assert.equal(readLine(), 'Fauna POST /classes/logging_tests')
-    assert.match(readLine(), /^  Credentials:/)
-    assert.equal(readLine(), '  Request JSON: {')
-    assert.equal(readLine(), '    "data": {}')
-    assert.equal(readLine(), '  }')
-    // Ignore the rest
-  })
+  it('request content', function () {
+    return captureLogged(function (client) {
+      return client.post(classRef, { data: {} });
+    }).then(function (res) {
+      var readLine = lineReader(res);
+      assert.equal(readLine(), 'Fauna POST /classes/logging_tests');
+      assert.match(readLine(), /^  Credentials:/);
+      assert.equal(readLine(), '  Request JSON: {');
+      assert.equal(readLine(), '    "data": {}');
+      assert.equal(readLine(), '  }');
+      // Ignore the rest
+    });
+  });
 
-  it('no auth', async () => {
-    const readLine = lineReader(await captureLogged(client => client.ping(), {secret: null}))
-    readLine()
-    assert.equal(readLine(), '  Credentials: null')
-  })
+  it('no auth', function () {
+    return captureLogged(function (client) {
+      return client.ping();
+    }, { secret: null }).then(function (res) {
+      var readLine = lineReader(res);
+      readLine();
+      assert.equal(readLine(), '  Credentials: null');
+    });
+  });
 
-  it('url query', async () => {
-    const instance = await client.post(classRef, {data: {}})
-    const readLine = lineReader(await captureLogged(client =>
-      client.get(instance.ref, {ts: instance.ts})))
-    assert.equal(readLine(), `Fauna GET /${instance.ref}?ts=${instance.ts}`)
-  })
+  it('url query', function () {
+    return client.post(classRef, { data: {} }).then(function (instance) {
+      return captureLogged(function (client) {
+        return client.get(instance.ref, { ts: instance.ts });
+      }).then(function (res) {
+        var readLine = lineReader(res);
+        assert.equal(readLine(), 'Fauna GET /' + instance.ref + '?ts=' + instance.ts);
+      });
+    });
+  });
 
-  it('empty object as url query', async () => {
-    const instance = await client.post(classRef, {data: {}})
-    const readLine = lineReader(await captureLogged(async client => {
-      assert.deepEqual(instance, await client.get(instance.ref, {}))
-    }))
-    assert.equal(readLine(), `Fauna GET /${instance.ref}`)
-  })
-})
+  it('empty object as url query', function () {
+    return client.post(classRef, { data: {} }).then(function (instance) {
+      return captureLogged(function (client) {
+        return client.get(instance.ref, {}).then(function (instance2) {
+          assert.deepEqual(instance, instance2);
+        });
+      }).then(function (logged) {
+        var readLine = lineReader(logged);
+        assert.equal(readLine(), 'Fauna GET /' + instance.ref);
+      });
+    });
+  });
+});
 
-async function captureLogged(clientAction, clientParams = {}) {
-  let logged
-  const client = getClient(Object.assign({
-    observer: logger(str => {
-      logged = str
+function captureLogged(clientAction, clientParams) {
+  if (typeof clientParams === 'undefined') {
+    clientParams = {};
+  }
+
+  var logged;
+  var loggedClient = util.getClient(objectAssign({
+    observer: logger(function (str) {
+      logged = str;
     })
-  }, clientParams))
-  await clientAction(client)
-  return logged
+  }, clientParams));
+
+  return clientAction(loggedClient).then(function () { return logged; });
 }
 
 function lineReader(str) {
-  const lines = str.split('\n')
-  return () => lines.shift()
+  var lines = str.split('\n');
+  return function () { return lines.shift(); };
 }
-

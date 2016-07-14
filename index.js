@@ -1,22 +1,17 @@
-/* global exports */
-/* eslint-disable no-var */
+/**
+ * An ES6 compatible promise. This driver depends on the {@link https://github.com/stefanpenner/es6-promise|es6-promise polyfill}.
+ * @external Promise
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise}
+ */
 
-var singleExports =
-  ['model/Codec', 'model/Field', 'model/Model', 'AsyncStream', 'Client', 'PageStream']
-singleExports.forEach(function(filename) {
-  var module = require('./lib/' + filename).default
-  exports[module.name] = module
-})
+module.exports = {
+  Client: require('./src/Client'),
+  Expr: require('./src/Expr'),
+  PageHelper: require('./src/PageHelper'),
+  RequestResult: require('./src/RequestResult'),
 
-var multipleExports = ['model/Builtin', 'errors', 'objects']
-multipleExports.forEach(function(filename) {
-  var module = require('./lib/' + filename)
-  if ('default' in module) {
-    exports[module.default.name] = module.default
-    delete module.default
-  }
-  for (var key in module)
-    exports[key] = module[key]
-})
-
-exports.query = require('./lib/query')
+  clientLogger: require('./src/clientLogger'),
+  errors: require('./src/errors'),
+  values: require('./src/values'),
+  query: require('./src/query')
+};

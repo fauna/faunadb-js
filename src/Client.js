@@ -1,172 +1,241 @@
-import btoa from 'btoa-lite'
-import request from 'superagent'
-import {FaunaHTTPError} from './errors'
-import {Ref} from './objects'
-import {parseJSON} from './_json'
-import RequestResult from './RequestResult'
-import {applyDefaults, removeUndefinedValues} from './_util'
+'use strict';
+
+var btoa = require('btoa-lite');
+var request = require('superagent');
+var errors = require('./errors');
+var query = require('./query');
+var values = require('./values');
+var json = require('./_json');
+var RequestResult = require('./RequestResult');
+var util = require('./_util');
+var PageHelper = require('./PageHelper');
+var Promise = require('es6-promise').Promise;
 
 /**
- * Directly communicates with FaunaDB via JSON.
+ * The callback that will be executed after every completed request.
  *
- * It is encouraged to pass e.g. {@link Ref} objects instead of raw JSON data.
- *
- * All methods return a converted JSON response.
- * This is an object containing Arrays, strings, and other objects.
- * Any {@link Ref}, {@link SetRef}, {@link FaunaTime}, or {@link FaunaDate}
- * values in it will also be parsed.
- * (So instead of `{ "@ref": "classes/frogs/123" }`,
- * you will get `new Ref("classes/frogs/123")`.)
- *
- * There is no way to automatically convert to any other type, such as {@link Event},
- * from the response; you'll have to do that yourself manually.
+ * @callback Client~observerCallback
+ * @param {RequestResult} res
  */
-export default class Client {
-  /**
-   *
-   * @param {string} options.domain Base URL for the FaunaDB server.
-   * @param {('http'|'https')} options.scheme HTTP scheme to use.
-   * @param {number} options.port Port of the FaunaDB server.
-   * @param {?Object} options.secret
-   *   Auth token for the FaunaDB server.
-   *   Passed straight to [request](https://github.com/request/request#http-authentication).
-   * @param {string} options.secret.user
-   * @param {string} options.secret.pass
-   * @param {?number} options.timeout Read timeout in seconds.
-   * @param {function(res: RequestResult): void} options.observer
-   *   Callback that will be called after every completed request.
-   */
-  constructor(options) {
-    const opts = applyDefaults(options, {
-      domain: 'rest.faunadb.com',
-      scheme: 'https',
-      port: null,
-      secret: null,
-      timeout: 60,
-      observer: null
-    })
 
-    if (opts.port === null)
-      opts.port = opts.scheme === 'https' ? 443 : 80
+/**
+ * A client for interacting with FaunaDB.
+ *
+ * Users will mainly call the {@link Client#query} method to execute queries.
+ *
+ * See the [FaunaDB Documentation](https://faunadb.com/documentation) for detailed examples.
+ *
+ * All methods return promises containing a JSON object that represents the FaunaDB response.
+ * Literal types in the response object will remain as strings, Arrays, and objects.
+ * FaunaDB types, such as {@link Ref}, {@link SetRef}, {@link FaunaTime}, and {@link FaunaDate} will
+ * be converted into the appropriate object.
+ *
+ * (So if a response contains `{ "@ref": "classes/frogs/123" }`,
+ * it will be returned as `new Ref("classes/frogs/123")`.)
+ *
+ * @constructor
+ * @param {?Object} options
+ *   Object that configures this FaunaDB client.
+ * @param {?string} options.domain
+ *   Base URL for the FaunaDB server.
+ * @param {?('http'|'https')} options.scheme
+ *   HTTP scheme to use.
+ * @param {?number} options.port
+ *   Port of the FaunaDB server.
+ * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://faunadb.com/documentation/objects#keys))
+ * @param {?number} options.timeout Read timeout in seconds.
+ * @param {?Client~observerCallback} options.observer
+ *   Callback that will be called after every completed request.
+ */
+function Client(options) {
+  var opts = util.applyDefaults(options, {
+    domain: 'rest.faunadb.com',
+    scheme: 'https',
+    port: null,
+    secret: null,
+    timeout: 60,
+    observer: null
+  });
 
-    this._baseUrl = `${opts.scheme}://${opts.domain}:${opts.port}`
-    this._timeout = Math.floor(opts.timeout * 1000)
-    this._secret = opts.secret
-    this._observer = opts.observer
+  if (opts.port === null) {
+    opts.port = opts.scheme === 'https' ? 443 : 80;
   }
 
-  /**
-   * HTTP `GET`.
-   * See the [docs](https://faunadb.com/documentation/rest).
-   * @param {string|Ref} path Path relative the `domain` from the constructor.
-   * @param {Object} query URL parameters.
-   * @return {Promise<Object>} Converted JSON response.
-   */
-  get(path, query=null) {
-    return this._execute('GET', path, null, query)
+  this._baseUrl = opts.scheme + '://' + opts.domain + ':' + opts.port;
+  this._timeout = Math.floor(opts.timeout * 1000);
+  this._secret = opts.secret;
+  this._observer = opts.observer;
+}
+
+/**
+ * Executes a query via the FaunaDB Query API.
+ * See the [docs](https://faunadb.com/documentation/queries),
+ * and the query functions in this documentation.
+ * @param expression {Expr}
+ *   The query to execute. Created from query functions such as {@link add}.
+ * @return {external:Promise<Object>} FaunaDB response object.
+ */
+Client.prototype.query = function (expression) {
+  return this._execute('POST', '', query.wrap(expression));
+};
+
+/**
+ * Returns a {@link PageHelper} for the given Query expression.
+ * This provides a helpful API for paginating over FaunaDB responses.
+ * @param expression {Expr}
+ *   The Query expression to paginate over.
+ * @param params {Object}
+ *   Options to be passed to the paginate function. See [paginate](https://faunadb.com/documentation/queries#read_functions).
+ * @returns {PageHelper} A PageHelper that wraps the provided expression.
+ */
+Client.prototype.paginate = function(expression, params) {
+  params = defaults(params, {});
+
+  return new PageHelper(this, expression, params);
+};
+
+/**
+ * Issues a HTTP `GET` request via the legacy REST API.
+ * See the [docs](https://faunadb.com/documentation/rest).
+ * @deprecated Use the {@link Client#query} API where possible.
+ * @param {(string|Ref)} path Path relative the `domain` from the constructor.
+ * @param {Object} query URL parameters.
+ * @return {external:Promise<Object>} FaunaDB response object.
+ */
+Client.prototype.get = function (path, query) {
+  query = defaults(query, null);
+  return this._execute('GET', path, null, query);
+};
+
+/**
+ * Issues a HTTP `POST` request via the legacy REST API.
+ * See the [docs](https://faunadb.com/documentation/rest).
+ * @deprecated Use the {@link Client#query} API where possible.
+ * @param {(string|Ref)} path Path relative to the `domain` from the constructor.
+ * @param {Object} data Object to be converted to request JSON.
+ * @return {external:Promise<Object>} FaunaDB response object.
+ */
+Client.prototype.post = function (path, data) {
+  return this._execute('POST', path, data);
+};
+
+/**
+ * Issues a HTTP `PUT` request via the legacy REST API.
+ * See the [docs](https://faunadb.com/documentation/rest).
+ * @deprecated Use the {@link Client#query} API where possible.
+ * @param {(string|Ref)} path Path relative to the `domain` from the constructor.
+ * @param {Object} data Object to be converted to the request JSON.
+ * @return {external:Promise<Object>} FaunaDB response object.
+ */
+Client.prototype.put = function (path, data) {
+  return this._execute('PUT', path, data);
+};
+
+/**
+ * Issues a HTTP `PATCH` request via the legacy REST API.
+ * See the [docs](https://faunadb.com/documentation/rest).
+ * @deprecated Use the {@link Client#query} API where possible.
+ * @param {(string|Ref)} path Path relative to the `domain` from the constructor.
+ * @param {Object} data Object to be converted to the request JSON.
+ * @return {external:Promise<Object>} FaunaDB response object.
+ */
+Client.prototype.patch = function (path, data) {
+  return this._execute('PATCH', path, data);
+};
+
+/**
+ * Issues a HTTP `DELETE` request via the legacy REST API.
+ * See the [docs](https://faunadb.com/documentation/rest).
+ * @deprecated Use the {@link Client#query} API where possible.
+ * @param {(string|Ref)} path Path relative to the `domain` from the constructor.
+ * @return {external:Promise<Object>} FaunaDB response object.
+ */
+Client.prototype.delete = function (path) {
+  return this._execute('DELETE', path);
+};
+
+/**
+ * Sends a `ping` request to FaunaDB.
+ * See the [docs](https://faunadb.com/documentation/rest#other).
+ * @return {external:Promise<string>} Ping response.
+ */
+Client.prototype.ping = function (scope, timeout) {
+  return this.get('ping', { scope: scope, timeout: timeout });
+};
+
+Client.prototype._execute = function (action, path, data, query) {
+  query = defaults(query, null);
+
+  if (path instanceof values.Ref) {
+    path = path.value;
   }
 
-  /**
-   * HTTP `POST`.
-   * See the [docs](https://faunadb.com/documentation/rest).
-   * @param {string|Ref} path Path relative to the `domain` from the constructor.
-   * @param {Object} data Object to be converted to request JSON.
-   * @return {Promise<Object>} Converted JSON response.
-   */
-  post(path, data) {
-    return this._execute('POST', path, data)
+  if (query !== null) {
+    query = util.removeUndefinedValues(query);
   }
 
-  /**
-   * Like {@link post}, but a `PUT` request.
-   * See the [docs](https://faunadb.com/documentation/rest).
-   */
-  put(path, data) {
-    return this._execute('PUT', path, data)
-  }
-
-  /**
-   * Like {@link post}, but a `PATCH` request.
-   * See the [docs](https://faunadb.com/documentation/rest).
-   */
-  patch(path, data) {
-    return this._execute('PATCH', path, data)
-  }
-
-  /**
-   * Like {@link post}, but a `DELETE` request.
-   * See the [docs](https://faunadb.com/documentation/rest).
-   */
-  delete(path) {
-    return this._execute('DELETE', path)
-  }
-
-  /**
-   * Use the FaunaDB query API.
-   * See the [docs](https://faunadb.com/documentation/queries)
-   * and the query functions in this documentation.
-   * @param expression {object} Created from query functions such as {@link add}.
-   * @return {Promise<Object>} Server's response to the query.
-   */
-  query(expression) {
-    return this._execute('POST', '', expression)
-  }
-
-  /**
-   * Ping FaunaDB.
-   * See the [docs](https://faunadb.com/documentation/rest#other).
-   * @return {Promise<string>}
-   */
-  ping(scope=undefined, timeout=undefined) {
-    return this.get('ping', {scope, timeout})
-  }
-
-  async _execute(action, path, data, query=null) {
-    if (path instanceof Ref)
-      path = path.value
-    if (query !== null)
-      query = removeUndefinedValues(query)
-
-    const startTime = Date.now()
-    const response = await this._performRequest(action, path, data, query)
-    const endTime = Date.now()
-    const responseObject = parseJSON(response.text)
-    const requestResult = new RequestResult(
-      this,
+  var startTime = Date.now();
+  var self = this;
+  return this._performRequest(action, path, data, query).then(function (response) {
+    var endTime = Date.now();
+    var responseObject = json.parseJSON(response.text);
+    var requestResult = new RequestResult(
+      self,
       action, path, query, data,
       response.text, responseObject, response.status, response.header,
-      startTime, endTime)
+      startTime, endTime);
 
-    if (this._observer != null)
-      this._observer(requestResult)
+    if (self._observer != null) {
+      self._observer(requestResult);
+    }
 
-    FaunaHTTPError.raiseForStatusCode(requestResult)
-    return responseObject['resource']
+    errors.FaunaHTTPError.raiseForStatusCode(requestResult);
+    return responseObject['resource'];
+  });
+};
+
+Client.prototype._performRequest = function (action, path, data, query) {
+  var rq = request(action, this._baseUrl + '/' + path);
+  if (query) {
+    rq.query(query);
   }
 
-  _performRequest(action, path, data, query) {
-    const rq = request(action, `${this._baseUrl}/${path}`)
-    if (query)
-      rq.query(query)
-    if (data)
-      rq.send(data)
-    if (this._secret)
-      rq.set('Authorization', secretHeader(this._secret))
-    rq.timeout(this._timeout)
+  if (data) {
+    rq.send(data);
+  }
 
-    return new Promise((resolve, reject) => {
-      rq.end((error, result) => {
-        // superagent treates 4xx and 5xx status codes as exceptions. We'll handle those ourselves.
-        if (error && !('status' in error))
-          reject(error)
-        else
-          resolve(result)
-      })
-    })
+  if (this._secret) {
+    rq.set('Authorization', secretHeader(this._secret));
+  }
+
+  rq.timeout(this._timeout);
+
+  return new Promise(function (resolve, reject) {
+    rq.end(function (error, result) {
+      // superagent treates 4xx and 5xx status codes as exceptions. We'll handle those ourselves.
+      if (error && error.response === undefined) {
+        reject(error);
+      } else if (error &&
+          error.response &&
+          !(error.response.status >= 400 && error.response.status <= 599)) {
+        reject(error);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+function defaults(obj, def) {
+  if (obj === undefined) {
+    return def;
+  } else {
+    return obj;
   }
 }
 
 function secretHeader(secret) {
-  const str = 'pass' in secret ? `${secret.user}:${secret.pass}` : secret.user
-  return `Basic ${btoa(str)}`
+  return 'Basic ' + btoa(secret + ':');
 }
+
+module.exports = Client;

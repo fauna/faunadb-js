@@ -1,55 +1,87 @@
-import {assert} from 'chai'
-import {NotFound, Unauthorized} from '../src/errors'
-import {assertRejected, client, dbRef, getClient} from './util'
+'use strict';
 
-let cls
+var assert = require('chai').assert;
+var errors = require('../src/errors');
+var util = require('./util');
 
-describe('Client', () => {
-  before(async () => {
-    cls = await client.post('classes', {name: 'my_class'})
-  })
+var client;
+var cls;
 
-  it('invalid key', async () => {
-    const client = getClient({secret: {user: 'bad_key'}})
-    await assertRejected(client.get(dbRef), Unauthorized)
-  })
+describe('Client', function () {
+  before(function () {
+    // Hideous way to ensure that the client is initialized.
+    client = util.client();
 
-  it('ping', async () => {
-    assert.equal(await client.ping('all'), 'Scope all is OK')
-  })
+    return client.post('classes', { name: 'my_class' }).then(function(result) {
+      cls = result;
+    });
+  });
 
-  it('get', async () => {
-    const classes = await client.get('classes')
-    assert.instanceOf(classes.data, Array)
-  })
+  it('invalid key', function () {
+    var badClient = util.getClient({ secret: { user: 'bad_key' } });
+    return util.assertRejected(badClient.get(util.dbRef), errors.Unauthorized);
+  });
 
-  it('post', async () => {
-    assert.deepEqual(await client.get(cls.ref), cls)
-  })
+  it('ping', function () {
+    return client.ping('all').then(function(res) {
+      assert.equal(res, 'Scope all is OK');
+    });
+  });
 
-  it('put', async () => {
-    let instance = await createInstance()
+  it('get', function () {
+    return client.get('classes').then(function(res) {
+      assert.instanceOf(res.data, Array);
+    });
+  });
 
-    instance = await client.put(instance.ref, {data: {a: 2}})
-    assert.equal(instance.data.a, 2)
+  it('post', function () {
+    return client.get(cls.ref).then(function(res) {
+      assert.deepEqual(res, cls);
+    });
+  });
 
-    instance = await client.put(instance.ref, {data: {b: 3}})
-    assert.isFalse('a' in instance.data)
-    assert.deepEqual(instance.data.b, 3)
-  })
+  it('put', function () {
+    return createInstance().then(function(instance) {
+      return client.put(instance.ref, { data: { a:2 } });
+    }).then(function(instance) {
+      assert.equal(instance.data.a, 2);
 
-  it('patch', async () => {
-    let instance = await createInstance()
-    instance = await client.patch(instance.ref, {data: {a: 1}})
-    instance = await client.patch(instance.ref, {data: {b: 2}})
-    assert.deepEqual(instance.data, {a: 1, b: 2})
-  })
+      return client.put(instance.ref, { data: { b:3 } });
+    }).then(function(instance) {
+      assert.isFalse('a' in instance.data);
+      assert.deepEqual(instance.data.b, 3);
+    });
+  });
 
-  it('delete', async () => {
-    const instance = await createInstance()
-    await client.delete(instance.ref)
-    await assertRejected(client.get(instance.ref), NotFound)
-  })
-})
+  it('patch', function () {
+    return createInstance().then(function(instance) {
+      return client.patch(instance.ref, { data: { a: 1 } });
+    }).then(function(instance) {
+      return client.patch(instance.ref, { data: { b:2 } });
+    }).then(function(instance) {
+      assert.deepEqual(instance.data, { a: 1, b: 2 });
+    });
+  });
 
-const createInstance = () => client.post('classes/my_class', {})
+  it('delete', function () {
+    return createInstance().then(function(instance) {
+      return client.delete(instance.ref).then(function() { return instance; });
+    }).then(function(instance) {
+      util.assertRejected(client.get(instance.ref), errors.NotFound);
+    });
+  });
+
+  it('paginates', function() {
+    return createInstance().then(function(instance) {
+      return client.paginate(instance.ref).each(function(page) {
+        page.forEach(function(i) {
+          assert.deepEqual(instance.ref, i);
+        });
+      });
+    });
+  });
+});
+
+function createInstance() {
+  return client.post('classes/my_class', {});
+}

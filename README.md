@@ -1,97 +1,177 @@
-Node.js client for [FaunaDB](https://faunadb.com).
+# FaunaDB Javascript Driver
 
-View documentation [here](https://faunadb.github.io/faunadb-js/).
+A Javascript driver for [FaunaDB](https://faunadb.com).
 
-See an example [here](https://github.com/faunadb/faunadb-js/blob/master/examples/faunadb-test.js)
-([EcmaScript 7 version](https://github.com/faunadb/faunadb-js/blob/master/examples/faunadb-test-es7.js)).
+[View reference JSDocs here](https://faunadb.github.com/faunadb-js).
 
-See the [FaunaDB Documentation](https://faunadb.com/documentation) for
-a complete API reference, or look in
-[`/tests`](https://github.com/faunadb/faunadb-python/tree/master/tests) for more
-examples.
+See the [FaunaDB Documentation](https://faunadb.com/documentation) and
+[Tutorials](https://faunadb.com/tutorials) for guides and a complete database
+API reference.
+
+## Supported Runtimes
+
+This Driver supports and is tested on:
+
+* Node.js
+  * LTS (v4)
+  * Stable (v6)
+  * v0.12.x
+* Chrome
+* Firefox
+* Safari
+* Internet Explorer 11
 
 ## Using the Client
 
-### Install
+### Installation
 
-We will publish to `npm` soon.
+#### Node.js
+
+TODO: NPM
+
+#### Browsers
+
+TODO: Browser source
 
 ### Use
 
-All work with FaunaDB happens through a Client instance.
-All Client methods return [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
-Although it's possible to use Client alone, it's often easier to do work through Model classes.
-For advanced work, the query api (`faunadb/lib/query`) will be useful.
+The [tutorials](http://faunadb.com/tutorials) in the FaunaDB documentation
+contain driver-specific examples.
 
+#### Requiring the Driver
 
-## Building it yourself
+```javascript
+var faunadb = require('faunadb'),
+  q = faunadb.query,
+  Ref = q.Ref;
+  // Insert additional namespace aliases here.
+```
 
-### Setup
+This is the recommended require stanza. The `faunadb.query` module contains all
+of the functions to create FaunaDB Query expressions. This example also shows
+an example of defining a local `Ref` name, so as to not have to call `q.Ref` at
+all times.
 
-    npm install
+#### Instantiating a Client and Issuing Queries
+```javascript
+var client = new faunadb.Client({ secret: 'YOUR_FAUNADB_SECRET' });
+```
 
+Once the client has been instantiated, it can be used to issue queries. For
+example, to create an instance in an existing class named `test` with the data:
+`{ testField: 'testValue' }`:
 
-### Build
+```javascript
+var createP = client.query(q.Create(Ref('classes/test'), { testField: 'testValue' }));
+```
 
-`npm run build` or `npm run watch`.
+Note that we are using the `Ref` alias defined above here.
 
+All methods on `faunadb.Client` return [ES6 Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
+So, if we wanted to handle the Promise to access the `Ref` of the newly created
+instance:
 
-### Test
+```javascript
+createP.then(function(res) {
+  console.log(res.ref); // Would log the ref to console.
+});
+```
 
-    npm run test
+`res` is a JSON object containing the FaunaDB response. See the JSDocs for
+`faunadb.Client`, and the [FaunaDB Developer Guide](https://faunadb.com/documentation/dev)
+for more information on responses.
 
-To run tests, you will need to create a `testConfig.json` in the faunadb-js directory
-that looks like this:
+#### Pagination Helpers
 
-    {
-      "domain": "localhost",
-      "scheme": "http",
-      "port": 8443,
-      "auth": {"user": "secret"}
-    }
+This driver contains helpers to provide a simpler API for consuming paged
+responses from FaunaDB. See the [FaunaDB Developer Guide](https://faunadb.com/documentation/dev) 
+and the [Paginate Function Reference](https://faunadb.com/documentation/queries#read_functions-paginate_set)
+for a description of paged responses.
 
-`domain`, `scheme`, and `port` are optional and will default to FaunaDB cloud.
-So to test with cloud, `testConfig.json` is as simple as:
+Using the helper to page over sets lets the driver handle cursoring and
+pagination state. For example:
 
-    {
-      "auth": {"user": "me@example.com", "pass": "swordfish"}
-    }
+```javascript
+var helper = client.paginate(q.Match(Ref('indexes/test_index'), 'example-term'));
+```
 
-You can also set the `FAUNA_DOMAIN`, `FAUNA_SCHEME`, `FAUNA_PORT`, and `FAUNA_ROOT_KEY` environment variables. `FAUNA_ROOT_KEY` may look like `me@example.com:swordfish` for cloud accounts.
+Here, `helper` is an instance of `PageHelper`. The `each` method will execute a
+callback function on each consumed page.
 
-Note that when testing in cloud, builtin tests for database, key, and custom field will fail as cloud accounts do not have access to that functionality.
+```javascript
+helper.each(function(page) {
+  console.log(page); // Will log the page's contents, for example: [ Ref("classes/test/1234"), ... ]
+});
+```
 
-Testing uses a require hook, so building isn't necessary.
+Note that `each` returns a `Promise<void>` that is fulfilled on the completion
+of pagination.
 
-For fuller testing, run `./test-all.sh`, which uses [nvm](https://github.com/creationix/nvm).
+The pagination can be transformed server-side via the FaunaDB query language
+via the `map` and `filter` functions.
 
-To run a single test file:
+For example, to retrieve the matched instances:
 
-    node_modules/mocha/bin/mocha --compilers js:babel-register test/client_test.js
+```javascript
+helper.map(function(ref) { return q.Get(ref); }).each(function(page) {
+  console.log(page); // Will now log the retrieved instances.
+});
+```
 
+[See the JSDocs](https://faunadb.github.com/faunadb-js/PageHelper.html) for
+more information on the pagination helper.
 
-### Document
+## Client Development
 
-    npm run doc
+Run `npm install` to install dependencies.
 
+### Code
 
-### Contribute
+As the driver targets multiple JS runtimes, it is developed in vanilla ES5.  We
+use the [es6-promise](https://github.com/stefanpenner/es6-promise) polyfill in
+order to provide Promise support.
 
-GitHub pull requests are very welcome.
+### Testing
 
+* `npm run test`: This will run tests against the current version of Node.js.
+  [nvm](https://github.com/creationix/nvm) is useful for managing multiple
+  versions of Node.js for testing.
+* `npm run browser-test-{mac|linux|win}`: This will run tests against
+  platform-specific browsers.  [Karma](https://karma-runner.github.io/1.0/index.html) 
+  is used as the test runner.
 
-## LICENSE
+Both Node.js and browser tests will read a `testConfig.json` file located in
+the root directory of this project for Fauna client configuration. A minimal
+`testConfig.json` file would contain your FaunaDB key:
 
-Copyright 2015 [Fauna, Inc.](https://faunadb.com/)
+```json
+{ "auth": "YOUR_FAUNA_KEY" }
+```
 
-Licensed under the Mozilla Public License, Version 2.0 (the
-"License"); you may not use this software except in compliance with
-the License. You may obtain a copy of the License at
+Each test run will create a new database, and will attempt to clean it up when
+done. If the tests are cancelled, the test database will not get cleaned up.
+Therefore it is recommended to use a FaunaDB key scoped to an empty parent
+database created for this purpose, rather than your account's root key. This
+will make cleanup of test databases as easy as removing the parent database.
+
+See the [FaunaDB Multitenancy Tutorial](https://faunadb.com/tutorials/multitenant) for more
+information about nested databases.
+
+### Documentation
+
+* `npm run doc` will generate JSDoc documentation for the project.
+
+## License
+
+Copyright 2016 [Fauna, Inc.](https://faunadb.com/)
+
+Licensed under the Mozilla Public License, Version 2.0 (the "License"); you may
+not use this software except in compliance with the License. You may obtain a
+copy of the License at
 
 [http://mozilla.org/MPL/2.0/](http://mozilla.org/MPL/2.0/)
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-implied. See the License for the specific language governing
-permissions and limitations under the License.
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
