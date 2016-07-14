@@ -9,3 +9,4 @@ typings/
 .vscode/
 faunadb*.tgz
 doc/
+dist/
