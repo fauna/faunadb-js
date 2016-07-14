@@ -46,7 +46,7 @@ function Ref() {
  * @return {Expr}
  * */
 function Let(vars, in_expr) {
-  return new Expr({ let: Expr.wrapValues(vars), in: Expr.wrap(in_expr) });
+  return new Expr({ let: wrapValues(vars), in: wrap(in_expr) });
 }
 
 /**
@@ -56,7 +56,7 @@ function Let(vars, in_expr) {
  * @return {Expr}
  * */
 function Var(varName) {
-  return new Expr({ var: Expr.wrap(varName) });
+  return new Expr({ var: wrap(varName) });
 }
 
 /**
@@ -68,7 +68,7 @@ function Var(varName) {
  * @return {Expr}
  * */
 function If(condition, then, _else) {
-  return new Expr({ if: Expr.wrap(condition), then: Expr.wrap(then), else: Expr.wrap(_else) });
+  return new Expr({ if: wrap(condition), then: wrap(then), else: wrap(_else) });
 }
 
 /**
@@ -78,7 +78,7 @@ function If(condition, then, _else) {
  * @return {Expr}
  * */
 function Do() {
-  return new Expr({ do: Expr.wrap(varargs(arguments)) });
+  return new Expr({ do: wrap(varargs(arguments)) });
 }
 
 /** See the [docs](https://faunadb.com/documentation/queries#basic_forms).
@@ -86,8 +86,8 @@ function Do() {
  * @param {...module:query~ExprArg} fields
  * @return {Expr}
  * */
-function Object(fields) {
-  return new Expr({ object: Expr.wrapValues(fields) });
+var objectFunction = function(fields) {
+  return new Expr({ object: wrapValues(fields) });
 }
 
 /**
@@ -159,7 +159,7 @@ function _lambdaFunc(func) {
  * @private
  */
 function _lambdaExpr(var_name, expr) {
-  return new Expr({ lambda: Expr.wrap(var_name), expr: Expr.wrap(expr) });
+  return new Expr({ lambda: wrap(var_name), expr: wrap(expr) });
 }
 
 // Collection functions
@@ -171,7 +171,7 @@ function _lambdaExpr(var_name, expr) {
  * @return {Expr}
  * */
 function Map(collection, lambda_expr) {
-  return new Expr({ map: Expr.wrap(Lambda(lambda_expr)), collection: Expr.wrap(collection) });
+  return new Expr({ map: wrap(lambda_expr), collection: wrap(collection) });
 }
 
 /**
@@ -182,7 +182,7 @@ function Map(collection, lambda_expr) {
  * @return {Expr}
  * */
 function Foreach(collection, lambda_expr) {
-  return new Expr({ foreach: Expr.wrap(Lambda(lambda_expr)), collection: Expr.wrap(collection) });
+  return new Expr({ foreach: wrap(lambda_expr), collection: wrap(collection) });
 }
 
 /**
@@ -193,7 +193,7 @@ function Foreach(collection, lambda_expr) {
  * @return {Expr}
  * */
 function Filter(collection, lambda_expr) {
-  return new Expr({ filter: Expr.wrap(Lambda(lambda_expr)), collection: Expr.wrap(collection) });
+  return new Expr({ filter: wrap(lambda_expr), collection: wrap(collection) });
 }
 
 /**
@@ -204,7 +204,7 @@ function Filter(collection, lambda_expr) {
  * @return {Expr}
  * */
 function Take(number, collection) {
-  return new Expr({ take: Expr.wrap(number), collection: Expr.wrap(collection) });
+  return new Expr({ take: wrap(number), collection: wrap(collection) });
 }
 
 /**
@@ -215,7 +215,7 @@ function Take(number, collection) {
  * @return {Expr}
  * */
 function Drop(number, collection) {
-  return new Expr({ drop: Expr.wrap(number), collection: Expr.wrap(collection) });
+  return new Expr({ drop: wrap(number), collection: wrap(collection) });
 }
 
 /**
@@ -226,7 +226,7 @@ function Drop(number, collection) {
  * @return {Expr}
  */
 function Prepend(elements, collection) {
-  return new Expr({ prepend: Expr.wrap(elements), collection: Expr.wrap(collection) });
+  return new Expr({ prepend: wrap(elements), collection: wrap(collection) });
 }
 
 /**
@@ -237,7 +237,7 @@ function Prepend(elements, collection) {
  * @return {Expr}
  */
 function Append(elements, collection) {
-  return new Expr({ append: Expr.wrap(elements), collection: Expr.wrap(collection) });
+  return new Expr({ append: wrap(elements), collection: wrap(collection) });
 }
 
 // Read functions
@@ -252,7 +252,7 @@ function Append(elements, collection) {
 function Get(ref, ts) {
   ts = defaults(ts, null);
 
-  return new Expr(params({ get: Expr.wrap(ref) }, { ts: Expr.wrap(ts) }));
+  return new Expr(params({ get: wrap(ref) }, { ts: wrap(ts) }));
 }
 
 /**
@@ -267,7 +267,7 @@ function Get(ref, ts) {
 function Paginate(set, opts) {
   opts = defaults(opts, {});
 
-  return new Expr(objectAssign({ paginate: Expr.wrap(set) }, Expr.wrapValues(opts)));
+  return new Expr(objectAssign({ paginate: wrap(set) }, wrapValues(opts)));
 }
 
 /**
@@ -280,7 +280,7 @@ function Paginate(set, opts) {
 function Exists(ref, ts) {
   ts = defaults(ts, null);
 
-  return new Expr(params({ exists: Expr.wrap(ref) }, { ts: Expr.wrap(ts) }));
+  return new Expr(params({ exists: wrap(ref) }, { ts: wrap(ts) }));
 }
 
 /**
@@ -293,7 +293,7 @@ function Exists(ref, ts) {
 function Count(set, events) {
   events = defaults(events, null);
 
-  return new Expr(params({ count: Expr.wrap(set) }, { events: Expr.wrapValues(events) }));
+  return new Expr(params({ count: wrap(set) }, { events: wrapValues(events) }));
 }
 
 // Write functions
@@ -306,7 +306,7 @@ function Count(set, events) {
  * @return {Expr}
  */
 function Create(class_ref, params) {
-  return new Expr({ create: Expr.wrap(class_ref), params: Expr.wrap(params) });
+  return new Expr({ create: wrap(class_ref), params: wrap(params) });
 }
 
 /**
@@ -317,7 +317,7 @@ function Create(class_ref, params) {
  * @return {Expr}
  */
 function Update(ref, params) {
-  return new Expr({ update: Expr.wrap(ref), params: Expr.wrap(params) });
+  return new Expr({ update: wrap(ref), params: wrap(params) });
 }
 
 /**
@@ -328,7 +328,7 @@ function Update(ref, params) {
  * @return {Expr}
  */
 function Replace(ref, params) {
-  return new Expr({ replace: Expr.wrap(ref), params: Expr.wrap(params) });
+  return new Expr({ replace: wrap(ref), params: wrap(params) });
 }
 
 /**
@@ -338,7 +338,7 @@ function Replace(ref, params) {
  * @return {Expr}
  */
 function Delete(ref) {
-  return new Expr({ delete: Expr.wrap(ref) });
+  return new Expr({ delete: wrap(ref) });
 }
 
 /**
@@ -351,7 +351,7 @@ function Delete(ref) {
  * @return {Expr}
  */
 function Insert(ref, ts, action, params) {
-  return new Expr({ insert: Expr.wrap(ref), ts: Expr.wrap(ts), action: Expr.wrap(action), params: Expr.wrap(params) });
+  return new Expr({ insert: wrap(ref), ts: wrap(ts), action: wrap(action), params: wrap(params) });
 }
 
 /**
@@ -363,7 +363,7 @@ function Insert(ref, ts, action, params) {
  * @return {Expr}
  */
 function Remove(ref, ts, action) {
-  return new Expr({ remove: Expr.wrap(ref), ts: Expr.wrap(ts), action: Expr.wrap(action) });
+  return new Expr({ remove: wrap(ref), ts: wrap(ts), action: wrap(action) });
 }
 
 // Sets
@@ -378,7 +378,7 @@ function Remove(ref, ts, action) {
 function Match(index) {
   var args = argsToArray(arguments);
   args.shift();
-  return new Expr({ match: Expr.wrap(index), terms: Expr.wrap(varargs(args)) });
+  return new Expr({ match: wrap(index), terms: wrap(varargs(args)) });
 }
 
 /**
@@ -388,7 +388,7 @@ function Match(index) {
  * @return {Expr}
  */
 function Union() {
-  return new Expr({ union: Expr.wrap(varargs(arguments)) });
+  return new Expr({ union: wrap(varargs(arguments)) });
 }
 
 /**
@@ -398,7 +398,7 @@ function Union() {
  * @return {Expr}
  * */
 function Intersection() {
-  return new Expr({ intersection: Expr.wrap(varargs(arguments)) });
+  return new Expr({ intersection: wrap(varargs(arguments)) });
 }
 
 /**
@@ -408,7 +408,7 @@ function Intersection() {
  * @return {Expr}
  * */
 function Difference() {
-  return new Expr({ difference: Expr.wrap(varargs(arguments)) });
+  return new Expr({ difference: wrap(varargs(arguments)) });
 }
 
 /**
@@ -418,7 +418,7 @@ function Difference() {
  * @return {Expr}
  * */
 function Distinct(set) {
-  return new Expr({ distinct: Expr.wrap(set) });
+  return new Expr({ distinct: wrap(set) });
 }
 
 /**
@@ -429,7 +429,7 @@ function Distinct(set) {
  * @return {Expr}
  */
 function Join(source, target) {
-  return new Expr({ join: Expr.wrap(source), with: Expr.wrap(Lambda(target)) });
+  return new Expr({ join: wrap(source), with: wrap(target) });
 }
 
 // Authentication
@@ -442,7 +442,7 @@ function Join(source, target) {
  * @return {Expr}
  * */
 function Login(ref, params) {
-  return new Expr({ login: Expr.wrap(ref), params: Expr.wrap(params) });
+  return new Expr({ login: wrap(ref), params: wrap(params) });
 }
 
 /**
@@ -452,7 +452,7 @@ function Login(ref, params) {
  * @return {Expr}
  */
 function Logout(delete_tokens) {
-  return new Expr({ logout: Expr.wrap(delete_tokens) });
+  return new Expr({ logout: wrap(delete_tokens) });
 }
 
 /**
@@ -463,7 +463,7 @@ function Logout(delete_tokens) {
  * @return {Expr}
  */
 function Identify(ref, password) {
-  return new Expr({ identify: Expr.wrap(ref), password: Expr.wrap(password) });
+  return new Expr({ identify: wrap(ref), password: wrap(password) });
 }
 
 // String functions
@@ -477,7 +477,7 @@ function Identify(ref, password) {
  */
 function Concat(strings, separator) {
   separator = defaults(separator, null);
-  return new Expr(params({ concat: Expr.wrap(strings) }, { separator: Expr.wrap(separator) }));
+  return new Expr(params({ concat: wrap(strings) }, { separator: wrap(separator) }));
 }
 
 /**
@@ -487,7 +487,7 @@ function Concat(strings, separator) {
  * @return {Expr}
  */
 function Casefold(string) {
-  return new Expr({ casefold: Expr.wrap(string) });
+  return new Expr({ casefold: wrap(string) });
 }
 
 // Time and date functions
@@ -498,7 +498,7 @@ function Casefold(string) {
  * @return {Expr}
  */
 function Time(string) {
-  return new Expr({ time: Expr.wrap(string) });
+  return new Expr({ time: wrap(string) });
 }
 
 /**
@@ -509,7 +509,7 @@ function Time(string) {
  * @return {Expr}
  */
 function Epoch(number, unit) {
-  return new Expr({ epoch: Expr.wrap(number), unit: Expr.wrap(unit) });
+  return new Expr({ epoch: wrap(number), unit: wrap(unit) });
 }
 
 /**
@@ -519,7 +519,7 @@ function Epoch(number, unit) {
  * @return {Expr}
  */
 function Date(string) {
-  return new Expr({ date: Expr.wrap(string) });
+  return new Expr({ date: wrap(string) });
 }
 
 // Miscellaneous functions
@@ -551,7 +551,7 @@ function Equals() {
  * @return {Expr}
  */
 function Contains(path, _in) {
-  return new Expr({ contains: Expr.wrap(path), in: Expr.wrap(_in) });
+  return new Expr({ contains: wrap(path), in: wrap(_in) });
 }
 
 /**
@@ -563,9 +563,9 @@ function Contains(path, _in) {
  * @return {Expr}
  */
 function Select(path, from, _default) {
-  var exprObj = { select: Expr.wrap(path), from: Expr.wrap(from) };
+  var exprObj = { select: wrap(path), from: wrap(from) };
   if (_default !== undefined) {
-    exprObj.default = Expr.wrapValues(_default);
+    exprObj.default = wrapValues(_default);
   }
   return new Expr(exprObj);
 }
@@ -577,7 +577,7 @@ function Select(path, from, _default) {
  * @return {Expr}
  */
 function Add() {
-  return new Expr({ add: Expr.wrap(varargs(arguments)) });
+  return new Expr({ add: wrap(varargs(arguments)) });
 }
 
 /**
@@ -587,7 +587,7 @@ function Add() {
  * @return {Expr}
  */
 function Multiply() {
-  return new Expr({ multiply: Expr.wrap(varargs(arguments)) });
+  return new Expr({ multiply: wrap(varargs(arguments)) });
 }
 
 /**
@@ -597,7 +597,7 @@ function Multiply() {
  * @return {Expr}
  */
 function Subtract() {
-  return new Expr({ subtract: Expr.wrap(varargs(arguments)) });
+  return new Expr({ subtract: wrap(varargs(arguments)) });
 }
 
 /**
@@ -607,7 +607,7 @@ function Subtract() {
  * @return {Expr}
  */
 function Divide() {
-  return new Expr({ divide: Expr.wrap(varargs(arguments)) });
+  return new Expr({ divide: wrap(varargs(arguments)) });
 }
 
 /**
@@ -617,7 +617,7 @@ function Divide() {
  * @return {Expr}
  */
 function Modulo() {
-  return new Expr({ modulo: Expr.wrap(varargs(arguments)) });
+  return new Expr({ modulo: wrap(varargs(arguments)) });
 }
 
 /**
@@ -627,7 +627,7 @@ function Modulo() {
  * @return {Expr}
  */
 function LT() {
-  return new Expr({ lt: Expr.wrap(varargs(arguments)) });
+  return new Expr({ lt: wrap(varargs(arguments)) });
 }
 
 /**
@@ -637,7 +637,7 @@ function LT() {
  * @return {Expr}
  */
 function LTE() {
-  return new Expr({ lte: Expr.wrap(varargs(arguments)) });
+  return new Expr({ lte: wrap(varargs(arguments)) });
 }
 
 /**
@@ -647,7 +647,7 @@ function LTE() {
  * @return {Expr}
  */
 function GT() {
-  return new Expr({ gt: Expr.wrap(varargs(arguments)) });
+  return new Expr({ gt: wrap(varargs(arguments)) });
 }
 
 /**
@@ -657,7 +657,7 @@ function GT() {
  * @return {Expr}
  */
 function GTE() {
-  return new Expr({ gte: Expr.wrap(varargs(arguments)) });
+  return new Expr({ gte: wrap(varargs(arguments)) });
 }
 
 /**
@@ -667,7 +667,7 @@ function GTE() {
  * @return {Expr}
  */
 function And() {
-  return new Expr({ and: Expr.wrap(varargs(arguments)) });
+  return new Expr({ and: wrap(varargs(arguments)) });
 }
 
 /**
@@ -677,7 +677,7 @@ function And() {
  * @return {Expr}
  */
 function Or() {
-  return new Expr({ or: Expr.wrap(varargs(arguments)) });
+  return new Expr({ or: wrap(varargs(arguments)) });
 }
 
 /**
@@ -687,7 +687,7 @@ function Or() {
  * @return {Expr}
  */
 function Not(boolean) {
-  return new Expr({ not: Expr.wrap(boolean) });
+  return new Expr({ not: wrap(boolean) });
 }
 
 // Helpers
@@ -738,13 +738,62 @@ function defaults(param, def) {
   }
 }
 
+/**
+ * Wraps an object as an Expression. This will automatically wrap any bare objects with
+ * the appropriate {@link object} escaping.
+ * @param {Object} obj
+ *  The object to be wrapped as an Expression.
+ * @returns {Expr}
+ *   The expression wrapping the provided object.
+ * @private
+ */
+function wrap(obj) {
+  if (obj === null) {
+    return null;
+  } else if (obj instanceof Expr) {
+    return obj;
+  } else if (obj instanceof Function) {
+    return Lambda(obj);
+  } else if (obj instanceof Array) {
+    return new Expr(obj.map(function (elem) {
+      return wrap(elem);
+    }));
+  } else if (typeof obj === 'object') {
+    return new Expr({ object: wrapValues(obj) });
+  } else {
+    return obj;
+  }
+}
+
+/**
+ * Wraps all of the values of a provided Object, while leaving the parent object unwrapped.
+ * @param {Object} obj
+ *  The object whose values are to be wrapped as Expressions.
+ * @returns {Object}
+ *  A copy of the provided object, with the values wrapped as Expressions.
+ * @private
+ */
+function wrapValues(obj) {
+  if (obj !== null) {
+    var rv = {};
+
+    Object.keys(obj).forEach(function(key) {
+      rv[key] = wrap(obj[key]);
+    });
+
+    return rv;
+  } else {
+    return null;
+  }
+}
+
 module.exports = {
   Ref: Ref,
   Let: Let,
   Var: Var,
   If: If,
   Do: Do,
-  Object: Object,
+  Object: objectFunction,
   Lambda: Lambda,
   Map: Map,
   Foreach: Foreach,
