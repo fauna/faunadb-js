@@ -3,6 +3,7 @@
 var btoa = require('btoa-lite');
 var request = require('superagent');
 var errors = require('./errors');
+var query = require('./query');
 var values = require('./values');
 var json = require('./_json');
 var RequestResult = require('./RequestResult');
@@ -75,7 +76,7 @@ function Client(options) {
  * @return {external:Promise<Object>} FaunaDB response object.
  */
 Client.prototype.query = function (expression) {
-  return this._execute('POST', '', expression);
+  return this._execute('POST', '', query.wrap(expression));
 };
 
 /**

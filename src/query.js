@@ -841,5 +841,6 @@ module.exports = {
   GTE: GTE,
   And: And,
   Or: Or,
-  Not: Not
+  Not: Not,
+  wrap: wrap
 };
