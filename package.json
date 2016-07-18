@@ -1,17 +1,16 @@
 {
   "name": "faunadb",
   "version": "0.2.0",
-  "description": "FaunaDB (faunadb.com) client for node",
+  "description": "FaunaDB Javascript driver for Node.JS and Browsers",
   "homepage": "https://faunadb.com",
   "repository": "faunadb/faunadb-js",
   "license": "MPL-2.0",
+  "keywords": [ "database", "fauna", "official", "driver" ],
+  "bugs": { "url": "https://github.com/faunadb/faunadb-js/issues" },
   "files": [
     "index.d.ts",
     "src/"
   ],
-  "engines": {
-    "node": ">= 4.0.0"
-  },
   "main": "index.js",
   "scripts": {
     "doc": "jsdoc -c ./jsdoc.json",

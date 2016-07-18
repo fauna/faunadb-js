@@ -27,11 +27,17 @@ This Driver supports and is tested on:
 
 #### Node.js
 
-TODO: NPM
+`npm install faunadb`
+
+See [faunadb on NPM](https://npmjs.com/package/faunadb) for more information.
 
 #### Browsers
 
-TODO: Browser source
+The browser release can be found in the [faunadb/faunadb-js-release](https://github.com/faunadb/faunadb-js-release) repository.
+
+This release can be installed via bower:
+
+`bower install faunadb`
 
 ### Use
 
