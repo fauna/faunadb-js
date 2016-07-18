@@ -16,6 +16,8 @@
   "scripts": {
     "doc": "jsdoc -c ./jsdoc.json",
     "test": "mocha test/",
+    "browserify": "browserify index.js -o dist/faunadb.js",
+    "browserify-min": "browserify index.js | uglifyjs -c --screw-ie8 -m -o dist/faunadb-min.js",
     "browser-test-mac": "karma start browserTest.conf.js --browsers Chrome,Safari,Firefox",
     "browser-test-win": "karma start browserTest.conf.js --browsers Chrome,Firefox,IE",
     "browser-test-linux": "karma start browserTest.conf.js --browsers Chrome,Firefox",
@@ -44,6 +46,7 @@
     "karma-safari-launcher": "^1.0.0",
     "karma-spec-reporter": "0.0.26",
     "mocha": "^2.4.5",
+    "uglify-js": "^2.7.0",
     "watchify": "^3.7.0"
   }
 }
