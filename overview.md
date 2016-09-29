@@ -18,4 +18,4 @@ See the README and the [Official FaunaDB Documentation](https://fauna.com/docume
 ## Internal types and modules
 
 * [Expr](Expr.html): A base class for FaunaDB expression types.
-* [values module](module-values.html): Class heirarchy for FaunaDB value types.
+* [values module](module-values.html): Class hierarchy for FaunaDB value types.
