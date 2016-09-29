@@ -23,7 +23,7 @@ var Promise = require('es6-promise').Promise;
  *
  * Users will mainly call the {@link Client#query} method to execute queries.
  *
- * See the [FaunaDB Documentation](https://faunadb.com/documentation) for detailed examples.
+ * See the [FaunaDB Documentation](https://fauna.com/documentation) for detailed examples.
  *
  * All methods return promises containing a JSON object that represents the FaunaDB response.
  * Literal types in the response object will remain as strings, Arrays, and objects.
@@ -42,7 +42,7 @@ var Promise = require('es6-promise').Promise;
  *   HTTP scheme to use.
  * @param {?number} options.port
  *   Port of the FaunaDB server.
- * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://faunadb.com/documentation/objects#keys))
+ * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://fauna.com/documentation/objects#keys))
  * @param {?number} options.timeout Read timeout in seconds.
  * @param {?Client~observerCallback} options.observer
  *   Callback that will be called after every completed request.
@@ -69,7 +69,7 @@ function Client(options) {
 
 /**
  * Executes a query via the FaunaDB Query API.
- * See the [docs](https://faunadb.com/documentation/queries),
+ * See the [docs](https://fauna.com/documentation/queries),
  * and the query functions in this documentation.
  * @param expression {Expr}
  *   The query to execute. Created from query functions such as {@link add}.
@@ -85,7 +85,7 @@ Client.prototype.query = function (expression) {
  * @param expression {Expr}
  *   The Query expression to paginate over.
  * @param params {Object}
- *   Options to be passed to the paginate function. See [paginate](https://faunadb.com/documentation/queries#read_functions).
+ *   Options to be passed to the paginate function. See [paginate](https://fauna.com/documentation/queries#read_functions).
  * @returns {PageHelper} A PageHelper that wraps the provided expression.
  */
 Client.prototype.paginate = function(expression, params) {
@@ -96,7 +96,7 @@ Client.prototype.paginate = function(expression, params) {
 
 /**
  * Issues a HTTP `GET` request via the legacy REST API.
- * See the [docs](https://faunadb.com/documentation/rest).
+ * See the [docs](https://fauna.com/documentation/rest).
  * @deprecated Use the {@link Client#query} API where possible.
  * @param {(string|Ref)} path Path relative the `domain` from the constructor.
  * @param {Object} query URL parameters.
@@ -109,7 +109,7 @@ Client.prototype.get = function (path, query) {
 
 /**
  * Issues a HTTP `POST` request via the legacy REST API.
- * See the [docs](https://faunadb.com/documentation/rest).
+ * See the [docs](https://fauna.com/documentation/rest).
  * @deprecated Use the {@link Client#query} API where possible.
  * @param {(string|Ref)} path Path relative to the `domain` from the constructor.
  * @param {Object} data Object to be converted to request JSON.
@@ -121,7 +121,7 @@ Client.prototype.post = function (path, data) {
 
 /**
  * Issues a HTTP `PUT` request via the legacy REST API.
- * See the [docs](https://faunadb.com/documentation/rest).
+ * See the [docs](https://fauna.com/documentation/rest).
  * @deprecated Use the {@link Client#query} API where possible.
  * @param {(string|Ref)} path Path relative to the `domain` from the constructor.
  * @param {Object} data Object to be converted to the request JSON.
@@ -133,7 +133,7 @@ Client.prototype.put = function (path, data) {
 
 /**
  * Issues a HTTP `PATCH` request via the legacy REST API.
- * See the [docs](https://faunadb.com/documentation/rest).
+ * See the [docs](https://fauna.com/documentation/rest).
  * @deprecated Use the {@link Client#query} API where possible.
  * @param {(string|Ref)} path Path relative to the `domain` from the constructor.
  * @param {Object} data Object to be converted to the request JSON.
@@ -145,7 +145,7 @@ Client.prototype.patch = function (path, data) {
 
 /**
  * Issues a HTTP `DELETE` request via the legacy REST API.
- * See the [docs](https://faunadb.com/documentation/rest).
+ * See the [docs](https://fauna.com/documentation/rest).
  * @deprecated Use the {@link Client#query} API where possible.
  * @param {(string|Ref)} path Path relative to the `domain` from the constructor.
  * @return {external:Promise<Object>} FaunaDB response object.
@@ -156,7 +156,7 @@ Client.prototype.delete = function (path) {
 
 /**
  * Sends a `ping` request to FaunaDB.
- * See the [docs](https://faunadb.com/documentation/rest#other).
+ * See the [docs](https://fauna.com/documentation/rest#other).
  * @return {external:Promise<string>} Ping response.
  */
 Client.prototype.ping = function (scope, timeout) {

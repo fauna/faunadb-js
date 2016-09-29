@@ -1,6 +1,6 @@
 # FaunaDB JS Driver Reference Documentation
 
-See the README and the [Official FaunaDB Documentation](https://faunadb.com/documentation) for examples and tutorials.
+See the README and the [Official FaunaDB Documentation](https://fauna.com/documentation) for examples and tutorials.
 
 ## Required Classes and Modules
 
