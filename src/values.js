@@ -12,7 +12,7 @@ var util = require('util');
  * contains these values. For example, a FaunaDB response containing
  *`{ "@ref": "classes/frogs/123" }` will be returned as `new Ref("classes/frogs/123")`.
  *
- * See the [FaunaDB Query API Documentation](https://faunadb.com/documentation/queries#values)
+ * See the [FaunaDB Query API Documentation](https://fauna.com/documentation/queries#values)
  * for more information.
  *
  * @module values
@@ -31,7 +31,7 @@ util.inherits(Value, Expr);
 
 /**
  * FaunaDB ref.
- * See the [docs](https://faunadb.com/documentation/queries#values-special_types).
+ * See the [docs](https://fauna.com/documentation/queries#values-special_types).
  *
  * A simple wrapper around a string which can be extracted using `ref.value`.
  * Queries that require a Ref will not work if you just pass in a string.
@@ -147,7 +147,7 @@ SetRef.prototype.toJSON = function() {
   return { '@set': this.value };
 };
 
-/** FaunaDB time. See the [docs](https://faunadb.com/documentation/queries#values-special_types).
+/** FaunaDB time. See the [docs](https://fauna.com/documentation/queries#values-special_types).
  *
  * @param {string|Date} value If a Date, this is converted to a string.
  * @extends module:values~Value
@@ -181,7 +181,7 @@ FaunaTime.prototype.toJSON = function() {
   return { '@ts': this.value };
 };
 
-/** FaunaDB date. See the [docs](https://faunadb.com/documentation/queries#values-special_types).
+/** FaunaDB date. See the [docs](https://fauna.com/documentation/queries#values-special_types).
  *
  * @param {string|Date} value
  *   If a Date, this is converted to a string, with time-of-day discarded.

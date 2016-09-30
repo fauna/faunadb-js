@@ -1,6 +1,6 @@
 # FaunaDB JS Driver Reference Documentation
 
-See the README and the [Official FaunaDB Documentation](https://faunadb.com/documentation) for examples and tutorials.
+See the README and the [Official FaunaDB Documentation](https://fauna.com/documentation) for examples and tutorials.
 
 ## Required Classes and Modules
 
@@ -18,4 +18,4 @@ See the README and the [Official FaunaDB Documentation](https://faunadb.com/docu
 ## Internal types and modules
 
 * [Expr](Expr.html): A base class for FaunaDB expression types.
-* [values module](module-values.html): Class heirarchy for FaunaDB value types.
+* [values module](module-values.html): Class hierarchy for FaunaDB value types.

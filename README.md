@@ -1,11 +1,11 @@
 # FaunaDB Javascript Driver
 
-A Javascript driver for [FaunaDB](https://faunadb.com).
+A Javascript driver for [FaunaDB](https://fauna.com).
 
 [View reference JSDocs here](https://faunadb.github.com/faunadb-js).
 
-See the [FaunaDB Documentation](https://faunadb.com/documentation) and
-[Tutorials](https://faunadb.com/tutorials) for guides and a complete database
+See the [FaunaDB Documentation](https://fauna.com/documentation) and
+[Tutorials](https://fauna.com/tutorials) for guides and a complete database
 API reference.
 
 ## Supported Runtimes
@@ -41,7 +41,7 @@ This release can be installed via bower:
 
 ### Use
 
-The [tutorials](http://faunadb.com/tutorials) in the FaunaDB documentation
+The [tutorials](http://fauna.com/tutorials) in the FaunaDB documentation
 contain driver-specific examples.
 
 #### Requiring the Driver
@@ -84,14 +84,14 @@ createP.then(function(res) {
 ```
 
 `res` is a JSON object containing the FaunaDB response. See the JSDocs for
-`faunadb.Client`, and the [FaunaDB Developer Guide](https://faunadb.com/documentation/dev)
+`faunadb.Client`, and the [FaunaDB Developer Guide](https://fauna.com/documentation/dev)
 for more information on responses.
 
 #### Pagination Helpers
 
 This driver contains helpers to provide a simpler API for consuming paged
-responses from FaunaDB. See the [FaunaDB Developer Guide](https://faunadb.com/documentation/dev) 
-and the [Paginate Function Reference](https://faunadb.com/documentation/queries#read_functions-paginate_set)
+responses from FaunaDB. See the [FaunaDB Developer Guide](https://fauna.com/documentation/dev) 
+and the [Paginate Function Reference](https://fauna.com/documentation/queries#read_functions-paginate_set)
 for a description of paged responses.
 
 Using the helper to page over sets lets the driver handle cursoring and
@@ -160,7 +160,7 @@ Therefore it is recommended to use a FaunaDB key scoped to an empty parent
 database created for this purpose, rather than your account's root key. This
 will make cleanup of test databases as easy as removing the parent database.
 
-See the [FaunaDB Multitenancy Tutorial](https://faunadb.com/tutorials/multitenant) for more
+See the [FaunaDB Multitenancy Tutorial](https://fauna.com/tutorials/multitenant) for more
 information about nested databases.
 
 ### Documentation
@@ -169,7 +169,7 @@ information about nested databases.
 
 ## License
 
-Copyright 2016 [Fauna, Inc.](https://faunadb.com/)
+Copyright 2016 [Fauna, Inc.](https://fauna.com/)
 
 Licensed under the Mozilla Public License, Version 2.0 (the "License"); you may
 not use this software except in compliance with the License. You may obtain a
