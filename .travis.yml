@@ -1,0 +1,19 @@
+sudo: false
+language: node_js
+node_js:
+- '0.12'
+- '4'
+- '6'
+env:
+  global:
+  - secure: akx67tSghMTX37ire/8GzsRIMCUcDcJRqw0+H07gSQoEW3s691XuRuu9dtPNchvLMoaR+V+3AJ4h4XDNorZhG7JWINwtZNeXjGhtCgijPzDaB8o8qt9P1DcanT+FofJYc0YcpVNxb/fg4/LYc/GAseKoDSHA6I256gLjqWQ4lVQ/f/AetTCKfq4yYK/Q+GWJZvZ5HChoPtKabG7OvUcYckHWD7ebb4/S8ga5aQqvQM+mq87C0ZFEgm83QPQYVUh6jz7k4m+a+D5+UJsEcL5DI5QHsM+yWLX+mIJg2n7oNsaoqXdRU9QVoLIhFzNhs1XeUWsYsgT1OI5xJnwywc3pUOFd6b3A0ST5pEWIXArUJIrWW0pvKyGHEEQ5sh5qNcGd+hUaGyYmjR+7QbohRIhGs7F8ysJCGH51QZAnOJ4Lh+yl4UpWJq8qpVUFbyxePDhI0ItAjQ6XsSc/7+yyddzgPjoBEf/+ERDUH/6kmuVQFRglboVqi+Dj09VRCw++uXC17d7xjUClzBU0XGmk5ihc0tOBHD2D9kL/FwyoL4mVlKYZCq6rkQb/33pW3c2NwL3WA12DatO9d/UuaYh9PT/EYEhzEhKn0kZPPCPK+ZKXjdEDjyS7q7w6ZpVPnuC5z86Sdon570eifMwOx/YtYBjpOjg2DKI7/188JTPBvpKQI4o=
+  - FAUNA_DOMAIN=cloud.faunadb.com
+  - FAUNA_SCHEME=https
+  - FAUNA_PORT=443
+notifications:
+  email: false
+  slack:
+    secure: iA5nKUmNdBlckKtdW5HEEiGDFkG7+QBSviz0Zvrs7iYnAeBiWun5H+bcCd3bn3mO7lkgtz4f20PceCa6VsrzuIr0AajD9SUJgdBl93Y3UGDtFr+6IvbK51swPCitcKt0uzHBgZ9bC1CWX674ef8irdYlnRgapFJB/chzg6uO23JZn2dbKntSvi9pMt2uGbJRtVZdmG39FDOo8LLKfnUWi74tllThnUXFvx7C49uK4wuL8rpD+oW9NW6gnRBnMYiy8cZxw7WlzEjHP+dKf52rTm6gSCneAQh8fFft5dxzlFpkuDpsJNMQZVyEz/t6aper/1Xyp9YrVLNfVxsqK6YoSCkvzxu+SMeQAQmOt9Cf/7KP0Hh/URgp8TtWSdqWfi+0XhjCwO9itbVPXEaWelmHJWl+3xcvsRlY6TYS7LXjL5+D+TQSMX6f1ppXMaiHc38GQsogrn2kxnqXtMGAwlh6+diRE2xmRT+2czcTEP0j9k56VZMKlBrKVLxk8QNfbhNHiakV8fNYqkaf8uAJc3hkQV1Qiw1oi1t5aj6YV0IbB7S9jJMhOGpCLAn7MHUKa/tIhV2PIjLMP3sBBkMNC7FbgnhiHQmROO4526pDsiJ1linUEjfCXBGmeb7XdGg97GB51C6Se1MHjjSTgHTcPTNIegc9Ez/t5GnJJuS6zmDOHPY=
+branches:
+  only:
+  - master
