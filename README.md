@@ -146,6 +146,7 @@ order to provide Promise support.
 * `npm run test`: This will run tests against the current version of Node.js.
   [nvm](https://github.com/creationix/nvm) is useful for managing multiple
   versions of Node.js for testing.
+* `npm run coverage`: This will run tests with coverage enabled.
 * `npm run browser-test-{mac|linux|win}`: This will run tests against
   platform-specific browsers.  [Karma](https://karma-runner.github.io/1.0/index.html) 
   is used as the test runner.
