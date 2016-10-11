@@ -17,7 +17,7 @@ var classRef, indexRef, instanceRefs = {}, refsToIndex = {};
 var tsClassRef, tsIndexRef, tsInstance1Ref, tsInstance1Ts;
 
 describe('page', function() {
-  this.timeout(5000);
+  this.timeout(10000);
   before(function() {
     client = util.client();
 
