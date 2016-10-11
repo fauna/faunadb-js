@@ -1,7 +1,8 @@
 # FaunaDB Javascript Driver
 
 [![Build Status](https://img.shields.io/travis/faunadb/faunadb-js/master.svg?maxAge=21600)](https://travis-ci.org/faunadb/faunadb-js)
-[![Gem Version](https://img.shields.io/npm/v/faunadb.svg?maxAge=21600)](https://www.npmjs.com/package/faunadb)
+[![Coverage Status](https://img.shields.io/codecov/c/github/faunadb/faunadb-js/master.svg?maxAge=21600)](https://codecov.io/gh/faunadb/faunadb-js/branch/master)
+[![Npm Version](https://img.shields.io/npm/v/faunadb.svg?maxAge=21600)](https://www.npmjs.com/package/faunadb)
 [![License](https://img.shields.io/badge/license-MPL_2.0-blue.svg?maxAge=2592000)](https://raw.githubusercontent.com/faunadb/faunadb-js/master/LICENSE)
 
 A Javascript driver for [FaunaDB](https://fauna.com).
