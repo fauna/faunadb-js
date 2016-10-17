@@ -10,3 +10,4 @@ typings/
 faunadb*.tgz
 doc/
 dist/
+coverage/

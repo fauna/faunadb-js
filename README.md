@@ -1,7 +1,8 @@
 # FaunaDB Javascript Driver
 
 [![Build Status](https://img.shields.io/travis/faunadb/faunadb-js/master.svg?maxAge=21600)](https://travis-ci.org/faunadb/faunadb-js)
-[![Gem Version](https://img.shields.io/npm/v/faunadb.svg?maxAge=21600)](https://www.npmjs.com/package/faunadb)
+[![Coverage Status](https://img.shields.io/codecov/c/github/faunadb/faunadb-js/master.svg?maxAge=21600)](https://codecov.io/gh/faunadb/faunadb-js/branch/master)
+[![Npm Version](https://img.shields.io/npm/v/faunadb.svg?maxAge=21600)](https://www.npmjs.com/package/faunadb)
 [![License](https://img.shields.io/badge/license-MPL_2.0-blue.svg?maxAge=2592000)](https://raw.githubusercontent.com/faunadb/faunadb-js/master/LICENSE)
 
 A Javascript driver for [FaunaDB](https://fauna.com).
@@ -146,6 +147,7 @@ order to provide Promise support.
 * `npm run test`: This will run tests against the current version of Node.js.
   [nvm](https://github.com/creationix/nvm) is useful for managing multiple
   versions of Node.js for testing.
+* `npm run coverage`: This will run tests with coverage enabled.
 * `npm run browser-test-{mac|linux|win}`: This will run tests against
   platform-specific browsers.  [Karma](https://karma-runner.github.io/1.0/index.html) 
   is used as the test runner.
