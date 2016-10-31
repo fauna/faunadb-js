@@ -533,6 +533,16 @@ function Database(name) {
 /**
  * See the [docs](https://fauna.com/documentation/queries#misc_functions).
  *
+ * @param {module:query~ExprArg} name
+ * @return {Expr}
+ */
+function Index(name) {
+  return new Expr({ index: wrap(name) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
@@ -824,6 +834,7 @@ module.exports = {
   Date: Date,
   NextId: NextID,
   Database: Database,
+  Index: Index,
   Equals: Equals,
   Contains: Contains,
   Select: Select,

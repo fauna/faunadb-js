@@ -407,6 +407,12 @@ describe('query', function () {
     });
   });
 
+  it('index', function() {
+    return client.query(query.Index("widgets_by_n")).then(function(res) {
+      assert.equal(res.value, nIndexRef.value);
+    });
+  });
+
   it('equals', function () {
     var p1 = assertQuery(query.Equals(1, 1, 1), true);
     var p2 = assertQuery(query.Equals(1, 1, 2), false);
