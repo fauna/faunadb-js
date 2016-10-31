@@ -25,19 +25,19 @@ describe('query', function () {
 
     return client.query(query.CreateClass({ name: 'widgets' })).then(function (instance) {
       classRef = instance.ref;
-      var nIndexRefP = client.query(query.Create(Ref('indexes'), {
+      var nIndexRefP = client.query(query.CreateIndex({
         name: 'widgets_by_n',
         source: classRef,
         terms: [ { 'field': ['data', 'n'] }]
       })).then(function(i) { nIndexRef = i.ref; });
 
-      var mIndexRefP = client.query(query.Create(Ref('indexes'), {
+      var mIndexRefP = client.query(query.CreateIndex({
         name: 'widgets_by_m',
         source: classRef,
         terms: [ { 'field': ['data', 'm'] }]
       })).then(function(i) { mIndexRef = i.ref; });
 
-      var nCoveredIndexRefP = client.query(query.Create(Ref('indexes'), {
+      var nCoveredIndexRefP = client.query(query.CreateIndex({
         name: 'widgets_cost_by_p',
         source: classRef,
         terms: [ { 'field': ['data', 'p' ] }],

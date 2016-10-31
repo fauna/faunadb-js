@@ -373,6 +373,16 @@ function CreateDatabase(params) {
   return new Expr({ create_database: wrap(params) });
 }
 
+/**
+ * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ *
+ * @param {?module:query~ExprArg} params
+ * @return {Expr}
+ */
+function CreateIndex(params) {
+  return new Expr({ create_index: wrap(params) });
+}
+
 // Sets
 
 /**
@@ -850,6 +860,7 @@ module.exports = {
   Remove: Remove,
   CreateClass: CreateClass,
   CreateDatabase: CreateDatabase,
+  CreateIndex: CreateIndex,
   Match: Match,
   Union: Union,
   Intersection: Intersection,
