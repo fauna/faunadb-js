@@ -25,7 +25,7 @@ export module query {
   export function Exists(ref: ExprArg, ts?: ExprArg): Expr;
 
   export function Create(class_ref: ExprArg, params?: ExprArg): Expr;
-  export function update(ref: ExprArg, params: ExprArg): Expr;
+  export function Update(ref: ExprArg, params: ExprArg): Expr;
   export function Replace(ref: ExprArg, params: ExprArg): Expr;
   export function Delete(ref: ExprArg): Expr;
   export function Insert(ref: ExprArg, ts: ExprArg, action: ExprArg, params: ExprArg): Expr;
