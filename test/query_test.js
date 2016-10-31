@@ -23,7 +23,7 @@ describe('query', function () {
     // Hideous way to ensure that the client is initialized.
     client = util.client();
 
-    return client.query(query.Create(Ref('classes'), { name: 'widgets' })).then(function (instance) {
+    return client.query(query.CreateClass({ name: 'widgets' })).then(function (instance) {
       classRef = instance.ref;
       var nIndexRefP = client.query(query.Create(Ref('indexes'), {
         name: 'widgets_by_n',
@@ -52,7 +52,7 @@ describe('query', function () {
           refM1 = i.ref;
           return create({ n: 1, m: 1, p: 1, cost: 10 });
         }).then(function (i) { refN1M1 = i.ref; });
-        var thimbleClassRefP = client.query(query.Create(Ref('classes'), { name: 'thimbles' })).then(function (i) { thimbleClassRef = i.ref; });
+        var thimbleClassRefP = client.query(query.CreateClass({ name: 'thimbles' })).then(function (i) { thimbleClassRef = i.ref; });
 
         return Promise.all([createP, thimbleClassRefP]);
       });

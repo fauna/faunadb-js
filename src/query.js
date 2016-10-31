@@ -353,6 +353,16 @@ function Remove(ref, ts, action) {
   return new Expr({ remove: wrap(ref), ts: wrap(ts), action: wrap(action) });
 }
 
+/**
+ * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ *
+ * @param {?module:query~ExprArg} params
+ * @return {Expr}
+ */
+function CreateClass(params) {
+  return new Expr({ create_class: wrap(params) });
+}
+
 // Sets
 
 /**
@@ -828,6 +838,7 @@ module.exports = {
   Delete: Delete,
   Insert: Insert,
   Remove: Remove,
+  CreateClass: CreateClass,
   Match: Match,
   Union: Union,
   Intersection: Intersection,
