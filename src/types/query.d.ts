@@ -52,6 +52,7 @@ export module query {
   export function NextId(): Expr;
   export function Database(name: ExprArg): Expr;
   export function Index(name: ExprArg): Expr;
+  export function Class(name: ExprArg): Expr;
   export function Equals(...args: ExprArg[]): Expr;
   export function Contains(path: ExprArg, _in: ExprArg): Expr;
   export function Select(path: ExprArg, from: ExprArg, _default?: ExprArg): Expr;

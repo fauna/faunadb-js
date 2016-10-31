@@ -413,6 +413,12 @@ describe('query', function () {
     });
   });
 
+  it('class', function() {
+    return client.query(query.Class("widgets")).then(function(res) {
+      assert.equal(res.value, classRef.value);
+    });
+  });
+
   it('equals', function () {
     var p1 = assertQuery(query.Equals(1, 1, 1), true);
     var p2 = assertQuery(query.Equals(1, 1, 2), false);

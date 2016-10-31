@@ -543,6 +543,16 @@ function Index(name) {
 /**
  * See the [docs](https://fauna.com/documentation/queries#misc_functions).
  *
+ * @param {module:query~ExprArg} name
+ * @return {Expr}
+ */
+function Class(name) {
+  return new Expr({ class: wrap(name) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
@@ -835,6 +845,7 @@ module.exports = {
   NextId: NextID,
   Database: Database,
   Index: Index,
+  Class: Class,
   Equals: Equals,
   Contains: Contains,
   Select: Select,
