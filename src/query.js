@@ -523,6 +523,16 @@ function NextID() {
 /**
  * See the [docs](https://fauna.com/documentation/queries#misc_functions).
  *
+ * @param {module:query~ExprArg} name
+ * @return {Expr}
+ */
+function Database(name) {
+  return new Expr({ database: wrap(name) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
@@ -813,6 +823,7 @@ module.exports = {
   Epoch: Epoch,
   Date: Date,
   NextId: NextID,
+  Database: Database,
   Equals: Equals,
   Contains: Contains,
   Select: Select,

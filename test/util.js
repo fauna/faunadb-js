@@ -10,6 +10,7 @@ var util = require('../src/_util');
 
 var assert = chai.assert;
 var Ref = query.Ref;
+var Database = query.Database;
 var Value = values.Value;
 
 var env = process.env;
@@ -110,7 +111,7 @@ var dbRef = Ref('databases', dbName);
 
 before(function () {
   return rootClient.query(query.Create(Ref('databases'), { name: dbName })).then(function() {
-    return rootClient.query(query.Create(Ref('keys'), { database: dbRef, role: 'server' }));
+    return rootClient.query(query.Create(Ref('keys'), { database: Database(dbName), role: 'server' }));
   }).then(function(key) {
     clientSecret = key.secret;
     _client = getClient();
