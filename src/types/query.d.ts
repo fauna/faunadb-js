@@ -23,7 +23,6 @@ export module query {
   export function Get(ref: ExprArg, ts?: ExprArg): Expr;
   export function Paginate(set: ExprArg, opts?: Object): Expr;
   export function Exists(ref: ExprArg, ts?: ExprArg): Expr;
-  export function Count(set: ExprArg, events?: ExprArg): Expr;
 
   export function Create(class_ref: ExprArg, params?: ExprArg): Expr;
   export function update(ref: ExprArg, params: ExprArg): Expr;

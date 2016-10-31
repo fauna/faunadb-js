@@ -1,3 +1,7 @@
+## 0.2.2-SNAPSHOT
+
+- Remove count function
+
 ## 0.2.1 (September 6, 2016)
 
 - Change the default cloud endpoint from `rest.faunadb.com` to `cloud.faunadb.com`.

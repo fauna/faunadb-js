@@ -283,19 +283,6 @@ function Exists(ref, ts) {
   return new Expr(params({ exists: wrap(ref) }, { ts: wrap(ts) }));
 }
 
-/**
- * See the [docs](https://fauna.com/documentation/queries#read_functions).
- *
- * @param {module:query~ExprArg} set
- * @param {?module:query~ExprArg} events
- * @return {Expr}
- */
-function Count(set, events) {
-  events = defaults(events, null);
-
-  return new Expr(params({ count: wrap(set) }, { events: wrapValues(events) }));
-}
-
 // Write functions
 
 /**
@@ -805,7 +792,6 @@ module.exports = {
   Get: Get,
   Paginate: Paginate,
   Exists: Exists,
-  Count: Count,
   Create: Create,
   Update: Update,
   Replace: Replace,

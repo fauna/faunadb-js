@@ -212,18 +212,6 @@ describe('query', function () {
     });
   });
 
-  it('count', function () {
-    var p1 = create({ n: 123 });
-    var p2 = create({ n: 123 });
-    var instances = nSet(123);
-    // `count` is currently only approximate. Should be 2.
-    return Promise.all([p1, p2]).then(function() {
-      return client.query(query.Count(instances)).then(function (count) {
-        assert.typeOf(count, 'number');
-      });
-    });
-  });
-
   // Write functions
 
   it('create', function () {
