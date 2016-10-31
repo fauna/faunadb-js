@@ -31,6 +31,7 @@ export module query {
   export function Insert(ref: ExprArg, ts: ExprArg, action: ExprArg, params: ExprArg): Expr;
   export function Remove(ref: ExprArg, ts: ExprArg, action: ExprArg): Expr;
   export function CreateClass(params: ExprArg): Expr;
+  export function CreateDatabase(params: ExprArg): Expr;
 
   export function Match(index: ExprArg, ...terms: ExprArg[]): Expr;
   export function Union(...sets: ExprArg[]): Expr;
