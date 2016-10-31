@@ -33,6 +33,7 @@ export module query {
   export function CreateClass(params: ExprArg): Expr;
   export function CreateDatabase(params: ExprArg): Expr;
   export function CreateIndex(params: ExprArg): Expr;
+  export function CreateKey(params: ExprArg): Expr;
 
   export function Match(index: ExprArg, ...terms: ExprArg[]): Expr;
   export function Union(...sets: ExprArg[]): Expr;

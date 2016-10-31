@@ -112,7 +112,7 @@ var dbRef = Ref('databases', dbName);
 
 before(function () {
   return rootClient.query(query.CreateDatabase({ name: dbName })).then(function() {
-    return rootClient.query(query.Create(Ref('keys'), { database: Database(dbName), role: 'server' }));
+    return rootClient.query(query.CreateKey({ database: Database(dbName), role: 'server' }));
   }).then(function(key) {
     clientSecret = key.secret;
     _client = getClient();
