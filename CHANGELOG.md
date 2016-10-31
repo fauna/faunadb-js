@@ -1,6 +1,7 @@
 ## 0.2.2-SNAPSHOT
 
 - Remove count function
+- Adding missing ref constructors for database, index, and class.
 
 ## 0.2.1 (September 6, 2016)
 
