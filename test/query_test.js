@@ -423,8 +423,7 @@ describe('query', function () {
     var p1 = assertQuery(query.Equals(1, 1, 1), true);
     var p2 = assertQuery(query.Equals(1, 1, 2), false);
     var p3 = assertQuery(query.Equals(1), true);
-    var p4 = assertBadQuery(query.Equals());
-    return Promise.all([p1, p2, p3, p4]);
+    return Promise.all([p1, p2, p3]);
   });
 
   it('contains', function () {
@@ -452,22 +451,17 @@ describe('query', function () {
   });
 
   it('add', function () {
-    var p1 = assertQuery(query.Add(2, 3, 5), 10);
-    var p2 = assertBadQuery(query.Add());
-    return Promise.all([p1, p2]);
+    return assertQuery(query.Add(2, 3, 5), 10);
   });
 
   it('multiply', function () {
-    var p1 = assertQuery(query.Multiply(2, 3, 5), 30);
-    var p2 = assertBadQuery(query.Multiply());
-    return Promise.all([p1, p2]);
+    return assertQuery(query.Multiply(2, 3, 5), 30);
   });
 
   it('subtract', function () {
     var p1 = assertQuery(query.Subtract(2, 3, 5), -6);
     var p2 = assertQuery(query.Subtract(2), 2);
-    var p3 = assertBadQuery(query.Subtract());
-    return Promise.all([p1, p2, p3]);
+    return Promise.all([p1, p2]);
   });
 
   it('divide', function () {
@@ -475,8 +469,7 @@ describe('query', function () {
     // await assertQuery(query.Divide(2, 3, 5), 2/15)
     var p1 = assertQuery(query.Divide(2), 2);
     var p2 = assertBadQuery(query.Divide(1, 0));
-    var p3 = assertBadQuery(query.Divide());
-    return Promise.all([p1, p2, p3]);
+    return Promise.all([p1, p2]);
   });
 
   it('modulo', function () {
@@ -485,8 +478,7 @@ describe('query', function () {
     var p2 = assertQuery(query.Modulo(15, 10, 2), 1);
     var p3 = assertQuery(query.Modulo(2), 2);
     var p4 = assertBadQuery(query.Modulo(1, 0));
-    var p5 = assertBadQuery(query.Modulo());
-    return Promise.all([p1, p2, p3, p4, p5]);
+    return Promise.all([p1, p2, p3, p4]);
   });
 
   it('lt', function () {
@@ -510,8 +502,7 @@ describe('query', function () {
     var p2 = assertQuery(query.And(true, true, true), true);
     var p3 = assertQuery(query.And(true), true);
     var p4 = assertQuery(query.And(false), false);
-    var p5 = assertBadQuery(query.And());
-    return Promise.all([p1, p2, p3, p4, p5]);
+    return Promise.all([p1, p2, p3, p4]);
   });
 
   it('or', function () {
@@ -519,8 +510,7 @@ describe('query', function () {
     var p2 = assertQuery(query.Or(false, false, false), false);
     var p3 = assertQuery(query.Or(true), true);
     var p4 = assertQuery(query.Or(false), false);
-    var p5 = assertBadQuery(query.Or());
-    return Promise.all([p1, p2, p3, p4, p5]);
+    return Promise.all([p1, p2, p3, p4]);
   });
 
   it('not', function () {
@@ -528,6 +518,50 @@ describe('query', function () {
     var p2 = assertQuery(query.Not(false), true);
     return Promise.all([p1, p2]);
   });
+
+  // Check arity of all query functions
+
+  it('arity', function () {
+    // By default assume all functions should have strict arity
+    var testParams = {
+      'Ref': [0, 'at least 1'],
+      'Do': [0, 'at least 1'],
+      'Lambda': [3, 'from 1 to 2'],
+      'Get': [3, 'from 1 to 2'],
+      'Paginate': [3, 'from 1 to 2'],
+      'Exists': [3, 'from 1 to 2'],
+      'Create': [3, 'from 1 to 2'],
+      'Match': [0, 'at least 1'],
+      'Union': [0, 'at least 1'],
+      'Intersection': [0, 'at least 1'],
+      'Difference': [0, 'at least 1'],
+      'Concat': [0, 'at least 1'],
+      'Equals': [0, 'at least 1'],
+      'Select': [4, 'from 2 to 3'],
+      'Add': [0, 'at least 1'],
+      'Multiply': [0, 'at least 1'],
+      'Subtract': [0, 'at least 1'],
+      'Divide': [0, 'at least 1'],
+      'Modulo': [0, 'at least 1'],
+      'LT': [0, 'at least 1'],
+      'LTE': [0, 'at least 1'],
+      'GT': [0, 'at least 1'],
+      'GTE': [0, 'at least 1'],
+      'And': [0, 'at least 1'],
+      'Or': [0, 'at least 1']
+    };
+
+    for (var fun in query) {
+      var params = testParams[fun] || [],
+        arity = params[0] !== undefined ? params[0] : 100,
+        errorMessage = new RegExp(
+          'Function require ' + (params[1] || '\\d+') +
+            ' arguments but ' + arity + ' were given')
+
+      assert.throws(function () { query[fun].apply(null, new Array(arity)); }, errors.InvalidValue, errorMessage, fun);
+    }
+  });
+
 
   // Helpers
 
