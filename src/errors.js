@@ -45,8 +45,8 @@ util.inherits(FaunaError, Error);
  * @extends module:errors~FaunaError
  * @constructor
  */
-function InvalidValue() {
-  FaunaError.call(this, arguments);
+function InvalidValue(message) {
+  FaunaError.call(this, message);
 }
 
 util.inherits(InvalidValue, FaunaError);
