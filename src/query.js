@@ -283,19 +283,6 @@ function Exists(ref, ts) {
   return new Expr(params({ exists: wrap(ref) }, { ts: wrap(ts) }));
 }
 
-/**
- * See the [docs](https://fauna.com/documentation/queries#read_functions).
- *
- * @param {module:query~ExprArg} set
- * @param {?module:query~ExprArg} events
- * @return {Expr}
- */
-function Count(set, events) {
-  events = defaults(events, null);
-
-  return new Expr(params({ count: wrap(set) }, { events: wrapValues(events) }));
-}
-
 // Write functions
 
 /**
@@ -364,6 +351,46 @@ function Insert(ref, ts, action, params) {
  */
 function Remove(ref, ts, action) {
   return new Expr({ remove: wrap(ref), ts: wrap(ts), action: wrap(action) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ *
+ * @param {module:query~ExprArg} params
+ * @return {Expr}
+ */
+function CreateClass(params) {
+  return new Expr({ create_class: wrap(params) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ *
+ * @param {module:query~ExprArg} params
+ * @return {Expr}
+ */
+function CreateDatabase(params) {
+  return new Expr({ create_database: wrap(params) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ *
+ * @param {module:query~ExprArg} params
+ * @return {Expr}
+ */
+function CreateIndex(params) {
+  return new Expr({ create_index: wrap(params) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ *
+ * @param {module:query~ExprArg} params
+ * @return {Expr}
+ */
+function CreateKey(params) {
+  return new Expr({ create_key: wrap(params) });
 }
 
 // Sets
@@ -531,6 +558,36 @@ function Date(string) {
  */
 function NextID() {
   return new Expr({ next_id: null });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
+ * @param {module:query~ExprArg} name
+ * @return {Expr}
+ */
+function Database(name) {
+  return new Expr({ database: wrap(name) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
+ * @param {module:query~ExprArg} name
+ * @return {Expr}
+ */
+function Index(name) {
+  return new Expr({ index: wrap(name) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
+ * @param {module:query~ExprArg} name
+ * @return {Expr}
+ */
+function Class(name) {
+  return new Expr({ class: wrap(name) });
 }
 
 /**
@@ -805,13 +862,16 @@ module.exports = {
   Get: Get,
   Paginate: Paginate,
   Exists: Exists,
-  Count: Count,
   Create: Create,
   Update: Update,
   Replace: Replace,
   Delete: Delete,
   Insert: Insert,
   Remove: Remove,
+  CreateClass: CreateClass,
+  CreateDatabase: CreateDatabase,
+  CreateIndex: CreateIndex,
+  CreateKey: CreateKey,
   Match: Match,
   Union: Union,
   Intersection: Intersection,
@@ -827,6 +887,9 @@ module.exports = {
   Epoch: Epoch,
   Date: Date,
   NextId: NextID,
+  Database: Database,
+  Index: Index,
+  Class: Class,
   Equals: Equals,
   Contains: Contains,
   Select: Select,

@@ -23,14 +23,17 @@ export module query {
   export function Get(ref: ExprArg, ts?: ExprArg): Expr;
   export function Paginate(set: ExprArg, opts?: Object): Expr;
   export function Exists(ref: ExprArg, ts?: ExprArg): Expr;
-  export function Count(set: ExprArg, events?: ExprArg): Expr;
 
   export function Create(class_ref: ExprArg, params?: ExprArg): Expr;
-  export function update(ref: ExprArg, params: ExprArg): Expr;
+  export function Update(ref: ExprArg, params: ExprArg): Expr;
   export function Replace(ref: ExprArg, params: ExprArg): Expr;
   export function Delete(ref: ExprArg): Expr;
   export function Insert(ref: ExprArg, ts: ExprArg, action: ExprArg, params: ExprArg): Expr;
   export function Remove(ref: ExprArg, ts: ExprArg, action: ExprArg): Expr;
+  export function CreateClass(params: ExprArg): Expr;
+  export function CreateDatabase(params: ExprArg): Expr;
+  export function CreateIndex(params: ExprArg): Expr;
+  export function CreateKey(params: ExprArg): Expr;
 
   export function Match(index: ExprArg, ...terms: ExprArg[]): Expr;
   export function Union(...sets: ExprArg[]): Expr;
@@ -51,6 +54,9 @@ export module query {
   export function Date(string: ExprArg): Expr;
 
   export function NextId(): Expr;
+  export function Database(name: ExprArg): Expr;
+  export function Index(name: ExprArg): Expr;
+  export function Class(name: ExprArg): Expr;
   export function Equals(...args: ExprArg[]): Expr;
   export function Contains(path: ExprArg, _in: ExprArg): Expr;
   export function Select(path: ExprArg, from: ExprArg, _default?: ExprArg): Expr;

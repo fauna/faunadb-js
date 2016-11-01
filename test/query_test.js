@@ -23,21 +23,21 @@ describe('query', function () {
     // Hideous way to ensure that the client is initialized.
     client = util.client();
 
-    return client.query(query.Create(Ref('classes'), { name: 'widgets' })).then(function (instance) {
+    return client.query(query.CreateClass({ name: 'widgets' })).then(function (instance) {
       classRef = instance.ref;
-      var nIndexRefP = client.query(query.Create(Ref('indexes'), {
+      var nIndexRefP = client.query(query.CreateIndex({
         name: 'widgets_by_n',
         source: classRef,
         terms: [ { 'field': ['data', 'n'] }]
       })).then(function(i) { nIndexRef = i.ref; });
 
-      var mIndexRefP = client.query(query.Create(Ref('indexes'), {
+      var mIndexRefP = client.query(query.CreateIndex({
         name: 'widgets_by_m',
         source: classRef,
         terms: [ { 'field': ['data', 'm'] }]
       })).then(function(i) { mIndexRef = i.ref; });
 
-      var nCoveredIndexRefP = client.query(query.Create(Ref('indexes'), {
+      var nCoveredIndexRefP = client.query(query.CreateIndex({
         name: 'widgets_cost_by_p',
         source: classRef,
         terms: [ { 'field': ['data', 'p' ] }],
@@ -52,7 +52,7 @@ describe('query', function () {
           refM1 = i.ref;
           return create({ n: 1, m: 1, p: 1, cost: 10 });
         }).then(function (i) { refN1M1 = i.ref; });
-        var thimbleClassRefP = client.query(query.Create(Ref('classes'), { name: 'thimbles' })).then(function (i) { thimbleClassRef = i.ref; });
+        var thimbleClassRefP = client.query(query.CreateClass({ name: 'thimbles' })).then(function (i) { thimbleClassRef = i.ref; });
 
         return Promise.all([createP, thimbleClassRefP]);
       });
@@ -208,18 +208,6 @@ describe('query', function () {
         return client.query(query.Delete(ref));
       }).then(function() {
         return assertQuery(query.Exists(ref), false);
-      });
-    });
-  });
-
-  it('count', function () {
-    var p1 = create({ n: 123 });
-    var p2 = create({ n: 123 });
-    var instances = nSet(123);
-    // `count` is currently only approximate. Should be 2.
-    return Promise.all([p1, p2]).then(function() {
-      return client.query(query.Count(instances)).then(function (count) {
-        assert.typeOf(count, 'number');
       });
     });
   });
@@ -416,6 +404,18 @@ describe('query', function () {
       var parsed = parseInt(res);
       assert.isNotNaN(parsed);
       assert.isNumber(parsed);
+    });
+  });
+
+  it('index', function() {
+    return client.query(query.Index("widgets_by_n")).then(function(res) {
+      assert.equal(res.value, nIndexRef.value);
+    });
+  });
+
+  it('class', function() {
+    return client.query(query.Class("widgets")).then(function(res) {
+      assert.equal(res.value, classRef.value);
     });
   });
 
