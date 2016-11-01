@@ -356,7 +356,7 @@ function Remove(ref, ts, action) {
 /**
  * See the [docs](https://fauna.com/documentation/queries#write_functions).
  *
- * @param {?module:query~ExprArg} params
+ * @param {module:query~ExprArg} params
  * @return {Expr}
  */
 function CreateClass(params) {
@@ -366,7 +366,7 @@ function CreateClass(params) {
 /**
  * See the [docs](https://fauna.com/documentation/queries#write_functions).
  *
- * @param {?module:query~ExprArg} params
+ * @param {module:query~ExprArg} params
  * @return {Expr}
  */
 function CreateDatabase(params) {
@@ -376,7 +376,7 @@ function CreateDatabase(params) {
 /**
  * See the [docs](https://fauna.com/documentation/queries#write_functions).
  *
- * @param {?module:query~ExprArg} params
+ * @param {module:query~ExprArg} params
  * @return {Expr}
  */
 function CreateIndex(params) {
@@ -386,7 +386,7 @@ function CreateIndex(params) {
 /**
  * See the [docs](https://fauna.com/documentation/queries#write_functions).
  *
- * @param {?module:query~ExprArg} params
+ * @param {module:query~ExprArg} params
  * @return {Expr}
  */
 function CreateKey(params) {
