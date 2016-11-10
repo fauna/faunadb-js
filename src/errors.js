@@ -52,6 +52,37 @@ function InvalidValue(message) {
 util.inherits(InvalidValue, FaunaError);
 
 /**
+ * Exception thrown by this client library when an invalid
+ * value is provided as a function argument.
+ *
+ * @extends module:errors~FaunaError
+ * @constructor
+ */
+function InvalidArity(message, min, max, actual) {
+  FaunaError.call(this, message);
+
+  /**
+   * Minimum number of arguments.
+   * @type {number}
+   */
+  this.min = min;
+
+  /**
+   * Maximum number of arguments.
+   * @type {number}
+   */
+  this.max = max;
+
+  /**
+   * Actual number of arguments called with.
+   * @type {number}
+   */
+  this.actual = actual;
+}
+
+util.inherits(InvalidArity, FaunaError);
+
+/**
  * Base exception type for errors returned by the FaunaDB server.
  *
  * @param {RequestResult} requestResult
@@ -203,6 +234,7 @@ util.inherits(UnavailableError, FaunaHTTPError);
 module.exports = {
   FaunaHTTPError: FaunaHTTPError,
   InvalidValue: InvalidValue,
+  InvalidArity: InvalidArity,
   BadRequest: BadRequest,
   Unauthorized: Unauthorized,
   PermissionDenied: PermissionDenied,

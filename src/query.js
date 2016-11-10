@@ -812,8 +812,8 @@ function Not(boolean) {
  */
 function arity(min, max, message, args) {
   if ((min !== null && args.length < min) || (max !== null && args.length > max)) {
-    throw new errors.InvalidValue(
-      'Function require ' + message + ' arguments but ' + args.length + ' were given.');
+    throw new errors.InvalidArity(
+      'Function requires ' + message + ' arguments but ' + args.length + ' were given.', min, max, args.length);
   }
 }
 

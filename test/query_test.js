@@ -555,10 +555,10 @@ describe('query', function () {
       var params = testParams[fun] || [],
         arity = params[0] !== undefined ? params[0] : 100,
         errorMessage = new RegExp(
-          'Function require ' + (params[1] || '\\d+') +
+          'Function requires ' + (params[1] || '\\d+') +
             ' arguments but ' + arity + ' were given')
 
-      assert.throws(function () { query[fun].apply(null, new Array(arity)); }, errors.InvalidValue, errorMessage, fun);
+      assert.throws(function () { query[fun].apply(null, new Array(arity)); }, errors.InvalidArity, errorMessage, fun);
     }
   });
 
