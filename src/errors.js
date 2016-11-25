@@ -58,8 +58,8 @@ util.inherits(InvalidValue, FaunaError);
  * @extends module:errors~FaunaError
  * @constructor
  */
-function InvalidArity(message, min, max, actual) {
-  FaunaError.call(this, message);
+function InvalidArity(min, max, actual) {
+  FaunaError.call(this, 'Function requires ' + messageForArity(min, max) + ' arguments but ' + actual + ' were given.');
 
   /**
    * Minimum number of arguments.
@@ -78,6 +78,13 @@ function InvalidArity(message, min, max, actual) {
    * @type {number}
    */
   this.actual = actual;
+
+  function messageForArity(min, max) {
+    if (max === null) return 'at least ' + min;
+    if (min === null) return 'up to ' + max;
+    if (min === max) return  min;
+    return 'from ' + min + ' to ' + max;
+  }
 }
 
 util.inherits(InvalidArity, FaunaError);

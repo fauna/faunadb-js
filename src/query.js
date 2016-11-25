@@ -810,17 +810,16 @@ function Not(boolean) {
 /**
  * @ignore
  */
-function arity(min, max, message, args) {
+function arity(min, max, args) {
   if ((min !== null && args.length < min) || (max !== null && args.length > max)) {
-    throw new errors.InvalidArity(
-      'Function requires ' + message + ' arguments but ' + args.length + ' were given.', min, max, args.length);
+    throw new errors.InvalidArity(min, max, args.length);
   }
 }
 
-arity.exact = function (n, args) { arity(n, n, n, args); };
-arity.max = function (n, args) { arity(null, n, 'up to ' + n, args); };
-arity.min = function (n, args) { arity(n, null, 'at least ' + n, args); };
-arity.between = function (min, max, args) { arity(min, max, 'from ' + min + ' to ' + max, args); };
+arity.exact = function (n, args) { arity(n, n, args); };
+arity.max = function (n, args) { arity(null, n, args); };
+arity.min = function (n, args) { arity(n, null, args); };
+arity.between = function (min, max, args) { arity(min, max, args); };
 
 /** Adds optional parameters to the query.
  *
