@@ -45,11 +45,49 @@ util.inherits(FaunaError, Error);
  * @extends module:errors~FaunaError
  * @constructor
  */
-function InvalidValue() {
-  FaunaError.call(this, arguments);
+function InvalidValue(message) {
+  FaunaError.call(this, message);
 }
 
 util.inherits(InvalidValue, FaunaError);
+
+/**
+ * Exception thrown by this client library when an invalid
+ * value is provided as a function argument.
+ *
+ * @extends module:errors~FaunaError
+ * @constructor
+ */
+function InvalidArity(min, max, actual) {
+  FaunaError.call(this, 'Function requires ' + messageForArity(min, max) + ' arguments but ' + actual + ' were given.');
+
+  /**
+   * Minimum number of arguments.
+   * @type {number}
+   */
+  this.min = min;
+
+  /**
+   * Maximum number of arguments.
+   * @type {number}
+   */
+  this.max = max;
+
+  /**
+   * Actual number of arguments called with.
+   * @type {number}
+   */
+  this.actual = actual;
+
+  function messageForArity(min, max) {
+    if (max === null) return 'at least ' + min;
+    if (min === null) return 'up to ' + max;
+    if (min === max) return  min;
+    return 'from ' + min + ' to ' + max;
+  }
+}
+
+util.inherits(InvalidArity, FaunaError);
 
 /**
  * Base exception type for errors returned by the FaunaDB server.
@@ -203,6 +241,7 @@ util.inherits(UnavailableError, FaunaHTTPError);
 module.exports = {
   FaunaHTTPError: FaunaHTTPError,
   InvalidValue: InvalidValue,
+  InvalidArity: InvalidArity,
   BadRequest: BadRequest,
   Unauthorized: Unauthorized,
   PermissionDenied: PermissionDenied,

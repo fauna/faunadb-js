@@ -4,6 +4,7 @@
 - Adding missing ref constructors for database, index, and class.
 - Adding missing write functions: create database, create index, create key, and
   create class.
+- Restrict query language functions arity for safety
 
 ## 0.2.1 (September 6, 2016)
 
