@@ -1,3 +1,5 @@
+## 0.2.3-SNAPSHOT
+
 ## 0.2.2 (November 30, 2016)
 
 - Remove count function
