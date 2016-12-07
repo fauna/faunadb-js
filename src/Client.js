@@ -49,7 +49,7 @@ var Promise = require('es6-promise').Promise;
  */
 function Client(options) {
   var opts = util.applyDefaults(options, {
-    domain: 'cloud.faunadb.com',
+    domain: 'db.fauna.com',
     scheme: 'https',
     port: null,
     secret: null,
