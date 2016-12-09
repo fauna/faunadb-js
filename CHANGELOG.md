@@ -1,5 +1,7 @@
 ## 0.2.3-SNAPSHOT
 
+- Change the default cloud endpoint from `cloud.faunadb.com` to `db.fauna.com`.
+
 ## 0.2.2 (November 30, 2016)
 
 - Remove count function
