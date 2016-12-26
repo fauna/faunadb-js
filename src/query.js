@@ -884,7 +884,7 @@ function wrap(obj) {
     return obj;
   } else if (obj instanceof Function) {
     return Lambda(obj);
-  } else if (obj instanceof Array) {
+  } else if (Array.isArray(obj)) {
     return new Expr(obj.map(function (elem) {
       return wrap(elem);
     }));
