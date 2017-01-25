@@ -26,9 +26,11 @@ var objectAssign = require('object-assign');
 // Type helpers
 
 /**
- * Constructs a Ref value.
+ * If one parameter is provided, constructs a literal Ref value. If two are provided,
+ * constructs a Ref() function that, when evaluated, returns a Ref value.
  *
- * @param {string} ref
+ * @param {string|module:query~ExprArg} ref
+ * @param {?module:query~ExprArg} id
  * @return {Expr}
  */
 function Ref() {

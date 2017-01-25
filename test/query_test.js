@@ -520,8 +520,8 @@ describe('query', function () {
   });
 
   it('ref', function() {
-    var id = refN1.id.toString();
-    return assertQuery(query.Ref(classRef, query.Concat([id.charAt(0), id.substr(1)])), refN1);
+    var ref = query.Ref(classRef.value + "/123456");
+    return assertQuery(query.Ref(classRef, query.Concat(["123", "456"])), ref);
   });
 
   // Check arity of all query functions
