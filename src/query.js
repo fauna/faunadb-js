@@ -26,15 +26,19 @@ var objectAssign = require('object-assign');
 // Type helpers
 
 /**
- * Constructs a Ref value.
+ * If one parameter is provided, constructs a literal Ref value. If two are provided,
+ * constructs a Ref() function that, when evaluated, returns a Ref value.
  *
- * @param {string} ref
+ * @param {string|module:query~ExprArg} ref
+ * @param {?module:query~ExprArg} id
  * @return {Expr}
  */
 function Ref() {
-  arity.min(1, arguments);
-  var args = argsToArray(arguments);
-  return new (values.Ref.bind.apply(values.Ref, [null].concat(args)));
+  arity.between(1, 2, arguments);
+  switch (arguments.length) {
+    case 1: return new values.Ref(arguments[0]);
+    case 2: return new Expr({ ref: wrap(arguments[0]), id: wrap(arguments[1]) });
+  }
 }
 
 // Basic forms

@@ -519,12 +519,17 @@ describe('query', function () {
     return Promise.all([p1, p2]);
   });
 
+  it('ref', function() {
+    var ref = query.Ref(classRef.value + "/123456");
+    return assertQuery(query.Ref(classRef, query.Concat(["123", "456"])), ref);
+  });
+
   // Check arity of all query functions
 
   it('arity', function () {
     // By default assume all functions should have strict arity
     var testParams = {
-      'Ref': [0, 'at least 1'],
+      'Ref': [3, 'from 1 to 2'],
       'Do': [0, 'at least 1'],
       'Lambda': [3, 'from 1 to 2'],
       'Get': [3, 'from 1 to 2'],

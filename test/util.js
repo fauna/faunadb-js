@@ -106,7 +106,7 @@ function unwrapExprValues(obj) {
 
 var rootClient = getClient({ secret: testConfig.auth });
 var dbName = 'faunadb-js-test-' + randomString();
-var dbRef = Ref('databases', dbName);
+var dbRef = Ref('databases/' + dbName);
 
 // global before/after for every test
 
