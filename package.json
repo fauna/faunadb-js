@@ -3,10 +3,10 @@
   "version": "0.2.3-SNAPSHOT",
   "description": "FaunaDB Javascript driver for Node.JS and Browsers",
   "homepage": "https://fauna.com",
-  "repository": "faunadb/faunadb-js",
+  "repository": "fauna/faunadb-js",
   "license": "MPL-2.0",
   "keywords": [ "database", "fauna", "official", "driver" ],
-  "bugs": { "url": "https://github.com/faunadb/faunadb-js/issues" },
+  "bugs": { "url": "https://github.com/fauna/faunadb-js/issues" },
   "files": [
     "index.d.ts",
     "src/"

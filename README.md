@@ -1,13 +1,13 @@
 # FaunaDB Javascript Driver
 
-[![Build Status](https://img.shields.io/travis/faunadb/faunadb-js/master.svg?maxAge=21600)](https://travis-ci.org/faunadb/faunadb-js)
-[![Coverage Status](https://img.shields.io/codecov/c/github/faunadb/faunadb-js/master.svg?maxAge=21600)](https://codecov.io/gh/faunadb/faunadb-js/branch/master)
+[![Build Status](https://img.shields.io/travis/fauna/faunadb-js/master.svg?maxAge=21600)](https://travis-ci.org/fauna/faunadb-js)
+[![Coverage Status](https://img.shields.io/codecov/c/github/fauna/faunadb-js/master.svg?maxAge=21600)](https://codecov.io/gh/fauna/faunadb-js/branch/master)
 [![Npm Version](https://img.shields.io/npm/v/faunadb.svg?maxAge=21600)](https://www.npmjs.com/package/faunadb)
-[![License](https://img.shields.io/badge/license-MPL_2.0-blue.svg?maxAge=2592000)](https://raw.githubusercontent.com/faunadb/faunadb-js/master/LICENSE)
+[![License](https://img.shields.io/badge/license-MPL_2.0-blue.svg?maxAge=2592000)](https://raw.githubusercontent.com/fauna/faunadb-js/master/LICENSE)
 
 A Javascript driver for [FaunaDB](https://fauna.com).
 
-[View reference JSDocs here](https://faunadb.github.com/faunadb-js).
+[View reference JSDocs here](https://fauna.github.com/faunadb-js).
 
 See the [FaunaDB Documentation](https://fauna.com/documentation) and
 [Tutorials](https://fauna.com/tutorials) for guides and a complete database
@@ -38,7 +38,7 @@ See [faunadb on NPM](https://npmjs.com/package/faunadb) for more information.
 
 #### Browsers
 
-The browser release can be found in the [faunadb/faunadb-js-release](https://github.com/faunadb/faunadb-js-release) repository.
+The browser release can be found in the [fauna/faunadb-js-release](https://github.com/fauna/faunadb-js-release) repository.
 
 This release can be installed via bower:
 
@@ -129,7 +129,7 @@ helper.map(function(ref) { return q.Get(ref); }).each(function(page) {
 });
 ```
 
-[See the JSDocs](https://faunadb.github.com/faunadb-js/PageHelper.html) for
+[See the JSDocs](https://fauna.github.com/faunadb-js/PageHelper.html) for
 more information on the pagination helper.
 
 ## Client Development
@@ -175,7 +175,7 @@ information about nested databases.
 
 ## License
 
-Copyright 2016 [Fauna, Inc.](https://fauna.com/)
+Copyright 2017 [Fauna, Inc.](https://fauna.com/)
 
 Licensed under the Mozilla Public License, Version 2.0 (the "License"); you may
 not use this software except in compliance with the License. You may obtain a
