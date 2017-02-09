@@ -187,6 +187,19 @@ describe('query', function () {
     });
   });
 
+  it('key_from_secret', function () {
+    var client = util.rootClient;
+
+    return client.query(query.CreateKey({ database: util.dbRef, role: 'server' })).then(function(key) {
+      var p1 = client.query(query.Get(key.ref));
+      var p2 = client.query(query.KeyFromSecret(key.secret));
+
+      return Promise.all([p1, p2]).then(function(keys) {
+        assert.deepEqual(keys[0], keys[1]);
+      });
+    });
+  });
+
   it('paginate', function () {
     var testSet = nSet(1);
     var p1 = assertQuery(query.Paginate(testSet), { data: [refN1, refN1M1] });
