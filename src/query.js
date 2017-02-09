@@ -274,6 +274,17 @@ function Get(ref, ts) {
 
 /**
  * See the [docs](https://fauna.com/documentation/queries#read_functions).
+ *
+ * @param {module:query~ExprArg} secret
+ * @return {Expr}
+ */
+function KeyFromSecret(secret) {
+  arity.exact(1, arguments);
+  return new Expr({ key_from_secret: wrap(secret) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#read_functions).
  * You may want to utilize {@link Client#paginate} to obtain a {@link PageHelper},
  * rather than using this query function directly.
  *
@@ -937,6 +948,7 @@ module.exports = {
   Prepend: Prepend,
   Append: Append,
   Get: Get,
+  KeyFromSecret: KeyFromSecret,
   Paginate: Paginate,
   Exists: Exists,
   Create: Create,

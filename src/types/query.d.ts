@@ -22,6 +22,7 @@ export module query {
   export function Append(elements: ExprArg, collection: ExprArg): Expr;
 
   export function Get(ref: ExprArg, ts?: ExprArg): Expr;
+  export function KeyFromSecret(secret: ExprArg): Expr;
   export function Paginate(set: ExprArg, opts?: Object): Expr;
   export function Exists(ref: ExprArg, ts?: ExprArg): Expr;
 
