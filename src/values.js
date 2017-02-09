@@ -1,5 +1,6 @@
 'use strict';
 
+var base64 = require('base64-js');
 var errors = require('./errors');
 var Expr = require('./Expr');
 var util = require('util');
@@ -216,10 +217,41 @@ FaunaDate.prototype.toJSON = function()  {
   return { '@date': this.value };
 };
 
+/** FaunaDB bytes. See the [docs](https://fauna.com/documentation/queries#values-special_types).
+ *
+ * @param {Uint8Array|ArrayBuffer|string} value
+ *    If ArrayBuffer it's converted to Uint8Array
+ *    If string it must be base64 encoded and it's converted to Uint8Array
+ * @extends module:values~Value
+ * @constructor
+ */
+function Bytes(value) {
+  if (value instanceof ArrayBuffer) {
+    this.value = new Uint8Array(value);
+  } else if (typeof value === 'string') {
+    this.value = base64.toByteArray(value);
+  } else {
+    this.value = value;
+  }
+}
+
+util.inherits(Bytes, Value);
+
+/** @ignore */
+Bytes.prototype.inspect = function() {
+  return 'Bytes("' + base64.fromByteArray(this.value) + '")';
+};
+
+/** @ignore */
+Bytes.prototype.toJSON = function()  {
+  return { '@bytes': base64.fromByteArray(this.value) };
+};
+
 module.exports = {
   Value: Value,
   Ref: Ref,
   SetRef: SetRef,
   FaunaTime: FaunaTime,
-  FaunaDate: FaunaDate
+  FaunaDate: FaunaDate,
+  Bytes: Bytes
 };

@@ -25,6 +25,7 @@
   },
   "typings": "index.ts.d",
   "dependencies": {
+    "base64-js": "^1.2.0",
     "btoa-lite": "^1.0.0",
     "es6-promise": "^3.2.1",
     "fn-annotate": "^1.1.3",

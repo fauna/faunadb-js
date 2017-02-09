@@ -9,7 +9,8 @@ var values = require('../src/values');
 var FaunaDate = values.FaunaDate,
   FaunaTime = values.FaunaTime,
   Ref = values.Ref,
-  SetRef = values.SetRef;
+  SetRef = values.SetRef,
+  Bytes = values.Bytes;
 
 
 describe('Values', function() {
@@ -91,5 +92,26 @@ describe('Values', function() {
     var test_date_json = '{"@date":"1970-01-01"}';
     assert.equal(json.toJSON(test_date), test_date_json);
     assert.deepEqual(json.parseJSON(test_date_json), test_date);
+  });
+
+  it('bytes - string base64', function () {
+    var test_bytes = new Bytes('AQIDBA==');
+    var test_bytes_json = '{"@bytes":"AQIDBA=="}';
+    assert.equal(json.toJSON(test_bytes), test_bytes_json);
+    assert.deepEqual(json.parseJSON(test_bytes_json), test_bytes);
+  });
+
+  it('bytes - Uint8Array', function () {
+    var test_bytes = new Bytes(new Uint8Array([1,2,3,4]));
+    var test_bytes_json = '{"@bytes":"AQIDBA=="}';
+    assert.equal(json.toJSON(test_bytes), test_bytes_json);
+    assert.deepEqual(json.parseJSON(test_bytes_json), test_bytes);
+  });
+
+  it('bytes - ArrayBuffer', function () {
+    var test_bytes = new Bytes(new ArrayBuffer(4));
+    var test_bytes_json = '{"@bytes":"AAAAAA=="}';
+    assert.equal(json.toJSON(test_bytes), test_bytes_json);
+    assert.deepEqual(json.parseJSON(test_bytes_json), test_bytes);
   });
 });
