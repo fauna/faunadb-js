@@ -61,6 +61,28 @@ describe('query', function () {
 
   // Basic forms
 
+  it('at', function () {
+    var client = util.client();
+
+    var paginate = query.Paginate(nSet(1000));
+
+    return create({ n: 1000 }).then(function (inst1) {
+      return create({ n: 1000 }).then(function (inst2) {
+        return create({ n: 1000 }).then(function (inst3) {
+          var p1 = client.query(paginate).then(function (data) {
+            assert.deepEqual(data.data, [inst1.ref, inst2.ref, inst3.ref], 'Should contains all instance with n=1000');
+          });
+
+          var p2 = client.query(query.At(inst1.ts, paginate)).then(function (data) {
+            assert.deepEqual(data.data, [inst1.ref], 'Should contains only the first instance with n=1000');
+          });
+
+          return Promise.all([p1, p2]);
+        });
+      });
+    });
+  });
+
   it('let/var', function () {
     return assertQuery(query.Let({ x: 1 }, query.Var('x')), 1);
   });
