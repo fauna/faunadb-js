@@ -46,6 +46,18 @@ function Ref() {
 /**
  * See the [docs](https://fauna.com/documentation/queries#basic_forms).
  *
+ * @param {module:query~ExprArg} timestamp
+ * @param {module:query~ExprArg} expr
+ * @return {Expr}
+ * */
+function At(timestamp, expr) {
+  arity.exact(2, arguments);
+  return new Expr({ at: wrap(timestamp), expr: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#basic_forms).
+ *
  * @param {module:query~ExprArg} vars
  * @param {module:query~ExprArg} in_expr
  * @return {Expr}
@@ -934,6 +946,7 @@ function wrapValues(obj) {
 
 module.exports = {
   Ref: Ref,
+  At: At,
   Let: Let,
   Var: Var,
   If: If,

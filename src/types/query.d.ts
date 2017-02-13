@@ -6,6 +6,7 @@ export type Lambda = (...vars: any[]) => Expr;
 
 export module query {
   export function Ref(ref: ExprArg, id?: ExprArg): Expr;
+  export function At(timestamp: ExprArg, expr: ExprArg): Expr;
   export function Let(vars: ExprArg, in_expr: ExprArg): Expr;
   export function Var(varName: ExprArg): Expr;
   export function If(condition: ExprArg, then: ExprArg, _else: ExprArg): Expr;
