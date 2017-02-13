@@ -114,4 +114,13 @@ describe('Values', function() {
     assert.equal(json.toJSON(test_bytes), test_bytes_json);
     assert.deepEqual(json.parseJSON(test_bytes_json), test_bytes);
   });
+
+  it('bytes - errors', function() {
+    assert.throws(function() { new Bytes(10) }, 'InvalidValue: Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: 10');
+    assert.throws(function() { new Bytes(3.14) }, 'InvalidValue: Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: 3.14');
+    assert.throws(function() { new Bytes({}) }, 'InvalidValue: Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: {}');
+    assert.throws(function() { new Bytes([]) }, 'InvalidValue: Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: []');
+    assert.throws(function() { new Bytes(null) }, 'InvalidValue: Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: null');
+    assert.throws(function() { new Bytes(undefined) }, 'InvalidValue: Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: undefined');
+  });
 });

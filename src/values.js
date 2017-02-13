@@ -230,8 +230,10 @@ function Bytes(value) {
     this.value = new Uint8Array(value);
   } else if (typeof value === 'string') {
     this.value = base64.toByteArray(value);
-  } else {
+  } else if (value instanceof Uint8Array) {
     this.value = value;
+  } else {
+    throw new errors.InvalidValue('Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: ' + JSON.stringify(value));
   }
 }
 
