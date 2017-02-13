@@ -9,7 +9,8 @@ var values = require('../src/values');
 var FaunaDate = values.FaunaDate,
   FaunaTime = values.FaunaTime,
   Ref = values.Ref,
-  SetRef = values.SetRef;
+  SetRef = values.SetRef,
+  Bytes = values.Bytes;
 
 
 describe('Values', function() {
@@ -91,5 +92,35 @@ describe('Values', function() {
     var test_date_json = '{"@date":"1970-01-01"}';
     assert.equal(json.toJSON(test_date), test_date_json);
     assert.deepEqual(json.parseJSON(test_date_json), test_date);
+  });
+
+  it('bytes - string base64', function () {
+    var test_bytes = new Bytes('AQIDBA==');
+    var test_bytes_json = '{"@bytes":"AQIDBA=="}';
+    assert.equal(json.toJSON(test_bytes), test_bytes_json);
+    assert.deepEqual(json.parseJSON(test_bytes_json), test_bytes);
+  });
+
+  it('bytes - Uint8Array', function () {
+    var test_bytes = new Bytes(new Uint8Array([1,2,3,4]));
+    var test_bytes_json = '{"@bytes":"AQIDBA=="}';
+    assert.equal(json.toJSON(test_bytes), test_bytes_json);
+    assert.deepEqual(json.parseJSON(test_bytes_json), test_bytes);
+  });
+
+  it('bytes - ArrayBuffer', function () {
+    var test_bytes = new Bytes(new ArrayBuffer(4));
+    var test_bytes_json = '{"@bytes":"AAAAAA=="}';
+    assert.equal(json.toJSON(test_bytes), test_bytes_json);
+    assert.deepEqual(json.parseJSON(test_bytes_json), test_bytes);
+  });
+
+  it('bytes - errors', function() {
+    assert.throws(function() { new Bytes(10) }, 'InvalidValue: Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: 10');
+    assert.throws(function() { new Bytes(3.14) }, 'InvalidValue: Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: 3.14');
+    assert.throws(function() { new Bytes({}) }, 'InvalidValue: Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: {}');
+    assert.throws(function() { new Bytes([]) }, 'InvalidValue: Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: []');
+    assert.throws(function() { new Bytes(null) }, 'InvalidValue: Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: null');
+    assert.throws(function() { new Bytes(undefined) }, 'InvalidValue: Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: undefined');
   });
 });

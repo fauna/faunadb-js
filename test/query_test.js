@@ -11,7 +11,8 @@ var Ref = query.Ref;
 
 var FaunaDate = values.FaunaDate,
   FaunaTime = values.FaunaTime,
-  SetRef = values.SetRef;
+  SetRef = values.SetRef,
+  Bytes = values.Bytes;
 
 var client;
 
@@ -557,6 +558,14 @@ describe('query', function () {
   it('ref', function() {
     var ref = query.Ref(classRef.value + "/123456");
     return assertQuery(query.Ref(classRef, query.Concat(["123", "456"])), ref);
+  });
+
+  it('bytes', function() {
+    return Promise.all([
+      assertQuery(new Bytes("AQIDBA=="), new Bytes("AQIDBA==")),
+      assertQuery(new Uint8Array([0, 0, 0, 0]), new Bytes("AAAAAA==")),
+      assertQuery(new ArrayBuffer(4), new Bytes("AAAAAA=="))
+    ]);
   });
 
   // Check arity of all query functions

@@ -915,6 +915,8 @@ function wrap(obj) {
     return new Expr(obj.map(function (elem) {
       return wrap(elem);
     }));
+  } else if (obj instanceof Uint8Array || obj instanceof ArrayBuffer) {
+    return new values.Bytes(obj);
   } else if (typeof obj === 'object') {
     return new Expr({ object: wrapValues(obj) });
   } else {

@@ -22,4 +22,10 @@ export module values {
 
     date: Date;
   }
+
+  export class Bytes extends Value {
+    constructor(value: string);
+    constructor(value: ArrayBuffer);
+    constructor(value: Uint8Array);
+  }
 }

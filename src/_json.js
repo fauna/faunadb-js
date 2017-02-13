@@ -29,6 +29,8 @@ function json_parse(_, val) {
     return new values.FaunaTime(val['@ts']);
   } else if ('@date' in val) {
     return new values.FaunaDate(val['@date']);
+  } else if ('@bytes' in val) {
+    return new values.Bytes(val['@bytes']);
   } else {
     return val;
   }
