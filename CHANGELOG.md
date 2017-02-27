@@ -1,4 +1,4 @@
-## 0.2.3-SNAPSHOT
+## 0.2.3 (February 27, 2017)
 
 - Change the default cloud endpoint from `cloud.faunadb.com` to `db.fauna.com`.
 - Adds support for key_from_secret function.
