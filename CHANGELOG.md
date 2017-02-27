@@ -1,3 +1,5 @@
+## 0.4.0-SNAPSHOT
+
 ## 0.3.0 (February 27, 2017)
 
 - Change the default cloud endpoint from `cloud.faunadb.com` to `db.fauna.com`.
