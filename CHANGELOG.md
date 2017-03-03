@@ -1,3 +1,5 @@
+## 0.2.5-SNAPSHOT
+
 ## 0.2.4 (March 3, 2017)
 - Using literal strings as Error class names to avoid problems with minified
   code
