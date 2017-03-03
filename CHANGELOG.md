@@ -1,4 +1,6 @@
 ## 0.2.4-SHAPSHOT
+- Using literal strings as Error class names to avoid problems with minified
+  code
 
 ## 0.2.3 (February 27, 2017)
 
