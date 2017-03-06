@@ -200,9 +200,8 @@ Client.prototype._performRequest = function (action, path, data, query) {
     rq.query(query);
   }
 
-  if (data) {
-    rq.send(data);
-  }
+  rq.type('json');
+  rq.send(JSON.stringify(data));
 
   if (this._secret) {
     rq.set('Authorization', secretHeader(this._secret));
