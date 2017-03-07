@@ -60,8 +60,35 @@ describe('query', function () {
     });
   });
 
-  // Basic forms
+  it('echo values', function () {
+    var pInteger = client.query(10).then(function (res) {
+      assert.equal(res, 10);
+    });
 
+    var pNumber = client.query(3.14).then(function (res) {
+      assert.equal(res, 3.14);
+    });
+
+    var pString = client.query('string').then(function (res) {
+      assert.equal(res, 'string');
+    });
+
+    var pObject = client.query({a: 1, b: 'string', c: 3.14, d: null}).then(function (res) {
+      assert.deepEqual(res, {a: 1, b: 'string', c: 3.14, d: null});
+    });
+
+    var pArray = client.query([1, 'string', 3.14, null]).then(function (res) {
+      assert.deepEqual(res, [1, 'string', 3.14, null]);
+    });
+
+    var pNull = client.query(null).then(function (res) {
+      assert.equal(res, null);
+    });
+
+    return Promise.all([pInteger, pNumber, pString, pObject, pArray, pNull]);
+  })
+
+  // Basic forms
   it('at', function () {
     var client = util.client();
 
