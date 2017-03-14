@@ -1,4 +1,7 @@
-## 0.2.5-SNAPSHOT
+## 1.0.1-SNAPSHOT
+
+## 1.0.0 (March 13, 2017)
+- Official release
 
 ## 0.2.4 (March 3, 2017)
 - Using literal strings as Error class names to avoid problems with minified
