@@ -112,7 +112,10 @@ describe('query', function () {
   });
 
   it('let/var', function () {
-    return assertQuery(query.Let({ x: 1 }, query.Var('x')), 1);
+    return Promise.all([
+      assertQuery(query.Let({ x: 1 }, query.Var('x')), 1),
+      assertQuery(query.Let({ x: 1, y: 2 }, function(x, y) { return [x, y] }), [1, 2])
+    ]);
   });
 
   it('if', function () {
