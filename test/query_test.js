@@ -502,7 +502,8 @@ describe('query', function () {
     var p1 = assertQuery(query.Select('a', obj), { b: 1 });
     var p2 = assertQuery(query.Select(['a', 'b'], obj), 1);
     var p3 = assertQuery(query.Select('c', obj, null), null);
-    var p4 = assertBadQuery(query.Select('c', obj), errors.NotFound);
+    var p4 = assertQuery(query.Select('c', obj, "default"), "default");
+    var p5 = assertBadQuery(query.Select('c', obj), errors.NotFound);
     return Promise.all([p1, p2, p3, p4]);
   });
 

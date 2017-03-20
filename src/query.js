@@ -695,7 +695,7 @@ function Select(path, from, _default) {
   arity.between(2, 3, arguments);
   var exprObj = { select: wrap(path), from: wrap(from) };
   if (_default !== undefined) {
-    exprObj.default = wrapValues(_default);
+    exprObj.default = wrap(_default);
   }
   return new Expr(exprObj);
 }
