@@ -66,7 +66,7 @@ function Let(vars, in_expr) {
   arity.exact(2, arguments);
 
   if (in_expr instanceof Function) {
-    var expr = in_expr.apply(null, annotate(in_expr).map(function(name) {
+    var expr = in_expr.apply(null, Object.keys(vars).map(function(name) {
       return Var(name);
     }));
 
