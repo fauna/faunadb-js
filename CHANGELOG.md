@@ -1,4 +1,6 @@
 ## 1.0.1-SNAPSHOT
+- Fix wrap of Select's default parameter in order to allow other types rather
+  than Object.
 
 ## 1.0.0 (March 13, 2017)
 - Official release
