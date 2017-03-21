@@ -44,6 +44,18 @@ This release can be installed via bower:
 
 `bower install faunadb`
 
+Or via CDN:
+
+```html
+<script src="//cdn.jsdelivr.net/faunadb/1.0/faunadb.js"></script>
+```
+
+The minified version of the driver can also be used via CDN:
+
+```html
+<script src="//cdn.jsdelivr.net/faunadb/1.0/faunadb-min.js"></script>
+```
+
 ### Use
 
 The [tutorials](http://fauna.com/tutorials) in the FaunaDB documentation
@@ -95,7 +107,7 @@ for more information on responses.
 #### Pagination Helpers
 
 This driver contains helpers to provide a simpler API for consuming paged
-responses from FaunaDB. See the [FaunaDB Developer Guide](https://fauna.com/documentation/dev) 
+responses from FaunaDB. See the [FaunaDB Developer Guide](https://fauna.com/documentation/dev)
 and the [Paginate Function Reference](https://fauna.com/documentation/queries#read_functions-paginate_set)
 for a description of paged responses.
 
@@ -149,7 +161,7 @@ order to provide Promise support.
   versions of Node.js for testing.
 * `npm run coverage`: This will run tests with coverage enabled.
 * `npm run browser-test-{mac|linux|win}`: This will run tests against
-  platform-specific browsers.  [Karma](https://karma-runner.github.io/1.0/index.html) 
+  platform-specific browsers.  [Karma](https://karma-runner.github.io/1.0/index.html)
   is used as the test runner.
 
 Both Node.js and browser tests will read a `testConfig.json` file located in
