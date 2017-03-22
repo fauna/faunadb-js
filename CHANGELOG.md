@@ -1,4 +1,5 @@
-## 1.0.2-SNAPSHOT
+## 1.1.0-SNAPSHOT
+- Accept lambdas at Let function
 
 ## 1.0.1 (March 21, 2017)
 - Fix wrap of Select's default parameter in order to allow other types rather
