@@ -1,4 +1,6 @@
-## 1.1.0-SNAPSHOT
+## 1.1.1-SNAPSHOT
+
+## 1.1.0 (March 22, 2017)
 - Accept lambdas at Let function
 
 ## 1.0.1 (March 21, 2017)
