@@ -23,8 +23,8 @@ describe('Client', function () {
   });
 
   it('ping', function () {
-    return client.ping('all').then(function(res) {
-      assert.equal(res, 'Scope all is OK');
+    return client.ping('node').then(function(res) {
+      assert.equal(res, 'Scope node is OK');
     });
   });
 
