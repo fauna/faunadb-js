@@ -1,4 +1,5 @@
 ## 1.1.1-SNAPSHOT
+- Fix wrap of literal objects for lambda form of let expression
 
 ## 1.1.0 (March 22, 2017)
 - Accept lambdas at Let function
