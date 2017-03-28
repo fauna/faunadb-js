@@ -1,4 +1,4 @@
-## 1.1.1-SNAPSHOT
+## 1.1.1 (March 28, 2017)
 - Fix wrap of literal objects for lambda form of let expression
 
 ## 1.1.0 (March 22, 2017)
