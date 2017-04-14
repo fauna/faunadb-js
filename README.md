@@ -32,7 +32,7 @@ This Driver supports and is tested on:
 
 #### Node.js
 
-`npm install faunadb`
+`npm install --save faunadb`
 
 See [faunadb on NPM](https://npmjs.com/package/faunadb) for more information.
 
@@ -65,15 +65,11 @@ contain driver-specific examples.
 
 ```javascript
 var faunadb = require('faunadb'),
-  q = faunadb.query,
-  Ref = q.Ref;
-  // Insert additional namespace aliases here.
+  q = faunadb.query;
 ```
 
 This is the recommended require stanza. The `faunadb.query` module contains all
-of the functions to create FaunaDB Query expressions. This example also shows
-an example of defining a local `Ref` name, so as to not have to call `q.Ref` at
-all times.
+of the functions to create FaunaDB Query expressions.
 
 #### Instantiating a Client and Issuing Queries
 ```javascript
@@ -85,22 +81,20 @@ example, to create an instance in an existing class named `test` with the data:
 `{ testField: 'testValue' }`:
 
 ```javascript
-var createP = client.query(q.Create(Ref('classes/test'), { testField: 'testValue' }));
+var createP = client.query(q.Create(q.Class('test'), { testField: 'testValue' }));
 ```
-
-Note that we are using the `Ref` alias defined above here.
 
 All methods on `faunadb.Client` return [ES6 Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
 So, if we wanted to handle the Promise to access the `Ref` of the newly created
 instance:
 
 ```javascript
-createP.then(function(res) {
-  console.log(res.ref); // Would log the ref to console.
+createP.then(function(response) {
+  console.log(response.ref); // Would log the ref to console.
 });
 ```
 
-`res` is a JSON object containing the FaunaDB response. See the JSDocs for
+`response` is a JSON object containing the FaunaDB response. See the JSDocs for
 `faunadb.Client`, and the [FaunaDB Developer Guide](https://fauna.com/documentation/dev)
 for more information on responses.
 
@@ -112,13 +106,13 @@ and the [Paginate Function Reference](https://fauna.com/documentation/queries#re
 for a description of paged responses.
 
 Using the helper to page over sets lets the driver handle cursoring and
-pagination state. For example:
+pagination state. For example, `client.paginate`:
 
 ```javascript
-var helper = client.paginate(q.Match(Ref('indexes/test_index'), 'example-term'));
+var helper = client.paginate(q.Match(q.Index('test_index'), 'example-term'));
 ```
 
-Here, `helper` is an instance of `PageHelper`. The `each` method will execute a
+The return value, `helper`, is an instance of `PageHelper`. The `each` method will execute a
 callback function on each consumed page.
 
 ```javascript
