@@ -1,4 +1,5 @@
 ## 1.1.2-SNAPSHOT
+- Fix typescript declaration file to include default types
 
 ## 1.1.1 (March 28, 2017)
 - Fix wrap of literal objects for lambda form of let expression
