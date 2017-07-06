@@ -1,4 +1,4 @@
-## 1.1.2-SNAPSHOT
+## 1.1.2 (July 06, 2017)
 - Fix typescript declaration file to include default types
 
 ## 1.1.1 (March 28, 2017)
