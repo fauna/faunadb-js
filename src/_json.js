@@ -31,6 +31,8 @@ function json_parse(_, val) {
     return new values.FaunaDate(val['@date']);
   } else if ('@bytes' in val) {
     return new values.Bytes(val['@bytes']);
+  } else if ('@query' in val) {
+    return new values.Query(val['@query']);
   } else {
     return val;
   }

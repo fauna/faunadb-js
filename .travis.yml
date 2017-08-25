@@ -4,6 +4,7 @@ node_js:
 - '0.12'
 - '4'
 - '6'
+- '7'
 script:
 - istanbul cover node_modules/mocha/bin/_mocha --report lcovonly test/
 after_success:
