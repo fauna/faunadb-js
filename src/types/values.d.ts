@@ -28,4 +28,8 @@ export module values {
     constructor(value: ArrayBuffer);
     constructor(value: Uint8Array);
   }
+
+  export class Query extends Value {
+    constructor(value: Object);
+  }
 }

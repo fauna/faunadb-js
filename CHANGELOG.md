@@ -1,4 +1,5 @@
 ## 1.1.3-SNAPSHOT
+- Adds support for @query type (user defined functions)
 
 ## 1.1.2 (July 06, 2017)
 - Fix typescript declaration file to include default types

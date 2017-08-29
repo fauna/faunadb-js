@@ -190,6 +190,44 @@ function _lambdaExpr(var_name, expr) {
   return new Expr({ lambda: wrap(var_name), expr: wrap(expr) });
 }
 
+/**
+ * See the [docs](https://fauna.com/documentation/queries#basic_forms).
+ *
+ * Invokes a given function passing in the provided arguments
+ *
+ * ```
+ * Call(Ref("functions/a_function"), 1, 2)
+ * ```
+ *
+ * @param {module:query~ExprArg} ref
+ * @param {...module:query~ExprArg} args
+ * @return {Expr}
+ * */
+function Call(ref) {
+  arity.min(1, arguments);
+  var args = argsToArray(arguments);
+  args.shift();
+  return new Expr({ call: wrap(ref), arguments: varargs(args) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#basic_forms).
+ *
+ * Constructs a `@query` type using the Lambda() or a function.
+ *
+ * ```
+ * Query(Lambda(['a', 'b'], Add(Var('a'), Var('b'))))
+ * Query(function (a, b) { return Add(a, b) })
+ * ```
+ *
+ * @param {module:query~ExprArg|function} lambda
+ * @return {Expr}
+ * */
+function Query(lambda) {
+  arity.exact(1, arguments);
+  return new Expr({ query: wrap(lambda) });
+}
+
 // Collection functions
 
 /** See the [docs](https://fauna.com/documentation/queries#collection_functions).
@@ -450,6 +488,17 @@ function CreateIndex(params) {
 function CreateKey(params) {
   arity.exact(1, arguments);
   return new Expr({ create_key: wrap(params) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ *
+ * @param {module:query~ExprArg} params
+ * @return {Expr}
+ */
+function CreateFunction(params) {
+  arity.exact(1, arguments);
+  return new Expr({ create_function: wrap(params) });
 }
 
 // Sets
@@ -962,6 +1011,8 @@ module.exports = {
   Do: Do,
   Object: objectFunction,
   Lambda: Lambda,
+  Call: Call,
+  Query: Query,
   Map: Map,
   Foreach: Foreach,
   Filter: Filter,
@@ -983,6 +1034,7 @@ module.exports = {
   CreateDatabase: CreateDatabase,
   CreateIndex: CreateIndex,
   CreateKey: CreateKey,
+  CreateFunction: CreateFunction,
   Match: Match,
   Union: Union,
   Intersection: Intersection,

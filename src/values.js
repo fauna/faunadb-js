@@ -249,11 +249,34 @@ Bytes.prototype.toJSON = function()  {
   return { '@bytes': base64.fromByteArray(this.value) };
 };
 
+/** FaunaDB query. See the [docs](https://fauna.com/documentation/queries#values-special_types).
+ *
+ * @param {any} value
+ * @extends module:values~Value
+ * @constructor
+ */
+function Query(value) {
+  this.value = value;
+}
+
+util.inherits(Query, Value);
+
+/** @ignore */
+Query.prototype.inspect = function() {
+  return 'Query("' + this.value + '")';
+};
+
+/** @ignore */
+Query.prototype.toJSON = function()  {
+  return { '@query': this.value };
+};
+
 module.exports = {
   Value: Value,
   Ref: Ref,
   SetRef: SetRef,
   FaunaTime: FaunaTime,
   FaunaDate: FaunaDate,
-  Bytes: Bytes
+  Bytes: Bytes,
+  Query: Query
 };

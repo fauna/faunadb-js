@@ -158,6 +158,26 @@ describe('query', function () {
     return assertQuery(query.Map([[1, 2], [3, 4]], multi_args), [[2, 1], [4, 3]]);
   });
 
+  it('call function', function () {
+    var body = query.Query(function (a, b) {
+      return query.Concat([a, b], '/');
+    });
+
+    return client.query(query.CreateFunction({ name: "concat_with_slash", body: body })).then(function () {
+      return assertQuery(query.Call(Ref("functions/concat_with_slash"), 'a', 'b'), 'a/b');
+    });
+  });
+
+  it('echo query', function () {
+    var lambda = function (x) { return x; }
+
+    return client.query(query.Query(lambda)).then(function (body) {
+      return client.query(body).then(function (bodyEchoed) {
+        assert.deepEqual(body, bodyEchoed);
+      });
+    });
+  });
+
   // Collection functions
 
   it('map', function () {
@@ -346,6 +366,14 @@ describe('query', function () {
           return assertQuery(query.Get(ref), instance);
         });
       });
+    });
+  });
+
+  it('create function', function () {
+    var body = query.Query(function(x) { return x; });
+
+    return client.query(query.CreateFunction({ name: "a_function", body: body })).then(function () {
+      return assertQuery(query.Exists(Ref("functions/a_function")), true);
     });
   });
 
@@ -608,6 +636,7 @@ describe('query', function () {
       'Ref': [3, 'from 1 to 2'],
       'Do': [0, 'at least 1'],
       'Lambda': [3, 'from 1 to 2'],
+      'Call': [0, 'at least 1'],
       'Get': [3, 'from 1 to 2'],
       'Paginate': [3, 'from 1 to 2'],
       'Exists': [3, 'from 1 to 2'],

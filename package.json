@@ -5,8 +5,15 @@
   "homepage": "https://fauna.com",
   "repository": "fauna/faunadb-js",
   "license": "MPL-2.0",
-  "keywords": [ "database", "fauna", "official", "driver" ],
-  "bugs": { "url": "https://github.com/fauna/faunadb-js/issues" },
+  "keywords": [
+    "database",
+    "fauna",
+    "official",
+    "driver"
+  ],
+  "bugs": {
+    "url": "https://github.com/fauna/faunadb-js/issues"
+  },
   "files": [
     "index.d.ts",
     "src/"

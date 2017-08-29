@@ -10,7 +10,8 @@ var FaunaDate = values.FaunaDate,
   FaunaTime = values.FaunaTime,
   Ref = values.Ref,
   SetRef = values.SetRef,
-  Bytes = values.Bytes;
+  Bytes = values.Bytes,
+  Query = values.Query;
 
 
 describe('Values', function() {
@@ -122,5 +123,12 @@ describe('Values', function() {
     assert.throws(function() { new Bytes([]) }, 'InvalidValue: Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: []');
     assert.throws(function() { new Bytes(null) }, 'InvalidValue: Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: null');
     assert.throws(function() { new Bytes(undefined) }, 'InvalidValue: Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: undefined');
+  });
+
+  it('query', function() {
+    var test_query = new Query({lambda:'x',expr:{var:'x'}});
+    var test_query_json = '{"@query":{"lambda":"x","expr":{"var":"x"}}}';
+    assert.equal(json.toJSON(test_query), test_query_json);
+    assert.deepEqual(json.parseJSON(test_query_json), test_query);
   });
 });
