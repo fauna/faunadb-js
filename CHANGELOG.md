@@ -1,5 +1,7 @@
-## 1.1.3-SNAPSHOT
+## 2.0.0-SNAPSHOT
 - Adds support for @query type (user defined functions)
+- Adds support for recursive references
+- Removes `get`, `post`, `put`, `patch` and `delete` methods from `Client` class
 
 ## 1.1.2 (July 06, 2017)
 - Fix typescript declaration file to include default types

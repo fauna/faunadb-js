@@ -16,29 +16,18 @@ var FaunaDate = values.FaunaDate,
 
 describe('Values', function() {
   var
-    ref = new Ref('classes', 'frogs', '123'),
-    jsonRef = '{"@ref":"classes/frogs/123"}';
+    ref = new Ref('123', new Ref('frogs', values.Native.CLASSES)),
+    jsonRef = '{"@ref":{"id":"123","class":{"@ref":{"id":"frogs","class":{"@ref":{"id":"classes"}}}}}}';
 
   it('ref', function () {
     assert.deepEqual(json.parseJSON(jsonRef), ref);
     assert.equal(json.toJSON(ref), jsonRef);
 
-    var blobs = new Ref('classes', 'blobs');
-    var blobRef = new Ref(blobs, '123');
+    assert.equal(ref.id, '123');
+    assert.deepEqual(ref.class, new Ref('frogs', values.Native.CLASSES));
+    assert.equal(ref.database, undefined);
 
-    assert.deepEqual(blobRef.class, blobs);
-    assert.equal(blobRef.id, '123');
-
-    var keys = new Ref('keys');
-    assert.deepEqual(keys.class, keys);
-    assert.throws(function () { return keys.id; }, errors.InvalidValue);
-
-    var keyRef = new Ref(keys, '123');
-    assert.deepEqual(keyRef.class, keys);
-    assert.equal(keyRef.id, '123');
-
-    // valueOf converts to string
-    assert.equal('' + blobRef, 'classes/blobs/123');
+    assert.throws(function() { new Ref(); }, 'InvalidValue: id cannot be null or undefined');
   });
 
   it('serializes expr', function() {
@@ -48,8 +37,8 @@ describe('Values', function() {
 
   it('set', function () {
     var
-      index = new Ref('indexes', 'frogs_by_size'),
-      jsonIndex = '{"@ref":"indexes/frogs_by_size"}',
+      index = new Ref('frogs_by_size', values.Native.INDEXES),
+      jsonIndex = '{"@ref":{"id":"frogs_by_size","class":{"@ref":{"id":"indexes"}}}}',
       match = new SetRef({ match: index, terms: ref }),
       jsonMatch = '{"@set":{"match":' + jsonIndex + ',"terms":' + jsonRef + '}}';
     assert.deepEqual(json.parseJSON(jsonMatch), match);

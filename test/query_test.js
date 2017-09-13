@@ -164,7 +164,7 @@ describe('query', function () {
     });
 
     return client.query(query.CreateFunction({ name: "concat_with_slash", body: body })).then(function () {
-      return assertQuery(query.Call(Ref("functions/concat_with_slash"), 'a', 'b'), 'a/b');
+      return assertQuery(query.Call(query.Function("concat_with_slash"), 'a', 'b'), 'a/b');
     });
   });
 
@@ -305,7 +305,7 @@ describe('query', function () {
     return create().then(function (instance) {
       assert('ref' in instance);
       assert('ts' in instance);
-      assert.deepEqual(instance.class, classRef);
+      assert.deepEqual(instance.ref.class, classRef);
     });
   });
 
@@ -373,7 +373,7 @@ describe('query', function () {
     var body = query.Query(function(x) { return x; });
 
     return client.query(query.CreateFunction({ name: "a_function", body: body })).then(function () {
-      return assertQuery(query.Exists(Ref("functions/a_function")), true);
+      return assertQuery(query.Exists(query.Function("a_function")), true);
     });
   });
 
@@ -437,7 +437,9 @@ describe('query', function () {
         var secret = result2.secret;
         var instanceClient = util.getClient({ secret: secret });
 
-        return instanceClient.query(query.Select('ref', query.Get(Ref('classes/widgets/self')))).then(function (result3) {
+        //todo: use `identity()` function instead
+        var self = new values.Ref('self', new values.Ref('widgets', values.Native.CLASSES));
+        return instanceClient.query(query.Select('ref', query.Get(self))).then(function (result3) {
           assert.deepEqual(result3, instanceRef);
 
           return instanceClient.query(query.Logout(true));
@@ -504,13 +506,13 @@ describe('query', function () {
 
   it('index', function() {
     return client.query(query.Index("widgets_by_n")).then(function(res) {
-      assert.equal(res.value, nIndexRef.value);
+      assert.deepEqual(res, nIndexRef);
     });
   });
 
   it('class', function() {
     return client.query(query.Class("widgets")).then(function(res) {
-      assert.equal(res.value, classRef.value);
+      assert.deepEqual(res, classRef);
     });
   });
 
@@ -616,8 +618,7 @@ describe('query', function () {
   });
 
   it('ref', function() {
-    var ref = query.Ref(classRef.value + "/123456");
-    return assertQuery(query.Ref(classRef, query.Concat(["123", "456"])), ref);
+    return assertQuery(Ref(classRef, query.Concat(["123", "456"])), new values.Ref("123456", classRef));
   });
 
   it('bytes', function() {
@@ -626,6 +627,43 @@ describe('query', function () {
       assertQuery(new Uint8Array([0, 0, 0, 0]), new Bytes("AAAAAA==")),
       assertQuery(new ArrayBuffer(4), new Bytes("AAAAAA=="))
     ]);
+  });
+
+  it('nested refs', function() {
+    return util.rootClient.query(query.CreateKey({database: util.dbRef, role: 'admin'})).then(function(adminKey) {
+      var adminClient = util.getClient({secret: adminKey.secret});
+
+      return createNewDatabase(adminClient, 'parent-database').then(function(client1) {
+        return createNewDatabase(client1, 'child-database').then(function() {
+          return client1.query(query.CreateKey({database: query.Database('child-database'), role: 'server'})).then(function(key) {
+            var client2 = util.getClient({secret: key.secret});
+
+            return client2.query(query.CreateClass({name: 'a_class'})).then(function() {
+              var nestedDatabase = query.Database('child-database', query.Database('parent-database'));
+              var nestedClassRef = query.Class('a_class', nestedDatabase);
+              var allNestedClasses = query.Classes(nestedDatabase);
+
+              var a_class_ref = new values.Ref(
+                'a_class',
+                values.Native.CLASSES,
+                new values.Ref(
+                  'child-database',
+                  values.Native.DATABASES,
+                  new values.Ref('parent-database', values.Native.DATABASES)))
+
+              var p1 = assertQuery(query.Exists(nestedClassRef), true);
+              var p2 = assertQuery(query.Paginate(allNestedClasses), {data: [ a_class_ref ]});
+
+              return Promise.all([p1, p2]);
+            });
+          });
+        });
+      });
+    });
+  });
+
+  it('nested ref from string', function() {
+    return assertQuery(query.Ref('classes/widget/123'), new values.Ref('123', new values.Ref('widget', values.Native.CLASSES)));
   });
 
   // Check arity of all query functions
@@ -658,7 +696,18 @@ describe('query', function () {
       'GT': [0, 'at least 1'],
       'GTE': [0, 'at least 1'],
       'And': [0, 'at least 1'],
-      'Or': [0, 'at least 1']
+      'Or': [0, 'at least 1'],
+      'Index': [3, 'from 1 to 2'],
+      'Class': [3, 'from 1 to 2'],
+      'Database': [3, 'from 1 to 2'],
+      'Function': [3, 'from 1 to 2'],
+      'Classes': [2, 'up to 1'],
+      'Databases': [2, 'up to 1'],
+      'Indexes': [2, 'up to 1'],
+      'Functions': [2, 'up to 1'],
+      'Keys': [2, 'up to 1'],
+      'Tokens': [2, 'up to 1'],
+      'Credentials': [2, 'up to 1']
     };
 
     for (var fun in query) {
@@ -683,6 +732,14 @@ describe('query', function () {
     return Promise.all([p1, p2]);
   });
 });
+
+function createNewDatabase(client, name) {
+  return client.query(query.CreateDatabase({name: name})).then(function() {
+    return client.query(query.CreateKey({database: query.Database(name), role: 'admin'})).then(function(key) {
+      return util.getClient({secret: key.secret});
+    });
+  });
+}
 
 function create(data) {
   if (typeof data === 'undefined') {

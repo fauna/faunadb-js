@@ -26,17 +26,19 @@ var objectAssign = require('object-assign');
 // Type helpers
 
 /**
- * If one parameter is provided, constructs a literal Ref value. If two are provided,
- * constructs a Ref() function that, when evaluated, returns a Ref value.
+ * If one parameter is provided, constructs a literal Ref value.
+ * The string `classes/widget/123` will be equivalent to `new values.Ref('123', new values.Ref('widget', values.Native.CLASSES))`
+ *
+ * If two are provided, constructs a Ref() function that, when evaluated, returns a Ref value.
  *
  * @param {string|module:query~ExprArg} ref
- * @param {?module:query~ExprArg} id
+ * @param {module:query~ExprArg} [id]
  * @return {Expr}
  */
 function Ref() {
   arity.between(1, 2, arguments);
   switch (arguments.length) {
-    case 1: return new values.Ref(arguments[0]);
+    case 1: return new Expr({ '@ref': wrap(arguments[0]) });
     case 2: return new Expr({ ref: wrap(arguments[0]), id: wrap(arguments[1]) });
   }
 }
@@ -687,33 +689,151 @@ function NextId() {
  * See the [docs](https://fauna.com/documentation/queries#misc_functions).
  *
  * @param {module:query~ExprArg} name
+ * @param {module:query~ExprArg} [scope]
  * @return {Expr}
  */
-function Database(name) {
-  arity.exact(1, arguments);
-  return new Expr({ database: wrap(name) });
+function Database(name, scope) {
+  arity.between(1, 2, arguments);
+  switch(arguments.length) {
+    case 1: return new Expr({ database: wrap(name) });
+    case 2: return new Expr({ database: wrap(name), scope: wrap(scope) });
+  }
 }
 
 /**
  * See the [docs](https://fauna.com/documentation/queries#misc_functions).
  *
  * @param {module:query~ExprArg} name
+ * @param {module:query~ExprArg} [scope]
  * @return {Expr}
  */
-function Index(name) {
-  arity.exact(1, arguments);
-  return new Expr({ index: wrap(name) });
+function Index(name, scope) {
+  arity.between(1, 2, arguments);
+  switch(arguments.length) {
+    case 1: return new Expr({ index: wrap(name) });
+    case 2: return new Expr({ index: wrap(name), scope: wrap(scope) });
+  }
 }
 
 /**
  * See the [docs](https://fauna.com/documentation/queries#misc_functions).
  *
  * @param {module:query~ExprArg} name
+ * @param {module:query~ExprArg} [scope]
  * @return {Expr}
  */
-function Class(name) {
-  arity.exact(1, arguments);
-  return new Expr({ class: wrap(name) });
+function Class(name, scope) {
+  arity.between(1, 2, arguments);
+  switch(arguments.length) {
+    case 1: return new Expr({ class: wrap(name) });
+    case 2: return new Expr({ class: wrap(name), scope: wrap(scope) });
+  }
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
+ * @param {module:query~ExprArg} name
+ * @param {module:query~ExprArg} [scope]
+ * @return {Expr}
+ */
+function FunctionFn(name, scope) {
+  arity.between(1, 2, arguments);
+  switch(arguments.length) {
+    case 1: return new Expr({ function: wrap(name) });
+    case 2: return new Expr({ function: wrap(name), scope: wrap(scope) });
+  }
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
+ * Constructs a `classes` function that, when evaluated, returns a Ref value.
+ *
+ * @param {module:query~ExprArg} [scope]
+ * @return {Expr}
+ */
+function Classes(scope) {
+  arity.max(1, arguments);
+  return new Expr({ classes: wrap(scope) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
+ * Constructs a `databases` functions that, when evaluated, returns a Ref value.
+ *
+ * @param {module:query~ExprArg} [scope]
+ * @return {Expr}
+ */
+function Databases(scope) {
+  arity.max(1, arguments);
+  return new Expr({ databases: wrap(scope) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
+ * Constructs an `indexes` function that, when evaluated, returns a Ref value.
+ *
+ * @param {module:query~ExprArg} [scope]
+ * @return {Expr}
+ */
+function Indexes(scope) {
+  arity.max(1, arguments);
+  return new Expr({ indexes: wrap(scope) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
+ * Constructs a `functions` function that, when evaluated, returns a Ref value.
+ *
+ * @param {module:query~ExprArg} [scope]
+ * @return {Expr}
+ */
+function Functions(scope) {
+  arity.max(1, arguments);
+  return new Expr({ functions: wrap(scope) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
+ * Constructs a `keys` function that, when evaluated, returns a Ref value.
+ *
+ * @param {module:query~ExprArg} [scope]
+ * @return {Expr}
+ */
+function Keys(scope) {
+  arity.max(1, arguments);
+  return new Expr({ keys: wrap(scope) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
+ * Constructs a `tokens` function that, when evaluated, returns a Ref value.
+ *
+ * @param {module:query~ExprArg} [scope]
+ * @return {Expr}
+ */
+function Tokens(scope) {
+  arity.max(1, arguments);
+  return new Expr({ tokens: wrap(scope) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
+ * Constructs a `credentials` functions that, when evaluated, returns a Ref value.
+ *
+ * @param {module:query~ExprArg} [scope]
+ * @return {Expr}
+ */
+function Credentials(scope) {
+  arity.max(1, arguments);
+  return new Expr({ credentials: wrap(scope) });
 }
 
 /**
@@ -1053,6 +1173,14 @@ module.exports = {
   Database: Database,
   Index: Index,
   Class: Class,
+  Function: FunctionFn,
+  Classes: Classes,
+  Databases: Databases,
+  Indexes: Indexes,
+  Functions: Functions,
+  Keys: Keys,
+  Tokens: Tokens,
+  Credentials: Credentials,
   Equals: Equals,
   Contains: Contains,
   Select: Select,

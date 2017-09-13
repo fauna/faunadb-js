@@ -2,6 +2,7 @@
 
 var assert = require('chai').assert;
 var logger = require('../src/clientLogger').logger;
+var query = require('../src/query');
 var objectAssign = require('object-assign');
 var util = require('./util');
 
@@ -20,7 +21,7 @@ describe('clientLogger', function () {
   before(function () {
     // Hideous way to ensure the client is initialized.
     client = util.client();
-    return client.post('classes', { name: 'logging_tests' }).then(function (res) {
+    return client.query(query.CreateClass({ name: 'logging_tests' })).then(function (res) {
       classRef = res['ref'];
     });
   });
@@ -51,38 +52,30 @@ describe('clientLogger', function () {
 
   it('request content', function () {
     return captureLogged(function (client) {
-      return client.post(classRef, { data: {} });
+      return client.query(query.Create(classRef, { data: {} }));
     }).then(function (res) {
       var readLine = lineReader(res);
-      assert.equal(readLine(), 'Fauna POST /classes/logging_tests');
+      assert.equal(readLine(), 'Fauna POST /');
       assert.equal(readLine(), '  Request JSON: {');
-      assert.equal(readLine(), '    "data": {}');
+      assert.equal(readLine(), '    "create": {');
+      assert.equal(readLine(), '      "@ref": {');
+      assert.equal(readLine(), '        "id": "logging_tests",');
+      assert.equal(readLine(), '        "class": {');
+      assert.equal(readLine(), '          "@ref": {');
+      assert.equal(readLine(), '            "id": "classes"');
+      assert.equal(readLine(), '          }');
+      assert.equal(readLine(), '        }');
+      assert.equal(readLine(), '      }');
+      assert.equal(readLine(), '    },');
+      assert.equal(readLine(), '    "params": {');
+      assert.equal(readLine(), '      "object": {');
+      assert.equal(readLine(), '        "data": {');
+      assert.equal(readLine(), '          "object": {}');
+      assert.equal(readLine(), '        }');
+      assert.equal(readLine(), '      }');
+      assert.equal(readLine(), '    }');
       assert.equal(readLine(), '  }');
       // Ignore the rest
-    });
-  });
-
-  it('url query', function () {
-    return client.post(classRef, { data: {} }).then(function (instance) {
-      return captureLogged(function (client) {
-        return client.get(instance.ref, { ts: instance.ts });
-      }).then(function (res) {
-        var readLine = lineReader(res);
-        assert.equal(readLine(), 'Fauna GET /' + instance.ref + '?ts=' + instance.ts);
-      });
-    });
-  });
-
-  it('empty object as url query', function () {
-    return client.post(classRef, { data: {} }).then(function (instance) {
-      return captureLogged(function (client) {
-        return client.get(instance.ref, {}).then(function (instance2) {
-          assert.deepEqual(instance, instance2);
-        });
-      }).then(function (logged) {
-        var readLine = lineReader(logged);
-        assert.equal(readLine(), 'Fauna GET /' + instance.ref);
-      });
     });
   });
 });
