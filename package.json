@@ -45,7 +45,7 @@
     "eslint": "^2.10.2",
     "ink-docstrap": "^1.2.1",
     "istanbul": "^0.4.5",
-    "jsdoc": "^3.4.0",
+    "jsdoc": "^3.5.5",
     "karma": "^0.13.22",
     "karma-browserify": "^5.0.5",
     "karma-chrome-launcher": "^1.0.1",
