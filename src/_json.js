@@ -25,8 +25,8 @@ function json_parse(_, val) {
     if (!('class' in ref) && !('database' in ref))
       return values.Native.fromName(ref['id']);
 
-    var cls = json_parse(_, ref['class']);
-    var db = json_parse(_, ref['database']);
+    var cls = json_parse('class', ref['class']);
+    var db = json_parse('database', ref['database']);
 
     return new values.Ref(ref['id'], cls, db);
   } else if ('@obj' in val) {
