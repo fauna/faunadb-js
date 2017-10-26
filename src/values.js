@@ -11,7 +11,8 @@ var util = require('util');
  *
  * Instances of these classes will be returned in responses if the response object
  * contains these values. For example, a FaunaDB response containing
- *`{ "@ref": "classes/frogs/123" }` will be returned as `new Ref("classes/frogs/123")`.
+ *`{ "@ref": { "id": "123", "class": { "@ref": { "id": "frogs", "class": { "@ref": { "id": "classes" } } } } } }
+ * will be returned as `new values.Ref("123", new values.Ref("frogs", values.Native.CLASSES))`.
  *
  * See the [FaunaDB Query API Documentation](https://fauna.com/documentation/queries#values)
  * for more information.
@@ -34,62 +35,54 @@ util.inherits(Value, Expr);
  * FaunaDB ref.
  * See the [docs](https://fauna.com/documentation/queries#values-special_types).
  *
- * A simple wrapper around a string which can be extracted using `ref.value`.
- * Queries that require a Ref will not work if you just pass in a string.
- *
- * You can create a Ref from a string, such as `new Ref('databases/prydain')`.
- * You can also call `new Ref('databases', 'prydain')` or `new Ref(new Ref('databases'), 'prydain').
- *
- * @param {string|Ref} valueOrParent
- *   The string value of the Ref, or the parent portion of the Ref if child is specified.
- * @param {?string} id
- *   The child portion of the ref.
+ * @param {string} id
+ *   The id portion of the ref.
+ * @param {Ref} [clazz]
+ *   The class portion of the ref.
+ * @param {Ref} [database]
+ *   The database portion of the ref.
  *
  * @extends module:values~Value
  * @constructor
  */
-function Ref() {
-  var parts = Array.prototype.slice.call(arguments);
-  /**
-   * The string value of the ref.
-   *
-   * @type {string}
-   */
-  this.value = parts.join('/');
+function Ref(id, clazz, database) {
+  if (!id) throw new errors.InvalidValue('id cannot be null or undefined');
+
+  this.value = {id: id};
+  if (clazz) this.value['class'] = clazz;
+  if (database) this.value['database'] = database;
 }
 
 util.inherits(Ref, Value);
 
 /**
  * Gets the class part out of the Ref.
- * This is done by removing the id.
- * So `new Ref('a', 'b/c').class` will be `new Ref('a/b')`.
  *
  * @member {string}
  * @name module:values~Ref#class
  */
 Object.defineProperty(Ref.prototype, 'class', { get: function() {
-  var parts = this.value.split('/');
-  if (parts.length === 1) {
-    return this;
-  } else {
-    return new Ref(parts.slice(0, parts.length - 1).join('/'));
-  }
+  return this.value['class'];
 } });
 
 /**
- * Removes the class part of the Ref, leaving only the id.
- * this is everything after the last `/`.
+ * Gets the database part out of the Ref.
  *
- * @member {string}
+ * @member {Ref}
+ * @name module:values~Ref#database
+ */
+Object.defineProperty(Ref.prototype, 'database', { get: function() {
+  return this.value['database'];
+} });
+
+/**
+ * Gets the id part out of the Ref.
+ *
+ * @member {Ref}
  * @name module:values~Ref#id
  */
 Object.defineProperty(Ref.prototype, 'id', { get: function() {
-  var parts = this.value.split('/');
-  if (parts.length === 1) {
-    throw new errors.InvalidValue('The Ref does not have an id.');
-  }
-  return parts[parts.length - 1];
+  return this.value['id'];
 } });
 
 /** @ignore */
@@ -99,7 +92,9 @@ Ref.prototype.toJSON = function() {
 
 /** @ignore */
 Ref.prototype.toString = function() {
-  return this.value;
+  var cls = this.class !== undefined ? ', class=' + this.class.toString() : '';
+  var db = this.database !== undefined ? ' database=' +  this.database.toString() : '';
+  return 'Ref(id=' + this.id + cls + db + ')';
 };
 
 /** @ignore */
@@ -109,7 +104,9 @@ Ref.prototype.valueOf = function() {
 
 /** @ignore */
 Ref.prototype.inspect = function() {
-  return 'Ref(' + JSON.stringify(this.value) + ')';
+  var cls = this.class !== undefined ? ', class=' + this.class.inspect() : '';
+  var db = this.database !== undefined ? ', database=' +  this.database.inspect() : '';
+  return 'Ref(id=' + this.id + cls + db + ')';
 };
 
 /**
@@ -120,6 +117,25 @@ Ref.prototype.inspect = function() {
 Ref.prototype.equals = function(other) {
   return other instanceof Ref && this.value === other.value;
 };
+
+var Native = {
+  CLASSES: new Ref("classes"),
+  INDEXES: new Ref("indexes"),
+  DATABASES: new Ref("databases"),
+  FUNCTIONS: new Ref("functions"),
+  KEYS: new Ref("keys")
+};
+
+Native.fromName = function(name) {
+  switch(name) {
+    case "classes": return Native.CLASSES;
+    case "indexes": return Native.INDEXES;
+    case "databases": return Native.DATABASES;
+    case "functions": return Native.FUNCTIONS;
+    case "keys": return Native.KEYS;
+  }
+  return new Ref(name);
+}
 
 /**
  * FaunaDB Set.
@@ -274,6 +290,7 @@ Query.prototype.toJSON = function()  {
 module.exports = {
   Value: Value,
   Ref: Ref,
+  Native: Native,
   SetRef: SetRef,
   FaunaTime: FaunaTime,
   FaunaDate: FaunaDate,

@@ -21,10 +21,10 @@ describe('page', function() {
   before(function() {
     client = util.client();
 
-    var p1 = client.query(query.Create(Ref('classes'), { 'name': 'timestamped_things' } )).then(function(resp) {
+    var p1 = client.query(query.CreateClass({ 'name': 'timestamped_things' })).then(function(resp) {
       tsClassRef = resp.ref;
 
-      return client.query(query.Create(Ref('indexes'), {
+      return client.query(query.CreateIndex({
         name: 'timestamped_things_by_class',
         source: tsClassRef
       })).then(function(resp) {
@@ -38,9 +38,9 @@ describe('page', function() {
       });
     });
 
-    var p2 = client.query(query.Create(Ref('classes'), { 'name': 'paged_things' } )).then(function(resp) {
+    var p2 = client.query(query.CreateClass({ 'name': 'paged_things' } )).then(function(resp) {
       classRef = resp.ref;
-      return client.query(query.Create(Ref('indexes'), {
+      return client.query(query.CreateIndex({
         name: 'things_by_class',
         source: classRef,
         values: [{ 'field': [ 'data', 'i' ] }, { 'field': 'ref' }]
@@ -175,8 +175,8 @@ describe('page', function() {
       p.forEach(function(item) {
         assert.property(item, 'ts');
         assert.property(item, 'action');
-        assert.property(item, 'resource');
-        assert.property(item, 'values');
+        assert.property(item, 'instance');
+        assert.property(item, 'data');
       });
     });
   });
@@ -200,8 +200,8 @@ describe('page', function() {
         var value = item.value;
         assert.property(value, 'ts');
         assert.property(value, 'action');
-        assert.property(value, 'resource');
-        assert.property(value, 'values');
+        assert.property(value, 'instance');
+        assert.property(value, 'data');
       });
     });
   });

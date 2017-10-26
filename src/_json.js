@@ -20,7 +20,15 @@ function json_parse(_, val) {
   if (typeof val !== 'object' || val === null) {
     return val;
   } else if ('@ref' in val) {
-    return new values.Ref(val['@ref']);
+    var ref = val['@ref'];
+
+    if (!('class' in ref) && !('database' in ref))
+      return values.Native.fromName(ref['id']);
+
+    var cls = json_parse('class', ref['class']);
+    var db = json_parse('database', ref['database']);
+
+    return new values.Ref(ref['id'], cls, db);
   } else if ('@obj' in val) {
     return val['@obj'];
   } else if ('@set' in val) {

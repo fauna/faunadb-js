@@ -5,6 +5,23 @@ export module values {
     toJSON(): Object;
     inspect(): string;
   }
+
+  export class Ref extends Value {
+    constructor(id: string, cls?: Ref, db?: Ref);
+
+    id: string;
+    class?: Ref;
+    database?: Ref;
+  }
+
+  export class Native {
+    static readonly CLASSES: Ref;
+    static readonly INDEXES: Ref;
+    static readonly DATABASES: Ref;
+    static readonly KEYS: Ref;
+    static readonly FUNCTIONS: Ref;
+  }
+
   export class SetRef extends Value {
     constructor(value: string);
   }

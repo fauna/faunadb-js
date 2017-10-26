@@ -95,72 +95,12 @@ Client.prototype.paginate = function(expression, params) {
 };
 
 /**
- * Issues a HTTP `GET` request via the legacy REST API.
- * See the [docs](https://fauna.com/documentation/rest).
- * @deprecated Use the {@link Client#query} API where possible.
- * @param {(string|Ref)} path Path relative the `domain` from the constructor.
- * @param {Object} query URL parameters.
- * @return {external:Promise<Object>} FaunaDB response object.
- */
-Client.prototype.get = function (path, query) {
-  query = defaults(query, null);
-  return this._execute('GET', path, null, query);
-};
-
-/**
- * Issues a HTTP `POST` request via the legacy REST API.
- * See the [docs](https://fauna.com/documentation/rest).
- * @deprecated Use the {@link Client#query} API where possible.
- * @param {(string|Ref)} path Path relative to the `domain` from the constructor.
- * @param {Object} data Object to be converted to request JSON.
- * @return {external:Promise<Object>} FaunaDB response object.
- */
-Client.prototype.post = function (path, data) {
-  return this._execute('POST', path, data);
-};
-
-/**
- * Issues a HTTP `PUT` request via the legacy REST API.
- * See the [docs](https://fauna.com/documentation/rest).
- * @deprecated Use the {@link Client#query} API where possible.
- * @param {(string|Ref)} path Path relative to the `domain` from the constructor.
- * @param {Object} data Object to be converted to the request JSON.
- * @return {external:Promise<Object>} FaunaDB response object.
- */
-Client.prototype.put = function (path, data) {
-  return this._execute('PUT', path, data);
-};
-
-/**
- * Issues a HTTP `PATCH` request via the legacy REST API.
- * See the [docs](https://fauna.com/documentation/rest).
- * @deprecated Use the {@link Client#query} API where possible.
- * @param {(string|Ref)} path Path relative to the `domain` from the constructor.
- * @param {Object} data Object to be converted to the request JSON.
- * @return {external:Promise<Object>} FaunaDB response object.
- */
-Client.prototype.patch = function (path, data) {
-  return this._execute('PATCH', path, data);
-};
-
-/**
- * Issues a HTTP `DELETE` request via the legacy REST API.
- * See the [docs](https://fauna.com/documentation/rest).
- * @deprecated Use the {@link Client#query} API where possible.
- * @param {(string|Ref)} path Path relative to the `domain` from the constructor.
- * @return {external:Promise<Object>} FaunaDB response object.
- */
-Client.prototype.delete = function (path) {
-  return this._execute('DELETE', path);
-};
-
-/**
  * Sends a `ping` request to FaunaDB.
  * See the [docs](https://fauna.com/documentation/rest#other).
  * @return {external:Promise<string>} Ping response.
  */
 Client.prototype.ping = function (scope, timeout) {
-  return this.get('ping', { scope: scope, timeout: timeout });
+  return this._execute('GET', 'ping', null, { scope: scope, timeout: timeout });
 };
 
 Client.prototype._execute = function (action, path, data, query) {
@@ -206,6 +146,8 @@ Client.prototype._performRequest = function (action, path, data, query) {
   if (this._secret) {
     rq.set('Authorization', secretHeader(this._secret));
   }
+
+  rq.set('X-FaunaDB-API-Version', '2.1');
 
   rq.timeout(this._timeout);
 

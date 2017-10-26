@@ -9,7 +9,6 @@ var objectAssign = require('object-assign');
 var util = require('../src/_util');
 
 var assert = chai.assert;
-var Ref = query.Ref;
 var Database = query.Database;
 var CreateDatabase = query.CreateDatabase;
 var Value = values.Value;
@@ -106,7 +105,7 @@ function unwrapExprValues(obj) {
 
 var rootClient = getClient({ secret: testConfig.auth });
 var dbName = 'faunadb-js-test-' + randomString();
-var dbRef = Ref('databases/' + dbName);
+var dbRef = query.Database(dbName);
 
 // global before/after for every test
 
@@ -122,7 +121,7 @@ before(function () {
 });
 
 after(function () {
-  return rootClient.delete(dbRef);
+  return rootClient.query(query.Delete(dbRef));
 });
 
 module.exports = {

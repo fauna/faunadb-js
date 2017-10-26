@@ -60,9 +60,17 @@ export module query {
   export function Date(string: ExprArg): Expr;
 
   export function NextId(): Expr;
-  export function Database(name: ExprArg): Expr;
-  export function Index(name: ExprArg): Expr;
-  export function Class(name: ExprArg): Expr;
+  export function Database(name: ExprArg, scope?: ExprArg): Expr;
+  export function Index(name: ExprArg, scope?: ExprArg): Expr;
+  export function Class(name: ExprArg, scope?: ExprArg): Expr;
+  export function Function(name: ExprArg, scope?: ExprArg): Expr;
+  export function Databases(scope?: ExprArg): Expr;
+  export function Classes(scope?: ExprArg): Expr;
+  export function Indexes(scope?: ExprArg): Expr;
+  export function Functions(scope?: ExprArg): Expr;
+  export function Keys(scope?: ExprArg): Expr;
+  export function Tokens(scope?: ExprArg): Expr;
+  export function Credentials(scope?: ExprArg): Expr;
   export function Equals(...args: ExprArg[]): Expr;
   export function Contains(path: ExprArg, _in: ExprArg): Expr;
   export function Select(path: ExprArg, from: ExprArg, _default?: ExprArg): Expr;
