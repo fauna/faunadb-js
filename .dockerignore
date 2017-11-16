@@ -1,0 +1,16 @@
+esdoc
+lib
+node_modules
+npm-debug.log
+testConfig.json
+typings/
+*.iml
+*.swp
+.idea/
+.vscode/
+faunadb*.tgz
+doc/
+dist/
+coverage/
+.git/
+.gitignore
