@@ -106,16 +106,16 @@ describe('Values', function() {
   });
 
   it('bytes - errors', function() {
-    assert.throws(function() { new Bytes(10) }, errors.InvalidValue, 'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: 10');
-    assert.throws(function() { new Bytes(3.14) }, errors.InvalidValue, 'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: 3.14');
-    assert.throws(function() { new Bytes({}) }, errors.InvalidValue, 'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: {}');
-    assert.throws(function() { new Bytes([]) }, errors.InvalidValue, 'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: []');
-    assert.throws(function() { new Bytes(null) }, errors.InvalidValue, 'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: null');
-    assert.throws(function() { new Bytes(undefined) }, errors.InvalidValue, 'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: undefined');
+    assert.throws(function() { new Bytes(10); }, errors.InvalidValue, 'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: 10');
+    assert.throws(function() { new Bytes(3.14); }, errors.InvalidValue, 'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: 3.14');
+    assert.throws(function() { new Bytes({}); }, errors.InvalidValue, 'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: {}');
+    assert.throws(function() { new Bytes([]); }, errors.InvalidValue, 'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: []');
+    assert.throws(function() { new Bytes(null); }, errors.InvalidValue, 'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: null');
+    assert.throws(function() { new Bytes(undefined); }, errors.InvalidValue, 'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: undefined');
   });
 
   it('query', function() {
-    var test_query = new Query({lambda:'x',expr:{var:'x'}});
+    var test_query = new Query({ lambda: 'x', expr: { var: 'x' } });
     var test_query_json = '{"@query":{"lambda":"x","expr":{"var":"x"}}}';
     assert.equal(json.toJSON(test_query), test_query_json);
     assert.deepEqual(json.parseJSON(test_query_json), test_query);

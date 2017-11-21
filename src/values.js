@@ -48,7 +48,7 @@ util.inherits(Value, Expr);
 function Ref(id, clazz, database) {
   if (!id) throw new errors.InvalidValue('id cannot be null or undefined');
 
-  this.value = {id: id};
+  this.value = { id: id };
   if (clazz) this.value['class'] = clazz;
   if (database) this.value['database'] = database;
 }
@@ -119,23 +119,23 @@ Ref.prototype.equals = function(other) {
 };
 
 var Native = {
-  CLASSES: new Ref("classes"),
-  INDEXES: new Ref("indexes"),
-  DATABASES: new Ref("databases"),
-  FUNCTIONS: new Ref("functions"),
-  KEYS: new Ref("keys")
+  CLASSES: new Ref('classes'),
+  INDEXES: new Ref('indexes'),
+  DATABASES: new Ref('databases'),
+  FUNCTIONS: new Ref('functions'),
+  KEYS: new Ref('keys')
 };
 
 Native.fromName = function(name) {
   switch(name) {
-    case "classes": return Native.CLASSES;
-    case "indexes": return Native.INDEXES;
-    case "databases": return Native.DATABASES;
-    case "functions": return Native.FUNCTIONS;
-    case "keys": return Native.KEYS;
+    case 'classes': return Native.CLASSES;
+    case 'indexes': return Native.INDEXES;
+    case 'databases': return Native.DATABASES;
+    case 'functions': return Native.FUNCTIONS;
+    case 'keys': return Native.KEYS;
   }
   return new Ref(name);
-}
+};
 
 /**
  * FaunaDB Set.
