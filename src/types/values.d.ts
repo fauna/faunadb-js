@@ -2,7 +2,7 @@ import Expr from './Expr';
 
 export module values {
   export class Value extends Expr {
-    toJSON(): Object;
+    toJSON(): object;
     inspect(): string;
   }
 
@@ -47,6 +47,6 @@ export module values {
   }
 
   export class Query extends Value {
-    constructor(value: Object);
+    constructor(value: object);
   }
 }

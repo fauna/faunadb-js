@@ -6,8 +6,7 @@
         "sourceMap": false
     },
     "files": [
-      "index.d.ts",
-      "typings/index.d.ts"
+      "index.d.ts"
     ],
     "exclude": [
         "node_modules"

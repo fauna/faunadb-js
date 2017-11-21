@@ -2,7 +2,7 @@ import RequestResult from "./RequestResult";
 
 export module errors {
   export class FaunaError extends Error {
-    constructor(message: String);
+    constructor(message: string);
 
     name: string;
     message: string;
@@ -16,7 +16,7 @@ export module errors {
     constructor(requestResult: RequestResult);
 
     requestResult: RequestResult;
-    errors(): Object;
+    errors(): object;
   }
 
   export class BadRequest extends FaunaHttpError {}

@@ -30,7 +30,7 @@
     "browser-test-linux": "karma start browserTest.conf.js --browsers Chrome,Firefox",
     "browser-test-remote": "karma start mobileTest.conf.js"
   },
-  "typings": "index.ts.d",
+  "types": "index.d.ts",
   "dependencies": {
     "base64-js": "^1.2.0",
     "btoa-lite": "^1.0.0",
@@ -55,6 +55,7 @@
     "karma-safari-launcher": "^1.0.0",
     "karma-spec-reporter": "^0.0.31",
     "mocha": "^4.0.1",
+    "typescript": "^2.6.1",
     "uglify-js": "^3.1.10",
     "watchify": "^3.7.0"
   }
