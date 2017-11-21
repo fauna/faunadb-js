@@ -41,21 +41,21 @@
   },
   "devDependencies": {
     "browserify": "^13.0.1",
-    "chai": "^3.5.0",
-    "eslint": "^2.10.2",
+    "chai": "^4.1.2",
+    "eslint": "^4.11.0",
     "ink-docstrap": "^1.2.1",
     "istanbul": "^0.4.5",
     "jsdoc": "^3.5.5",
-    "karma": "^0.13.22",
+    "karma": "^1.7.1",
     "karma-browserify": "^5.0.5",
-    "karma-chrome-launcher": "^1.0.1",
+    "karma-chrome-launcher": "^2.2.0",
     "karma-firefox-launcher": "^1.0.0",
     "karma-ie-launcher": "^1.0.0",
     "karma-mocha": "^1.0.1",
     "karma-safari-launcher": "^1.0.0",
-    "karma-spec-reporter": "0.0.26",
-    "mocha": "^2.4.5",
-    "uglify-js": "^2.7.0",
+    "karma-spec-reporter": "^0.0.31",
+    "mocha": "^4.0.1",
+    "uglify-js": "^3.1.10",
     "watchify": "^3.7.0"
   }
 }
