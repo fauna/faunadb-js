@@ -10,7 +10,6 @@ var util = require('../src/_util');
 
 var assert = chai.assert;
 var Database = query.Database;
-var CreateDatabase = query.CreateDatabase;
 var Value = values.Value;
 
 var env = process.env;

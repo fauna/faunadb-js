@@ -73,8 +73,8 @@ describe('query', function () {
       assert.equal(res, 'string');
     });
 
-    var pObject = client.query({a: 1, b: 'string', c: 3.14, d: null}).then(function (res) {
-      assert.deepEqual(res, {a: 1, b: 'string', c: 3.14, d: null});
+    var pObject = client.query({ a: 1, b: 'string', c: 3.14, d: null }).then(function (res) {
+      assert.deepEqual(res, { a: 1, b: 'string', c: 3.14, d: null });
     });
 
     var pArray = client.query([1, 'string', 3.14, null]).then(function (res) {
@@ -86,7 +86,7 @@ describe('query', function () {
     });
 
     return Promise.all([pInteger, pNumber, pString, pObject, pArray, pNull]);
-  })
+  });
 
   // Basic forms
   it('at', function () {
@@ -114,8 +114,8 @@ describe('query', function () {
   it('let/var', function () {
     return Promise.all([
       assertQuery(query.Let({ x: 1 }, query.Var('x')), 1),
-      assertQuery(query.Let({ x: 1, y: 2 }, function(x, y) { return [x, y] }), [1, 2]),
-      assertQuery(query.Let({ x: 1, y: 2 }, function(x, y) { return { a: x, b: y } }), { a: 1, b: 2 })
+      assertQuery(query.Let({ x: 1, y: 2 }, function(x, y) { return [x, y]; }), [1, 2]),
+      assertQuery(query.Let({ x: 1, y: 2 }, function(x, y) { return { a: x, b: y }; }), { a: 1, b: 2 })
     ]);
   });
 
@@ -163,13 +163,13 @@ describe('query', function () {
       return query.Concat([a, b], '/');
     });
 
-    return client.query(query.CreateFunction({ name: "concat_with_slash", body: body })).then(function () {
-      return assertQuery(query.Call(query.Function("concat_with_slash"), 'a', 'b'), 'a/b');
+    return client.query(query.CreateFunction({ name: 'concat_with_slash', body: body })).then(function () {
+      return assertQuery(query.Call(query.Function('concat_with_slash'), 'a', 'b'), 'a/b');
     });
   });
 
   it('echo query', function () {
-    var lambda = function (x) { return x; }
+    var lambda = function (x) { return x; };
 
     return client.query(query.Query(lambda)).then(function (body) {
       return client.query(body).then(function (bodyEchoed) {
@@ -372,8 +372,8 @@ describe('query', function () {
   it('create function', function () {
     var body = query.Query(function(x) { return x; });
 
-    return client.query(query.CreateFunction({ name: "a_function", body: body })).then(function () {
-      return assertQuery(query.Exists(query.Function("a_function")), true);
+    return client.query(query.CreateFunction({ name: 'a_function', body: body })).then(function () {
+      return assertQuery(query.Exists(query.Function('a_function')), true);
     });
   });
 
@@ -505,13 +505,13 @@ describe('query', function () {
   });
 
   it('index', function() {
-    return client.query(query.Index("widgets_by_n")).then(function(res) {
+    return client.query(query.Index('widgets_by_n')).then(function(res) {
       assert.deepEqual(res, nIndexRef);
     });
   });
 
   it('class', function() {
-    return client.query(query.Class("widgets")).then(function(res) {
+    return client.query(query.Class('widgets')).then(function(res) {
       assert.deepEqual(res, classRef);
     });
   });
@@ -536,9 +536,9 @@ describe('query', function () {
     var p1 = assertQuery(query.Select('a', obj), { b: 1 });
     var p2 = assertQuery(query.Select(['a', 'b'], obj), 1);
     var p3 = assertQuery(query.Select('c', obj, null), null);
-    var p4 = assertQuery(query.Select('c', obj, "default"), "default");
+    var p4 = assertQuery(query.Select('c', obj, 'default'), 'default');
     var p5 = assertBadQuery(query.Select('c', obj), errors.NotFound);
-    return Promise.all([p1, p2, p3, p4]);
+    return Promise.all([p1, p2, p3, p4, p5]);
   });
 
   it('select for array', function () {
@@ -618,27 +618,27 @@ describe('query', function () {
   });
 
   it('ref', function() {
-    return assertQuery(Ref(classRef, query.Concat(["123", "456"])), new values.Ref("123456", classRef));
+    return assertQuery(Ref(classRef, query.Concat(['123', '456'])), new values.Ref('123456', classRef));
   });
 
   it('bytes', function() {
     return Promise.all([
-      assertQuery(new Bytes("AQIDBA=="), new Bytes("AQIDBA==")),
-      assertQuery(new Uint8Array([0, 0, 0, 0]), new Bytes("AAAAAA==")),
-      assertQuery(new ArrayBuffer(4), new Bytes("AAAAAA=="))
+      assertQuery(new Bytes('AQIDBA=='), new Bytes('AQIDBA==')),
+      assertQuery(new Uint8Array([0, 0, 0, 0]), new Bytes('AAAAAA==')),
+      assertQuery(new ArrayBuffer(4), new Bytes('AAAAAA=='))
     ]);
   });
 
   it('nested refs', function() {
-    return util.rootClient.query(query.CreateKey({database: util.dbRef, role: 'admin'})).then(function(adminKey) {
-      var adminClient = util.getClient({secret: adminKey.secret});
+    return util.rootClient.query(query.CreateKey({ database: util.dbRef, role: 'admin' })).then(function(adminKey) {
+      var adminClient = util.getClient({ secret: adminKey.secret });
 
       return createNewDatabase(adminClient, 'parent-database').then(function(client1) {
         return createNewDatabase(client1, 'child-database').then(function() {
-          return client1.query(query.CreateKey({database: query.Database('child-database'), role: 'server'})).then(function(key) {
-            var client2 = util.getClient({secret: key.secret});
+          return client1.query(query.CreateKey({ database: query.Database('child-database'), role: 'server' })).then(function(key) {
+            var client2 = util.getClient({ secret: key.secret });
 
-            return client2.query(query.CreateClass({name: 'a_class'})).then(function() {
+            return client2.query(query.CreateClass({ name: 'a_class' })).then(function() {
               var nestedDatabase = query.Database('child-database', query.Database('parent-database'));
               var nestedClassRef = query.Class('a_class', nestedDatabase);
               var allNestedClasses = query.Classes(nestedDatabase);
@@ -649,10 +649,10 @@ describe('query', function () {
                 new values.Ref(
                   'child-database',
                   values.Native.DATABASES,
-                  new values.Ref('parent-database', values.Native.DATABASES)))
+                  new values.Ref('parent-database', values.Native.DATABASES)));
 
               var p1 = assertQuery(query.Exists(nestedClassRef), true);
-              var p2 = assertQuery(query.Paginate(allNestedClasses), {data: [ a_class_ref ]});
+              var p2 = assertQuery(query.Paginate(allNestedClasses), { data: [ a_class_ref ] });
 
               return Promise.all([p1, p2]);
             });
@@ -715,7 +715,7 @@ describe('query', function () {
         arity = params[0] !== undefined ? params[0] : 100,
         errorMessage = new RegExp(
           'Function requires ' + (params[1] || '\\d+') +
-            ' arguments but ' + arity + ' were given')
+            ' arguments but ' + arity + ' were given');
 
       assert.throws(function () { query[fun].apply(null, new Array(arity)); }, errors.InvalidArity, errorMessage, fun);
     }
@@ -734,9 +734,9 @@ describe('query', function () {
 });
 
 function createNewDatabase(client, name) {
-  return client.query(query.CreateDatabase({name: name})).then(function() {
-    return client.query(query.CreateKey({database: query.Database(name), role: 'admin'})).then(function(key) {
-      return util.getClient({secret: key.secret});
+  return client.query(query.CreateDatabase({ name: name })).then(function() {
+    return client.query(query.CreateKey({ database: query.Database(name), role: 'admin' })).then(function(key) {
+      return util.getClient({ secret: key.secret });
     });
   });
 }

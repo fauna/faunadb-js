@@ -2,14 +2,11 @@
 
 var assert = require('chai').assert;
 var query = require('../src/query');
-var values = require('../src/values');
 var PageHelper = require('../src/PageHelper');
 var Promise = require('es6-promise').Promise;
 var util = require('./util');
 
 var client;
-
-var Ref = query.Ref;
 
 var NUM_INSTANCES = 100;
 

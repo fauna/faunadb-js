@@ -119,7 +119,7 @@ function Do() {
 var objectFunction = function(fields) {
   arity.exact(1, arguments);
   return new Expr({ object: wrapValues(fields) });
-}
+};
 
 /**
  * See the [docs](https://fauna.com/documentation/queries#basic_forms).
