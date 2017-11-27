@@ -4,12 +4,12 @@ export default class RequestResult {
   constructor(client: Client,
               method: string,
               path: string,
-              query: Object,
-              requestContent: Object,
+              query: object,
+              requestContent: object,
               responseRaw: string,
-              responseContent: Object,
+              responseContent: object,
               statusCode: number,
-              responseHeaders: Object,
+              responseHeaders: object,
               startTime: Date,
               endTime: Date
   );

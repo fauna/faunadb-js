@@ -1,6 +1,6 @@
 import Expr from "./Expr";
 
-type ExprVal = (Expr|string|number|boolean|Object);
+type ExprVal = (Expr|string|number|boolean|object);
 type ExprArg = (ExprVal|Array<ExprVal>);
 export type Lambda = (...vars: any[]) => Expr;
 
@@ -26,7 +26,7 @@ export module query {
 
   export function Get(ref: ExprArg, ts?: ExprArg): Expr;
   export function KeyFromSecret(secret: ExprArg): Expr;
-  export function Paginate(set: ExprArg, opts?: Object): Expr;
+  export function Paginate(set: ExprArg, opts?: object): Expr;
   export function Exists(ref: ExprArg, ts?: ExprArg): Expr;
 
   export function Create(class_ref: ExprArg, params?: ExprArg): Expr;

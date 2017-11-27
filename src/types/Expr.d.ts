@@ -1,3 +1,3 @@
 export default class Expr {
-  constructor(obj: Object);
+  constructor(obj: object);
 }
