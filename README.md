@@ -175,6 +175,10 @@ will make cleanup of test databases as easy as removing the parent database.
 See the [FaunaDB Multitenancy Tutorial](https://fauna.com/tutorials/multitenant) for more
 information about nested databases.
 
+Alternatively, tests can be run via a Docker container with
+`FAUNA_ROOT_KEY="your-cloud-secret" make docker-test` (an alternate
+Alpine-based NodeJS image can be provided via `RUNTIME_IMAGE`).
+
 ### Documentation
 
 * `npm run doc` will generate JSDoc documentation for the project.
