@@ -22,7 +22,10 @@
   "scripts": {
     "doc": "jsdoc -c ./jsdoc.json",
     "test": "mocha test/",
-    "coverage": "istanbul cover node_modules/mocha/bin/_mocha test/",
+    "coverage": "nyc mocha test/",
+    "coverage-report": "nyc report --reporter=lcov",
+    "jenkins-test": "JUNIT_REPORT_PATH=results/report.xml JUNIT_REPORT_STACK=1 nyc mocha --colors --reporter mocha-jenkins-reporter test/",
+    "jenkins-coverage": "nyc report --reporter=lcovonly",
     "browserify": "browserify index.js --standalone faunadb -o dist/faunadb.js",
     "browserify-min": "browserify index.js --standalone faunadb | uglifyjs -c --screw-ie8 -m -o dist/faunadb-min.js",
     "browser-test-mac": "karma start browserTest.conf.js --browsers Chrome,Safari,Firefox",
@@ -44,7 +47,6 @@
     "chai": "^4.1.2",
     "eslint": "^4.11.0",
     "ink-docstrap": "^1.2.1",
-    "istanbul": "^0.4.5",
     "jsdoc": "^3.5.5",
     "karma": "^1.7.1",
     "karma-browserify": "^5.0.5",
@@ -55,6 +57,8 @@
     "karma-safari-launcher": "^1.0.0",
     "karma-spec-reporter": "^0.0.31",
     "mocha": "^4.0.1",
+    "mocha-jenkins-reporter": "^0.3.10",
+    "nyc": "^11.3.0",
     "typescript": "^2.6.1",
     "uglify-js": "^3.1.10",
     "watchify": "^3.7.0"

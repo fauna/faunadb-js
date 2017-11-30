@@ -1,3 +1,5 @@
+.PHONY: test
+
 RUNTIME_IMAGE ?= node:6-alpine
 DOCKER_RUN_FLAGS = -it --rm
 
@@ -16,6 +18,16 @@ endif
 ifdef FAUNA_PORT
 DOCKER_RUN_FLAGS += -e FAUNA_PORT=$(FAUNA_PORT)
 endif
+
+test:
+	npm run test
+
+jenkins-test:
+	npm run jenkins-test
+	npm run jenkins-coverage
+
+docker-wait:
+	dockerize -wait $(FAUNA_SCHEME)://$(FAUNA_DOMAIN):$(FAUNA_PORT)/ping -timeout $(FAUNA_TIMEOUT)
 
 docker-test:
 	docker build -f Dockerfile.test -t faunadb-js-test:latest --build-arg RUNTIME_IMAGE=$(RUNTIME_IMAGE) .
