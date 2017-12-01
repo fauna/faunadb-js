@@ -19,6 +19,10 @@ ifdef FAUNA_PORT
 DOCKER_RUN_FLAGS += -e FAUNA_PORT=$(FAUNA_PORT)
 endif
 
+ifdef FAUNA_TIMEOUT
+DOCKER_RUN_FLAGS += -e FAUNA_TIMEOUT=$(FAUNA_TIMEOUT)
+endif
+
 test:
 	npm run test
 
