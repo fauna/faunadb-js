@@ -12,5 +12,8 @@ faunadb*.tgz
 doc/
 dist/
 coverage/
+.nyc_output/
+results/
 .git/
 .gitignore
+Dockerfile.test

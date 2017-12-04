@@ -5,8 +5,8 @@ ARG RUNTIME_IMAGE
 # Use the docker image provided via build arg
 FROM $RUNTIME_IMAGE
 
-# Install the libraries we need for dockerize
-RUN apk add --no-cache curl
+# Install the libraries we need for dockerize and the build
+RUN apk add --no-cache curl make
 
 # Copy in the dockerize utility
 ARG DOCKERIZE_VERSION=0.6.0
@@ -20,7 +20,7 @@ WORKDIR /fauna/faunadb-js
 RUN npm install
 
 # Define the default variables for the tests
-ENV FAUNA_ROOT_KEY=secret FAUNA_DOMAIN=db.fauna.com FAUNA_SCHEME=https FAUNA_PORT=443
+ENV FAUNA_ROOT_KEY=secret FAUNA_DOMAIN=db.fauna.com FAUNA_SCHEME=https FAUNA_PORT=443 FAUNA_TIMEOUT=30s
 
 # Run the tests (after target database is up)
-ENTRYPOINT dockerize -wait "$FAUNA_SCHEME://$FAUNA_DOMAIN:$FAUNA_PORT/ping" -timeout 30s npm run test
+CMD ["make", "docker-wait", "test"]
