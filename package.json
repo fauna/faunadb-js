@@ -48,6 +48,7 @@
     "eslint": "^4.11.0",
     "ink-docstrap": "^1.2.1",
     "jsdoc": "^3.5.5",
+    "marked": "^0.3.9",
     "karma": "^1.7.1",
     "karma-browserify": "^5.0.5",
     "karma-chrome-launcher": "^2.2.0",
