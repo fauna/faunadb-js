@@ -476,7 +476,17 @@ describe('query', function () {
   });
 
   it('casefold', function () {
-    return assertQuery(query.Casefold('Hen Wen'), 'hen wen');
+    return Promise.all([
+      assertQuery(query.Casefold('Hen Wen'), 'hen wen'),
+
+      // https://unicode.org/reports/tr15/
+      assertQuery(query.Casefold("\u212B", "NFD"), "A\u030A"),
+      assertQuery(query.Casefold("\u212B", "NFC"), "\u00C5"),
+      assertQuery(query.Casefold("\u1E9B\u0323", "NFKD"), "\u0073\u0323\u0307"),
+      assertQuery(query.Casefold("\u1E9B\u0323", "NFKC"), "\u1E69"),
+
+      assertQuery(query.Casefold("\u212B", "NFKCCaseFold"), "\u00E5")
+    ]);
   });
 
   // Time and date functions
@@ -692,6 +702,7 @@ describe('query', function () {
       'Intersection': [0, 'at least 1'],
       'Difference': [0, 'at least 1'],
       'Concat': [0, 'at least 1'],
+      'Casefold': [0, 'at least 1'],
       'Equals': [0, 'at least 1'],
       'Select': [4, 'from 2 to 3'],
       'Add': [0, 'at least 1'],

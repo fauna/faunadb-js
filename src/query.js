@@ -642,11 +642,12 @@ function Concat(strings, separator) {
  * See the [docs](https://fauna.com/documentation/queries#string_functions).
  *
  * @param {module:query~ExprArg} string
+ * @param {module:query~ExprArg} normalizer
  * @return {Expr}
  */
-function Casefold(string) {
-  arity.exact(1, arguments);
-  return new Expr({ casefold: wrap(string) });
+function Casefold(string, normalizer) {
+  arity.min(1, arguments);
+  return new Expr(params({ casefold: wrap(string) }, { normalizer: wrap(normalizer) }));
 }
 
 // Time and date functions

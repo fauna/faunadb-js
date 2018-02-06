@@ -3,6 +3,7 @@
 - Adds support for recursive references
 - Removes `get`, `post`, `put`, `patch` and `delete` methods from `Client` class
 - Adds `abort` function
+- Adds `normalizer` argument to `casefold` function
 
 ## 1.1.2 (July 06, 2017)
 - Fix typescript declaration file to include default types
