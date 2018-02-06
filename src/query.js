@@ -520,6 +520,28 @@ function CreateFunction(params) {
 /**
  * See the [docs](https://fauna.com/documentation/queries#sets).
  *
+ * @param {module:query~ExprArg} ref
+ * @return {Expr}
+ */
+function Singleton(ref) {
+  arity.exact(1, arguments);
+  return new Expr({ singleton: wrap(ref) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#sets).
+ *
+ * @param {module:query~ExprArg} ref_set
+ * @return {Expr}
+ */
+function Events(ref_set) {
+  arity.exact(1, arguments);
+  return new Expr({ events: wrap(ref_set) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#sets).
+ *
  * @param {module:query~ExprArg} index
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
@@ -1200,6 +1222,8 @@ module.exports = {
   CreateIndex: CreateIndex,
   CreateKey: CreateKey,
   CreateFunction: CreateFunction,
+  Singleton: Singleton,
+  Events: Events,
   Match: Match,
   Union: Union,
   Intersection: Intersection,

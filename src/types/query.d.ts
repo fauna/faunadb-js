@@ -42,6 +42,8 @@ export module query {
   export function CreateKey(params: ExprArg): Expr;
   export function CreateFunction(params: ExprArg): Expr;
 
+  export function Singleton(ref: ExprArg): Expr;
+  export function Events(ref_set: ExprArg): Expr;
   export function Match(index: ExprArg, ...terms: ExprArg[]): Expr;
   export function Union(...sets: ExprArg[]): Expr;
   export function Intersection(...sets: ExprArg[]): Expr;

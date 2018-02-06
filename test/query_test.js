@@ -387,6 +387,53 @@ describe('query', function () {
 
   // Sets
 
+  it('events', function () {
+    return create().then(function (created) {
+      var ref = created['ref'];
+
+      return client.query(query.Update(ref, { data: { n: 100 } })).then(function () {
+        return client.query(query.Delete(ref)).then(function () {
+          return client.query(query.Paginate(query.Events(ref))).then(function (result) {
+            var events = result['data'];
+
+            assert.equal(events.length, 3);
+
+            assert.equal(events[0].action, 'create');
+            assert.deepEqual(events[0].instance, ref);
+
+            assert.equal(events[1].action, 'update');
+            assert.deepEqual(events[1].instance, ref);
+
+            assert.equal(events[2].action, 'delete');
+            assert.deepEqual(events[2].instance, ref);
+          });
+        });
+      });
+    });
+  });
+
+  it('singleton', function () {
+    return create().then(function (created) {
+      var ref = created['ref'];
+
+      return client.query(query.Update(ref, { data: { n: 100 } })).then(function () {
+        return client.query(query.Delete(ref)).then(function () {
+          return client.query(query.Paginate(query.Events(query.Singleton(ref)))).then(function (result) {
+            var events = result['data'];
+
+            assert.equal(events.length, 2);
+
+            assert.equal(events[0].action, 'add');
+            assert.deepEqual(events[0].instance, ref);
+
+            assert.equal(events[1].action, 'remove');
+            assert.deepEqual(events[1].instance, ref);
+          });
+        });
+      });
+    });
+  });
+
   it('match', function () {
     return assertSet(nSet(1), [refN1, refN1M1]);
   });
