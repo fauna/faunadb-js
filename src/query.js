@@ -1,6 +1,7 @@
 'use strict';
 
 var annotate = require('fn-annotate');
+var deprecate = require('util-deprecate');
 var Expr = require('./Expr');
 var errors = require('./errors');
 var values = require('./values');
@@ -690,11 +691,22 @@ function Date(string) {
 /**
  * See the [docs](https://fauna.com/documentation/queries#misc_functions).
  *
+ * @deprecated use NewId instead
  * @return {Expr}
  */
 function NextId() {
   arity.exact(0, arguments);
   return new Expr({ next_id: null });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
+ * @return {Expr}
+ */
+function NewId() {
+  arity.exact(0, arguments);
+  return new Expr({ new_id: null });
 }
 
 /**
@@ -1182,7 +1194,8 @@ module.exports = {
   Time: Time,
   Epoch: Epoch,
   Date: Date,
-  NextId: NextId,
+  NextId: deprecate(NextId, 'NextId() is deprecated, use NewId() instead'),
+  NewId: NewId,
   Database: Database,
   Index: Index,
   Class: Class,

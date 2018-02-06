@@ -4,6 +4,8 @@
 - Removes `get`, `post`, `put`, `patch` and `delete` methods from `Client` class
 - Adds `abort` function
 - Adds `normalizer` argument to `casefold` function
+- Adds `new_id` function
+- Deprecated `next_id` in favor of `new_id`
 
 ## 1.1.2 (July 06, 2017)
 - Fix typescript declaration file to include default types

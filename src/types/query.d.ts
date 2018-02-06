@@ -61,6 +61,7 @@ export module query {
   export function Date(string: ExprArg): Expr;
 
   export function NextId(): Expr;
+  export function NewId(): Expr;
   export function Database(name: ExprArg, scope?: ExprArg): Expr;
   export function Index(name: ExprArg, scope?: ExprArg): Expr;
   export function Class(name: ExprArg, scope?: ExprArg): Expr;

@@ -514,8 +514,8 @@ describe('query', function () {
   });
 
   // Miscellaneous functions
-  it('next_id', function() {
-    return client.query(query.NextId()).then(function(res) {
+  it('new_id', function() {
+    return client.query(query.NewId()).then(function(res) {
       var parsed = parseInt(res);
       assert.isNotNaN(parsed);
       assert.isNumber(parsed);
