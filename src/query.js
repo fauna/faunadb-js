@@ -624,6 +624,26 @@ function Identify(ref, password) {
   return new Expr({ identify: wrap(ref), password: wrap(password) });
 }
 
+/**
+ * See the [docs](https://fauna.com/documentation/queries#auth_functions).
+ *
+ * @return {Expr}
+ */
+function Identity() {
+  arity.exact(0, arguments);
+  return new Expr({ identity: null });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#auth_functions).
+ *
+ * @return {Expr}
+ */
+function HasIdentity() {
+  arity.exact(0, arguments);
+  return new Expr({ has_identity: null });
+}
+
 // String functions
 
 /**
@@ -1189,6 +1209,8 @@ module.exports = {
   Login: Login,
   Logout: Logout,
   Identify: Identify,
+  Identity: Identity,
+  HasIdentity: HasIdentity,
   Concat: Concat,
   Casefold: Casefold,
   Time: Time,

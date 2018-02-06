@@ -6,6 +6,7 @@
 - Adds `normalizer` argument to `casefold` function
 - Adds `new_id` function
 - Deprecated `next_id` in favor of `new_id`
+- Adds `identity` and `has_identity` functions
 
 ## 1.1.2 (July 06, 2017)
 - Fix typescript declaration file to include default types

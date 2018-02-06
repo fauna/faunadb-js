@@ -445,7 +445,6 @@ describe('query', function () {
         var secret = result2.secret;
         var instanceClient = util.getClient({ secret: secret });
 
-        //todo: use `identity()` function instead
         var self = new values.Ref('self', new values.Ref('widgets', values.Native.CLASSES));
         return instanceClient.query(query.Select('ref', query.Get(self))).then(function (result3) {
           assert.deepEqual(result3, instanceRef);
@@ -462,6 +461,29 @@ describe('query', function () {
     return client.query(query.Create(classRef, { credentials: { password: 'sekrit' } })).then(function (result) {
       var instanceRef = result.ref;
       return assertQuery(query.Identify(instanceRef, 'sekrit'), true);
+    });
+  });
+
+  it('has_identity', function () {
+    return client.query(query.Create(classRef, { credentials: { password: 'sekrit' } })).then(function (result) {
+      return client.query(query.Login(result['ref'], { password: 'sekrit' })).then(function (login) {
+        var new_client = util.getClient({ secret: login['secret'] });
+
+        return Promise.all([
+          assertQueryWithClient(client, query.HasIdentity(), false),
+          assertQueryWithClient(new_client, query.HasIdentity(), true)
+        ]);
+      });
+    });
+  });
+
+  it('identity', function () {
+    return client.query(query.Create(classRef, { credentials: { password: 'sekrit' } })).then(function (result) {
+      return client.query(query.Login(result['ref'], { password: 'sekrit' })).then(function (login) {
+        var new_client = util.getClient({ secret: login['secret'] });
+
+        return assertQueryWithClient(new_client, query.Identity(), result['ref']);
+      });
     });
   });
 
@@ -784,10 +806,14 @@ function mSet(m) {
   return query.Match(mIndexRef, m);
 }
 
-function assertQuery(query, expected) {
+function assertQueryWithClient(client, query, expected) {
   return client.query(query).then(function (result) {
     assert.deepEqual(result, expected);
   });
+}
+
+function assertQuery(query, expected) {
+  return assertQueryWithClient(client, query, expected);
 }
 
 function assertBadQuery(query, errorType) {
