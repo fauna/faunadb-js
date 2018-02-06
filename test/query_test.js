@@ -89,6 +89,14 @@ describe('query', function () {
   });
 
   // Basic forms
+
+  it('abort', function () {
+    return util.assertRejected(
+      client.query(query.Abort('abort message')),
+      errors.BadRequest
+    );
+  });
+
   it('at', function () {
     var client = util.client();
 
