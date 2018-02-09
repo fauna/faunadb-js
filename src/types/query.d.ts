@@ -6,6 +6,7 @@ export type Lambda = (...vars: any[]) => Expr;
 
 export module query {
   export function Ref(ref: ExprArg, id?: ExprArg): Expr;
+  export function Abort(msg: ExprArg): Expr;
   export function At(timestamp: ExprArg, expr: ExprArg): Expr;
   export function Let(vars: ExprArg, in_expr: ExprArg): Expr;
   export function Var(varName: ExprArg): Expr;
@@ -41,6 +42,8 @@ export module query {
   export function CreateKey(params: ExprArg): Expr;
   export function CreateFunction(params: ExprArg): Expr;
 
+  export function Singleton(ref: ExprArg): Expr;
+  export function Events(ref_set: ExprArg): Expr;
   export function Match(index: ExprArg, ...terms: ExprArg[]): Expr;
   export function Union(...sets: ExprArg[]): Expr;
   export function Intersection(...sets: ExprArg[]): Expr;
@@ -51,15 +54,18 @@ export module query {
   export function Login(ref: ExprArg, params: ExprArg): Expr;
   export function Logout(delete_tokens: ExprArg): Expr;
   export function Identify(ref: ExprArg, password: ExprArg): Expr;
+  export function Identity(): Expr;
+  export function HasIdentity(): Expr;
 
   export function Concat(strings: ExprArg, separator?: ExprArg): Expr;
-  export function Casefold(string: ExprArg): Expr;
+  export function Casefold(string: ExprArg, normalizer?: ExprArg): Expr;
 
   export function Time(string: ExprArg): Expr;
   export function Epoch(number: ExprArg, unit: ExprArg): Expr;
   export function Date(string: ExprArg): Expr;
 
   export function NextId(): Expr;
+  export function NewId(): Expr;
   export function Database(name: ExprArg, scope?: ExprArg): Expr;
   export function Index(name: ExprArg, scope?: ExprArg): Expr;
   export function Class(name: ExprArg, scope?: ExprArg): Expr;

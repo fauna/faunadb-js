@@ -1,6 +1,7 @@
 'use strict';
 
 var annotate = require('fn-annotate');
+var deprecate = require('util-deprecate');
 var Expr = require('./Expr');
 var errors = require('./errors');
 var values = require('./values');
@@ -44,6 +45,17 @@ function Ref() {
 }
 
 // Basic forms
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#basic_forms).
+ *
+ * @param {module:query~ExprArg} msg
+ * @return {Expr}
+ * */
+function Abort(msg) {
+  arity.exact(1, arguments);
+  return new Expr({ abort: wrap(msg) });
+}
 
 /**
  * See the [docs](https://fauna.com/documentation/queries#basic_forms).
@@ -508,6 +520,28 @@ function CreateFunction(params) {
 /**
  * See the [docs](https://fauna.com/documentation/queries#sets).
  *
+ * @param {module:query~ExprArg} ref
+ * @return {Expr}
+ */
+function Singleton(ref) {
+  arity.exact(1, arguments);
+  return new Expr({ singleton: wrap(ref) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#sets).
+ *
+ * @param {module:query~ExprArg} ref_set
+ * @return {Expr}
+ */
+function Events(ref_set) {
+  arity.exact(1, arguments);
+  return new Expr({ events: wrap(ref_set) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#sets).
+ *
  * @param {module:query~ExprArg} index
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
@@ -612,6 +646,26 @@ function Identify(ref, password) {
   return new Expr({ identify: wrap(ref), password: wrap(password) });
 }
 
+/**
+ * See the [docs](https://fauna.com/documentation/queries#auth_functions).
+ *
+ * @return {Expr}
+ */
+function Identity() {
+  arity.exact(0, arguments);
+  return new Expr({ identity: null });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#auth_functions).
+ *
+ * @return {Expr}
+ */
+function HasIdentity() {
+  arity.exact(0, arguments);
+  return new Expr({ has_identity: null });
+}
+
 // String functions
 
 /**
@@ -631,11 +685,12 @@ function Concat(strings, separator) {
  * See the [docs](https://fauna.com/documentation/queries#string_functions).
  *
  * @param {module:query~ExprArg} string
+ * @param {module:query~ExprArg} normalizer
  * @return {Expr}
  */
-function Casefold(string) {
-  arity.exact(1, arguments);
-  return new Expr({ casefold: wrap(string) });
+function Casefold(string, normalizer) {
+  arity.min(1, arguments);
+  return new Expr(params({ casefold: wrap(string) }, { normalizer: wrap(normalizer) }));
 }
 
 // Time and date functions
@@ -678,11 +733,22 @@ function Date(string) {
 /**
  * See the [docs](https://fauna.com/documentation/queries#misc_functions).
  *
+ * @deprecated use NewId instead
  * @return {Expr}
  */
 function NextId() {
   arity.exact(0, arguments);
   return new Expr({ next_id: null });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
+ * @return {Expr}
+ */
+function NewId() {
+  arity.exact(0, arguments);
+  return new Expr({ new_id: null });
 }
 
 /**
@@ -1124,6 +1190,7 @@ function wrapValues(obj) {
 
 module.exports = {
   Ref: Ref,
+  Abort: Abort,
   At: At,
   Let: Let,
   Var: Var,
@@ -1155,6 +1222,8 @@ module.exports = {
   CreateIndex: CreateIndex,
   CreateKey: CreateKey,
   CreateFunction: CreateFunction,
+  Singleton: Singleton,
+  Events: Events,
   Match: Match,
   Union: Union,
   Intersection: Intersection,
@@ -1164,12 +1233,15 @@ module.exports = {
   Login: Login,
   Logout: Logout,
   Identify: Identify,
+  Identity: Identity,
+  HasIdentity: HasIdentity,
   Concat: Concat,
   Casefold: Casefold,
   Time: Time,
   Epoch: Epoch,
   Date: Date,
-  NextId: NextId,
+  NextId: deprecate(NextId, 'NextId() is deprecated, use NewId() instead'),
+  NewId: NewId,
   Database: Database,
   Index: Index,
   Class: Class,

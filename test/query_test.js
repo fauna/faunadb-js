@@ -89,6 +89,14 @@ describe('query', function () {
   });
 
   // Basic forms
+
+  it('abort', function () {
+    return util.assertRejected(
+      client.query(query.Abort('abort message')),
+      errors.BadRequest
+    );
+  });
+
   it('at', function () {
     var client = util.client();
 
@@ -379,6 +387,53 @@ describe('query', function () {
 
   // Sets
 
+  it('events', function () {
+    return create().then(function (created) {
+      var ref = created['ref'];
+
+      return client.query(query.Update(ref, { data: { n: 100 } })).then(function () {
+        return client.query(query.Delete(ref)).then(function () {
+          return client.query(query.Paginate(query.Events(ref))).then(function (result) {
+            var events = result['data'];
+
+            assert.equal(events.length, 3);
+
+            assert.equal(events[0].action, 'create');
+            assert.deepEqual(events[0].instance, ref);
+
+            assert.equal(events[1].action, 'update');
+            assert.deepEqual(events[1].instance, ref);
+
+            assert.equal(events[2].action, 'delete');
+            assert.deepEqual(events[2].instance, ref);
+          });
+        });
+      });
+    });
+  });
+
+  it('singleton', function () {
+    return create().then(function (created) {
+      var ref = created['ref'];
+
+      return client.query(query.Update(ref, { data: { n: 100 } })).then(function () {
+        return client.query(query.Delete(ref)).then(function () {
+          return client.query(query.Paginate(query.Events(query.Singleton(ref)))).then(function (result) {
+            var events = result['data'];
+
+            assert.equal(events.length, 2);
+
+            assert.equal(events[0].action, 'add');
+            assert.deepEqual(events[0].instance, ref);
+
+            assert.equal(events[1].action, 'remove');
+            assert.deepEqual(events[1].instance, ref);
+          });
+        });
+      });
+    });
+  });
+
   it('match', function () {
     return assertSet(nSet(1), [refN1, refN1M1]);
   });
@@ -437,7 +492,6 @@ describe('query', function () {
         var secret = result2.secret;
         var instanceClient = util.getClient({ secret: secret });
 
-        //todo: use `identity()` function instead
         var self = new values.Ref('self', new values.Ref('widgets', values.Native.CLASSES));
         return instanceClient.query(query.Select('ref', query.Get(self))).then(function (result3) {
           assert.deepEqual(result3, instanceRef);
@@ -457,6 +511,29 @@ describe('query', function () {
     });
   });
 
+  it('has_identity', function () {
+    return client.query(query.Create(classRef, { credentials: { password: 'sekrit' } })).then(function (result) {
+      return client.query(query.Login(result['ref'], { password: 'sekrit' })).then(function (login) {
+        var new_client = util.getClient({ secret: login['secret'] });
+
+        return Promise.all([
+          assertQueryWithClient(client, query.HasIdentity(), false),
+          assertQueryWithClient(new_client, query.HasIdentity(), true)
+        ]);
+      });
+    });
+  });
+
+  it('identity', function () {
+    return client.query(query.Create(classRef, { credentials: { password: 'sekrit' } })).then(function (result) {
+      return client.query(query.Login(result['ref'], { password: 'sekrit' })).then(function (login) {
+        var new_client = util.getClient({ secret: login['secret'] });
+
+        return assertQueryWithClient(new_client, query.Identity(), result['ref']);
+      });
+    });
+  });
+
   // String functions
 
   it('concat', function () {
@@ -468,7 +545,17 @@ describe('query', function () {
   });
 
   it('casefold', function () {
-    return assertQuery(query.Casefold('Hen Wen'), 'hen wen');
+    return Promise.all([
+      assertQuery(query.Casefold('Hen Wen'), 'hen wen'),
+
+      // https://unicode.org/reports/tr15/
+      assertQuery(query.Casefold("\u212B", "NFD"), "A\u030A"),
+      assertQuery(query.Casefold("\u212B", "NFC"), "\u00C5"),
+      assertQuery(query.Casefold("\u1E9B\u0323", "NFKD"), "\u0073\u0323\u0307"),
+      assertQuery(query.Casefold("\u1E9B\u0323", "NFKC"), "\u1E69"),
+
+      assertQuery(query.Casefold("\u212B", "NFKCCaseFold"), "\u00E5")
+    ]);
   });
 
   // Time and date functions
@@ -496,8 +583,8 @@ describe('query', function () {
   });
 
   // Miscellaneous functions
-  it('next_id', function() {
-    return client.query(query.NextId()).then(function(res) {
+  it('new_id', function() {
+    return client.query(query.NewId()).then(function(res) {
       var parsed = parseInt(res);
       assert.isNotNaN(parsed);
       assert.isNumber(parsed);
@@ -684,6 +771,7 @@ describe('query', function () {
       'Intersection': [0, 'at least 1'],
       'Difference': [0, 'at least 1'],
       'Concat': [0, 'at least 1'],
+      'Casefold': [0, 'at least 1'],
       'Equals': [0, 'at least 1'],
       'Select': [4, 'from 2 to 3'],
       'Add': [0, 'at least 1'],
@@ -765,10 +853,14 @@ function mSet(m) {
   return query.Match(mIndexRef, m);
 }
 
-function assertQuery(query, expected) {
+function assertQueryWithClient(client, query, expected) {
   return client.query(query).then(function (result) {
     assert.deepEqual(result, expected);
   });
+}
+
+function assertQuery(query, expected) {
+  return assertQueryWithClient(client, query, expected);
 }
 
 function assertBadQuery(query, errorType) {
