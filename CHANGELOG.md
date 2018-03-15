@@ -8,6 +8,7 @@
 - Deprecated `next_id` in favor of `new_id`
 - Adds `identity` and `has_identity` functions
 - Adds `singleton` and `events` functions
+- Adds `select_all` function
 
 ## 1.1.2 (July 06, 2017)
 - Fix typescript declaration file to include default types

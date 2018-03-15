@@ -635,6 +635,18 @@ describe('query', function () {
     return Promise.all([p1, p2]);
   });
 
+  it('select_all', function () {
+    var obj1 = {foo: 'bar'};
+    var obj2 = {foo: 'baz'};
+    return assertQuery(query.SelectAll('foo', [obj1, obj2]), ['bar', 'baz']);
+  });
+
+  it('select_all for array', function () {
+    var obj1 = {foo: [0, 1]};
+    var obj2 = {foo: [2, 3]};
+    return assertQuery(query.SelectAll(['foo', 0], [obj1, obj2]), [0, 2]);
+  });
+
   it('add', function () {
     return assertQuery(query.Add(2, 3, 5), 10);
   });
