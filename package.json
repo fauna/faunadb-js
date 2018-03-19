@@ -1,6 +1,6 @@
 {
   "name": "faunadb",
-  "version": "2.0.0",
+  "version": "2.0.1-SNAPSHOT",
   "description": "FaunaDB Javascript driver for Node.JS and Browsers",
   "homepage": "https://fauna.com",
   "repository": "fauna/faunadb-js",
