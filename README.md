@@ -46,13 +46,13 @@ This release can be installed via bower:
 Or via CDN:
 
 ```html
-<script src="//cdn.jsdelivr.net/faunadb/1.1/faunadb.js"></script>
+<script src="//cdn.jsdelivr.net/faunadb/2.0/faunadb.js"></script>
 ```
 
 The minified version of the driver can also be used via CDN:
 
 ```html
-<script src="//cdn.jsdelivr.net/faunadb/1.1/faunadb-min.js"></script>
+<script src="//cdn.jsdelivr.net/faunadb/2.0/faunadb-min.js"></script>
 ```
 
 ### Use
@@ -184,7 +184,7 @@ Alpine-based NodeJS image can be provided via `RUNTIME_IMAGE`).
 
 ## License
 
-Copyright 2017 [Fauna, Inc.](https://fauna.com/)
+Copyright 2018 [Fauna, Inc.](https://fauna.com/)
 
 Licensed under the Mozilla Public License, Version 2.0 (the "License"); you may
 not use this software except in compliance with the License. You may obtain a

@@ -1,4 +1,4 @@
-## 2.0.0-SNAPSHOT
+## 2.0.0 (March 19, 2018)
 - Adds support for @query type (user defined functions)
 - Adds support for recursive references
 - Removes `get`, `post`, `put`, `patch` and `delete` methods from `Client` class
