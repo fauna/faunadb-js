@@ -945,6 +945,18 @@ function Select(path, from, _default) {
 /**
  * See the [docs](https://fauna.com/documentation/queries#misc_functions).
  *
+ * @param {module:query~ExprArg} path
+ * @param {module:query~ExprArg} from
+ * @return {Expr}
+ */
+function SelectAll(path, from) {
+  arity.exact(2, arguments);
+  return new Expr({ select_all: wrap(path), from: wrap(from) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ *
  * @param {...module:query~ExprArg} terms
  * @return {Expr}
  */
@@ -1256,6 +1268,7 @@ module.exports = {
   Equals: Equals,
   Contains: Contains,
   Select: Select,
+  SelectAll: SelectAll,
   Add: Add,
   Multiply: Multiply,
   Subtract: Subtract,
