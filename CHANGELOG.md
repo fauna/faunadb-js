@@ -1,5 +1,6 @@
 ## 2.0.1-SNAPSHOT
 - Adds `ngram` function
+- Adds `is_empty` and `is_nonempty` functions
 
 ## 2.0.0 (March 19, 2018)
 - Adds support for @query type (user defined functions)

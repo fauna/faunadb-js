@@ -261,6 +261,30 @@ describe('query', function () {
     return Promise.all([p1, p2]);
   });
 
+  it('is_empty', function () {
+    return create({n: 100}).then(function () {
+      var p1 = assertQuery(query.IsEmpty([]), true);
+      var p2 = assertQuery(query.IsEmpty([1, 2, 3]), false);
+
+      var p3 = assertQuery(query.IsEmpty(query.Paginate(nSet(99))), true);
+      var p4 = assertQuery(query.IsEmpty(query.Paginate(nSet(100))), false);
+
+      return Promise.all([p1, p2, p3, p4]);
+    });
+  });
+
+  it('is_nonempty', function () {
+    return create({n: 100}).then(function () {
+      var p1 = assertQuery(query.IsNonEmpty([]), false);
+      var p2 = assertQuery(query.IsNonEmpty([1, 2, 3]), true);
+
+      var p3 = assertQuery(query.IsNonEmpty(query.Paginate(nSet(99))), false);
+      var p4 = assertQuery(query.IsNonEmpty(query.Paginate(nSet(100))), true);
+
+      return Promise.all([p1, p2, p3, p4]);
+    });
+  });
+
   // Read functions
 
   it('get', function () {
