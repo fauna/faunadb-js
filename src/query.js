@@ -693,6 +693,20 @@ function Casefold(string, normalizer) {
   return new Expr(params({ casefold: wrap(string) }, { normalizer: wrap(normalizer) }));
 }
 
+/**
+ * See the [docs](https://fauna.com/documentation/queries#string_functions).
+ *
+ * @param {module:query~ExprArg} terms
+ * @param {?Object} opts
+ * @return {Expr}
+ */
+function NGram(terms, opts) {
+  arity.between(1, 2, arguments);
+  opts = defaults(opts, {});
+
+  return new Expr(objectAssign({ ngram: wrap(terms) }, wrapValues(opts)));
+}
+
 // Time and date functions
 /**
  * See the [docs](https://fauna.com/documentation/queries#time_functions).
@@ -1249,6 +1263,7 @@ module.exports = {
   HasIdentity: HasIdentity,
   Concat: Concat,
   Casefold: Casefold,
+  NGram: NGram,
   Time: Time,
   Epoch: Epoch,
   Date: Date,
