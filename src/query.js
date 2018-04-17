@@ -327,6 +327,28 @@ function Append(elements, collection) {
   return new Expr({ append: wrap(elements), collection: wrap(collection) });
 }
 
+/**
+ * See the [docs](https://fauna.com/documentation/queries#collection_functions).
+ *
+ * @param {module:query~ExprArg} collection
+ * @return {Expr}
+ */
+function IsEmpty(collection) {
+  arity.exact(1, arguments);
+  return new Expr({ is_empty: wrap(collection) });
+}
+
+/**
+ * See the [docs](https://fauna.com/documentation/queries#collection_functions).
+ *
+ * @param {module:query~ExprArg} collection
+ * @return {Expr}
+ */
+function IsNonEmpty(collection) {
+  arity.exact(1, arguments);
+  return new Expr({ is_nonempty: wrap(collection) });
+}
+
 // Read functions
 
 /**
@@ -1233,6 +1255,8 @@ module.exports = {
   Drop: Drop,
   Prepend: Prepend,
   Append: Append,
+  IsEmpty: IsEmpty,
+  IsNonEmpty: IsNonEmpty,
   Get: Get,
   KeyFromSecret: KeyFromSecret,
   Paginate: Paginate,
