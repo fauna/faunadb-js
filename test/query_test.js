@@ -558,6 +558,16 @@ describe('query', function () {
     ]);
   });
 
+  it('ngram', function() {
+    return Promise.all([
+      assertQuery(query.NGram("what"), ["w", "wh", "h", "ha", "a", "at", "t"]),
+      assertQuery(query.NGram("what", {min: 2, max: 3}), ["wh", "wha", "ha", "hat", "at"]),
+
+      assertQuery(query.NGram(["john", "doe"]), ["j", "jo", "o", "oh", "h", "hn", "n", "d", "do", "o", "oe", "e"]),
+      assertQuery(query.NGram(["john", "doe"], {min: 3, max: 4}), ["joh", "john", "ohn", "doe"])
+    ]);
+  });
+
   // Time and date functions
 
   it('time', function () {
@@ -784,6 +794,7 @@ describe('query', function () {
       'Difference': [0, 'at least 1'],
       'Concat': [0, 'at least 1'],
       'Casefold': [0, 'at least 1'],
+      'NGram': [3, 'from 1 to 2'],
       'Equals': [0, 'at least 1'],
       'Select': [4, 'from 2 to 3'],
       'Add': [0, 'at least 1'],
