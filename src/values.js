@@ -11,7 +11,7 @@ var util = require('util');
  *
  * Instances of these classes will be returned in responses if the response object
  * contains these values. For example, a FaunaDB response containing
- *`{ "@ref": { "id": "123", "class": { "@ref": { "id": "frogs", "class": { "@ref": { "id": "classes" } } } } } }
+ *`{ "@ref": { "id": "123", "class": { "@ref": { "id": "frogs", "class": { "@ref": { "id": "classes" } } } } } }`
  * will be returned as `new values.Ref("123", new values.Ref("frogs", values.Native.CLASSES))`.
  *
  * See the [FaunaDB Query API Documentation](https://fauna.com/documentation/queries#values)

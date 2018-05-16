@@ -3,17 +3,19 @@
 var util = require('util');
 
 /**
- * @module errors
- */
-
-/**
- * The base exception type for all FaunaDB errors. Errors can originate from
- * the client (e.g. bad method parameters), or, from the FaunaDB Server (e.g.
+ * FaunaDB error types. Request errors can originate from
+ * the client (e.g. bad method parameters) or from the FaunaDB Server (e.g.
  * invalid queries, timeouts.) Server errors will subclass
  * {@link module:errors~FaunaHTTPError}.
  *
  * See the [FaunaDB Error Documentation](https://fauna.com/documentation/dev#errors)
  * for more information on server errors.
+ *
+ * @module errors
+ */
+
+/**
+ * The base exception type for all FaunaDB errors.
  *
  * @param {string} message
  * @extends Error
