@@ -121,7 +121,7 @@ Client.prototype._execute = function (action, path, data, query) {
     var responseObject = json.parseJSON(response.text);
     var requestResult = new RequestResult(
       self,
-      action, path, query, data,
+      action, path, query, JSON.stringify(data),
       response.text, responseObject, response.status, response.header,
       startTime, endTime);
 
