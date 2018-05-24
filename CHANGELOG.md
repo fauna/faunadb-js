@@ -1,4 +1,6 @@
-## 2.0.1-SNAPSHOT
+## 2.0.2-SNAPSHOT
+
+## 2.0.1 (March 24, 2018)
 - Adds `ngram` function
 - Adds `is_empty` and `is_nonempty` functions
 - Provide a raw view of the query in the RequestResult
