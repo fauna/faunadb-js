@@ -43,7 +43,7 @@ describe('clientLogger', function () {
       }
 
       assert.equal(readLine(), '  Response JSON: {');
-      assert.equal(readLine(), '    "resource": "Scope global is OK"');
+      assert.equal(readLine(), '    "resource": "Scope write is OK"');
       assert.equal(readLine(), '  }');
       assert.match(readLine(), /^  Response \(200\): Network latency \d+ms$/);
     });

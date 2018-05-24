@@ -207,6 +207,8 @@ Client.prototype._performRequest = function (action, path, data, query) {
     rq.set('Authorization', secretHeader(this._secret));
   }
 
+  rq.set('X-FaunaDB-API-Version', '2.0');
+
   rq.timeout(this._timeout);
 
   return new Promise(function (resolve, reject) {
