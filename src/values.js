@@ -115,7 +115,12 @@ Ref.prototype.inspect = function() {
  * @returns {boolean}
  */
 Ref.prototype.equals = function(other) {
-  return other instanceof Ref && this.value === other.value;
+  return (other instanceof Ref) &&
+    this.id === other.id &&
+    ((this.class === undefined && other.class === undefined) ||
+      this.class.equals(other.class)) &&
+    ((this.database === undefined && other.database === undefined) ||
+      this.database.equals(other.database))
 };
 
 var Native = {
