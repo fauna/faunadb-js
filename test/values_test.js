@@ -30,6 +30,20 @@ describe('Values', function() {
     assert.throws(function() { new Ref(); }, errors.InvalidValue, 'id cannot be null or undefined');
   });
 
+  it('parse string ref', function () {
+    assert.deepEqual(json.parseJSON('{"@ref":"classes"}'), values.Native.CLASSES);
+    assert.deepEqual(json.parseJSON('{"@ref":"classes/widgets"}'), new Ref('widgets', values.Native.CLASSES));
+    assert.deepEqual(json.parseJSON('{"@ref":"classes/widgets/123"}'), new Ref('123', new Ref('widgets', values.Native.CLASSES)));
+
+    assert.deepEqual(json.parseJSON('{"@ref":"databases"}'), values.Native.DATABASES);
+    assert.deepEqual(json.parseJSON('{"@ref":"databases/widgets"}'), new Ref('widgets', values.Native.DATABASES));
+    assert.deepEqual(json.parseJSON('{"@ref":"databases/widgets/123"}'), new Ref('123', new Ref('widgets', values.Native.DATABASES)));
+
+    assert.deepEqual(json.parseJSON('{"@ref":"indexes"}'), values.Native.INDEXES);
+    assert.deepEqual(json.parseJSON('{"@ref":"indexes/widgets"}'), new Ref('widgets', values.Native.INDEXES));
+    assert.deepEqual(json.parseJSON('{"@ref":"indexes/widgets/123"}'), new Ref('123', new Ref('widgets', values.Native.INDEXES)));
+  });
+
   it('serializes expr', function() {
     var expr = new Expr({ some: 'stringField', num: 2 });
     assert.equal(json.toJSON(expr), '{"some":"stringField","num":2}');
