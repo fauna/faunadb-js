@@ -5,6 +5,7 @@ export default class RequestResult {
               method: string,
               path: string,
               query: object,
+              requestRaw: string,
               requestContent: object,
               responseRaw: string,
               responseContent: object,
