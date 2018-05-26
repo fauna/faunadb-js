@@ -12,6 +12,8 @@
  *   The path that was queried. Relative to the client's domain.
  * @param {string} query
  *   URL query parameters. Only set if `method` is "GET".
+ * @param {Object} requestRaw
+ *   The JSON request string.
  * @param {Object} requestContent
  *   The request data.
  * @param {string} responseRaw
@@ -28,7 +30,7 @@
  *   The time the response was received by the client.
  * @constructor
  */
-function RequestResult(client, method, path, query, requestContent, responseRaw, responseContent, statusCode, responseHeaders, startTime, endTime) {
+function RequestResult(client, method, path, query, requestRaw, requestContent, responseRaw, responseContent, statusCode, responseHeaders, startTime, endTime) {
   /** @type {Client} */
   this.client = client;
 
@@ -44,6 +46,9 @@ function RequestResult(client, method, path, query, requestContent, responseRaw,
    * @type {object}
    */
   this.query = query;
+
+  /** @type {string} */
+  this.requestRaw = requestRaw;
 
   /** @type {object} */
   this.requestContent = requestContent;

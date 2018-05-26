@@ -116,12 +116,12 @@ Client.prototype._execute = function (action, path, data, query) {
 
   var startTime = Date.now();
   var self = this;
-  return this._performRequest(action, path, data, query).then(function (response) {
+  return this._performRequest(action, path, data, query).then(function (response, rawQuery) {
     var endTime = Date.now();
     var responseObject = json.parseJSON(response.text);
     var requestResult = new RequestResult(
       self,
-      action, path, query, JSON.stringify(data),
+      action, path, query, rawQuery, data,
       response.text, responseObject, response.status, response.header,
       startTime, endTime);
 
@@ -140,8 +140,9 @@ Client.prototype._performRequest = function (action, path, data, query) {
     rq.query(query);
   }
 
+  var rawQuery = JSON.stringify(data);
   rq.type('json');
-  rq.send(JSON.stringify(data));
+  rq.send(rawQuery);
 
   if (this._secret) {
     rq.set('Authorization', secretHeader(this._secret));
@@ -161,7 +162,7 @@ Client.prototype._performRequest = function (action, path, data, query) {
           !(error.response.status >= 400 && error.response.status <= 599)) {
         reject(error);
       } else {
-        resolve(result);
+        resolve(result, rawQuery);
       }
     });
   });
