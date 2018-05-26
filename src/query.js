@@ -968,6 +968,7 @@ function FunctionFn(name, scope) {
  */
 function Classes(scope) {
   arity.max(1, arguments);
+  scope = defaults(scope, null);
   return new Expr({ classes: wrap(scope) });
 }
 
@@ -982,6 +983,7 @@ function Classes(scope) {
  */
 function Databases(scope) {
   arity.max(1, arguments);
+  scope = defaults(scope, null);
   return new Expr({ databases: wrap(scope) });
 }
 
@@ -996,6 +998,7 @@ function Databases(scope) {
  */
 function Indexes(scope) {
   arity.max(1, arguments);
+  scope = defaults(scope, null);
   return new Expr({ indexes: wrap(scope) });
 }
 
@@ -1010,6 +1013,7 @@ function Indexes(scope) {
  */
 function Functions(scope) {
   arity.max(1, arguments);
+  scope = defaults(scope, null);
   return new Expr({ functions: wrap(scope) });
 }
 
@@ -1024,6 +1028,7 @@ function Functions(scope) {
  */
 function Keys(scope) {
   arity.max(1, arguments);
+  scope = defaults(scope, null);
   return new Expr({ keys: wrap(scope) });
 }
 
@@ -1038,6 +1043,7 @@ function Keys(scope) {
  */
 function Tokens(scope) {
   arity.max(1, arguments);
+  scope = defaults(scope, null);
   return new Expr({ tokens: wrap(scope) });
 }
 
@@ -1052,6 +1058,7 @@ function Tokens(scope) {
  */
 function Credentials(scope) {
   arity.max(1, arguments);
+  scope = defaults(scope, null);
   return new Expr({ credentials: wrap(scope) });
 }
 
