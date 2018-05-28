@@ -22,6 +22,22 @@ function json_parse(_, val) {
   } else if ('@ref' in val) {
     var ref = val['@ref'];
 
+    if (typeof ref === 'string') {
+      var parts = ref.split('/');
+
+      var ref_parsed = values.Native.fromName(parts[0]);
+
+      if (parts.length > 1) {
+        ref_parsed = new values.Ref(parts[1], ref_parsed);
+      }
+
+      if (parts.length > 2) {
+        ref_parsed = new values.Ref(parts[2], ref_parsed);
+      }
+
+      return ref_parsed;
+    }
+
     if (!('class' in ref) && !('database' in ref)) {
       return values.Native.fromName(ref['id']);
     }
