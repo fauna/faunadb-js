@@ -1,3 +1,5 @@
+## 2.0.3-SNAPSHOT
+
 ## 2.0.2 (March 28, 2018)
 - Bug fix: functions with optional scope parameter were failing when scope was
   omitted.
