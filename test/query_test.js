@@ -12,7 +12,8 @@ var Ref = query.Ref;
 var FaunaDate = values.FaunaDate,
   FaunaTime = values.FaunaTime,
   SetRef = values.SetRef,
-  Bytes = values.Bytes;
+  Bytes = values.Bytes,
+  Native = values.Native;
 
 var client;
 
@@ -516,7 +517,7 @@ describe('query', function () {
         var secret = result2.secret;
         var instanceClient = util.getClient({ secret: secret });
 
-        var self = new values.Ref('self', new values.Ref('widgets', values.Native.CLASSES));
+        var self = new values.Ref('self', new values.Ref('widgets', Native.CLASSES));
         return instanceClient.query(query.Select('ref', query.Get(self))).then(function (result3) {
           assert.deepEqual(result3, instanceRef);
 
@@ -762,33 +763,61 @@ describe('query', function () {
     ]);
   });
 
-  it('nested refs', function() {
-    return util.rootClient.query(query.CreateKey({ database: util.dbRef, role: 'admin' })).then(function(adminKey) {
-      var adminClient = util.getClient({ secret: adminKey.secret });
+  it('recursive refs', function() {
+    return util.rootClient.query(
+      query.CreateKey({
+        database: util.dbRef,
+        role: 'admin'
+      })
+    ).then(function(adminKey) {
+      var adminCli = util.getClient({ 
+        secret: adminKey.secret
+      });
 
-      return createNewDatabase(adminClient, 'parent-database').then(function(client1) {
-        return createNewDatabase(client1, 'child-database').then(function() {
-          return client1.query(query.CreateKey({ database: query.Database('child-database'), role: 'server' })).then(function(key) {
-            var client2 = util.getClient({ secret: key.secret });
+      return createNewDatabase(adminCli, 'parent-db').then(function(parentCli) {
+        return createNewDatabase(parentCli, 'child-db').then(function(childCli) {
+          return childCli.query(
+            query.Do(
+              query.CreateDatabase({ name: 'a_db' }),
+              query.CreateClass({ name: 'a_class' }),
+              query.CreateIndex({ name: 'a_index', source: query.Ref('classes') }),
+              query.CreateFunction({ name: 'a_function', body: query.Query(function(a) { return a }) }),
+              query.Create(query.Ref('keys/123'), { database: query.Database('a_db'), role: 'server' })
+            )
+          ).then(function() {
+            var childDb = query.Database('child-db');
+            var childDbRef = new values.Ref('child-db', Native.DATABASES);
+            var nestedDb = query.Database('child-db', query.Database('parent-db'));
+            var nestedClass = query.Class('a_class', nestedDb);
+            var nestedClassRef = new values.Ref('a_class', Native.CLASSES, new values.Ref(
+              'child-db', Native.DATABASES, new values.Ref(
+                'parent-db', Native.DATABASES
+              )
+            ));
 
-            return client2.query(query.CreateClass({ name: 'a_class' })).then(function() {
-              var nestedDatabase = query.Database('child-database', query.Database('parent-database'));
-              var nestedClassRef = query.Class('a_class', nestedDatabase);
-              var allNestedClasses = query.Classes(nestedDatabase);
+            return Promise.all([
+              // Recursive from the top most database
+              assertQuery(query.Exists(nestedClass), true),
+              assertQuery(query.Paginate(query.Classes(nestedDb)), { data: [ nestedClassRef ] }),
 
-              var a_class_ref = new values.Ref(
-                'a_class',
-                values.Native.CLASSES,
-                new values.Ref(
-                  'child-database',
-                  values.Native.DATABASES,
-                  new values.Ref('parent-database', values.Native.DATABASES)));
+              // Non-recursive builtin references
+              assertQueryWithClient(childCli, query.Paginate(query.Classes()), { data: [ new values.Ref('a_class', Native.CLASSES) ] }),
+              assertQueryWithClient(childCli, query.Paginate(query.Databases()), { data: [ new values.Ref('a_db', Native.DATABASES) ] }),
+              assertQueryWithClient(childCli, query.Paginate(query.Indexes()), { data: [ new values.Ref('a_index', Native.INDEXES) ] }),
+              assertQueryWithClient(childCli, query.Paginate(query.Functions()), { data: [ new values.Ref('a_function', Native.FUNCTIONS) ] }),
+              assertQueryWithClient(childCli, query.Paginate(query.Keys()), { data: [ new values.Ref('123', Native.KEYS) ] }),
+              assertQueryWithClient(childCli, query.Paginate(query.Tokens()), { data: [] }),
+              assertQueryWithClient(childCli, query.Paginate(query.Credentials()), { data: [] }),
 
-              var p1 = assertQuery(query.Exists(nestedClassRef), true);
-              var p2 = assertQuery(query.Paginate(allNestedClasses), { data: [ a_class_ref ] });
-
-              return Promise.all([p1, p2]);
-            });
+              // Recursive built-in references
+              assertQueryWithClient(parentCli, query.Paginate(query.Classes(childDb)), { data: [ new values.Ref('a_class', Native.CLASSES, childDbRef) ] }),
+              assertQueryWithClient(parentCli, query.Paginate(query.Databases(childDb)), { data: [ new values.Ref('a_db', Native.DATABASES, childDbRef) ] }),
+              assertQueryWithClient(parentCli, query.Paginate(query.Indexes(childDb)), { data: [ new values.Ref('a_index', Native.INDEXES, childDbRef) ] }),
+              assertQueryWithClient(parentCli, query.Paginate(query.Functions(childDb)), { data: [ new values.Ref('a_function', Native.FUNCTIONS, childDbRef) ] }),
+              assertQueryWithClient(parentCli, query.Paginate(query.Keys(childDb)), { data: [ new values.Ref('123', Native.KEYS) ] }),
+              assertQueryWithClient(parentCli, query.Paginate(query.Tokens(childDb)), { data: [] }),
+              assertQueryWithClient(parentCli, query.Paginate(query.Credentials(childDb)), { data: [] })
+            ]);
           });
         });
       });
@@ -796,7 +825,7 @@ describe('query', function () {
   });
 
   it('nested ref from string', function() {
-    return assertQuery(query.Ref('classes/widget/123'), new values.Ref('123', new values.Ref('widget', values.Native.CLASSES)));
+    return assertQuery(query.Ref('classes/widget/123'), new values.Ref('123', new values.Ref('widget', Native.CLASSES)));
   });
 
   // Check arity of all query functions
