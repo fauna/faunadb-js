@@ -16,10 +16,10 @@ export module query {
   export function Lambda(f: Lambda): Expr;
   export function Lambda(var_name: ExprArg, expr: ExprArg): Expr;
   export function Call(ref: ExprArg, ...args: ExprArg[]): Expr;
-  export function Query(lambda: Lambda): Expr;
-  export function Map(collection: ExprArg, lambda_expr: Lambda): Expr;
-  export function Foreach(collection: ExprArg, lambda_expr: Lambda): Expr;
-  export function Filter(collection: ExprArg, lambda_expr: Lambda): Expr;
+  export function Query(lambda: (ExprArg|Lambda)): Expr;
+  export function Map(collection: ExprArg, lambda_expr: (ExprArg|Lambda)): Expr;
+  export function Foreach(collection: ExprArg, lambda_expr: (ExprArg|Lambda)): Expr;
+  export function Filter(collection: ExprArg, lambda_expr: (ExprArg|Lambda)): Expr;
   export function Take(number: ExprArg, collection: ExprArg): Expr;
   export function Drop(number: ExprArg, collection: ExprArg): Expr;
   export function Prepend(elements: ExprArg, collection: ExprArg): Expr;
