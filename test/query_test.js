@@ -751,6 +751,26 @@ describe('query', function () {
     return Promise.all([p1, p2]);
   });
 
+  it('to_string', function() {
+    var p1 = assertQuery(query.ToString(42), "42");
+    var p2 = assertQuery(query.ToString("42"), "42");
+    return Promise.all([p1, p2]);
+  });
+
+  it('to_number', function() {
+    var p1 = assertQuery(query.ToNumber(42), 42);
+    var p2 = assertQuery(query.ToNumber("42"), 42);
+    return Promise.all([p1, p2]);
+  });
+
+  it('to_time', function() {
+    return assertQuery(query.ToTime("1970-01-01T00:00:00Z"), new FaunaTime("1970-01-01T00:00:00Z"));
+  });
+
+  it('to_date', function() {
+    return assertQuery(query.ToDate("1970-01-01"), new FaunaDate("1970-01-01"));
+  });
+
   it('ref', function() {
     return assertQuery(Ref(classRef, query.Concat(['123', '456'])), new values.Ref('123456', classRef));
   });

@@ -1266,6 +1266,54 @@ function Not(boolean) {
   return new Expr({ not: wrap(boolean) });
 }
 
+/**
+ * Converts an expression to a string literal.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to a string.
+ * @return {Expr}
+ */
+function ToString(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ to_string: wrap(expr) });
+}
+
+/**
+ * Converts an expression to a number literal.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to a number.
+ * @return {Expr}
+ */
+function ToNumber(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ to_number: wrap(expr) });
+}
+
+/**
+ * Converts an expression to a time literal.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to a time.
+ * @return {Expr}
+ */
+function ToTime(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ to_time: wrap(expr) });
+}
+
+/**
+ * Converts an expression to a date literal.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to a date.
+ * @return {Expr}
+ */
+function ToDate(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ to_date: wrap(expr) });
+}
+
 // Helpers
 
 /**
@@ -1464,5 +1512,9 @@ module.exports = {
   And: And,
   Or: Or,
   Not: Not,
+  ToString: ToString,
+  ToNumber: ToNumber,
+  ToTime: ToTime,
+  ToDate: ToDate,
   wrap: wrap
 };

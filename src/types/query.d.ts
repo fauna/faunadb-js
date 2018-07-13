@@ -96,4 +96,9 @@ export module query {
   export function And(...args: ExprArg[]): Expr;
   export function Or(...args: ExprArg[]): Expr;
   export function Not(bool: ExprArg): Expr;
+
+  export function ToString(expr: ExprArg): Expr;
+  export function ToNumber(expr: ExprArg): Expr;
+  export function ToTime(expr: ExprArg): Expr;
+  export function ToDate(Expr: ExprArg): Expr;
 }
