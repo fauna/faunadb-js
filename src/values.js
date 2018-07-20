@@ -5,6 +5,9 @@ var errors = require('./errors');
 var Expr = require('./Expr');
 var util = require('util');
 
+var customInspect = util && util.inspect && util.inspect.custom;
+var stringify = (util && util.inspect) || JSON.stringify;
+
 /**
  * FaunaDB value types. Generally, these classes do not need to be instantiated
  * directly; they can be constructed through helper methods in {@link module:query}.
@@ -90,23 +93,35 @@ Ref.prototype.toJSON = function() {
   return { '@ref': this.value };
 };
 
-/** @ignore */
-Ref.prototype.toString = function() {
-  var cls = this.class !== undefined ? ', class=' + this.class.toString() : '';
-  var db = this.database !== undefined ? ' database=' +  this.database.toString() : '';
-  return 'Ref(id=' + this.id + cls + db + ')';
-};
+wrapToString(Ref, function() {
+  var constructors = {
+    classes: "Class",
+    databases: "Database",
+    indexes: "Index",
+    functions: "Function"
+  };
+
+  var toString = function(ref, prevDb) {
+    if (ref.class === undefined && ref.database === undefined)
+      return ref.id.charAt(0).toUpperCase() + ref.id.slice(1) + '(' + prevDb + ')';
+
+    var constructor = constructors[ref.class.id];
+    if (constructor !== undefined) {
+      var db = ref.database !== undefined ? ', ' +  ref.database.toString() : '';
+      return constructor + '("' + ref.id + '"' + db + ')';
+    }
+
+    var db = ref.database !== undefined ? ref.database.toString() : '';
+
+    return 'Ref(' + toString(ref.class, db) + ', "' + ref.id + '")';
+  };
+
+  return toString(this, '');
+});
 
 /** @ignore */
 Ref.prototype.valueOf = function() {
   return this.value;
-};
-
-/** @ignore */
-Ref.prototype.inspect = function() {
-  var cls = this.class !== undefined ? ', class=' + this.class.inspect() : '';
-  var db = this.database !== undefined ? ', database=' +  this.database.inspect() : '';
-  return 'Ref(id=' + this.id + cls + db + ')';
 };
 
 /**
@@ -159,10 +174,9 @@ function SetRef(value) {
 
 util.inherits(SetRef, Value);
 
-/** @ignore */
-SetRef.prototype.inspect = function() {
-  return 'SetRef(' + JSON.stringify(this.value) + ')';
-};
+wrapToString(SetRef, function() {
+  return 'SetRef(' + stringify(this.value) + ')';
+});
 
 /** @ignore */
 SetRef.prototype.toJSON = function() {
@@ -197,6 +211,10 @@ util.inherits(FaunaTime, Value);
 Object.defineProperty(FaunaTime.prototype, 'date', { get: function() {
   return new Date(this.value);
 } });
+
+wrapToString(FaunaTime, function() {
+  return 'Date("' + this.value + '")';
+});
 
 /** @ignore */
 FaunaTime.prototype.toJSON = function() {
@@ -233,6 +251,10 @@ Object.defineProperty(FaunaDate.prototype, 'date', { get: function() {
   return new Date(this.value);
 } });
 
+wrapToString(FaunaDate, function() {
+  return 'Date("' + this.value + '")';
+});
+
 /** @ignore */
 FaunaDate.prototype.toJSON = function()  {
   return { '@date': this.value };
@@ -254,16 +276,15 @@ function Bytes(value) {
   } else if (value instanceof Uint8Array) {
     this.value = value;
   } else {
-    throw new errors.InvalidValue('Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: ' + JSON.stringify(value));
+    throw new errors.InvalidValue('Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: ' + stringify(value));
   }
 }
 
 util.inherits(Bytes, Value);
 
-/** @ignore */
-Bytes.prototype.inspect = function() {
+wrapToString(Bytes, function() {
   return 'Bytes("' + base64.fromByteArray(this.value) + '")';
-};
+});
 
 /** @ignore */
 Bytes.prototype.toJSON = function()  {
@@ -282,15 +303,24 @@ function Query(value) {
 
 util.inherits(Query, Value);
 
-/** @ignore */
-Query.prototype.inspect = function() {
-  return 'Query("' + this.value + '")';
-};
+wrapToString(Query, function() {
+  return 'Query(' + stringify(this.value) + ')';
+});
 
 /** @ignore */
 Query.prototype.toJSON = function()  {
   return { '@query': this.value };
 };
+
+/** @ignore */
+function wrapToString(type, fn) {
+  type.prototype.toString = fn;
+  type.prototype.inspect = fn;
+
+  if (customInspect) {
+    type.prototype[customInspect] = fn;
+  }
+}
 
 module.exports = {
   Value: Value,

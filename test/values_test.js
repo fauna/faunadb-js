@@ -1,5 +1,6 @@
 'use strict';
 
+var util = require('util');
 var assert = require('chai').assert;
 var errors = require('../src/errors');
 var json = require('../src/_json');
@@ -119,5 +120,38 @@ describe('Values', function() {
     var test_query_json = '{"@query":{"lambda":"x","expr":{"var":"x"}}}';
     assert.equal(json.toJSON(test_query), test_query_json);
     assert.deepEqual(json.parseJSON(test_query_json), test_query);
+  });
+
+  it('pretty print', function() {
+    var assertPrint = function(value, expected) {
+      assert.equal(expected, util.inspect(value, {depth: null}));
+      assert.equal(expected, value.toString());
+    };
+
+    assertPrint(new Ref('cls', values.Native.CLASSES), 'Class("cls")');
+    assertPrint(new Ref('db', values.Native.DATABASES), 'Database("db")');
+    assertPrint(new Ref('idx', values.Native.INDEXES), 'Index("idx")');
+    assertPrint(new Ref('fn', values.Native.FUNCTIONS), 'Function("fn")');
+    assertPrint(new Ref('key', values.Native.KEYS), 'Ref(Keys(), "key")');
+
+    assertPrint(values.Native.CLASSES, 'Classes()');
+    assertPrint(values.Native.DATABASES, 'Databases()');
+    assertPrint(values.Native.INDEXES, 'Indexes()');
+    assertPrint(values.Native.FUNCTIONS, 'Functions()');
+    assertPrint(values.Native.KEYS, 'Keys()');
+
+    var db = new Ref("db", values.Native.DATABASES);
+    assertPrint(new Ref('cls', values.Native.CLASSES, db), 'Class("cls", Database("db"))');
+    assertPrint(new Ref('db', values.Native.DATABASES, db), 'Database("db", Database("db"))');
+    assertPrint(new Ref('idx', values.Native.INDEXES, db), 'Index("idx", Database("db"))');
+    assertPrint(new Ref('fn', values.Native.FUNCTIONS, db), 'Function("fn", Database("db"))');
+    assertPrint(new Ref('key', values.Native.KEYS, db), 'Ref(Keys(Database("db")), "key")');
+
+    assertPrint(new FaunaTime('1970-01-01T00:00:00.123456789Z'), 'Date("1970-01-01T00:00:00.123456789Z")');
+    assertPrint(new FaunaDate('1970-01-01'), 'Date("1970-01-01")');
+
+    assertPrint(new SetRef({'match': new Ref('idx', values.Native.INDEXES)}), 'SetRef({ match: Index("idx") })');
+    assertPrint(new Bytes('1234'), 'Bytes("1234")');
+    assertPrint(new Query({'lambda': 'x', 'expr': {'var': 'x'}}), 'Query({ lambda: \'x\', expr: { var: \'x\' } })');
   });
 });
