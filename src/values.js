@@ -304,7 +304,7 @@ function Query(value) {
 util.inherits(Query, Value);
 
 wrapToString(Query, function() {
-  return 'Query(' + stringify(this.value) + ')';
+  return 'Query(' + Expr.toString(this.value) + ')';
 });
 
 /** @ignore */

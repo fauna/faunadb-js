@@ -6,6 +6,7 @@ var errors = require('../src/errors');
 var json = require('../src/_json');
 var Expr = require('../src/Expr');
 var values = require('../src/values');
+var q = require('../src/query');
 
 var FaunaDate = values.FaunaDate,
   FaunaTime = values.FaunaTime,
@@ -122,12 +123,12 @@ describe('Values', function() {
     assert.deepEqual(json.parseJSON(test_query_json), test_query);
   });
 
-  it('pretty print', function() {
-    var assertPrint = function(value, expected) {
-      assert.equal(expected, util.inspect(value, {depth: null}));
-      assert.equal(expected, value.toString());
-    };
+  var assertPrint = function(value, expected) {
+    assert.equal(expected, util.inspect(value, {depth: null}));
+    assert.equal(expected, value.toString());
+  };
 
+  it('pretty print', function() {
     assertPrint(new Ref('cls', values.Native.CLASSES), 'Class("cls")');
     assertPrint(new Ref('db', values.Native.DATABASES), 'Database("db")');
     assertPrint(new Ref('idx', values.Native.INDEXES), 'Index("idx")');
@@ -152,6 +153,125 @@ describe('Values', function() {
 
     assertPrint(new SetRef({'match': new Ref('idx', values.Native.INDEXES)}), 'SetRef({ match: Index("idx") })');
     assertPrint(new Bytes('1234'), 'Bytes("1234")');
-    assertPrint(new Query({'lambda': 'x', 'expr': {'var': 'x'}}), 'Query({ lambda: \'x\', expr: { var: \'x\' } })');
+  });
+
+  it('pretty print Query', function() {
+    assertPrint(new Query(q.Lambda('x', q.Var('x'))), 'Query(Lambda("x", Var("x")))');
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.If(q.GT(q.Var('x'), q.Var('y')), 'x > y', 'x <= y'))),
+      'Query(Lambda(["x", "y"], If(GT(Var("x"), Var("y")), "x > y", "x <= y")))'
+    );
+    assertPrint(
+      new Query(q.Lambda('ref', q.Select(['data', 'name'], q.Get(q.Var('ref'))))),
+      'Query(Lambda("ref", Select(["data", "name"], Get(Var("ref")))))'
+    );
+
+    //returns object
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], {sum: q.Add(q.Var('x'), q.Var('y')), product: q.Multiply(q.Var('x'), q.Var('y'))})),
+      'Query(Lambda(["x", "y"], {sum: Add(Var("x"), Var("y")), product: Multiply(Var("x"), Var("y"))}))'
+    );
+
+    //returns array
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], [q.Add(q.Var('x'), q.Var('y')), q.Multiply(q.Var('x'), q.Var('y'))])),
+      'Query(Lambda(["x", "y"], [Add(Var("x"), Var("y")), Multiply(Var("x"), Var("y"))]))'
+    );
+
+    //underscored names
+    assertPrint(
+      new Query(q.Lambda('ref', q.SelectAll(['data', 'name'], q.Get(q.Var('ref'))))),
+      'Query(Lambda("ref", SelectAll(["data", "name"], Get(Var("ref")))))'
+    );
+    assertPrint(
+      new Query(q.Lambda('coll', q.IsEmpty(q.Var('coll')))),
+      'Query(Lambda("coll", IsEmpty(Var("coll"))))'
+    );
+    assertPrint(
+      new Query(q.Lambda('secret', q.KeyFromSecret(q.Var('secret')))),
+      'Query(Lambda("secret", KeyFromSecret(Var("secret"))))'
+    );
+
+    //special case
+    assertPrint(
+      new Query(q.Lambda('coll', q.IsNonEmpty(q.Var('coll')))),
+      'Query(Lambda("coll", IsNonEmpty(Var("coll"))))'
+    );
+
+    //vararg functions
+    assertPrint(
+      new Query(q.Lambda('x', q.Do(q.Var('x'), q.Var('x')))),
+      'Query(Lambda("x", Do(Var("x"), Var("x"))))'
+    );
+    assertPrint(
+      new Query(q.Lambda('ref', q.Call(q.Var('ref'), 1, 2, 3))),
+      'Query(Lambda("ref", Call(Var("ref"), 1, 2, 3)))'
+    );
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.Union(q.Var('x'), q.Var('y')))),
+      'Query(Lambda(["x", "y"], Union(Var("x"), Var("y"))))'
+    );
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.Intersection(q.Var('x'), q.Var('y')))),
+      'Query(Lambda(["x", "y"], Intersection(Var("x"), Var("y"))))'
+    );
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.Difference(q.Var('x'), q.Var('y')))),
+      'Query(Lambda(["x", "y"], Difference(Var("x"), Var("y"))))'
+    );
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.Equals(q.Var('x'), q.Var('y')))),
+      'Query(Lambda(["x", "y"], Equals(Var("x"), Var("y"))))'
+    );
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.Add(q.Var('x'), q.Var('y')))),
+      'Query(Lambda(["x", "y"], Add(Var("x"), Var("y"))))'
+    );
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.Multiply(q.Var('x'), q.Var('y')))),
+      'Query(Lambda(["x", "y"], Multiply(Var("x"), Var("y"))))'
+    );
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.Subtract(q.Var('x'), q.Var('y')))),
+      'Query(Lambda(["x", "y"], Subtract(Var("x"), Var("y"))))'
+    );
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.Divide(q.Var('x'), q.Var('y')))),
+      'Query(Lambda(["x", "y"], Divide(Var("x"), Var("y"))))'
+    );
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.Modulo(q.Var('x'), q.Var('y')))),
+      'Query(Lambda(["x", "y"], Modulo(Var("x"), Var("y"))))'
+    );
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.LT(q.Var('x'), q.Var('y')))),
+      'Query(Lambda(["x", "y"], LT(Var("x"), Var("y"))))'
+    );
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.LTE(q.Var('x'), q.Var('y')))),
+      'Query(Lambda(["x", "y"], LTE(Var("x"), Var("y"))))'
+    );
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.GT(q.Var('x'), q.Var('y')))),
+      'Query(Lambda(["x", "y"], GT(Var("x"), Var("y"))))'
+    );
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.GTE(q.Var('x'), q.Var('y')))),
+      'Query(Lambda(["x", "y"], GTE(Var("x"), Var("y"))))'
+    );
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.And(q.Var('x'), q.Var('y')))),
+      'Query(Lambda(["x", "y"], And(Var("x"), Var("y"))))'
+    );
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.Or(q.Var('x'), q.Var('y')))),
+      'Query(Lambda(["x", "y"], Or(Var("x"), Var("y"))))'
+    );
+
+    //nested varargs
+    assertPrint(
+      new Query(q.Lambda(['x', 'y'], q.Add(q.Var('x'), q.Add(q.Var('y'), 1)))),
+      'Query(Lambda(["x", "y"], Add(Var("x"), Add(Var("y"), 1))))'
+    );
   });
 });
