@@ -213,7 +213,7 @@ Object.defineProperty(FaunaTime.prototype, 'date', { get: function() {
 } });
 
 wrapToString(FaunaTime, function() {
-  return 'Date("' + this.value + '")';
+  return 'Time("' + this.value + '")';
 });
 
 /** @ignore */

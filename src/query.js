@@ -46,6 +46,16 @@ function Ref() {
   }
 }
 
+/**
+ * @param {Uint8Array|ArrayBuffer|module:query~ExprArg} bytes
+ *   A base64 encoded string or a byte array
+ * @return {Expr}
+ */
+function Bytes(bytes) {
+  arity.exact(1, arguments);
+  return new values.Bytes(bytes);
+}
+
 // Basic forms
 
 /**
@@ -1430,6 +1440,7 @@ function wrapValues(obj) {
 
 module.exports = {
   Ref: Ref,
+  Bytes: Bytes,
   Abort: Abort,
   At: At,
   Let: Let,
