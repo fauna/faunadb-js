@@ -86,7 +86,7 @@ function At(timestamp, expr) {
 function Let(vars, in_expr) {
   arity.exact(2, arguments);
 
-  if (in_expr instanceof Function) {
+  if (typeof in_expr === 'function') {
     in_expr = in_expr.apply(null, Object.keys(vars).map(function(name) {
       return Var(name);
     }));
@@ -180,7 +180,7 @@ function Lambda() {
   switch(arguments.length) {
     case 1:
       var value = arguments[0];
-      if (value instanceof Function) {
+      if (typeof value === 'function') {
         return _lambdaFunc(value);
       } else if (value instanceof Expr) {
         return value;
@@ -1391,7 +1391,7 @@ function wrap(obj) {
     return null;
   } else if (obj instanceof Expr) {
     return obj;
-  } else if (obj instanceof Function) {
+  } else if (typeof obj === 'function') {
     return Lambda(obj);
   } else if (Array.isArray(obj)) {
     return new Expr(obj.map(function (elem) {
