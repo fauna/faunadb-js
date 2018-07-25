@@ -1,3 +1,5 @@
+## 2.1.1-SNAPSHOT
+
 ## 2.1.0 (July 25, 2018)
 - Bug fix: Typescript functions that receive lambda should support lambdas created
   by `Lambda()` function.
