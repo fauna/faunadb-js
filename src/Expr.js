@@ -15,4 +15,46 @@ Expr.prototype.toJSON = function() {
   return this.raw;
 };
 
+var varArgsFunctions = ['Do', 'Call', 'Union', 'Intersection', 'Difference', 'Equals', 'Add', 'Multiply', 'Subtract', 'Divide', 'Modulo', 'LT', 'LTE', 'GT', 'GTE', 'And', 'Or'];
+var specialCases = {
+  is_nonempty: 'is_non_empty',
+  lt: 'LT',
+  lte: 'LTE',
+  gt: 'GT',
+  gte: 'GTE'
+};
+
+var exprToString = function(expr, caller) {
+  if (expr instanceof Expr)
+    expr = expr.raw;
+
+  if (typeof expr === 'string')
+    return '"' + expr + '"';
+
+  if (typeof expr === 'number')
+    return expr.toString();
+
+  if (Array.isArray(expr)) {
+    var array = expr.map(function(item) { return exprToString(item); }).join(', ');
+
+    return varArgsFunctions.includes(caller) ? array : '[' + array + ']';
+  }
+
+  var keys = Object.keys(expr);
+  var fn = keys[0];
+
+  if (fn === 'object')
+    return '{' + Object.keys(expr.object).map(function(k) { return k + ': ' + exprToString(expr.object[k])}).join(', ') + '}';
+
+  if (fn in specialCases)
+    fn = specialCases[fn];
+
+  fn = fn.split('_').map(function(str) { return str.charAt(0).toUpperCase() + str.slice(1); }).join('');
+
+  var args = Object.values(expr).map(function(v) { return exprToString(v, fn)}).join(', ');
+  return fn + '(' + args + ')';
+};
+
+Expr.toString = exprToString;
+
 module.exports = Expr;

@@ -2,6 +2,7 @@
 - Bug fix: Typescript functions that receive lambda should support lambdas created
   by `Lambda()` function.
 - Adds `to_string`, `to_number`, `to_time`, and `to_date` functions
+- Pretty print Fauna objects
 
 ## 2.0.2 (March 28, 2018)
 - Bug fix: functions with optional scope parameter were failing when scope was
