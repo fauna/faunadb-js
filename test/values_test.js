@@ -148,7 +148,7 @@ describe('Values', function() {
     assertPrint(new Ref('fn', values.Native.FUNCTIONS, db), 'Function("fn", Database("db"))');
     assertPrint(new Ref('key', values.Native.KEYS, db), 'Ref(Keys(Database("db")), "key")');
 
-    assertPrint(new FaunaTime('1970-01-01T00:00:00.123456789Z'), 'Date("1970-01-01T00:00:00.123456789Z")');
+    assertPrint(new FaunaTime('1970-01-01T00:00:00.123456789Z'), 'Time("1970-01-01T00:00:00.123456789Z")');
     assertPrint(new FaunaDate('1970-01-01'), 'Date("1970-01-01")');
 
     assertPrint(new SetRef({'match': new Ref('idx', values.Native.INDEXES)}), 'SetRef({ match: Index("idx") })');
