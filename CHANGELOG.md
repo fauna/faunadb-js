@@ -1,4 +1,4 @@
-## 2.1.1-SNAPSHOT
+## 2.5.0 (August 1, 2018)
 - Add support for the X-Last-Seen-Txn header
 
 ## 2.1.0 (July 25, 2018)
