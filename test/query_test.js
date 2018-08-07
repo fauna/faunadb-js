@@ -695,17 +695,43 @@ describe('query', function () {
     return assertQuery(query.SelectAll(['foo', 0], [obj1, obj2]), [0, 2]);
   });
 
+  it('abs', function () {
+    var p1 = assertQuery(query.Abs(10), 10);
+    var p2 = assertQuery(query.Abs(-10), 10);
+    return Promise.all([p1, p2]);
+  });
+
   it('add', function () {
     return assertQuery(query.Add(2, 3, 5), 10);
   });
 
-  it('multiply', function () {
-    return assertQuery(query.Multiply(2, 3, 5), 30);
+  it('bitand', function () {
+    var p1 = assertQuery(query.BitAnd(1, 0), 0);
+    var p2 = assertQuery(query.BitAnd(7, 3), 3);
+    return Promise.all([p1, p2]);
   });
 
-  it('subtract', function () {
-    var p1 = assertQuery(query.Subtract(2, 3, 5), -6);
-    var p2 = assertQuery(query.Subtract(2), 2);
+  it('bitnot', function () {
+    var p1 = assertQuery(query.BitNot(0), -1);
+    var p2 = assertQuery(query.BitNot(1), -2);
+    return Promise.all([p1, p2]);
+  });
+
+  it('bitor', function () {
+    var p1 = assertQuery(query.BitOr(0, 1, 0, 1), 1);
+    var p2 = assertQuery(query.BitOr(1, 2, 4), 7);
+    return Promise.all([p1, p2]);
+  });
+
+  it('bitxor', function () {
+    var p1 = assertQuery(query.BitXor(0, 1 ), 1);
+    var p2 = assertQuery(query.BitXor(1, 2, 4), 7);
+    return Promise.all([p1, p2]);
+  });
+
+  it('ceil', function () {
+    var p1 = assertQuery(query.Ceil(1.2), 2);
+    var p2 = assertQuery(query.Ceil(1.8), 2);
     return Promise.all([p1, p2]);
   });
 
@@ -717,6 +743,20 @@ describe('query', function () {
     return Promise.all([p1, p2]);
   });
 
+  it('floor', function () {
+    var p1 = assertQuery(query.Floor(1.2), 1);
+    var p2 = assertQuery(query.Floor(1.8), 1);
+    return Promise.all([p1, p2]);
+  });
+
+  it('max', function () {
+    return assertQuery(query.Max(2, 3, 5, 4), 5);
+  });
+
+  it('min', function () {
+    return assertQuery(query.Min(2, 3, 5, 4), 2);
+  });
+
   it('modulo', function () {
     var p1 = assertQuery(query.Modulo(5, 2), 1);
     // This is (15 % 10) % 2
@@ -725,6 +765,113 @@ describe('query', function () {
     var p4 = assertBadQuery(query.Modulo(1, 0));
     return Promise.all([p1, p2, p3, p4]);
   });
+
+  it('multiply', function () {
+    return assertQuery(query.Multiply(2, 3, 5), 30);
+  });
+
+  it('round', function () {
+    var p1 = assertQuery(query.Round(155.678, -1), 160);
+    var p2 = assertQuery(query.Round(155.678, 0), 156);
+    var p3 = assertQuery(query.Round(155.678, 1), 155.7);
+    var p4 = assertQuery(query.Round(155.678, 2), 155.68);
+    return Promise.all([p1, p2, p3, p4]);
+  });
+
+  it('subtract', function () {
+    var p1 = assertQuery(query.Subtract(2, 3, 5), -6);
+    var p2 = assertQuery(query.Subtract(2), 2);
+    return Promise.all([p1, p2]);
+  });
+
+  it('sign', function () {
+    var p1 = assertQuery(query.Sign(1.2), 1);
+    var p2 = assertQuery(query.Sign(1.8), 1);
+    return Promise.all([p1, p2]);
+  });
+
+  it('sqrt', function () {
+    var p1 = assertQuery(query.Sqrt(16), 4);
+    var p2 = assertQuery(query.Sqrt(4), 2);
+    return Promise.all([p1, p2]);
+  });
+
+  it('trunc', function () {
+    var p1 = assertQuery(query.Trunc(155.678, -1), 150);
+    var p2 = assertQuery(query.Trunc(155.678, 0), 155);
+    var p3 = assertQuery(query.Trunc(155.678, 1), 155.6);
+    var p4 = assertQuery(query.Trunc(155.678, 2), 155.67);
+    return Promise.all([p1, p2, p3, p4]);
+  });
+
+  it('acos', function () {
+    return assertQuery(query.Trunc(query.Acos(0.5), 2), 1.04);
+  });
+
+  it('asin', function () {
+    var p1 = assertQuery(query.Trunc(query.Asin(0.5),2), 0.52);
+    var p2 = assertQuery(query.Trunc(query.Asin(0),2), 0);
+    return Promise.all([p1, p2]);
+  });
+
+  it('atan', function () {
+    var p1 = assertQuery(query.Trunc(query.Atan(0.5),2), 0.46);
+    var p2 = assertQuery(query.Trunc(query.Atan(0),2), 0);
+    return Promise.all([p1, p2]);
+  });
+
+  it('cos', function () {
+    return assertQuery(query.Cos(0), 1);
+  });
+
+  it('cosh', function () {
+    return assertQuery(query.Trunc(query.Cosh(7.6), 1), 999);
+  });
+
+  it('degres', function () {
+    return assertQuery(query.Trunc(query.Degrees(6.29), 0), 360);
+  });
+
+  it('exp', function () {
+    return assertQuery(query.Trunc(query.Exp(5), 0), 148);
+  });
+
+  it('hypot', function () {
+    return assertQuery(query.Hypot(query.Hypot(3, 4), 0), 5);
+  });
+
+  it('ln', function () {
+    return assertQuery(query.Trunc(query.Ln(1), 0), 0);
+  });
+
+  it('log', function () {
+    return assertQuery(query.Trunc(query.Log(100), 0), 2);
+  });
+
+  it('pow', function () {
+    return assertQuery(query.Pow(3, 2), 9);
+  });
+
+  it('radians', function () {
+    return assertQuery(query.Trunc(query.Radians(360), 1), 6.2);
+  });
+
+  it('sin', function () {
+    return assertQuery(query.Trunc(query.Sin(0), 0), 0);
+  });
+
+  it('sinh', function () {
+    return assertQuery(query.Trunc(query.Sinh(4), 0), 27);
+  });
+
+  it('tan', function () {
+    return assertQuery(query.Trunc(query.Tan(0), 0), 0);
+  });
+
+  it('tanh', function () {
+    return assertQuery(query.Trunc(query.Tanh(100), 0), 1);
+  });
+
 
   it('lt', function () {
     return assertQuery(query.LT(1, 2), true);
@@ -887,10 +1034,19 @@ describe('query', function () {
       'Equals': [0, 'at least 1'],
       'Select': [4, 'from 2 to 3'],
       'Add': [0, 'at least 1'],
-      'Multiply': [0, 'at least 1'],
-      'Subtract': [0, 'at least 1'],
+      'BitAnd': [0, 'at least 1'],
+      'BitOr': [0, 'at least 1'],
+      'BitXor': [0, 'at least 1'],
       'Divide': [0, 'at least 1'],
+      'Max': [0, 'at least 1'],
+      'Min': [0, 'at least 1'],
       'Modulo': [0, 'at least 1'],
+      'Multiply': [0, 'at least 1'],
+      'Round': [0, 'at least 1'],
+      'Subtract': [0, 'at least 1'],
+      'Trunc': [0, 'at least 1'],
+      'Hypot': [0, 'at least 1'],
+      'Pow': [0, 'at least 1'],
       'LT': [0, 'at least 1'],
       'LTE': [0, 'at least 1'],
       'GT': [0, 'at least 1'],
@@ -916,7 +1072,6 @@ describe('query', function () {
         errorMessage = new RegExp(
           'Function requires ' + (params[1] || '\\d+') +
             ' arguments but ' + arity + ' were given');
-
       assert.throws(function () { query[fun].apply(null, new Array(arity)); }, errors.InvalidArity, errorMessage, fun);
     }
   });
