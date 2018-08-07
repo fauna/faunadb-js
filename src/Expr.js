@@ -51,7 +51,10 @@ var exprToString = function(expr, caller) {
 
   fn = fn.split('_').map(function(str) { return str.charAt(0).toUpperCase() + str.slice(1); }).join('');
 
-  var args = Object.values(expr).map(function(v) { return exprToString(v, fn)}).join(', ');
+  var args = keys.map(function(k) {
+    var v = expr[k];
+    return exprToString(v, fn)
+  }).join(', ');
   return fn + '(' + args + ')';
 };
 
