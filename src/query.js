@@ -10,7 +10,7 @@ var objectAssign = require('object-assign');
 /**
  * This module contains functions used to construct FaunaDB Queries.
  *
- * See the [FaunaDB Query API Documentation](https://fauna.com/documentation/queries)
+ * See the [FaunaDB Query API Documentation](https://app.fauna.com/documentation/reference/queryapi)
  * for per-function documentation.
  *
  * @module query
@@ -1135,7 +1135,19 @@ function SelectAll(path, from) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   A numbers to provide the absolute value.
+ * @return {Expr}
+ */
+function Abs(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ abs: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
  *
  * @param {...module:query~ExprArg} terms
  *   A collection of numbers to sum together.
@@ -1147,31 +1159,67 @@ function Add() {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
  *
  * @param {...module:query~ExprArg} terms
- *   A collection of numbers to multiply together.
+ *   A collection of numbers to bitwise and together.
  * @return {Expr}
  */
-function Multiply() {
+function BitAnd() {
   arity.min(1, arguments);
-  return new Expr({ multiply: wrap(varargs(arguments)) });
+  return new Expr({ bitand: wrap(varargs(arguments)) });
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
  *
  * @param {...module:query~ExprArg} terms
- *   A collection of numbers to compute the difference of.
+ *   A numbers to provide the bitwise not.
  * @return {Expr}
  */
-function Subtract() {
-  arity.min(1, arguments);
-  return new Expr({ subtract: wrap(varargs(arguments)) });
+function BitNot(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ bitnot: wrap(expr) });
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   A collection of numbers to bitwise Or'd together.
+ * @return {Expr}
+ */
+function BitOr() {
+  arity.min(1, arguments);
+  return new Expr({ bitor: wrap(varargs(arguments)) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   A collection of numbers to bitwise Xor'd together.
+ * @return {Expr}
+ */
+function BitXor() {
+  arity.min(1, arguments);
+  return new Expr({ bitxor: wrap(varargs(arguments)) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   The least integer that is greater than or equal to the number
+ * @return {Expr}
+ */
+function Ceil(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ ceil: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
  *
  * @param {...module:query~ExprArg} terms
  *   A collection of numbers to compute the quotient of.
@@ -1183,7 +1231,43 @@ function Divide() {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   The greatest integer that is less than or equal to the number
+ * @return {Expr}
+ */
+function Floor(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ floor: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   A collection of numbers to multiply together.
+ * @return {Expr}
+ */
+function Max() {
+  arity.min(1, arguments);
+  return new Expr({ max: wrap(varargs(arguments)) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   A collection of numbers to multiply together.
+ * @return {Expr}
+ */
+function Min() {
+  arity.min(1, arguments);
+  return new Expr({ min: wrap(varargs(arguments)) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
  *
  * @param {...module:query~ExprArg} terms
  *   A collection of numbers to compute the quotient of. The remainder will be returned.
@@ -1192,6 +1276,282 @@ function Divide() {
 function Modulo() {
   arity.min(1, arguments);
   return new Expr({ modulo: wrap(varargs(arguments)) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   A collection of numbers to multiply together.
+ * @return {Expr}
+ */
+function Multiply() {
+  arity.min(1, arguments);
+  return new Expr({ multiply: wrap(varargs(arguments)) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   A numbers to round.
+ * @param {...module:query~ExprArg} terms
+ *   An optional precision
+ * @return {Expr}
+ */
+function Round(value, precision) {
+  arity.min(1, arguments);
+  precision = defaults(precision, null);
+  return new Expr(params({ round: wrap(value) }, { precision: wrap(precision) }));
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   A collection of numbers to compute the difference of.
+ * @return {Expr}
+ */
+function Subtract() {
+  arity.min(1, arguments);
+  return new Expr({ subtract: wrap(varargs(arguments)) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   The sign of the number is returned as positive 1, zero 0 , negative -1
+ * @return {Expr}
+ */
+function Sign(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ sign: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   The square root of the number
+ * @return {Expr}
+ */
+function Sqrt(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ sqrt: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   A numbers to truncate.
+ * @param {...module:query~ExprArg} terms
+ *   An optional precision
+ * @return {Expr}
+ */
+function Trunc(value, precision) {
+  arity.min(1, arguments);
+  precision = defaults(precision, null);
+  return new Expr(params({ trunc: wrap(value) }, { precision: wrap(precision) }));
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   The arc cosine of the number
+ * @return {Expr}
+ */
+function Acos(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ acos: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   The arc sine of the number
+ * @return {Expr}
+ */
+function Asin(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ asin: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   The arc tangent of the number
+ * @return {Expr}
+ */
+function Atan(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ atan: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   The cosine of a number
+ * @return {Expr}
+ */
+function Cos(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ cos: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   The hyperbolic cosine of the number
+ * @return {Expr}
+ */
+function Cosh(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ cosh: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   Take radians and convert it to degrees 360 degrees = 2 * pi radians
+ * @return {Expr}
+ */
+function Degrees(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ degrees: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   The e raised to an exponent number
+ * @return {Expr}
+ */
+function Exp(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ exp: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   A side of the right triangle
+ * @param {...module:query~ExprArg} terms
+ *   The second side of a right triange, defaults to the first side
+ * @return {Expr}
+ */
+function Hypot(value, side) {
+  arity.min(1, arguments);
+  side = defaults(side, null);
+  return new Expr(params({ hypot: wrap(value) }, { b: wrap(side) }));
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   The natural log of the number
+ * @return {Expr}
+ */
+function Ln(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ ln: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   The log base 10 of a number
+ * @return {Expr}
+ */
+function Log(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ log: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   A numbers to raise to the power.
+ * @param {...module:query~ExprArg} terms
+ *   An optional exponent
+ * @return {Expr}
+ */
+function Pow(value, exponent) {
+  arity.min(1, arguments);
+  exponent = defaults(exponent, null);
+  return new Expr(params({ pow: wrap(value) }, { exp: wrap(exponent) }));
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   Take degrees and convert the number to radians 2 * pi = 360 degrees
+ * @return {Expr}
+ */
+function Radians(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ radians: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   The sine of a number
+ * @return {Expr}
+ */
+function Sin(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ sin: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   The hyperbolic sine of a number
+ * @return {Expr}
+ */
+function Sinh(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ sinh: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   The Tangent of a number
+ * @return {Expr}
+ */
+function Tan(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ tan: wrap(expr) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
+ *
+ * @param {...module:query~ExprArg} terms
+ *   The hyberbolic tangent of a number
+ * @return {Expr}
+ */
+function Tanh(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ tanh: wrap(expr) });
 }
 
 /**
@@ -1517,11 +1877,40 @@ module.exports = {
   Contains: Contains,
   Select: Select,
   SelectAll: SelectAll,
+  Abs: Abs,
   Add: Add,
-  Multiply: Multiply,
-  Subtract: Subtract,
+  BitAnd: BitAnd,
+  BitNot: BitNot,
+  BitOr: BitOr,
+  BitXor: BitXor,
+  Ceil: Ceil,
   Divide: Divide,
+  Floor: Floor,
+  Max: Max,
+  Min: Min,
   Modulo: Modulo,
+  Multiply: Multiply,
+  Round: Round,
+  Subtract: Subtract,
+  Sign: Sign,
+  Sqrt: Sqrt,
+  Trunc: Trunc,
+  Acos: Acos,
+  Asin: Asin,
+  Atan: Atan,
+  Cos: Cos,
+  Cosh: Cosh,
+  Degrees: Degrees,
+  Exp: Exp,
+  Hypot: Hypot,
+  Ln: Ln,
+  Log: Log,
+  Pow: Pow,
+  Radians: Radians,
+  Sin: Sin,
+  Sinh: Sinh,
+  Tan: Tan,
+  Tanh: Tanh,
   LT: LT,
   LTE: LTE,
   GT: GT,
