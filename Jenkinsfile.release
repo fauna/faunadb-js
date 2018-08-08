@@ -1,0 +1,128 @@
+def packageVersion = ""
+def releaseRepo = "faunadb-js-release"
+def driverRepo = "drivers"
+def jsDriverDir = "$driverRepo/js"
+def publicRepo = "faunadb-js-public"
+
+pipeline {
+  agent {
+    node { label 'release' }
+  }
+
+  parameters {
+    string(name: 'commit', description: 'Commit to build and release.')
+  }
+
+  environment {
+    GIT_CREDENTIALS = credentials('github-fauna-ci-auth')
+  }
+
+  stages {
+    stage('Setup Environment') {
+      steps {
+        dir(releaseRepo) {
+          git(
+            credentialsId: 'github-fauna-ci-auth',
+            url: 'https://github.com/fauna/faunadb-js-release')
+          sh 'git clean -dfx'
+        }
+
+        dir(publicRepo) {
+          git(
+            credentialsId: 'github-fauna-ci-auth',
+            url: 'https://github.com/fauna/faunadb-js')
+          sh 'git clean -dfx'
+        }
+
+        dir(driverRepo) {
+          git(
+            credentialsId: 'github-fauna-ci-auth',
+            url: 'https://github.com/fauna/drivers')
+          sh "git checkout $commit"
+          sh 'git clean -dfx'
+        }
+
+        dir(jsDriverDir) {
+          sh 'npm install'
+          script {
+            packageVersion = readJSON(file: './package.json').version
+          }
+        }
+      }
+    }
+
+    stage('Browserify') {
+      steps {
+        dir(jsDriverDir) {
+          sh 'mkdir dist'
+          sh 'npm run browserify'
+          sh 'npm run browserify-min'
+        }
+        sh "cp -R $jsDriverDir/dist/* $releaseRepo"
+      }
+    }
+
+    stage('Publish Release') {
+      environment {
+        VERSION = "$packageVersion"
+        TAG = "js-$packageVersion"
+        NPM_TOKEN = credentials('npmjs-auth-token')
+      }
+
+      steps {
+        dir(jsDriverDir) {
+          sh 'git tag -a -f -m "Release JS Driver $VERSION" $TAG $commit'
+          sh 'git push https://${GIT_CREDENTIALS}@github.com/fauna/drivers.git $TAG'
+          sh "echo '//registry.npmjs.org/:_authToken=$NPM_TOKEN' > .npmrc"
+          sh 'cat .npmrc'
+          sh 'npm publish'
+        }
+      }
+    }
+
+    stage('Push to CDN') {
+      environment {
+        VERSION = "$packageVersion"
+      }
+
+      steps {
+        dir(releaseRepo) {
+          sh "sed -i'' 's/faunadb\\/[^\\/]\\+\\/faunadb/faunadb\\/$packageVersion\\/faunadb/g' README.md"
+          sh 'git add -A'
+          sh 'git commit -m "Update browser release to version $VERSION"'
+          sh 'git tag -a -f -m "Update browser release to version $VERSION" $VERSION'
+          sh 'git push https://${GIT_CREDENTIALS}@github.com/fauna/faunadb-js-release.git master "refs/tags/$VERSION"'
+        }
+      }
+    }
+
+    stage('Pushlish docs') {
+      steps {
+        dir(jsDriverDir) {
+          sh 'npm run doc'
+        }
+
+        dir(publicRepo) {
+          sh 'git checkout gh-pages'
+          sh 'git reset --hard origin/gh-pages'
+          sh 'git clean -dfx'
+          sh 'rm -rf *'
+        }
+
+        sh "cp -R $jsDriverDir/doc/* $publicRepo/"
+
+        dir(publicRepo) {
+          sh 'git add -A'
+          sh "git commit -m 'Update docs to version $packageVersion'"
+          sh 'git push https://${GIT_CREDENTIALS}@github.com/fauna/faunadb-js.git gh-pages'
+        }
+      }
+    }
+
+    stage('Push to public') {
+      dir(driverRepo) {
+        sh 'git subtree push --prefix=js https://${GIT_CREDENTIALS}@github.com/fauna/faunadb-js.git master'
+      }
+    }
+  }
+}
