@@ -1,0 +1,97 @@
+def notify = new com.fauna.jenkins.Notify(this, env, currentBuild, 'drivers', 'Drivers', '#eng-notify')
+
+pipeline {
+  agent {
+    node { label 'drivers' }
+  }
+
+  stages {
+    stage('Run JS Tests') {
+      when {
+        changeset 'js/**'
+      }
+
+      stages {
+        stage('Setup') {
+          environment {
+            GCP_DOCKER_AUTH = credentials('gcp-jenkins-auth')
+          }
+
+          steps {
+            sh 'sudo docker login -u _json_key --password-stdin https://gcr.io < `echo $GCP_DOCKER_AUTH`'
+
+            script { notify.started() }
+          }
+        }
+
+        stage("Node v4") {
+          steps {
+            sh "sed -i'' 's/CORE_IMAGE_REPLACE/gcr.io\\/faunadb-cloud\\/faunadb\\/developer:latest/g' js/test/docker-compose.yml"
+            sh "sed -i'' 's/RUNTIME_IMAGE_REPLACE/node:4-alpine/g' js/test/docker-compose.yml"
+            sh 'sudo docker-compose -f "$WORKSPACE/js/test/docker-compose.yml" pull'
+            sh 'sudo docker-compose -f "$WORKSPACE/js/test/docker-compose.yml" build driver_test'
+            sh 'sudo docker-compose -f "$WORKSPACE/js/test/docker-compose.yml" run -T driver_test make docker-wait jenkins-test'
+            sh 'sudo docker-compose -f "$WORKSPACE/js/test/docker-compose.yml" rm -f -s -v'
+          }
+        }
+
+        stage("Node v6") {
+          steps {
+            sh "sed -i'' 's/CORE_IMAGE_REPLACE/gcr.io\\/faunadb-cloud\\/faunadb\\/developer:latest/g' js/test/docker-compose.yml"
+            sh "sed -i'' 's/RUNTIME_IMAGE_REPLACE/node:6-alpine/g' js/test/docker-compose.yml"
+            sh 'sudo docker-compose -f "$WORKSPACE/js/test/docker-compose.yml" pull'
+            sh 'sudo docker-compose -f "$WORKSPACE/js/test/docker-compose.yml" build driver_test'
+            sh 'sudo docker-compose -f "$WORKSPACE/js/test/docker-compose.yml" run -T driver_test make docker-wait jenkins-test'
+            sh 'sudo docker-compose -f "$WORKSPACE/js/test/docker-compose.yml" rm -f -s -v'
+          }
+        }
+
+        stage("Node v8") {
+          steps {
+            sh "sed -i'' 's/CORE_IMAGE_REPLACE/gcr.io\\/faunadb-cloud\\/faunadb\\/developer:latest/g' js/test/docker-compose.yml"
+            sh "sed -i'' 's/RUNTIME_IMAGE_REPLACE/node:8-alpine/g' js/test/docker-compose.yml"
+            sh 'sudo docker-compose -f "$WORKSPACE/js/test/docker-compose.yml" pull'
+            sh 'sudo docker-compose -f "$WORKSPACE/js/test/docker-compose.yml" build driver_test'
+            sh 'sudo docker-compose -f "$WORKSPACE/js/test/docker-compose.yml" run -T driver_test make docker-wait jenkins-test'
+            sh 'sudo docker-compose -f "$WORKSPACE/js/test/docker-compose.yml" rm -f -s -v'
+          }
+        }
+
+        stage("Node v10") {
+          steps {
+            sh "sed -i'' 's/CORE_IMAGE_REPLACE/gcr.io\\/faunadb-cloud\\/faunadb\\/developer:latest/g' js/test/docker-compose.yml"
+            sh "sed -i'' 's/RUNTIME_IMAGE_REPLACE/node:10-alpine/g' js/test/docker-compose.yml"
+            sh 'sudo docker-compose -f "$WORKSPACE/js/test/docker-compose.yml" pull'
+            sh 'sudo docker-compose -f "$WORKSPACE/js/test/docker-compose.yml" build driver_test'
+            sh 'sudo docker-compose -f "$WORKSPACE/js/test/docker-compose.yml" run -T driver_test make docker-wait jenkins-test'
+            sh 'sudo docker-compose -f "$WORKSPACE/js/test/docker-compose.yml" rm -f -s -v'
+          }
+        }
+
+        stage('Publish code coverage') {
+          steps {
+            sh 'bash <(curl -s https://codecov.io/bash) -R js -e driver_runtime,core_version'
+          }
+        }
+      }
+    }
+  }
+
+  post {
+    always {
+      junit 'js/test/results/report.xml'
+    }
+
+    aborted {
+      script { notify.aborted() }
+    }
+
+    failure {
+      script { notify.failed() }
+    }
+
+    success {
+      script { notify.succeeded() }
+    }
+  }
+}
