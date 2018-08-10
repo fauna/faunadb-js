@@ -37,7 +37,7 @@ var exprToString = function(expr, caller) {
   if (Array.isArray(expr)) {
     var array = expr.map(function(item) { return exprToString(item); }).join(', ');
 
-    return varArgsFunctions.includes(caller) ? array : '[' + array + ']';
+    return varArgsFunctions.indexOf(caller) != -1 ? array : '[' + array + ']';
   }
 
   var keys = Object.keys(expr);
