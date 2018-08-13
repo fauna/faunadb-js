@@ -177,6 +177,18 @@ describe('query', function () {
     });
   });
 
+  it('call with object', function() {
+    var body = query.Query(function (obj) {
+      return query.Let({a: query.Select('a', obj), b: query.Select('b', obj)}, function(a, b) {
+        return query.Concat([a, b], '/');
+      });
+    });
+
+    return client.query(query.CreateFunction({ name: 'concat_with_slash_obj', body: body })).then(function () {
+      return assertQuery(query.Call(query.Function('concat_with_slash_obj'), {a: 'a', b: 'b'}), 'a/b');
+    });
+  });
+
   it('echo query', function () {
     var lambda = function (x) { return x; };
 
@@ -642,7 +654,8 @@ describe('query', function () {
     var p1 = assertQuery(query.Equals(1, 1, 1), true);
     var p2 = assertQuery(query.Equals(1, 1, 2), false);
     var p3 = assertQuery(query.Equals(1), true);
-    return Promise.all([p1, p2, p3]);
+    var p4 = assertQuery(query.Equals({a: 10, b: 20}, {a: 10, b: 20}), true);
+    return Promise.all([p1, p2, p3, p4]);
   });
 
   it('contains', function () {
