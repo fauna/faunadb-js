@@ -8,7 +8,12 @@ pipeline {
   stages {
     stage('Run JS Tests') {
       when {
-        changeset 'js/**'
+        expression {
+          withCredentials([usernameColonPassword(credentialsId: 'github-fauna-ci-auth', variable: 'GITPASS')]) {
+            sh 'git fetch --no-tags --progress https://$GITPASS@github.com/fauna/drivers.git +refs/heads/master:refs/remotes/origin/master'
+          }
+          sh(returnStatus: true, script: 'git diff  origin/master --name-only | grep "^js\\/.*" > /dev/null') == 0
+        }
       }
 
       stages {
