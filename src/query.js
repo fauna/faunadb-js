@@ -246,7 +246,7 @@ function Call(ref) {
   arity.min(1, arguments);
   var args = argsToArray(arguments);
   args.shift();
-  return new Expr({ call: wrap(ref), arguments: varargs(args) });
+  return new Expr({ call: wrap(ref), arguments: wrap(varargs(args)) });
 }
 
 /**
@@ -1081,7 +1081,7 @@ function Credentials(scope) {
  */
 function Equals() {
   arity.min(1, arguments);
-  return new Expr({ equals: varargs(arguments) });
+  return new Expr({ equals: wrap(varargs(arguments)) });
 }
 
 /**
