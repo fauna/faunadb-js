@@ -17,9 +17,8 @@ API reference.
 This Driver supports and is tested on:
 
 * Node.js
-  * LTS (v4)
-  * Stable (v6)
-  * v0.12.x
+  * LTS
+  * Stable
 * Chrome
 * Firefox
 * Safari
