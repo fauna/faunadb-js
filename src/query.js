@@ -794,10 +794,8 @@ function HasIdentity() {
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
- * @param {module:query~ExprArg} strings
- *   A list of strings to concatenate.
- * @param {?module:query~ExprArg} separator
- *   The separator to use between each string.
+ * @param {string} strings - A list of strings to concatenate.
+ * @param {string} separator  - The separator to use between each string.
  * @return {Expr}
  */
 function Concat(strings, separator) {
@@ -809,10 +807,8 @@ function Concat(strings, separator) {
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
- * @param {module:query~ExprArg} string
- *   The string to casefold.
- * @param {module:query~ExprArg} normalizer
- *   The algorithm to use. One of: NFKCCaseFold, NFC, NFD, NFKC, NFKD.
+ * @param {string} string - The string to casefold.
+ * @param {string} normalizer - The algorithm to use. One of: NFKCCaseFold, NFC, NFD, NFKC, NFKD.
  * @return {Expr}
  */
 function Casefold(string, normalizer) {
@@ -823,12 +819,9 @@ function Casefold(string, normalizer) {
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
- * @param {...module:query~ExprArg} terms
- *   A string to search.
- * @param {...module:query~ExprArg} terms
- *   Find the first position of this string in the search string
- * @param {...module:query~ExprArg} terms
- *   An optional start offset into the search string
+ * @param {string} value - A string to search.
+ * @param {string} find - Find the first position of this string in the search string
+ * @param {int} start - An optional start offset into the search string
  * @return {Expr}
  */
 function FindStr(value, find, start) {
@@ -838,16 +831,12 @@ function FindStr(value, find, start) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string_functions).
+ * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
- * @param {...module:query~ExprArg} terms
- *   A string to search.
- * @param {...module:query~ExprArg} terms
- *   Find the first position of this string in the search string
- * @param {...module:query~ExprArg} terms
- *   An optional start offset into the search string
- * @param {...module:query~ExprArg} terms
- *   An optional number of results to return, max 1024
+ * @param {string} value - A string to search.
+ * @param {string} pattern - Find the first position of this pattern in the search string using a java regular expression syntax
+ * @param {int} start - An optional start offset into the search string
+ * @param {int} numResults - An optional number of results to return, max 1024
  * @return {Expr}
  */
 function FindStrRegex(value, pattern, start, numResults) {
@@ -857,43 +846,40 @@ function FindStrRegex(value, pattern, start, numResults) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string_functions).
+ * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
- * @param {module:query~ExprArg} string
- *   The string to calculate the length in codepoints.
+ * @param {string} value - The string to calculate the length in codepoints.
  * @return {Expr}
  */
-function Length(expr) {
+function Length(value) {
   arity.exact(1, arguments);
-  return new Expr(params({ length: wrap(expr) }));
+  return new Expr(params({ length: wrap(value) }));
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string_functions).
+ * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
- * @param {module:query~ExprArg} string
- *   The string to LowerCase.
+ * @param {string} value - The string to LowerCase.
  * @return {Expr}
  */
-function LowerCase(expr) {
+function LowerCase(value) {
   arity.exact(1, arguments);
-  return new Expr(params({ lowercase: wrap(expr) }));
+  return new Expr(params({ lowercase: wrap(value) }));
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string_functions).
+ * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
- * @param {module:query~ExprArg} string
- *   The string to LowerCase.
+ * @param {string} value - The string to trim leading white space.
  * @return {Expr}
  */
-function LTrim(expr) {
+function LTrim(value) {
   arity.exact(1, arguments);
-  return new Expr(params({ ltrim: wrap(expr) }));
+  return new Expr(params({ ltrim: wrap(value) }));
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string_functions).
+ * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
  * @param {module:query~ExprArg} terms
  *   A document from which to produce ngrams.
@@ -912,12 +898,10 @@ function NGram(terms, min, max) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string_functions).
+ * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
- * @param {...module:query~ExprArg} terms
- *   A string to repeat.
- * @param {...module:query~ExprArg} terms
- *   The number of times to repeat the string
+ * @param {String} value - A string to repeat.
+ * @param {int} number - The number of times to repeat the string
  * @return {Expr}
  */
 function Repeat(value, number) {
@@ -927,14 +911,11 @@ function Repeat(value, number) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string_functions).
+ * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
- * @param {...module:query~ExprArg} terms
- *   A string to search.
- * @param {...module:query~ExprArg} terms
- *   The string to find in the search string
- * @param {...module:query~ExprArg} terms
- *   The string to replace in the search string
+ * @param {String} value - A string to search.
+ * @param {String} find - The string to find in the search string
+ * @param {string} replace - The string to replace in the search string
  * @return {Expr}
  */
 function ReplaceStr(value, find, replace) {
@@ -943,16 +924,12 @@ function ReplaceStr(value, find, replace) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string_functions).
+ * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
- * @param {...module:query~ExprArg} terms
- *   A string to search.
- * @param {...module:query~ExprArg} terms
- *   The pattern to find in the search string
- * @param {...module:query~ExprArg} terms
- *   The string to replace in the search string
- * @param {...module:query~ExprArg} terms
- *   replace all or just the first
+ * @param {string} value - A string to search.
+ * @param {string} pattern - The pattern to find in the search string using a java regular expression syntax
+ * @param {string} replace - The string to replace in the search string
+ * @param {boolean} first - Replace all or just the first
  * @return {Expr}
  */
 function ReplaceStrRegex(value, pattern, replace, first) {
@@ -962,30 +939,28 @@ function ReplaceStrRegex(value, pattern, replace, first) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string_functions).
+ * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
- * @param {module:query~ExprArg} string
- *   The string to remove white space from the end.
+ * @param {String} value - The string to remove white space from the end.
  * @return {Expr}
  */
-function RTrim(expr) {
+function RTrim(value) {
   arity.exact(1, arguments);
-  return new Expr(params({ rtrim: wrap(expr) }));
+  return new Expr(params({ rtrim: wrap(value) }));
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string_functions).
+ * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
- * @param {module:query~ExprArg} string
- *   The string to Space.
+ * @param {int} num - The string of N Space(s).
  * @return {Expr}
  */
-function Space(expr) {
+function Space(num) {
   arity.exact(1, arguments);
-  return new Expr(params({ space: wrap(expr) }));
+  return new Expr(params({ space: wrap(num) }));
 }
 /**
- * See the [docs](https://fauna.com/documentation/queries#string_functions).
+ * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
  * @param {module:query~ExprArg} string
  *   The string to SubString.
@@ -999,39 +974,36 @@ function SubString(value, start, length) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string_functions).
+ * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
- * @param {module:query~ExprArg} string
- *   The string to TitleCase.
+ * @param {string} value - The string to TitleCase.
  * @return {Expr}
  */
-function TitleCase(expr) {
+function TitleCase(value) {
   arity.exact(1, arguments);
-  return new Expr(params({ titlecase: wrap(expr) }));
+  return new Expr(params({ titlecase: wrap(value) }));
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string_functions).
+ * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
- * @param {module:query~ExprArg} string
- *   The string to Trim.
+ * @param {string} value - The string to Trim.
  * @return {Expr}
  */
-function Trim(expr) {
+function Trim(value) {
   arity.exact(1, arguments);
-  return new Expr(params({ trim: wrap(expr) }));
+  return new Expr(params({ trim: wrap(value) }));
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string_functions).
+ * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
- * @param {module:query~ExprArg} string
- *   The string to Uppercase.
+ * @param {string} value - The string to Uppercase.
  * @return {Expr}
  */
-function UpperCase(expr) {
+function UpperCase(value) {
   arity.exact(1, arguments);
-  return new Expr(params({ uppercase: wrap(expr) }));
+  return new Expr(params({ uppercase: wrap(value) }));
 }
 
 // Time and date functions
