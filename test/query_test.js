@@ -135,12 +135,18 @@ describe('query', function () {
   });
 
   it('do', function () {
-    return create().then(function (i) {
+    var p1 = create().then(function (i) {
       var ref = i.ref;
       return assertQuery(query.Do(query.Delete(ref), 1), 1).then(function () {
-        assertQuery(query.Exists(ref), false);
+        return assertQuery(query.Exists(ref), false);
       });
     });
+
+    var p2 = assertQuery(query.Do(1), 1);
+    var p3 = assertQuery(query.Do(1, 2), 2);
+    var p4 = assertQuery(query.Do([1, 2]), [1, 2]);
+
+    return Promise.all([p1, p2, p3, p4]);
   });
 
   it('object', function () {
