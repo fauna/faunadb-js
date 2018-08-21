@@ -1,4 +1,7 @@
 ## 2.6.0-SNAPSHOT
+- Add stdlib string functions FindStr(), FindStrRegex(), Length(), Lower(),
+  LTrim(), Repeat(), ReplaceStr(), ReplaceStrRegex(), RTrim(), Space(),
+  SubString(), TitleCase(), Trim(), Upper()
 
 ## 2.5.0 (August 1, 2018)
 - Add support for the X-Last-Seen-Txn header
