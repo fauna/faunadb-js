@@ -142,7 +142,8 @@ function If(condition, then, _else) {
  * */
 function Do() {
   arity.min(1, arguments);
-  return new Expr({ do: wrap(varargs(arguments)) });
+  var args = argsToArray(arguments);
+  return new Expr({ do: wrap(args) });
 }
 
 /** See the [docs](https://fauna.com/documentation/queries#basic_forms).
