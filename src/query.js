@@ -795,7 +795,7 @@ function HasIdentity() {
  *
  * @param {string} strings - A list of strings to concatenate.
  * @param {string} separator  - The separator to use between each string.
- * @return {Expr}
+ * @return {string} a single combine string
  */
 function Concat(strings, separator) {
   arity.min(1, arguments);
@@ -808,7 +808,7 @@ function Concat(strings, separator) {
  *
  * @param {string} string - The string to casefold.
  * @param {string} normalizer - The algorithm to use. One of: NFKCCaseFold, NFC, NFD, NFKC, NFKD.
- * @return {Expr}
+ * @return {string} a casefold string
  */
 function Casefold(string, normalizer) {
   arity.min(1, arguments);
@@ -821,7 +821,7 @@ function Casefold(string, normalizer) {
  * @param {string} value - A string to search.
  * @param {string} find - Find the first position of this string in the search string
  * @param {int} start - An optional start offset into the search string
- * @return {Expr}
+ * @return {int} location of the found string or -1 if not found
  */
 function FindStr(value, find, start) {
   arity.between(2, 3, arguments);
@@ -836,7 +836,7 @@ function FindStr(value, find, start) {
  * @param {string} pattern - Find the first position of this pattern in the search string using a java regular expression syntax
  * @param {int} start - An optional start offset into the search string
  * @param {int} numResults - An optional number of results to return, max 1024
- * @return {Expr}
+ * @return {Array} an array of object describing where the search pattern was located
  */
 function FindStrRegex(value, pattern, start, numResults) {
   arity.between(2, 4, arguments);
@@ -848,7 +848,7 @@ function FindStrRegex(value, pattern, start, numResults) {
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
  * @param {string} value - The string to calculate the length in codepoints.
- * @return {Expr}
+ * @return {int} the length of the string in codepoints
  */
 function Length(value) {
   arity.exact(1, arguments);
@@ -859,7 +859,7 @@ function Length(value) {
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
  * @param {string} value - The string to LowerCase.
- * @return {Expr}
+ * @return {string} the string convert to lowercase
  */
 function LowerCase(value) {
   arity.exact(1, arguments);
@@ -870,7 +870,7 @@ function LowerCase(value) {
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
  * @param {string} value - The string to trim leading white space.
- * @return {Expr}
+ * @return {string} the string's leading white space removed
  */
 function LTrim(value) {
   arity.exact(1, arguments);
@@ -886,7 +886,7 @@ function LTrim(value) {
  *   An object of options
  *     - min: The minimum ngram size.
  *     - max: The maximum ngram size.
- * @return {Expr}
+ * @return {string|Array}
  */
 function NGram(terms, opts) {
   arity.between(1, 2, arguments);
@@ -898,9 +898,9 @@ function NGram(terms, opts) {
 /**
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
- * @param {String} value - A string to repeat.
+ * @param {string} value - A string to repeat.
  * @param {int} number - The number of times to repeat the string
- * @return {Expr}
+ * @return {string} a string which was repeated
  */
 function Repeat(value, number) {
   arity.between(1, 2, arguments);
@@ -911,10 +911,10 @@ function Repeat(value, number) {
 /**
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
- * @param {String} value - A string to search.
- * @param {String} find - The string to find in the search string
+ * @param {string} value - A string to search.
+ * @param {string} find - The string to find in the search string
  * @param {string} replace - The string to replace in the search string
- * @return {Expr}
+ * @return {String} all the occurrences of find substituted with replace string
  */
 function ReplaceStr(value, find, replace) {
   arity.exact(3, arguments);
@@ -928,7 +928,7 @@ function ReplaceStr(value, find, replace) {
  * @param {string} pattern - The pattern to find in the search string using a java regular expression syntax
  * @param {string} replace - The string to replace in the search string
  * @param {boolean} first - Replace all or just the first
- * @return {Expr}
+ * @return {string} all the occurrences of find pattern substituted with replace string
  */
 function ReplaceStrRegex(value, pattern, replace, first) {
   arity.between(3, 4, arguments);
@@ -939,8 +939,8 @@ function ReplaceStrRegex(value, pattern, replace, first) {
 /**
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
- * @param {String} value - The string to remove white space from the end.
- * @return {Expr}
+ * @param {string} value - The string to remove white space from the end.
+ * @return {string} all white space removed from the end of the string
  */
 function RTrim(value) {
   arity.exact(1, arguments);
@@ -951,7 +951,7 @@ function RTrim(value) {
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
  * @param {int} num - The string of N Space(s).
- * @return {Expr}
+ * @return {string} a string with spaces
  */
 function Space(num) {
   arity.exact(1, arguments);
@@ -960,9 +960,10 @@ function Space(num) {
 /**
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
- * @param {module:query~ExprArg} string
- *   The string to SubString.
- * @return {Expr}
+ * @param {string} value  The string to SubString.
+ * @param {int} start  Positive from the start, negative from the end of the string
+ * @param {int} length  An optional length, if omitted then returns to the end of string
+ * @return {string}
  */
 function SubString(value, start, length) {
   arity.between(1, 3, arguments);
@@ -975,7 +976,7 @@ function SubString(value, start, length) {
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
  * @param {string} value - The string to TitleCase.
- * @return {Expr}
+ * @return {string}  A string with titlecase
  */
 function TitleCase(value) {
   arity.exact(1, arguments);
@@ -986,7 +987,7 @@ function TitleCase(value) {
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
  * @param {string} value - The string to Trim.
- * @return {Expr}
+ * @return {string} remove white space from the leading and end of the string
  */
 function Trim(value) {
   arity.exact(1, arguments);
@@ -997,7 +998,7 @@ function Trim(value) {
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
  * @param {string} value - The string to Uppercase.
- * @return {Expr}
+ * @return {string} An uppercase string
  */
 function UpperCase(value) {
   arity.exact(1, arguments);
