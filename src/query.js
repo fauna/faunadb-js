@@ -796,7 +796,7 @@ function HasIdentity() {
  *
  * @param {string} strings - A list of strings to concatenate.
  * @param {string} separator  - The separator to use between each string.
- * @return {string} a single combine string
+ * @return {string} a single combined string
  */
 function Concat(strings, separator) {
   arity.min(1, arguments);
@@ -809,7 +809,7 @@ function Concat(strings, separator) {
  *
  * @param {string} string - The string to casefold.
  * @param {string} normalizer - The algorithm to use. One of: NFKCCaseFold, NFC, NFD, NFKC, NFKD.
- * @return {string} a casefold string
+ * @return {string} a normalized string
  */
 function Casefold(string, normalizer) {
   arity.min(1, arguments);
@@ -860,7 +860,7 @@ function Length(value) {
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
  * @param {string} value - The string to LowerCase.
- * @return {string} the string convert to lowercase
+ * @return {string} the string converted to lowercase
  */
 function LowerCase(value) {
   arity.exact(1, arguments);
@@ -871,7 +871,7 @@ function LowerCase(value) {
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
  * @param {string} value - The string to trim leading white space.
- * @return {string} the string's leading white space removed
+ * @return {string} the string with leading white space removed
  */
 function LTrim(value) {
   arity.exact(1, arguments);
@@ -887,7 +887,7 @@ function LTrim(value) {
  *   An object of options
  *     - min: The minimum ngram size.
  *     - max: The maximum ngram size.
- * @return {string|Array}
+ * @return {Array|Value}
  */
 function NGram(terms, opts) {
   arity.between(1, 2, arguments);
@@ -941,7 +941,7 @@ function ReplaceStrRegex(value, pattern, replace, first) {
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
  * @param {string} value - The string to remove white space from the end.
- * @return {string} all white space removed from the end of the string
+ * @return {string} the string with trailing whitespaces removed
  */
 function RTrim(value) {
   arity.exact(1, arguments);
@@ -962,7 +962,7 @@ function Space(num) {
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
  * @param {string} value  The string to SubString.
- * @param {int} start  Positive from the start, negative from the end of the string
+ * @param {int} start  The position the first character of the return string begins at
  * @param {int} length  An optional length, if omitted then returns to the end of string
  * @return {string}
  */
@@ -977,7 +977,7 @@ function SubString(value, start, length) {
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
  * @param {string} value - The string to TitleCase.
- * @return {string}  A string with titlecase
+ * @return {string}  A string converted to titlecase
  */
 function TitleCase(value) {
   arity.exact(1, arguments);
@@ -988,7 +988,7 @@ function TitleCase(value) {
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
  *
  * @param {string} value - The string to Trim.
- * @return {string} remove white space from the leading and end of the string
+ * @return {string} a string with leading and trailing whitespace removed
  */
 function Trim(value) {
   arity.exact(1, arguments);
@@ -1011,7 +1011,7 @@ function UpperCase(value) {
  * See the [docs](https://fauna.com/documentation/queries#time_functions).
  *
  * @param {module:query~ExprArg} string
- *   A string to convert to a time object.
+ *   A string to converted to a time object.
  * @return {Expr}
  */
 function Time(string) {
