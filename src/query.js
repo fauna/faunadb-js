@@ -827,7 +827,7 @@ function Casefold(string, normalizer) {
 function FindStr(value, find, start) {
   arity.between(2, 3, arguments);
   start = defaults(start, null);
-  return new Expr(params({ findstr: wrap(value) }, { find: wrap(find) }, { start: wrap(start) }));
+  return new Expr(params({ findstr: wrap(value), find: wrap(find) }, { start: wrap(start) }));
 }
 
 /**
@@ -842,7 +842,7 @@ function FindStr(value, find, start) {
 function FindStrRegex(value, pattern, start, numResults) {
   arity.between(2, 4, arguments);
   start = defaults(start, null);
-  return new Expr(params({ findstrregex: wrap(value) }, { pattern: wrap(pattern) }, { start: wrap(start) }, { num_results: wrap(numResults) }));
+  return new Expr(params({ findstrregex: wrap(value), pattern: wrap(pattern) }, { start: wrap(start), num_results: wrap(numResults) }));
 }
 
 /**
@@ -853,7 +853,7 @@ function FindStrRegex(value, pattern, start, numResults) {
  */
 function Length(value) {
   arity.exact(1, arguments);
-  return new Expr(params({ length: wrap(value) }));
+  return new Expr({ length: wrap(value) });
 }
 
 /**
@@ -864,7 +864,7 @@ function Length(value) {
  */
 function LowerCase(value) {
   arity.exact(1, arguments);
-  return new Expr(params({ lowercase: wrap(value) }));
+  return new Expr({ lowercase: wrap(value) });
 }
 
 /**
@@ -875,7 +875,7 @@ function LowerCase(value) {
  */
 function LTrim(value) {
   arity.exact(1, arguments);
-  return new Expr(params({ ltrim: wrap(value) }));
+  return new Expr({ ltrim: wrap(value) });
 }
 
 /**
@@ -919,7 +919,7 @@ function Repeat(value, number) {
  */
 function ReplaceStr(value, find, replace) {
   arity.exact(3, arguments);
-  return new Expr(params({ replacestr: wrap(value) }, params({ find: wrap(find) }, { replace: wrap(replace) })));
+  return new Expr({ replacestr: wrap(value), find: wrap(find), replace: wrap(replace) });
 }
 
 /**
@@ -934,7 +934,7 @@ function ReplaceStr(value, find, replace) {
 function ReplaceStrRegex(value, pattern, replace, first) {
   arity.between(3, 4, arguments);
   first = defaults(first, null);
-  return new Expr(params({ replacestrregex: wrap(value) }, params( params({ pattern: wrap(pattern) }, { replace: wrap(replace) }), { first: wrap(first) }) ));
+  return new Expr(params({ replacestrregex: wrap(value), pattern: wrap(pattern), replace: wrap(replace) }, { first: wrap(first) }));
 }
 
 /**
@@ -945,7 +945,7 @@ function ReplaceStrRegex(value, pattern, replace, first) {
  */
 function RTrim(value) {
   arity.exact(1, arguments);
-  return new Expr(params({ rtrim: wrap(value) }));
+  return new Expr({ rtrim: wrap(value) });
 }
 
 /**
@@ -956,7 +956,7 @@ function RTrim(value) {
  */
 function Space(num) {
   arity.exact(1, arguments);
-  return new Expr(params({ space: wrap(num) }));
+  return new Expr({ space: wrap(num) });
 }
 /**
  * See the [docs](https://fauna.com/documentation/queries#string-functions).
@@ -970,7 +970,7 @@ function SubString(value, start, length) {
   arity.between(1, 3, arguments);
   start = defaults(start, null);
   length = defaults(length, null);
-  return new Expr(params({ substring: wrap(value) }, params({ start: wrap(start) }, { length: wrap(length) } )));
+  return new Expr(params({ substring: wrap(value) }, { start: wrap(start), length: wrap(length) } ));
 }
 
 /**
@@ -981,7 +981,7 @@ function SubString(value, start, length) {
  */
 function TitleCase(value) {
   arity.exact(1, arguments);
-  return new Expr(params({ titlecase: wrap(value) }));
+  return new Expr({ titlecase: wrap(value) });
 }
 
 /**
@@ -992,7 +992,7 @@ function TitleCase(value) {
  */
 function Trim(value) {
   arity.exact(1, arguments);
-  return new Expr(params({ trim: wrap(value) }));
+  return new Expr({ trim: wrap(value) });
 }
 
 /**
@@ -1003,7 +1003,7 @@ function Trim(value) {
  */
 function UpperCase(value) {
   arity.exact(1, arguments);
-  return new Expr(params({ uppercase: wrap(value) }));
+  return new Expr({ uppercase: wrap(value) });
 }
 
 // Time and date functions

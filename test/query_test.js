@@ -604,8 +604,8 @@ describe('query', function () {
   it('findstr', function () {
     var p1 = assertQuery(query.FindStr("ABC","A"), 0);
     var p2 = assertQuery(query.FindStr("ABC","A",0), 0);
-    var p3 = assertQuery(query.FindStr("ABC","A",1), 0);
-    var p4 = assertQuery(query.FindStr("a big apple","a", 2), 0);
+    var p3 = assertQuery(query.FindStr("ABC","A",1), -1);
+    var p4 = assertQuery(query.FindStr("a big apple","a", 2), 6);
 
     return Promise.all([p1, p2, p3, p4]);
   });

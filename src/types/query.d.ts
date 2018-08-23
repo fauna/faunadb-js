@@ -74,7 +74,7 @@ export module query {
   export function RTrim(expr: ExprArg): Expr;
   export function Space(expr: ExprArg): Expr;
   export function SubString(expr: ExprArg, start?: ExprArg, length?: ExprArg): Expr;
-  export function TitleCase(expr: ExprArg): Expr;
+  export function TitleCase(value: ExprArg): Expr;
   export function Trim(expr: ExprArg): Expr;
   export function UpperCase(expr: ExprArg): Expr;
 
