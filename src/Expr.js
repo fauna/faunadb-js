@@ -17,7 +17,7 @@ Expr.prototype.toJSON = function() {
 
 var varArgsFunctions = ['Do', 'Call', 'Union', 'Intersection', 'Difference', 'Equals',
                         'Add', 'BitAnd', 'BitOr', 'BitXor',  'Divide', 'Max', 'Min',
-                        'Modulo', 'Multiply', 'Round', 'Subtract', 'Trunc', 'Hypot', 'Pow',
+                        'Modulo', 'Multiply', 'Subtract',
                         'LT', 'LTE', 'GT', 'GTE', 'And', 'Or'];
 var specialCases = {
   is_nonempty: 'is_non_empty',
