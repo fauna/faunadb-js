@@ -16,7 +16,6 @@ Expr.prototype.toJSON = function() {
 };
 
 var varArgsFunctions = ['Do', 'Call', 'Union', 'Intersection', 'Difference', 'Equals',
-                        'FindStr', 'FindStrRegex', 'Repeat', 'SubString', 'ReplaceStrRegex',
                         'Add', 'BitAnd', 'BitOr', 'BitXor',  'Divide', 'Max', 'Min',
                         'Modulo', 'Multiply', 'Round', 'Subtract', 'Trunc', 'Hypot', 'Pow',
                         'LT', 'LTE', 'GT', 'GTE', 'And', 'Or'];
