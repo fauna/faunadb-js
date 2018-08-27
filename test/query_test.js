@@ -601,6 +601,62 @@ describe('query', function () {
     ]);
   });
 
+  it('findstr', function () {
+    var p1 = assertQuery(query.FindStr("ABC","A"), 0);
+    var p2 = assertQuery(query.FindStr("ABC","A",0), 0);
+    var p3 = assertQuery(query.FindStr("ABC","A",1), -1);
+    var p4 = assertQuery(query.FindStr("a big apple","a", 2), 6);
+
+    return Promise.all([p1, p2, p3, p4]);
+  });
+
+  it('findstrregex', function () {
+    var p1 = assertQuery(query.FindStrRegex("ABC","A"),
+                          [ { start: 0, end: 0, data: 'A' } ]
+                         );
+    var p2 = assertQuery(query.FindStrRegex("ABCAB","AB"),
+                          [
+                          { start: 0, end: 1, data: 'AB' } ,
+                          { start: 3, end: 4, data: 'AB' }
+                          ]
+                        );
+    var p3 = assertQuery(query.FindStrRegex("one fish two Fish","[fF]ish"),
+                          [
+                          { start: 4, end: 7, data: 'fish' } ,
+                          { start: 13, end: 16, data: 'Fish' }
+                          ]
+    );
+
+    return Promise.all([p1, p2, p3]);
+  });
+
+  it('length', function () {
+    var p1 = assertQuery(query.Length(""), 0);
+    var p2 = assertQuery(query.Length("A"), 1);
+    var p3 = assertQuery(query.Length("ApPle"), 5);
+    var p4 = assertQuery(query.Length("two words"), 9);
+
+    return Promise.all([p1, p2, p3, p4]);
+  });
+
+  it('lowercase', function () {
+    var p1 = assertQuery(query.LowerCase(""), "");
+    var p2 = assertQuery(query.LowerCase("A"), "a");
+    var p3 = assertQuery(query.LowerCase("ApPle"), 'apple');
+    var p4 = assertQuery(query.LowerCase("İstanbul"), "i̇stanbul");
+
+    return Promise.all([p1, p2, p3, p4]);
+  });
+
+  it('ltrim', function () {
+    var p1 = assertQuery(query.LTrim(""), "");
+    var p2 = assertQuery(query.LTrim("    A"), "A");
+    var p3 = assertQuery(query.LTrim("\t\n\t\n  Apple"), 'Apple');
+    var p4 = assertQuery(query.LTrim(" A B C"), "A B C");
+
+    return Promise.all([p1, p2, p3, p4]);
+  });
+
   it('ngram', function() {
     return Promise.all([
       assertQuery(query.NGram("what"), ["w", "wh", "h", "ha", "a", "at", "t"]),
@@ -609,6 +665,69 @@ describe('query', function () {
       assertQuery(query.NGram(["john", "doe"]), ["j", "jo", "o", "oh", "h", "hn", "n", "d", "do", "o", "oe", "e"]),
       assertQuery(query.NGram(["john", "doe"], {min: 3, max: 4}), ["joh", "john", "ohn", "doe"])
     ]);
+  });
+
+  it('repeat', function () {
+    var p1 = assertQuery(query.Repeat("A"), "AA");
+    var p2 = assertQuery(query.Repeat("ABC", 3), "ABCABCABC");
+
+    return Promise.all([p1, p2]);
+  });
+
+  it('replacestr', function () {
+    var p1 = assertQuery(query.ReplaceStr("ABCDE","AB","AA"), "AACDE");
+    var p2 = assertQuery(query.ReplaceStr("One Fish Two Fish","Fish","Cat"), "One Cat Two Cat");
+
+    return Promise.all([p1, p2]);
+  });
+
+  it('replacestrregex', function () {
+    var p1 = assertQuery(query.ReplaceStrRegex("ABCDE","AB","AA"), "AACDE");
+    var p2 = assertQuery(query.ReplaceStrRegex("One Fish Two fish","[Ff]ish","Cat"), "One Cat Two Cat");
+
+    return Promise.all([p1, p2]);
+  });
+
+  it('rtrim', function () {
+    var p1 = assertQuery(query.RTrim("A\t\n   "), "A");
+    var p2 = assertQuery(query.RTrim("ABC DE F "), "ABC DE F");
+
+    return Promise.all([p1, p2]);
+  });
+
+  it('space', function () {
+    var p1 = assertQuery(query.Space(0), "");
+    var p2 = assertQuery(query.Space(5), "     ");
+
+    return Promise.all([p1, p2]);
+  });
+
+  it('substring', function () {
+    var p1 = assertQuery(query.SubString("ABCDEF",-3), "DEF");
+    var p2 = assertQuery(query.SubString("ABCDEF",0,3), "ABC");
+
+    return Promise.all([p1, p2]);
+  });
+
+  it('titlecase', function () {
+    var p1 = assertQuery(query.TitleCase("one fISH tWo FISH"), "One Fish Two Fish");
+    var p2 = assertQuery(query.TitleCase("ABC DEF"), "Abc Def");
+
+    return Promise.all([p1, p2]);
+  });
+
+  it('trim', function () {
+    var p1 = assertQuery(query.Trim("   A   "), "A");
+    var p2 = assertQuery(query.Trim("\t\nABC DEF\t\n   "), "ABC DEF");
+
+    return Promise.all([p1, p2]);
+  });
+
+  it('uppercase', function () {
+    var p1 = assertQuery(query.UpperCase("a"), "A");
+    var p2 = assertQuery(query.UpperCase("abc def"), "ABC DEF");
+
+    return Promise.all([p1, p2]);
   });
 
   // Time and date functions
@@ -1036,7 +1155,12 @@ describe('query', function () {
       'Difference': [0, 'at least 1'],
       'Concat': [0, 'at least 1'],
       'Casefold': [0, 'at least 1'],
+      'FindStr': [0, 'from 2 to 3'],
+      'FindStrRegex': [0, 'from 2 to 4'],
       'NGram': [3, 'from 1 to 2'],
+      'Repeat': [0, 'from 1 to 2'],
+      'ReplaceStrRegex': [0, 'from 3 to 4'],
+      'SubString': [0, 'from 1 to 3'],
       'Equals': [0, 'at least 1'],
       'Select': [4, 'from 2 to 3'],
       'Add': [0, 'at least 1'],
