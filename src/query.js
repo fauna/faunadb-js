@@ -95,14 +95,20 @@ function At(timestamp, expr) {
  * */
 function Let(vars, in_expr) {
   arity.exact(2, arguments);
+  var expr = in_expr;
+  var bindings = Object.keys(vars).map(function (k) {
+    var b = {};
+    b[k] = wrap(vars[k]);
+    return b;
+  });
 
-  if (typeof in_expr === 'function') {
-    in_expr = in_expr.apply(null, Object.keys(vars).map(function(name) {
+  if (typeof expr === 'function') {
+    expr = expr.apply(null, Object.keys(vars).map(function(name) {
       return Var(name);
     }));
   }
 
-  return new Expr({ let: wrapValues(vars), in: wrap(in_expr) });
+  return new Expr({ let: bindings, in: wrap(expr) });
 }
 
 /**
