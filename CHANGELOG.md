@@ -3,6 +3,7 @@
 - Add stdlib string functions FindStr(), FindStrRegex(), Length(), Lower(),
   LTrim(), Repeat(), ReplaceStr(), ReplaceStrRegex(), RTrim(), Space(),
   SubString(), TitleCase(), Trim(), Upper()
+- Add support for backrefs in `Let()`. Requires FaunaDB 2.6.0
 
 ## 2.5.0 (August 1, 2018)
 - Add support for the X-Last-Seen-Txn header
