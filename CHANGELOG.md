@@ -1,9 +1,11 @@
 ## 2.6.0-SNAPSHOT
-- Fix a bug on `Do()` function that was preventing expressions with only one statement
 - Add stdlib string functions FindStr(), FindStrRegex(), Length(), Lower(),
   LTrim(), Repeat(), ReplaceStr(), ReplaceStrRegex(), RTrim(), Space(),
   SubString(), TitleCase(), Trim(), Upper()
 - Add support for backrefs in `Let()`. Requires FaunaDB 2.6.0
+
+## 2.5.1 (September 7, 2018)
+- Fix a bug on `Do()` function that was preventing expressions with only one statement
 - Fix bug on string formatter of expressions types
 - Adds support for Symbol type
 
