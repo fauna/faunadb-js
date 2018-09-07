@@ -28,11 +28,19 @@ var exprToString = function(expr, caller) {
   if (expr instanceof Expr)
     expr = expr.raw;
 
-  if (typeof expr === 'string')
+  var type = typeof expr;
+
+  if (type === 'string')
     return '"' + expr + '"';
 
-  if (typeof expr === 'number')
+  if (type === 'symbol' || type === 'number' || type === 'boolean')
     return expr.toString();
+
+  if (type === 'undefined')
+    return 'undefined';
+
+  if (expr === null)
+    return 'null';
 
   if (Array.isArray(expr)) {
     var array = expr.map(function(item) { return exprToString(item); }).join(', ');

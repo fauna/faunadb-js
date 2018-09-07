@@ -274,4 +274,26 @@ describe('Values', function() {
       'Query(Lambda(["x", "y"], Add(Var("x"), Add(Var("y"), 1))))'
     );
   });
+
+  it('pretty print Expr with primitive types', function() {
+    assertPrint(
+      new Query(q.Lambda('_', {x: true, y: false, z: 'str', w: 10})),
+      'Query(Lambda("_", {x: true, y: false, z: "str", w: 10}))'
+    );
+
+    assertPrint(
+      new Query(q.Lambda('_', [true, false, 'str', 10])),
+      'Query(Lambda("_", [true, false, "str", 10]))'
+    );
+
+    assertPrint(
+      new Query(q.Lambda('_', [null, undefined])),
+      'Query(Lambda("_", [null, undefined]))'
+    );
+
+    assertPrint(
+      new Query(q.Lambda('_', Symbol('foo'))),
+      'Query(Lambda("_", "foo"))'
+    );
+  });
 });

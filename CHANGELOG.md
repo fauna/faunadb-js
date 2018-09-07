@@ -1,5 +1,7 @@
 ## 2.6.0-SNAPSHOT
 - Fix a bug on `Do()` function that was preventing expressions with only one statement
+- Fix bug on string formatter of expressions types
+- Adds support for Symbol type
 
 ## 2.5.0 (August 1, 2018)
 - Add support for the X-Last-Seen-Txn header
