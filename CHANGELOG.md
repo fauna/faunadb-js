@@ -1,4 +1,4 @@
-## 2.6.0-SNAPSHOT
+## 2.5.1 (September 7, 2018)
 - Fix a bug on `Do()` function that was preventing expressions with only one statement
 - Fix bug on string formatter of expressions types
 - Adds support for Symbol type
