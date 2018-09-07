@@ -4,6 +4,8 @@
   LTrim(), Repeat(), ReplaceStr(), ReplaceStrRegex(), RTrim(), Space(),
   SubString(), TitleCase(), Trim(), Upper()
 - Add support for backrefs in `Let()`. Requires FaunaDB 2.6.0
+- Fix bug on string formatter of expressions types
+- Adds support for Symbol type
 
 ## 2.5.0 (August 1, 2018)
 - Add support for the X-Last-Seen-Txn header

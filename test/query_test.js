@@ -86,7 +86,11 @@ describe('query', function () {
       assert.equal(res, null);
     });
 
-    return Promise.all([pInteger, pNumber, pString, pObject, pArray, pNull]);
+    var pSymbol = client.query(Symbol('foo')).then(function (res) {
+      assert.equal(res, 'foo');
+    });
+
+    return Promise.all([pInteger, pNumber, pString, pObject, pArray, pNull, pSymbol]);
   });
 
   // Basic forms

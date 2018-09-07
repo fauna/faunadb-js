@@ -1936,6 +1936,10 @@ function wrap(obj) {
     return null;
   } else if (obj instanceof Expr) {
     return obj;
+  } else if (typeof obj === 'symbol') {
+    return obj.toString().replace(/Symbol\((.*)\)/, function(str, symbol) {
+      return symbol;
+    });
   } else if (typeof obj === 'function') {
     return Lambda(obj);
   } else if (Array.isArray(obj)) {
