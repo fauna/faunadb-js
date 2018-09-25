@@ -100,7 +100,7 @@ for more information on responses.
 
 This driver contains helpers to provide a simpler API for consuming paged
 responses from FaunaDB. See the [FaunaDB Developer Guide](https://fauna.com/documentation/dev)
-and the [Paginate Function Reference](https://fauna.com/documentation/queries#read_functions-paginate_set)
+and the [Paginate Function Reference](https://app.fauna.com/documentation/reference/queryapi#read-functions-paginate_set)
 for a description of paged responses.
 
 Using the helper to page over sets lets the driver handle cursoring and

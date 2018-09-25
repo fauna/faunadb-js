@@ -59,7 +59,7 @@ function Bytes(bytes) {
 // Basic forms
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#basic_forms).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
  *
  * @param {module:query~ExprArg} msg
  *   The message to send back to the client.
@@ -71,7 +71,7 @@ function Abort(msg) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#basic_forms).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
  *
  * @param {module:query~ExprArg} timestamp
  *   An Expr that will evaluate to a Time.
@@ -85,7 +85,7 @@ function At(timestamp, expr) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#basic_forms).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
  *
  * @param {module:query~ExprArg} bindings
  *   A set of bindings to use within the given expression.
@@ -112,7 +112,7 @@ function Let(vars, in_expr) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#basic_forms).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
  *
  * @param {module:query~ExprArg} varName
  *   The name of the bound var.
@@ -124,7 +124,7 @@ function Var(varName) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#basic_forms).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
  *
  * @param {module:query~ExprArg} condition
  *   An expression that returns a boolean.
@@ -140,7 +140,7 @@ function If(condition, then, _else) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#basic_form).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
  *
  * @param {...module:query~ExprArg} args
  *   A series of expressions to run.
@@ -152,7 +152,7 @@ function Do() {
   return new Expr({ do: wrap(args) });
 }
 
-/** See the [docs](https://fauna.com/documentation/queries#basic_forms).
+/** See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
  *
  * @param {...module:query~ExprArg} fields
  *   The object to be escaped.
@@ -164,7 +164,7 @@ var objectFunction = function(fields) {
 };
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#basic_forms).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
  *
  * Takes a Javascript function, and will transform it
  * into the appropriate FaunaDB query. For example:
@@ -181,7 +181,7 @@ var objectFunction = function(fields) {
  * @return {Expr}
  *
  *//**
- * See the [docs](https://fauna.com/documentation/queries#basic_forms).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
  *
  * Directly produces a FaunaDB Lambda expression as described in the FaunaDB reference
  * documentation.
@@ -235,7 +235,7 @@ function _lambdaExpr(var_name, expr) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#basic_forms).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
  *
  * Invokes a given function passing in the provided arguments
  *
@@ -257,7 +257,7 @@ function Call(ref) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#basic_forms).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
  *
  * Constructs a `@query` type using the Lambda() or a function.
  *
@@ -277,7 +277,7 @@ function Query(lambda) {
 
 // Collection functions
 
-/** See the [docs](https://fauna.com/documentation/queries#collection_functions).
+/** See the [docs](https://app.fauna.com/documentation/reference/queryapi#collections).
  *
  * @param {module:query~ExprArg} collection
  *   An expression resulting in a collection to be mapped over.
@@ -291,7 +291,7 @@ function Map(collection, lambda_expr) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#collection_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#collections).
  *
  * @param {module:query~ExprArg} collection
  *   An expression resulting in a collection to be iterated over.
@@ -305,7 +305,7 @@ function Foreach(collection, lambda_expr) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#collection_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#collections).
  *
  * @param {module:query~ExprArg} collection
  *   An expression resulting in a collection to be filtered.
@@ -319,7 +319,7 @@ function Filter(collection, lambda_expr) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#collection_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#collections).
  *
  * @param {module:query~ExprArg} number
  *   An expression resulting in the number of elements to take from the collection.
@@ -333,7 +333,7 @@ function Take(number, collection) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#collection_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#collections).
  *
  * @param {module:query~ExprArg} number
  *   An expression resulting in the number of elements to drop from the collection.
@@ -347,7 +347,7 @@ function Drop(number, collection) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#collection_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#collections).
  *
  * @param {module:query~ExprArg} elements
  *   An expression resulting in a collection of elements to prepend to the given collection.
@@ -361,7 +361,7 @@ function Prepend(elements, collection) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#collection_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#collections).
  *
  * @param {module:query~ExprArg} elements
  *   An expression resulting in a collection of elements to append to the given collection.
@@ -375,7 +375,7 @@ function Append(elements, collection) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#collection_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#collections).
  *
  * @param {module:query~ExprArg} collection
  *   An expression resulting in a collection.
@@ -387,7 +387,7 @@ function IsEmpty(collection) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#collection_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#collections).
  *
  * @param {module:query~ExprArg} collection
  *   An expression resulting in a collection.
@@ -401,7 +401,7 @@ function IsNonEmpty(collection) {
 // Read functions
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#read_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#read-functions).
  *
  * @param {module:query~ExprArg} ref
  *   An expression resulting in either a Ref or SetRef.
@@ -417,7 +417,7 @@ function Get(ref, ts) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#read_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#read-functions).
  *
  * @param {module:query~ExprArg} secret
  *   The key or token secret to lookup.
@@ -429,7 +429,7 @@ function KeyFromSecret(secret) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#read_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#read-functions).
  * You may want to utilize {@link Client#paginate} to obtain a {@link PageHelper},
  * rather than using this query function directly.
  *
@@ -451,7 +451,7 @@ function Paginate(set, opts) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#read_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#read-functions).
  *
  * @param {module:query~ExprArg} ref
  *   An expression resulting in a Ref.
@@ -469,7 +469,7 @@ function Exists(ref, ts) {
 // Write functions
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
  *
  * @param {module:query~ExprArg} ref
  *   The Ref (usually a ClassRef) to create.
@@ -483,7 +483,7 @@ function Create(class_ref, params) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
  *
  * @param {module:query~ExprArg} ref
  *   The Ref to update.
@@ -497,7 +497,7 @@ function Update(ref, params) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
  *
  * @param {module:query~ExprArg} ref
  *   The Ref to replace.
@@ -511,7 +511,7 @@ function Replace(ref, params) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
  *
  * @param {module:query~ExprArg} ref
  *   The Ref to delete.
@@ -523,7 +523,7 @@ function Delete(ref) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
  *
  * @param {module:query~ExprArg} ref
  *   The Ref to insert against
@@ -541,7 +541,7 @@ function Insert(ref, ts, action, params) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
  *
  * @param {module:query~ExprArg} ref
  *   The Ref of the instance whose event should be removed.
@@ -557,7 +557,7 @@ function Remove(ref, ts, action) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
  *
  * @param {module:query~ExprArg} params
  *   An object of parameters used to create a class.
@@ -570,7 +570,7 @@ function CreateClass(params) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
  *
  * @param {module:query~ExprArg} params
  *   An object of parameters used to create a database.
@@ -583,7 +583,7 @@ function CreateDatabase(params) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
  *
  * @param {module:query~ExprArg} params
  *   An object of parameters used to create an index.
@@ -601,7 +601,7 @@ function CreateIndex(params) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
  *
  * @param {module:query~ExprArg} params
  *   An object of parameters used to create a new key
@@ -615,7 +615,7 @@ function CreateKey(params) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#write_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
  *
  * @param {module:query~ExprArg} params
  *   An objet of parameters used to create a new user defined function.
@@ -631,7 +631,7 @@ function CreateFunction(params) {
 // Sets
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#sets).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#sets).
  *
  * @param {module:query~ExprArg} ref
  *   The Ref of the instance for which to retrieve the singleton set.
@@ -643,7 +643,7 @@ function Singleton(ref) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#sets).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#sets).
  *
  * @param {module:query~ExprArg} ref
  *   A Ref or SetRef to retrieve an event set from.
@@ -655,7 +655,7 @@ function Events(ref_set) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#sets).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#sets).
  *
  * @param {module:query~ExprArg} index
  *   The Ref of the index to match against.
@@ -671,7 +671,7 @@ function Match(index) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#sets).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#sets).
  *
  * @param {...module:query~ExprArg} sets
  *   A list of SetRefs to union together.
@@ -683,7 +683,7 @@ function Union() {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#sets).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#sets).
  *
  * @param {...module:query~ExprArg} sets
  *   A list of SetRefs to intersect.
@@ -695,7 +695,7 @@ function Intersection() {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#sets).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#sets).
  *
  * @param {...module:query~ExprArg} sets
  *   A list of SetRefs to diff.
@@ -707,7 +707,7 @@ function Difference() {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#sets).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#sets).
  *
  * @param {module:query~ExprArg} set
  *   A SetRef to remove duplicates from.
@@ -719,7 +719,7 @@ function Distinct(set) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#sets).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#sets).
  *
  * @param {module:query~ExprArg} source
  *   A SetRef of the source set
@@ -735,7 +735,7 @@ function Join(source, target) {
 // Authentication
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#auth_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#authentication).
  *
  * @param {module:query~ExprArg} ref
  *   A Ref with credentials to authenticate against
@@ -750,7 +750,7 @@ function Login(ref, params) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#auth_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#authentication).
  *
  * @param {module:query~ExprArg} delete_tokens
  *   If true, log out all tokens associated with the current session.
@@ -762,7 +762,7 @@ function Logout(delete_tokens) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#auth_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#authentication).
  *
  * @param {module:query~ExprArg} ref
  *   The Ref to check the password against.
@@ -776,7 +776,7 @@ function Identify(ref, password) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#auth_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#authentication).
  *
  * @return {Expr}
  */
@@ -786,7 +786,7 @@ function Identity() {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#auth_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#authentication).
  *
  * @return {Expr}
  */
@@ -798,7 +798,7 @@ function HasIdentity() {
 // String functions
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {string} strings - A list of strings to concatenate.
  * @param {string} separator  - The separator to use between each string.
@@ -811,7 +811,7 @@ function Concat(strings, separator) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {string} string - The string to casefold.
  * @param {string} normalizer - The algorithm to use. One of: NFKCCaseFold, NFC, NFD, NFKC, NFKD.
@@ -823,7 +823,7 @@ function Casefold(string, normalizer) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {string} value - A string to search.
  * @param {string} find - Find the first position of this string in the search string
@@ -837,7 +837,7 @@ function FindStr(value, find, start) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {string} value - A string to search.
  * @param {string} pattern - Find the first position of this pattern in the search string using a java regular expression syntax
@@ -852,7 +852,7 @@ function FindStrRegex(value, pattern, start, numResults) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {string} value - The string to calculate the length in codepoints.
  * @return {int} the length of the string in codepoints
@@ -863,7 +863,7 @@ function Length(value) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {string} value - The string to LowerCase.
  * @return {string} the string converted to lowercase
@@ -874,7 +874,7 @@ function LowerCase(value) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {string} value - The string to trim leading white space.
  * @return {string} the string with leading white space removed
@@ -885,7 +885,7 @@ function LTrim(value) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {module:query~ExprArg} terms
  *   A document from which to produce ngrams.
@@ -903,7 +903,7 @@ function NGram(terms, opts) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {string} value - A string to repeat.
  * @param {int} number - The number of times to repeat the string
@@ -916,7 +916,7 @@ function Repeat(value, number) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {string} value - A string to search.
  * @param {string} find - The string to find in the search string
@@ -929,7 +929,7 @@ function ReplaceStr(value, find, replace) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {string} value - A string to search.
  * @param {string} pattern - The pattern to find in the search string using a java regular expression syntax
@@ -944,7 +944,7 @@ function ReplaceStrRegex(value, pattern, replace, first) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {string} value - The string to remove white space from the end.
  * @return {string} the string with trailing whitespaces removed
@@ -955,7 +955,7 @@ function RTrim(value) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {int} num - The string of N Space(s).
  * @return {string} a string with spaces
@@ -965,7 +965,7 @@ function Space(num) {
   return new Expr({ space: wrap(num) });
 }
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {string} value  The string to SubString.
  * @param {int} start  The position the first character of the return string begins at
@@ -980,7 +980,7 @@ function SubString(value, start, length) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {string} value - The string to TitleCase.
  * @return {string}  A string converted to titlecase
@@ -991,7 +991,7 @@ function TitleCase(value) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {string} value - The string to Trim.
  * @return {string} a string with leading and trailing whitespace removed
@@ -1002,7 +1002,7 @@ function Trim(value) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#string-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {string} value - The string to Uppercase.
  * @return {string} An uppercase string
@@ -1014,7 +1014,7 @@ function UpperCase(value) {
 
 // Time and date functions
 /**
- * See the [docs](https://fauna.com/documentation/queries#time_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#time-and-date).
  *
  * @param {module:query~ExprArg} string
  *   A string to converted to a time object.
@@ -1026,7 +1026,7 @@ function Time(string) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#time_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#time-and-date).
  *
  * @param {module:query~ExprArg} number
  *   The number of `unit`s from Epoch
@@ -1040,7 +1040,7 @@ function Epoch(number, unit) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#time_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#time-and-date).
  *
  * @param {module:query~ExprArg} string
  *   A string to convert to a Date object
@@ -1054,7 +1054,7 @@ function Date(string) {
 // Miscellaneous functions
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * @deprecated use NewId instead
  * @return {Expr}
@@ -1065,7 +1065,7 @@ function NextId() {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * @return {Expr}
  */
@@ -1075,7 +1075,7 @@ function NewId() {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * @param {module:query~ExprArg} name
  *   The name of the database.
@@ -1092,7 +1092,7 @@ function Database(name, scope) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * @param {module:query~ExprArg} name
  *   The name of the index.
@@ -1109,7 +1109,7 @@ function Index(name, scope) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * @param {module:query~ExprArg} name
  *   The name of the class.
@@ -1126,7 +1126,7 @@ function Class(name, scope) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * @param {module:query~ExprArg} name
  *   The name of the user defined function.
@@ -1143,7 +1143,7 @@ function FunctionFn(name, scope) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * Constructs a `classes` function that, when evaluated, returns a Ref value.
  *
@@ -1158,7 +1158,7 @@ function Classes(scope) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * Constructs a `databases` functions that, when evaluated, returns a Ref value.
  *
@@ -1173,7 +1173,7 @@ function Databases(scope) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * Constructs an `indexes` function that, when evaluated, returns a Ref value.
  *
@@ -1188,7 +1188,7 @@ function Indexes(scope) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * Constructs a `functions` function that, when evaluated, returns a Ref value.
  *
@@ -1203,7 +1203,7 @@ function Functions(scope) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * Constructs a `keys` function that, when evaluated, returns a Ref value.
  *
@@ -1218,7 +1218,7 @@ function Keys(scope) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * Constructs a `tokens` function that, when evaluated, returns a Ref value.
  *
@@ -1233,7 +1233,7 @@ function Tokens(scope) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * Constructs a `credentials` functions that, when evaluated, returns a Ref value.
  *
@@ -1248,7 +1248,7 @@ function Credentials(scope) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * @param {...module:query~ExprArg} terms
  *   A collection of expressions to check for equivalence.
@@ -1260,7 +1260,7 @@ function Equals() {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * @param {module:query~ExprArg} path
  *   An array representing a path to check for the existence of.
@@ -1274,7 +1274,7 @@ function Contains(path, _in) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * @param {module:query~ExprArg} path
  *   An array representing a path to pull from an object.
@@ -1294,7 +1294,7 @@ function Select(path, from, _default) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#misc_functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * @param {module:query~ExprArg} path
  *   An array representing a path to pull from an object.
@@ -1728,7 +1728,7 @@ function Tanh(expr) {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#logical-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#logical-functions).
  *
  * @param {...module:query~ExprArg} terms
  *   A collection of terms to compare.
@@ -1740,7 +1740,7 @@ function LT() {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#logical-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#logical-functions).
  *
  * @param {...module:query~ExprArg} terms
  *   A collection of terms to compare.
@@ -1752,7 +1752,7 @@ function LTE() {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#logical-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#logical-functions).
  *
  * @param {...module:query~ExprArg} terms
  *   A collection of terms to compare.
@@ -1764,7 +1764,7 @@ function GT() {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#logical-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#logical-functions).
  *
  * @param {...module:query~ExprArg} terms
  *   A collection of terms to compare.
@@ -1776,7 +1776,7 @@ function GTE() {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#logical-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#logical-functions).
  *
  * @param {...module:query~ExprArg} terms
  *   A collection to compute the conjunction of.
@@ -1788,7 +1788,7 @@ function And() {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#logical-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#logical-functions).
  *
  * @param {...module:query~ExprArg} terms
  *   A collection to compute the disjunction of.
@@ -1800,7 +1800,7 @@ function Or() {
 }
 
 /**
- * See the [docs](https://fauna.com/documentation/queries#logical-functions).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#logical-functions).
  *
  * @param {module:query~ExprArg} boolean
  *   A boolean to produce the negation of.

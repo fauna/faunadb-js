@@ -17,7 +17,7 @@ var stringify = (util && util.inspect) || JSON.stringify;
  *`{ "@ref": { "id": "123", "class": { "@ref": { "id": "frogs", "class": { "@ref": { "id": "classes" } } } } } }`
  * will be returned as `new values.Ref("123", new values.Ref("frogs", values.Native.CLASSES))`.
  *
- * See the [FaunaDB Query API Documentation](https://fauna.com/documentation/queries#values)
+ * See the [FaunaDB Query API Documentation](https://app.fauna.com/documentation/reference/queryapi#simple-type)
  * for more information.
  *
  * @module values
@@ -36,7 +36,7 @@ util.inherits(Value, Expr);
 
 /**
  * FaunaDB ref.
- * See the [docs](https://fauna.com/documentation/queries#values-special_types).
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#special-type).
  *
  * @param {string} id
  *   The id portion of the ref.
@@ -183,7 +183,7 @@ SetRef.prototype.toJSON = function() {
   return { '@set': this.value };
 };
 
-/** FaunaDB time. See the [docs](https://fauna.com/documentation/queries#values-special_types).
+/** FaunaDB time. See the [docs](https://app.fauna.com/documentation/reference/queryapi#special-type).
  *
  * @param {string|Date} value If a Date, this is converted to a string.
  * @extends module:values~Value
@@ -221,7 +221,7 @@ FaunaTime.prototype.toJSON = function() {
   return { '@ts': this.value };
 };
 
-/** FaunaDB date. See the [docs](https://fauna.com/documentation/queries#values-special_types).
+/** FaunaDB date. See the [docs](https://app.fauna.com/documentation/reference/queryapi#special-type).
  *
  * @param {string|Date} value
  *   If a Date, this is converted to a string, with time-of-day discarded.
@@ -260,7 +260,7 @@ FaunaDate.prototype.toJSON = function()  {
   return { '@date': this.value };
 };
 
-/** FaunaDB bytes. See the [docs](https://fauna.com/documentation/queries#values-special_types).
+/** FaunaDB bytes. See the [docs](https://app.fauna.com/documentation/reference/queryapi#special-type).
  *
  * @param {Uint8Array|ArrayBuffer|string} value
  *    If ArrayBuffer it's converted to Uint8Array
@@ -291,7 +291,7 @@ Bytes.prototype.toJSON = function()  {
   return { '@bytes': base64.fromByteArray(this.value) };
 };
 
-/** FaunaDB query. See the [docs](https://fauna.com/documentation/queries#values-special_types).
+/** FaunaDB query. See the [docs](https://app.fauna.com/documentation/reference/queryapi#special-type).
  *
  * @param {any} value
  * @extends module:values~Value

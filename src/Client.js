@@ -70,7 +70,7 @@ function Client(options) {
 
 /**
  * Executes a query via the FaunaDB Query API.
- * See the [docs](https://fauna.com/documentation/queries),
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi),
  * and the query functions in this documentation.
  * @param expression {Expr}
  *   The query to execute. Created from query functions such as {@link add}.
@@ -86,7 +86,7 @@ Client.prototype.query = function (expression) {
  * @param expression {Expr}
  *   The Query expression to paginate over.
  * @param params {Object}
- *   Options to be passed to the paginate function. See [paginate](https://fauna.com/documentation/queries#read_functions).
+ *   Options to be passed to the paginate function. See [paginate](https://app.fauna.com/documentation/reference/queryapi#read-functions).
  * @returns {PageHelper} A PageHelper that wraps the provided expression.
  */
 Client.prototype.paginate = function(expression, params) {
