@@ -42,7 +42,7 @@ var Promise = require('es6-promise').Promise;
  *   HTTP scheme to use.
  * @param {?number} options.port
  *   Port of the FaunaDB server.
- * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://fauna.com/documentation/objects#keys))
+ * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://app.fauna.com/documentation/intro/security))
  * @param {?number} options.timeout Read timeout in seconds.
  * @param {?Client~observerCallback} options.observer
  *   Callback that will be called after every completed request.
@@ -97,7 +97,6 @@ Client.prototype.paginate = function(expression, params) {
 
 /**
  * Sends a `ping` request to FaunaDB.
- * See the [docs](https://fauna.com/documentation/rest#other).
  * @return {external:Promise<string>} Ping response.
  */
 Client.prototype.ping = function (scope, timeout) {

@@ -93,14 +93,12 @@ createP.then(function(response) {
 ```
 
 `response` is a JSON object containing the FaunaDB response. See the JSDocs for
-`faunadb.Client`, and the [FaunaDB Developer Guide](https://fauna.com/documentation/dev)
-for more information on responses.
+`faunadb.Client`.
 
 #### Pagination Helpers
 
 This driver contains helpers to provide a simpler API for consuming paged
-responses from FaunaDB. See the [FaunaDB Developer Guide](https://fauna.com/documentation/dev)
-and the [Paginate Function Reference](https://app.fauna.com/documentation/reference/queryapi#read-functions-paginate_set)
+responses from FaunaDB. See the [Paginate Function Reference](https://app.fauna.com/documentation/reference/queryapi#read-functions-paginate_set)
 for a description of paged responses.
 
 Using the helper to page over sets lets the driver handle cursoring and
