@@ -67,7 +67,7 @@ export module query {
   export function Length(expr: ExprArg): Expr;
   export function LowerCase(expr: ExprArg): Expr;
   export function LTrim(expr: ExprArg): Expr;
-  export function NGram(terms: ExprArg, opts?: object): Expr;
+  export function NGram(terms: ExprArg, min?: ExprArg, max?: ExprArg): Expr;
   export function Repeat(expr: ExprArg, number?: ExprArg): Expr;
   export function ReplaceStr(expr: ExprArg, find: ExprArg, replace: ExprArg): Expr;
   export function ReplaceStrRegex(expr: ExprArg, find: ExprArg, replace: ExprArg, first?: ExprArg): Expr;

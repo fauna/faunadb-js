@@ -895,11 +895,12 @@ function LTrim(value) {
  *     - max: The maximum ngram size.
  * @return {Array|Value}
  */
-function NGram(terms, opts) {
-  arity.between(1, 2, arguments);
-  opts = defaults(opts, {});
+function NGram(terms, min, max) {
+  arity.between(1, 3, arguments);
+  min = defaults(min, null)
+  max = defaults(max, null)
 
-  return new Expr(objectAssign({ ngram: wrap(terms) }, wrapValues(opts)));
+  return new Expr(params({ ngram: wrap(terms) }, { min: wrap(min), max: wrap(max) }));
 }
 
 /**
