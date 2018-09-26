@@ -62,7 +62,7 @@ export module query {
 
   export function Concat(strings: ExprArg, separator?: ExprArg): Expr;
   export function Casefold(string: ExprArg, normalizer?: ExprArg): Expr;
-  export function NGram(terms: ExprArg, opts?: object): Expr;
+  export function NGram(terms: ExprArg, min?: ExprArg, max?: ExprArg): Expr;
 
   export function Time(string: ExprArg): Expr;
   export function Epoch(number: ExprArg, unit: ExprArg): Expr;
