@@ -8,9 +8,6 @@ var util = require('util');
  * invalid queries, timeouts.) Server errors will subclass
  * {@link module:errors~FaunaHTTPError}.
  *
- * See the [FaunaDB Error Documentation](https://fauna.com/documentation/dev#errors)
- * for more information on server errors.
- *
  * @module errors
  */
 
