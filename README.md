@@ -79,7 +79,7 @@ example, to create an instance in an existing class named `test` with the data:
 `{ testField: 'testValue' }`:
 
 ```javascript
-var createP = client.query(q.Create(q.Class('test'), { testField: 'testValue' }));
+var createP = client.query(q.Create(q.Class('test'), { data: { testField: 'testValue' } }));
 ```
 
 All methods on `faunadb.Client` return [ES6 Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
