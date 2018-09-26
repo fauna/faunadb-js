@@ -1,3 +1,8 @@
+## 2.5.2 (September 26, 2018)
+- Fix README example
+- Fix min/max parameters on ngram function
+- Update documentation with correct links
+
 ## 2.5.1 (September 7, 2018)
 - Fix a bug on `Do()` function that was preventing expressions with only one statement
 - Fix bug on string formatter of expressions types
