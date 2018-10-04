@@ -1,3 +1,14 @@
+## 2.6.0
+- Add stdlib math functions Abs(), Asin(), Acos(), Atan(), BitAnd(), BitNot(),
+  BitOr(), BitXor(), Ceil(), Cos(), Cosh(), Degrees(), Divide(), Exp(), Floor(),
+  Hypot(), Ln(), Log(), Max(), Min(), Modulo(), Pow(), Radians(), Round(),
+  Sign(), Sin(), Sinh(), Sqrt(), Tan(), Tanh(), Trunc()
+- Add stdlib string functions FindStr(), FindStrRegex(), Length(), Lower(),
+  LTrim(), Repeat(), ReplaceStr(), ReplaceStrRegex(), RTrim(), Space(),
+  SubString(), TitleCase(), Trim(), Upper()
+- Add support for backrefs in `Let()`. Requires FaunaDB 2.6.0
+- Expose last seen txn time via `getLastTxnTime()`
+
 ## 2.5.2 (September 26, 2018)
 - Fix README example
 - Fix min/max parameters on ngram function
