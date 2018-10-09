@@ -70,8 +70,9 @@ function client() {
   return _client;
 }
 
-function randomString() {
-  return (Math.random() * 0xFFFFFF << 0).toString(16);
+function randomString(prefix) {
+  var rand = (Math.random() * 0xFFFFFF << 0).toString(16);
+  return (prefix || '') + rand;
 }
 
 function unwrapExpr(obj) {
@@ -103,7 +104,7 @@ function unwrapExprValues(obj) {
 }
 
 var rootClient = getClient({ secret: testConfig.auth });
-var dbName = 'faunadb-js-test-' + randomString();
+var dbName = randomString('faunadb-js-test-');
 var dbRef = query.Database(dbName);
 
 // global before/after for every test
@@ -130,5 +131,6 @@ module.exports = {
   clientSecret: clientSecret,
   rootClient: rootClient,
   dbRef: dbRef,
-  unwrapExpr: unwrapExpr
+  unwrapExpr: unwrapExpr,
+  randomString: randomString
 };

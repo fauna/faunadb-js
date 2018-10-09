@@ -3,6 +3,7 @@
   LTrim(), Repeat(), ReplaceStr(), ReplaceStrRegex(), RTrim(), Space(),
   SubString(), TitleCase(), Trim(), Upper()
 - Add support for backrefs in `Let()`. Requires FaunaDB 2.6.0
+- Add CreateRole() and Role() functions
 
 ## 2.5.1 (September 7, 2018)
 - Fix a bug on `Do()` function that was preventing expressions with only one statement

@@ -432,6 +432,24 @@ describe('query', function () {
     });
   });
 
+  it('create role', function () {
+    return withNewDatabase().then(function (clients) {
+      return clients.admin.query(query.CreateRole({
+        name: 'a_role',
+        privileges: [{
+          resource: query.Databases(),
+          actions: { read: true }
+        }]
+      })).then(function () {
+        return assertQueryWithClient(
+          clients.admin,
+          query.Exists(query.Role('a_role')),
+          true
+        );
+      });
+    });
+  });
+
   // Sets
 
   it('events', function () {
@@ -1076,17 +1094,8 @@ describe('query', function () {
   });
 
   it('recursive refs', function() {
-    return util.rootClient.query(
-      query.CreateKey({
-        database: util.dbRef,
-        role: 'admin'
-      })
-    ).then(function(adminKey) {
-      var adminCli = util.getClient({
-        secret: adminKey.secret
-      });
-
-      return createNewDatabase(adminCli, 'parent-db').then(function(parentCli) {
+    return withNewDatabase().then(function (clients) {
+      return createNewDatabase(clients.admin, 'parent-db').then(function(parentCli) {
         return createNewDatabase(parentCli, 'child-db').then(function(childCli) {
           return childCli.query(
             query.Do(
@@ -1191,6 +1200,7 @@ describe('query', function () {
       'Class': [3, 'from 1 to 2'],
       'Database': [3, 'from 1 to 2'],
       'Function': [3, 'from 1 to 2'],
+      'Role': [3, 'from 1 to 2'],
       'Classes': [2, 'up to 1'],
       'Databases': [2, 'up to 1'],
       'Indexes': [2, 'up to 1'],
@@ -1221,6 +1231,23 @@ describe('query', function () {
     return Promise.all([p1, p2]);
   });
 });
+
+function withNewDatabase() {
+  return util.rootClient.query(
+    query.CreateKey({
+      database: util.dbRef,
+      role: 'admin'
+    })
+  ).then(function(adminKey) {
+    var adminCli = util.getClient({
+      secret: adminKey.secret
+    });
+
+    return createNewDatabase(adminCli, util.randomString('sub_db_')).then(function (client) {
+      return { admin: adminCli, server: client };
+    })
+  });
+}
 
 function createNewDatabase(client, name) {
   return client.query(query.CreateDatabase({ name: name })).then(function() {

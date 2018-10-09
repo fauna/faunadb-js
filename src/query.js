@@ -605,7 +605,7 @@ function CreateIndex(params) {
  *
  * @param {module:query~ExprArg} params
  *   An object of parameters used to create a new key
- *     - database: Ref of the database the key will be scoped to
+ *     - database: Ref of the database the key will be scoped to. Optional.
  *     - role: The role of the new key
  * @return {Expr}
  */
@@ -618,7 +618,7 @@ function CreateKey(params) {
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
  *
  * @param {module:query~ExprArg} params
- *   An objet of parameters used to create a new user defined function.
+ *   An object of parameters used to create a new user defined function.
  *     - name: The name of the function
  *     - body: A lambda function (escaped with `query`).
  * @return {Expr}
@@ -626,6 +626,21 @@ function CreateKey(params) {
 function CreateFunction(params) {
   arity.exact(1, arguments);
   return new Expr({ create_function: wrap(params) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
+ *
+ * @param {module:query~ExprArg} params
+ *   An object of parameters used to create a new role.
+ *     - name: The name of the role
+ *     - privileges: An array of privileges
+ *     - membership: An array of membership bindings
+ * @return {Expr}
+ */
+function CreateRole(params) {
+  arity.exact(1, arguments);
+  return new Expr({ create_role: wrap(params) });
 }
 
 // Sets
@@ -1141,6 +1156,21 @@ function FunctionFn(name, scope) {
     case 1: return new Expr({ function: wrap(name) });
     case 2: return new Expr({ function: wrap(name), scope: wrap(scope) });
   }
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
+ *
+ * @param {module:query~ExprArg} name
+ *   The name of the role.
+ * @param {module:query~ExprArg} [scope]
+ *   The Ref of the role's scope.
+ * @return {Expr}
+ */
+function Role(name, scope) {
+  arity.between(1, 2, arguments);
+  scope = defaults(scope, null);
+  return new Expr(params({ role: wrap(name) }, { scope: wrap(scope) }));
 }
 
 /**
@@ -2015,6 +2045,7 @@ module.exports = {
   CreateIndex: CreateIndex,
   CreateKey: CreateKey,
   CreateFunction: CreateFunction,
+  CreateRole: CreateRole,
   Singleton: Singleton,
   Events: Events,
   Match: Match,
@@ -2054,6 +2085,7 @@ module.exports = {
   Index: Index,
   Class: Class,
   Function: FunctionFn,
+  Role: Role,
   Classes: Classes,
   Databases: Databases,
   Indexes: Indexes,
