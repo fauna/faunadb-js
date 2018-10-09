@@ -44,6 +44,7 @@ export module query {
   export function CreateIndex(params: ExprArg): Expr;
   export function CreateKey(params: ExprArg): Expr;
   export function CreateFunction(params: ExprArg): Expr;
+  export function CreateRole(params: ExprArg): Expr;
 
   export function Singleton(ref: ExprArg): Expr;
   export function Events(ref_set: ExprArg): Expr;
@@ -88,6 +89,7 @@ export module query {
   export function Index(name: ExprArg, scope?: ExprArg): Expr;
   export function Class(name: ExprArg, scope?: ExprArg): Expr;
   export function Function(name: ExprArg, scope?: ExprArg): Expr;
+  export function Role(name: ExprArg, scope?: ExprArg): Expr;
   export function Databases(scope?: ExprArg): Expr;
   export function Classes(scope?: ExprArg): Expr;
   export function Indexes(scope?: ExprArg): Expr;
