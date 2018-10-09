@@ -433,19 +433,15 @@ describe('query', function () {
   });
 
   it('create role', function () {
-    return withNewDatabase().then(function (clients) {
-      return clients.admin.query(query.CreateRole({
+    return withNewDatabase().then(function (client) {
+      return client.query(query.CreateRole({
         name: 'a_role',
         privileges: [{
           resource: query.Databases(),
           actions: { read: true }
         }]
       })).then(function () {
-        return assertQueryWithClient(
-          clients.admin,
-          query.Exists(query.Role('a_role')),
-          true
-        );
+        return assertQueryWithClient(client, query.Exists(query.Role('a_role')), true);
       });
     });
   });
@@ -1094,8 +1090,8 @@ describe('query', function () {
   });
 
   it('recursive refs', function() {
-    return withNewDatabase().then(function (clients) {
-      return createNewDatabase(clients.admin, 'parent-db').then(function(parentCli) {
+    return withNewDatabase().then(function (adminCli) {
+      return createNewDatabase(adminCli, 'parent-db').then(function(parentCli) {
         return createNewDatabase(parentCli, 'child-db').then(function(childCli) {
           return childCli.query(
             query.Do(
@@ -1103,6 +1099,7 @@ describe('query', function () {
               query.CreateClass({ name: 'a_class' }),
               query.CreateIndex({ name: 'a_index', source: query.Ref('classes') }),
               query.CreateFunction({ name: 'a_function', body: query.Query(function(a) { return a }) }),
+              query.CreateRole({ name: 'a_role', privileges: { resource: query.Classes(), actions: { read: true }}}),
               query.Create(query.Ref('keys/123'), { database: query.Database('a_db'), role: 'server' })
             )
           ).then(function() {
@@ -1118,14 +1115,15 @@ describe('query', function () {
 
             return Promise.all([
               // Recursive from the top most database
-              assertQuery(query.Exists(nestedClass), true),
-              assertQuery(query.Paginate(query.Classes(nestedDb)), { data: [ nestedClassRef ] }),
+              assertQueryWithClient(adminCli, query.Exists(nestedClass), true),
+              assertQueryWithClient(adminCli, query.Paginate(query.Classes(nestedDb)), { data: [ nestedClassRef ] }),
 
               // Non-recursive builtin references
               assertQueryWithClient(childCli, query.Paginate(query.Classes()), { data: [ new values.Ref('a_class', Native.CLASSES) ] }),
               assertQueryWithClient(childCli, query.Paginate(query.Databases()), { data: [ new values.Ref('a_db', Native.DATABASES) ] }),
               assertQueryWithClient(childCli, query.Paginate(query.Indexes()), { data: [ new values.Ref('a_index', Native.INDEXES) ] }),
               assertQueryWithClient(childCli, query.Paginate(query.Functions()), { data: [ new values.Ref('a_function', Native.FUNCTIONS) ] }),
+              assertQueryWithClient(childCli, query.Paginate(query.Roles()), { data: [ new values.Ref('a_role', Native.ROLES) ] }),
               assertQueryWithClient(childCli, query.Paginate(query.Keys()), { data: [ new values.Ref('123', Native.KEYS) ] }),
               assertQueryWithClient(childCli, query.Paginate(query.Tokens()), { data: [] }),
               assertQueryWithClient(childCli, query.Paginate(query.Credentials()), { data: [] }),
@@ -1135,6 +1133,7 @@ describe('query', function () {
               assertQueryWithClient(parentCli, query.Paginate(query.Databases(childDb)), { data: [ new values.Ref('a_db', Native.DATABASES, childDbRef) ] }),
               assertQueryWithClient(parentCli, query.Paginate(query.Indexes(childDb)), { data: [ new values.Ref('a_index', Native.INDEXES, childDbRef) ] }),
               assertQueryWithClient(parentCli, query.Paginate(query.Functions(childDb)), { data: [ new values.Ref('a_function', Native.FUNCTIONS, childDbRef) ] }),
+              assertQueryWithClient(parentCli, query.Paginate(query.Roles(childDb)), { data: [ new values.Ref('a_role', Native.ROLES, childDbRef) ] }),
               assertQueryWithClient(parentCli, query.Paginate(query.Keys(childDb)), { data: [ new values.Ref('123', Native.KEYS) ] }),
               assertQueryWithClient(parentCli, query.Paginate(query.Tokens(childDb)), { data: [] }),
               assertQueryWithClient(parentCli, query.Paginate(query.Credentials(childDb)), { data: [] })
@@ -1205,6 +1204,7 @@ describe('query', function () {
       'Databases': [2, 'up to 1'],
       'Indexes': [2, 'up to 1'],
       'Functions': [2, 'up to 1'],
+      'Roles': [2, 'up to 1'],
       'Keys': [2, 'up to 1'],
       'Tokens': [2, 'up to 1'],
       'Credentials': [2, 'up to 1']
@@ -1239,13 +1239,8 @@ function withNewDatabase() {
       role: 'admin'
     })
   ).then(function(adminKey) {
-    var adminCli = util.getClient({
-      secret: adminKey.secret
-    });
-
-    return createNewDatabase(adminCli, util.randomString('sub_db_')).then(function (client) {
-      return { admin: adminCli, server: client };
-    })
+    var adminCli = util.getClient({ secret: adminKey.secret });
+    return createNewDatabase(adminCli, util.randomString('sub_db_'));
   });
 }
 

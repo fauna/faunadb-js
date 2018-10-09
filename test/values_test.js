@@ -133,12 +133,14 @@ describe('Values', function() {
     assertPrint(new Ref('db', values.Native.DATABASES), 'Database("db")');
     assertPrint(new Ref('idx', values.Native.INDEXES), 'Index("idx")');
     assertPrint(new Ref('fn', values.Native.FUNCTIONS), 'Function("fn")');
+    assertPrint(new Ref('role', values.Native.ROLES), 'Role("role")');
     assertPrint(new Ref('key', values.Native.KEYS), 'Ref(Keys(), "key")');
 
     assertPrint(values.Native.CLASSES, 'Classes()');
     assertPrint(values.Native.DATABASES, 'Databases()');
     assertPrint(values.Native.INDEXES, 'Indexes()');
     assertPrint(values.Native.FUNCTIONS, 'Functions()');
+    assertPrint(values.Native.ROLES, 'Roles()');
     assertPrint(values.Native.KEYS, 'Keys()');
 
     var db = new Ref("db", values.Native.DATABASES);
@@ -146,6 +148,7 @@ describe('Values', function() {
     assertPrint(new Ref('db', values.Native.DATABASES, db), 'Database("db", Database("db"))');
     assertPrint(new Ref('idx', values.Native.INDEXES, db), 'Index("idx", Database("db"))');
     assertPrint(new Ref('fn', values.Native.FUNCTIONS, db), 'Function("fn", Database("db"))');
+    assertPrint(new Ref('role', values.Native.ROLES, db), 'Role("role", Database("db"))');
     assertPrint(new Ref('key', values.Native.KEYS, db), 'Ref(Keys(Database("db")), "key")');
 
     assertPrint(new FaunaTime('1970-01-01T00:00:00.123456789Z'), 'Time("1970-01-01T00:00:00.123456789Z")');

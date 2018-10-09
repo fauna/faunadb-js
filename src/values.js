@@ -98,7 +98,8 @@ wrapToString(Ref, function() {
     classes: "Class",
     databases: "Database",
     indexes: "Index",
-    functions: "Function"
+    functions: "Function",
+    roles: "Role"
   };
 
   var toString = function(ref, prevDb) {
@@ -143,6 +144,7 @@ var Native = {
   INDEXES: new Ref('indexes'),
   DATABASES: new Ref('databases'),
   FUNCTIONS: new Ref('functions'),
+  ROLES: new Ref('roles'),
   KEYS: new Ref('keys')
 };
 
@@ -152,6 +154,7 @@ Native.fromName = function(name) {
     case 'indexes': return Native.INDEXES;
     case 'databases': return Native.DATABASES;
     case 'functions': return Native.FUNCTIONS;
+    case 'roles': return Native.ROLES;
     case 'keys': return Native.KEYS;
   }
   return new Ref(name);

@@ -1236,6 +1236,21 @@ function Functions(scope) {
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
+ * Constructs a `roles` function that, when evaluated, returns a Ref value.
+ *
+ * @param {module:query~ExprArg} [scope]
+ *   The Ref of the role set's scope.
+ * @return {Expr}
+ */
+function Roles(scope) {
+  arity.max(1, arguments);
+  scope = defaults(scope, null);
+  return new Expr({ roles: wrap(scope) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
+ *
  * Constructs a `keys` function that, when evaluated, returns a Ref value.
  *
  * @param {module:query~ExprArg} [scope]
@@ -2090,6 +2105,7 @@ module.exports = {
   Databases: Databases,
   Indexes: Indexes,
   Functions: Functions,
+  Roles: Roles,
   Keys: Keys,
   Tokens: Tokens,
   Credentials: Credentials,
