@@ -94,6 +94,7 @@ export module query {
   export function Classes(scope?: ExprArg): Expr;
   export function Indexes(scope?: ExprArg): Expr;
   export function Functions(scope?: ExprArg): Expr;
+  export function Roles(scope?: ExprArg): Expr;
   export function Keys(scope?: ExprArg): Expr;
   export function Tokens(scope?: ExprArg): Expr;
   export function Credentials(scope?: ExprArg): Expr;
