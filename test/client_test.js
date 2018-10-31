@@ -35,6 +35,32 @@ describe('Client', function () {
       });
     });
   });
+
+  it('updates the last txntime for a query', function() {
+    var firstSeen = client.getLastTxnTime();
+
+    var pEcho = client.query(42).then(function (res) {
+      assert.isAtLeast(client.getLastTxnTime(), firstSeen);
+    });
+
+    var pCreate = client.query(query.CreateClass({ name: 'foo_class' })).then(function (res) {
+      assert.isAbove(client.getLastTxnTime(), firstSeen);
+    });
+
+    return Promise.all([pEcho, pCreate]);
+  })
+
+  it('manually updates the last txntime for a bigger time', function() {
+    var firstSeen = client.getLastTxnTime();
+    
+    client.syncLastTxnTime(firstSeen - 1200);
+    assert.equal(firstSeen, client.getLastTxnTime());
+
+    var lastSeen = firstSeen + 1200;
+    client.syncLastTxnTime(lastSeen);
+    assert.equal(lastSeen, client.getLastTxnTime());
+  })
+
 });
 
 function createInstance() {

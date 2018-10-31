@@ -103,6 +103,31 @@ Client.prototype.ping = function (scope, timeout) {
   return this._execute('GET', 'ping', null, { scope: scope, timeout: timeout });
 };
 
+/**
+ * Get the freshest timestamp reported to this client.
+ * @returns {number} the last seen transaction time
+ */
+Client.prototype.getLastTxnTime = function() {
+  return this._lastSeen;
+};
+
+/**
+  * Sync the freshest timestamp seen by this client.
+  *
+  * This has no effect if staler than currently stored timestamp.
+  * WARNING: This should be used only when coordinating timestamps across
+  *          multiple clients. Moving the timestamp arbitrarily forward into
+  *          the future will cause transactions to stall.
+ * @param time {number} the last seen transaction time
+ */
+Client.prototype.syncLastTxnTime = function(time) {
+  if (this._lastSeen == null) {
+    this._lastSeen = time;
+  } else if (this._lastSeen < time) {
+      this._lastSeen = time;
+  }
+};
+
 Client.prototype._execute = function (action, path, data, query) {
   query = defaults(query, null);
 
@@ -125,14 +150,9 @@ Client.prototype._execute = function (action, path, data, query) {
       response.text, responseObject, response.status, response.header,
       startTime, endTime);
 
-    if ('x-last-seen-txn' in response.header) {
-        var time = parseInt(response.header['x-last-seen-txn'], 10);
-
-        if (self._lastSeen == null) {
-            self._lastSeen = time;
-        } else if (self._lastSeen < time) {
-            self._lastSeen = time;
-        }
+    if ('x-txn-time' in response.header) {
+      var time = parseInt(response.header['x-txn-time'], 10);
+      self.syncLastTxnTime(time);
     }
 
     if (self._observer != null) {
