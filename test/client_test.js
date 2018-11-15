@@ -61,7 +61,29 @@ describe('Client', function () {
     assert.equal(lastSeen, client.getLastTxnTime());
   })
 
+  it('extract response headers from observer', function() {
+    var assertResults = function(result) {
+      assertHeader(result.responseHeaders, 'x-read-ops');
+      assertHeader(result.responseHeaders, 'x-write-ops');
+      assertHeader(result.responseHeaders, 'x-storage-bytes-read');
+      assertHeader(result.responseHeaders, 'x-storage-bytes-write');
+      assertHeader(result.responseHeaders, 'x-query-bytes-in');
+      assertHeader(result.responseHeaders, 'x-query-bytes-out');
+
+      assert.isAbove(result.endTime, result.startTime);
+    }
+
+    var observedClient = util.getClient({ observer: assertResults });
+
+    return observedClient.query(query.CreateClass({ name: 'bar_class' }));
+  })
+
 });
+
+function assertHeader(headers, name) {
+  assert.isNotNull(headers[name]);
+  assert.isAtLeast(parseInt(headers[name]), 0);
+}
 
 function createInstance() {
   return client.query(query.Create(query.Class('my_class'), {}));
