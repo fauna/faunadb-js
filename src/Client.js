@@ -128,9 +128,7 @@ Client.prototype._execute = function (action, path, data, query) {
     if ('x-last-seen-txn' in response.header) {
         var time = parseInt(response.header['x-last-seen-txn'], 10);
 
-        if (self._lastSeen == null) {
-            self._lastSeen = time;
-        } else if (self._lastSeen < time) {
+        if (self._lastSeen == null || self._lastSeen < time) {
             self._lastSeen = time;
         }
     }
