@@ -1,3 +1,7 @@
+## 2.6.1
+- Make the FaunaClient.query(..) function generic for Typescript
+- Temporarily disable X-Last-Seen-Txn header due to CORS issues
+
 ## 2.6.0
 - Add stdlib math functions Abs(), Asin(), Acos(), Atan(), BitAnd(), BitNot(),
   BitOr(), BitXor(), Ceil(), Cos(), Cosh(), Degrees(), Divide(), Exp(), Floor(),
