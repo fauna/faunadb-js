@@ -29,18 +29,21 @@ describe('query', function () {
       classRef = instance.ref;
       var nIndexRefP = client.query(query.CreateIndex({
         name: 'widgets_by_n',
+        active: true,
         source: classRef,
         terms: [ { 'field': ['data', 'n'] }]
       })).then(function(i) { nIndexRef = i.ref; });
 
       var mIndexRefP = client.query(query.CreateIndex({
         name: 'widgets_by_m',
+        active: true,
         source: classRef,
         terms: [ { 'field': ['data', 'm'] }]
       })).then(function(i) { mIndexRef = i.ref; });
 
       var nCoveredIndexRefP = client.query(query.CreateIndex({
         name: 'widgets_cost_by_p',
+        active: true,
         source: classRef,
         terms: [ { 'field': ['data', 'p' ] }],
         values: [ { 'field': ['data', 'cost' ] }]
@@ -1097,7 +1100,7 @@ describe('query', function () {
             query.Do(
               query.CreateDatabase({ name: 'a_db' }),
               query.CreateClass({ name: 'a_class' }),
-              query.CreateIndex({ name: 'a_index', source: query.Ref('classes') }),
+              query.CreateIndex({ name: 'a_index', active: true, source: query.Ref('classes') }),
               query.CreateFunction({ name: 'a_function', body: query.Query(function(a) { return a }) }),
               query.CreateRole({ name: 'a_role', privileges: { resource: query.Classes(), actions: { read: true }}}),
               query.Create(query.Ref('keys/123'), { database: query.Database('a_db'), role: 'server' })

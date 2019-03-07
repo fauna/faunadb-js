@@ -23,6 +23,7 @@ describe('page', function() {
 
       return client.query(query.CreateIndex({
         name: 'timestamped_things_by_class',
+        active: true,
         source: tsClassRef
       })).then(function(resp) {
         tsIndexRef = resp.ref;
@@ -39,6 +40,7 @@ describe('page', function() {
       classRef = resp.ref;
       return client.query(query.CreateIndex({
         name: 'things_by_class',
+        active: true,
         source: classRef,
         values: [{ 'field': [ 'data', 'i' ] }, { 'field': 'ref' }]
       })).then(function(resp) {
