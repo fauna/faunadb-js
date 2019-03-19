@@ -1894,6 +1894,138 @@ function ToTime(expr) {
 }
 
 /**
+ * Converts an expression evaluating to a time to seconds since epoch.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to seconds numeric value.
+ * @return {Expr}
+ */
+function ToSeconds(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ to_seconds: wrap(expr) });
+}
+
+/**
+ * Converts a time expression to milliseconds since the UNIX epoch.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to millisecond numeric value.
+ * @return {Expr}
+ */
+function ToMillis(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ to_millis: wrap(expr) });
+}
+
+/**
+ * Converts a time expression to microseconds since the UNIX epoch.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to microsecond numeric value.
+ * @return {Expr}
+ */
+function ToMicros(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ to_micros: wrap(expr) });
+}
+
+/**
+ * Returns a time expression's day of the week following ISO-8601 convention, from 1 (Monday) to 7 (Sunday).
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to day of week.
+ * @return {Expr}
+ */
+function DayOfWeek(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ day_of_week: wrap(expr) });
+}
+
+/**
+ * Returns a time expression's day of the year, from 1 to 365, or 366 in a leap year.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to day of year.
+ * @return {Expr}
+ */
+function DayOfYear(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ day_of_year: wrap(expr) });
+}
+
+/**
+ * Returns a time expression's day of the month, from 1 to 31.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to day of month.
+ * @return {Expr}
+ */
+function DayOfMonth(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ day_of_month: wrap(expr) });
+}
+
+/**
+ * Returns a time expression's second of the minute, from 0 to 59.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to a hour.
+ * @return {Expr}
+ */
+function Hour(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ hour: wrap(expr) });
+}
+
+/**
+ * Returns a time expression's second of the minute, from 0 to 59.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to a month.
+ * @return {Expr}
+ */
+function Minute(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ minute: wrap(expr) });
+}
+
+/**
+ * Returns a time expression's second of the minute, from 0 to 59.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to a month.
+ * @return {Expr}
+ */
+function Second(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ second: wrap(expr) });
+}
+
+/**
+ * Returns a time expression's month of the year, from 1 to 12.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to a month.
+ * @return {Expr}
+ */
+function Month(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ month: wrap(expr) });
+}
+
+/**
+ * Returns the time expression's year, following the ISO-8601 standard.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to a year.
+ * @return {Expr}
+ */
+function Year(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ year: wrap(expr) });
+}
+
+/**
  * Converts an expression to a date literal.
  *
  * @param {module:query~ExprArg} expression
@@ -2157,6 +2289,17 @@ module.exports = {
   ToString: ToString,
   ToNumber: ToNumber,
   ToTime: ToTime,
+  ToSeconds: ToSeconds,
+  ToMicros: ToMicros,
+  ToMillis: ToMillis,
+  DayOfMonth: DayOfMonth,
+  DayOfWeek: DayOfWeek,
+  DayOfYear: DayOfYear,
+  Second: Second,
+  Minute: Minute,
+  Hour: Hour,
+  Month: Month,
+  Year: Year,
   ToDate: ToDate,
   wrap: wrap
 };

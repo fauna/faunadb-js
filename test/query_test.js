@@ -1057,31 +1057,107 @@ describe('query', function () {
     return Promise.all([p1, p2]);
   });
 
-  it('to_string', function() {
+  it('to_string', function () {
     var p1 = assertQuery(query.ToString(42), "42");
     var p2 = assertQuery(query.ToString("42"), "42");
     return Promise.all([p1, p2]);
   });
 
-  it('to_number', function() {
+  it('to_number', function () {
     var p1 = assertQuery(query.ToNumber(42), 42);
     var p2 = assertQuery(query.ToNumber("42"), 42);
     return Promise.all([p1, p2]);
   });
 
-  it('to_time', function() {
+  it('to_time', function () {
     return assertQuery(query.ToTime("1970-01-01T00:00:00Z"), new FaunaTime("1970-01-01T00:00:00Z"));
   });
 
-  it('to_date', function() {
+  it('to_millis', function () {
+    var p1 = assertQuery(query.ToMillis(query.Time("1970-01-01T00:00:00Z")), 0);
+    var p2 = assertQuery(query.ToMillis(query.Epoch(2147483648000, "millisecond")), 2147483648000);
+    var p3 = assertQuery(query.ToMillis(0), 0);
+    var p4 = assertQuery(query.ToMillis(2147483648000000), 2147483648000);
+    return Promise.all([p1, p2, p3, p4]);
+  });
+
+  it('to_seconds', function () {
+    var p1 = assertQuery(query.ToSeconds(query.Epoch(0, "second")), 0);
+    var p2 = assertQuery(query.ToSeconds(query.Epoch(2147483648, "second")), 2147483648);
+    var p3 = assertQuery(query.ToSeconds(0), 0);
+    var p4 = assertQuery(query.ToSeconds(2147483648000000), 2147483648);
+    return Promise.all([p1, p2, p3, p4]);
+  });
+
+  it('to_micros', function () {
+    var p1 = assertQuery(query.ToMicros(query.Epoch(0, "second")), 0);
+    var p2 = assertQuery(query.ToMicros(query.Epoch(2147483648000000, "microsecond")), 2147483648000000)
+    var p3 = assertQuery(query.ToMicros(0), 0);
+    var p4 = assertQuery(query.ToMicros(2147483648000000), 2147483648000000);
+    return Promise.all([p1, p2, p3, p4]);
+  });
+
+  it('day_of_month', function () {
+    var p1 = assertQuery(query.DayOfMonth(query.Epoch(0, "second")), 1);
+    var p2 = assertQuery(query.DayOfMonth(query.Epoch(2147483648, "second")), 19);
+    var p3 = assertQuery(query.DayOfMonth(0), 1);
+    var p4 = assertQuery(query.DayOfMonth(2147483648000000), 19);
+    return Promise.all([p1, p2, p3, p4]);
+  });
+
+  it('day_of_week', function () {
+    var p1 = assertQuery(query.DayOfWeek(query.Epoch(0, "second")), 4);
+    var p2 = assertQuery(query.DayOfWeek(query.Epoch(2147483648, "second")), 2);
+    var p3 = assertQuery(query.DayOfWeek(0), 4);
+    var p4 = assertQuery(query.DayOfWeek(2147483648000000), 2);
+    return Promise.all([p1, p2, p3, p4]);
+  });
+
+  it('day_of_year', function () {
+    var p1 = assertQuery(query.DayOfYear(query.Epoch(0, "second")), 1);
+    var p2 = assertQuery(query.DayOfYear(query.Epoch(2147483648, "second")), 19);
+    var p3 = assertQuery(query.DayOfYear(0), 1);
+    var p4 = assertQuery(query.DayOfYear(2147483648000000), 19);
+    return Promise.all([p1, p2, p3, p4]);
+  });
+
+  it('month', function () {
+    var p1 = assertQuery(query.Month(query.Epoch(0, "second")), 1);
+    var p2 = assertQuery(query.Month(query.Epoch(2147483648, "second")), 1);
+    var p3 = assertQuery(query.Month(0), 1);
+    var p4 = assertQuery(query.Month(2147483648000000), 1);
+    return Promise.all([p1, p2, p3, p4]);
+  });
+
+  it('year', function () {
+    var p1 = assertQuery(query.Year(query.Epoch(0, "second")), 1970);
+    var p2 = assertQuery(query.Year(query.Epoch(2147483648, "second")), 2038);
+    var p3 = assertQuery(query.Year(0), 1970);
+    var p4 = assertQuery(query.Year(2147483648000000), 2038);
+    return Promise.all([p1, p2, p3, p4]);
+  });
+
+  it('hour', function () {
+    return assertQuery(query.Hour(query.Epoch(0, "second")), 0);
+  });
+
+  it('minute', function () {
+    return assertQuery(query.Minute(query.Epoch(0, "second")), 0);
+  });
+
+  it('second', function () {
+    return assertQuery(query.Second(query.Epoch(0, "second")), 0);
+  });
+
+  it('to_date', function () {
     return assertQuery(query.ToDate("1970-01-01"), new FaunaDate("1970-01-01"));
   });
 
-  it('ref', function() {
+  it('ref', function () {
     return assertQuery(Ref(classRef, query.Concat(['123', '456'])), new values.Ref('123456', classRef));
   });
 
-  it('bytes', function() {
+  it('bytes', function () {
     return Promise.all([
       assertQuery(query.Bytes('AQIDBA=='), new Bytes('AQIDBA==')),
       assertQuery(query.Bytes(new Uint8Array([0, 0, 0, 0])), new Bytes('AAAAAA==')),
