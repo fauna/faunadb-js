@@ -28,14 +28,14 @@ var objectAssign = require('object-assign');
 
 /**
  * If one parameter is provided, constructs a literal Ref value.
- * The string `classes/widget/123` will be equivalent to `new values.Ref('123', new values.Ref('widget', values.Native.CLASSES))`
+ * The string `collections/widget/123` will be equivalent to `new values.Ref('123', new values.Ref('widget', values.Native.COLLECTIONS))`
  *
  * If two are provided, constructs a Ref() function that, when evaluated, returns a Ref value.
  *
  * @param {string|module:query~ExprArg} ref|cls
- *   Alone, the ref in path form. Combined with `id`, must be a class ref.
+ *   Alone, the ref in path form. Combined with `id`, must be a collection ref.
  * @param {module:query~ExprArg} [id]
- *   A numeric id of the given class.
+ *   A numeric id of the given collection.
  * @return {Expr}
  */
 function Ref() {
@@ -406,7 +406,7 @@ function IsNonEmpty(collection) {
  * @param {module:query~ExprArg} ref
  *   An expression resulting in either a Ref or SetRef.
  * @param {?module:query~ExprArg} ts
- *   The snapshot time at which to get the instance.
+ *   The snapshot time at which to get the document.
  * @return {Expr}
  */
 function Get(ref, ts) {
@@ -456,7 +456,7 @@ function Paginate(set, opts) {
  * @param {module:query~ExprArg} ref
  *   An expression resulting in a Ref.
  * @param {?module:query~ExprArg} ts
- *   The snapshot time at which to check for the instance's existence.
+ *   The snapshot time at which to check for the document's existence.
  * @return {Expr}
  */
 function Exists(ref, ts) {
@@ -472,14 +472,14 @@ function Exists(ref, ts) {
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
  *
  * @param {module:query~ExprArg} ref
- *   The Ref (usually a ClassRef) to create.
+ *   The Ref (usually a CollectionRef) to create.
  * @param {?module:query~ExprArg} params
- *   An object representing the parameters of the instance.
+ *   An object representing the parameters of the document.
  * @return {Expr}
  */
-function Create(class_ref, params) {
+function Create(collection_ref, params) {
   arity.between(1, 2, arguments);
-  return new Expr({ create: wrap(class_ref), params: wrap(params) });
+  return new Expr({ create: wrap(collection_ref), params: wrap(params) });
 }
 
 /**
@@ -488,7 +488,7 @@ function Create(class_ref, params) {
  * @param {module:query~ExprArg} ref
  *   The Ref to update.
  * @param {module:query~ExprArg} params
- *   An object representing the parameters of the instance.
+ *   An object representing the parameters of the document.
  * @return {Expr}
  */
 function Update(ref, params) {
@@ -502,7 +502,7 @@ function Update(ref, params) {
  * @param {module:query~ExprArg} ref
  *   The Ref to replace.
  * @param {module:query~ExprArg} params
- *   An object representing the parameters of the instance.
+ *   An object representing the parameters of the document.
  * @return {Expr}
  */
 function Replace(ref, params) {
@@ -532,7 +532,7 @@ function Delete(ref) {
  * @param {module:query~ExprArg} action
  *   Whether the event should be a Create, Update, or Delete.
  * @param {module:query~ExprArg} params
- *   If this is a Create or Update, the parameters of the instance.
+ *   If this is a Create or Update, the parameters of the document.
  * @return {Expr}
  */
 function Insert(ref, ts, action, params) {
@@ -544,7 +544,7 @@ function Insert(ref, ts, action, params) {
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
  *
  * @param {module:query~ExprArg} ref
- *   The Ref of the instance whose event should be removed.
+ *   The Ref of the document whose event should be removed.
  * @param {module:query~ExprArg} ts
  *   The valid time of the event.
  * @param {module:query~ExprArg} action
@@ -563,10 +563,25 @@ function Remove(ref, ts, action) {
  *   An object of parameters used to create a class.
  *     - name (required): the name of the class to create
  * @return {Expr}
+ * 
+ * @deprecated use CreateCollection instead
  */
 function CreateClass(params) {
   arity.exact(1, arguments);
   return new Expr({ create_class: wrap(params) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
+ *
+ * @param {module:query~ExprArg} params
+ *   An object of parameters used to create a collection.
+ *     - name (required): the name of the collection to create
+ * @return {Expr}
+ */
+function CreateCollection(params) {
+  arity.exact(1, arguments);
+  return new Expr({ create_collection: wrap(params) });
 }
 
 /**
@@ -588,7 +603,7 @@ function CreateDatabase(params) {
  * @param {module:query~ExprArg} params
  *   An object of parameters used to create an index.
  *     - name (required): the name of the index to create
- *     - source: One or more source objects describing source classes and (optional) field bindings.
+ *     - source: One or more source objects describing source collections and (optional) field bindings.
  *     - terms: An array of term objects describing the fields to be indexed. Optional
  *     - values: An array of value objects describing the fields to be covered. Optional
  *     - unique: If true, maintains a uniqueness constraint on combined terms and values. Optional
@@ -649,7 +664,7 @@ function CreateRole(params) {
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#sets).
  *
  * @param {module:query~ExprArg} ref
- *   The Ref of the instance for which to retrieve the singleton set.
+ *   The Ref of the document for which to retrieve the singleton set.
  * @return {Expr}
  */
 function Singleton(ref) {
@@ -1132,12 +1147,31 @@ function Index(name, scope) {
  * @param {module:query~ExprArg} [scope]
  *   The Ref of the class's scope.
  * @return {Expr}
+ * 
+ * @deprecated Class is deprecated, use Collection instead
  */
 function Class(name, scope) {
   arity.between(1, 2, arguments);
   switch(arguments.length) {
     case 1: return new Expr({ class: wrap(name) });
     case 2: return new Expr({ class: wrap(name), scope: wrap(scope) });
+  }
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
+ *
+ * @param {module:query~ExprArg} name
+ *   The name of the collection.
+ * @param {module:query~ExprArg} [scope]
+ *   The Ref of the collection's scope.
+ * @return {Expr}
+ */
+function Collection(name, scope) {
+  arity.between(1, 2, arguments);
+  switch (arguments.length) {
+    case 1: return new Expr({ collection: wrap(name) });
+    case 2: return new Expr({ collection: wrap(name), scope: wrap(scope) });
   }
 }
 
@@ -1186,6 +1220,21 @@ function Classes(scope) {
   arity.max(1, arguments);
   scope = defaults(scope, null);
   return new Expr({ classes: wrap(scope) });
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
+ *
+ * Constructs a `collections` function that, when evaluated, returns a Ref value.
+ *
+ * @param {module:query~ExprArg} [scope]
+ *   The Ref of the collection set's scope.
+ * @return {Expr}
+ */
+function Collections(scope) {
+  arity.max(1, arguments);
+  scope = defaults(scope, null);
+  return new Expr({ collections: wrap(scope) });
 }
 
 /**
@@ -2187,7 +2236,8 @@ module.exports = {
   Delete: Delete,
   Insert: Insert,
   Remove: Remove,
-  CreateClass: CreateClass,
+  CreateClass: deprecate(CreateClass, 'CreateClass() is deprecated, use CreateCOllection() instead'),
+  CreateCollection: CreateCollection,
   CreateDatabase: CreateDatabase,
   CreateIndex: CreateIndex,
   CreateKey: CreateKey,
@@ -2230,10 +2280,12 @@ module.exports = {
   NewId: NewId,
   Database: Database,
   Index: Index,
-  Class: Class,
+  Class: deprecate(Class, 'Class() is deprecated, use Collection() instead'),
+  Collection: Collection,
   Function: FunctionFn,
   Role: Role,
-  Classes: Classes,
+  Classes: deprecate(Classes, 'Classes() is deprecated, use Collections() instead'),
+  Collections: Collections,
   Databases: Databases,
   Indexes: Indexes,
   Functions: Functions,

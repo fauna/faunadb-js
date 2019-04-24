@@ -31,7 +31,7 @@ var Promise = require('es6-promise').Promise;
  * be converted into the appropriate object.
  *
  * (So if a response contains `{ "@ref": "classes/frogs/123" }`,
- * it will be returned as `new Ref("classes/frogs/123")`.)
+ * it will be returned as `new Ref("collections/frogs/123")`.)
  *
  * @constructor
  * @param {?Object} options

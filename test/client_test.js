@@ -12,7 +12,7 @@ describe('Client', function () {
     // Hideous way to ensure that the client is initialized.
     client = util.client();
 
-    return client.query(query.CreateClass({ name: 'my_class' }));
+    return client.query(query.CreateCollection({ name: 'my_collection' }));
   });
 
   it('invalid key', function () {
@@ -27,10 +27,10 @@ describe('Client', function () {
   });
 
   it('paginates', function() {
-    return createInstance().then(function(instance) {
-      return client.paginate(instance.ref).each(function(page) {
+    return createDocument().then(function(document) {
+      return client.paginate(document.ref).each(function(page) {
         page.forEach(function(i) {
-          assert.deepEqual(instance.ref, i);
+          assert.deepEqual(document.ref, i);
         });
       });
     });
@@ -39,11 +39,11 @@ describe('Client', function () {
   it('updates the last txntime for a query', function() {
     var firstSeen = client.getLastTxnTime();
 
-    var pEcho = client.query(42).then(function (res) {
+    var pEcho = client.query(42).then(function(res) {
       assert.isAtLeast(client.getLastTxnTime(), firstSeen);
     });
 
-    var pCreate = client.query(query.CreateClass({ name: 'foo_class' })).then(function (res) {
+    var pCreate = client.query(query.CreateCollection({ name: 'foo_collection' })).then(function(res) {
       assert.isAbove(client.getLastTxnTime(), firstSeen);
     });
 
@@ -52,7 +52,7 @@ describe('Client', function () {
 
   it('manually updates the last txntime for a bigger time', function() {
     var firstSeen = client.getLastTxnTime();
-    
+
     client.syncLastTxnTime(firstSeen - 1200);
     assert.equal(firstSeen, client.getLastTxnTime());
 
@@ -75,16 +75,16 @@ describe('Client', function () {
 
     var observedClient = util.getClient({ observer: assertResults });
 
-    return observedClient.query(query.CreateClass({ name: 'bar_class' }));
+    return observedClient.query(query.CreateCollection({ name: 'bar_collection' }));
   })
 
 });
 
 function assertHeader(headers, name) {
   assert.isNotNull(headers[name]);
-  assert.isAtLeast(parseInt(headers[name]), 0);
+  assert.isAtLeast(parseInt(headers[name]), 0, 'header["' + name + '"]');
 }
 
-function createInstance() {
-  return client.query(query.Create(query.Class('my_class'), {}));
+function createDocument() {
+  return client.query(query.Create(query.Collection('my_collection'), {}));
 }

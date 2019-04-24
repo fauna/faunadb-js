@@ -7,7 +7,7 @@ var objectAssign = require('object-assign');
 var util = require('./util');
 
 var client;
-var classRef;
+var collectionRef;
 
 // Polyfill for startsWith, which IE11 does not support
 if (!String.prototype.startsWith) {
@@ -21,8 +21,8 @@ describe('clientLogger', function () {
   before(function () {
     // Hideous way to ensure the client is initialized.
     client = util.client();
-    return client.query(query.CreateClass({ name: 'logging_tests' })).then(function (res) {
-      classRef = res['ref'];
+    return client.query(query.CreateCollection({ name: 'logging_tests' })).then(function (res) {
+      collectionRef = res['ref'];
     });
   });
 
@@ -52,7 +52,7 @@ describe('clientLogger', function () {
 
   it('request content', function () {
     return captureLogged(function (client) {
-      return client.query(query.Create(classRef, { data: {} }));
+      return client.query(query.Create(collectionRef, { data: {} }));
     }).then(function (res) {
       var readLine = lineReader(res);
       assert.equal(readLine(), 'Fauna POST /');
@@ -62,7 +62,7 @@ describe('clientLogger', function () {
       assert.equal(readLine(), '        "id": "logging_tests",');
       assert.equal(readLine(), '        "class": {');
       assert.equal(readLine(), '          "@ref": {');
-      assert.equal(readLine(), '            "id": "classes"');
+      assert.equal(readLine(), '            "id": "collections"');
       assert.equal(readLine(), '          }');
       assert.equal(readLine(), '        }');
       assert.equal(readLine(), '      }');

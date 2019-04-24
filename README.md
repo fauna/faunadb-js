@@ -75,16 +75,16 @@ var client = new faunadb.Client({ secret: 'YOUR_FAUNADB_SECRET' });
 ```
 
 Once the client has been instantiated, it can be used to issue queries. For
-example, to create an instance in an existing class named `test` with the data:
+example, to create an document in an existing collection named `test` with the data:
 `{ testField: 'testValue' }`:
 
 ```javascript
-var createP = client.query(q.Create(q.Class('test'), { data: { testField: 'testValue' } }));
+var createP = client.query(q.Create(q.Collection('test'), { data: { testField: 'testValue' } }));
 ```
 
 All methods on `faunadb.Client` return [ES6 Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
 So, if we wanted to handle the Promise to access the `Ref` of the newly created
-instance:
+document:
 
 ```javascript
 createP.then(function(response) {
@@ -113,7 +113,7 @@ callback function on each consumed page.
 
 ```javascript
 helper.each(function(page) {
-  console.log(page); // Will log the page's contents, for example: [ Ref("classes/test/1234"), ... ]
+  console.log(page); // Will log the page's contents, for example: [ Ref("collections/test/1234"), ... ]
 });
 ```
 
@@ -123,11 +123,11 @@ of pagination.
 The pagination can be transformed server-side via the FaunaDB query language
 via the `map` and `filter` functions.
 
-For example, to retrieve the matched instances:
+For example, to retrieve the matched documents:
 
 ```javascript
 helper.map(function(ref) { return q.Get(ref); }).each(function(page) {
-  console.log(page); // Will now log the retrieved instances.
+  console.log(page); // Will now log the retrieved documents.
 });
 ```
 

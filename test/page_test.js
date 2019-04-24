@@ -10,45 +10,45 @@ var client;
 
 var NUM_INSTANCES = 100;
 
-var classRef, indexRef, instanceRefs = {}, refsToIndex = {};
-var tsClassRef, tsIndexRef, tsInstance1Ref, tsInstance1Ts;
+var collectionRef, indexRef, instanceRefs = {}, refsToIndex = {};
+var tsCollectionRef, tsIndexRef, tsInstance1Ref, tsInstance1Ts;
 
 describe('page', function() {
   this.timeout(10000);
   before(function() {
     client = util.client();
 
-    var p1 = client.query(query.CreateClass({ 'name': 'timestamped_things' })).then(function(resp) {
-      tsClassRef = resp.ref;
+    var p1 = client.query(query.CreateCollection({ 'name': 'timestamped_things' })).then(function(resp) {
+      tsCollectionRef = resp.ref;
 
       return client.query(query.CreateIndex({
-        name: 'timestamped_things_by_class',
+        name: 'timestamped_things_by_collection',
         active: true,
-        source: tsClassRef
+        source: tsCollectionRef
       })).then(function(resp) {
         tsIndexRef = resp.ref;
-        return client.query(query.Create(tsClassRef));
+        return client.query(query.Create(tsCollectionRef));
       }).then(function(resp) {
         tsInstance1Ref = resp.ref;
         tsInstance1Ts = resp.ts;
 
-        return client.query(query.Create(tsClassRef));
+        return client.query(query.Create(tsCollectionRef));
       });
     });
 
-    var p2 = client.query(query.CreateClass({ 'name': 'paged_things' } )).then(function(resp) {
-      classRef = resp.ref;
+    var p2 = client.query(query.CreateCollection({ 'name': 'paged_things' })).then(function(resp) {
+      collectionRef = resp.ref;
       return client.query(query.CreateIndex({
-        name: 'things_by_class',
+        name: 'things_by_collection',
         active: true,
-        source: classRef,
-        values: [{ 'field': [ 'data', 'i' ] }, { 'field': 'ref' }]
+        source: collectionRef,
+        values: [{ 'field': ['data', 'i'] }, { 'field': 'ref' }]
       })).then(function(resp) {
         indexRef = resp.ref;
 
         var promises = [];
-        for(var i = 0; i < NUM_INSTANCES; ++i) {
-          var p = client.query(query.Create(classRef, { 'data': { 'i': i } })).then(function(resp) {
+        for (var i = 0; i < NUM_INSTANCES; ++i) {
+          var p = client.query(query.Create(collectionRef, { 'data': { 'i': i } })).then(function(resp) {
             instanceRefs[resp.data.i] = resp.ref;
             refsToIndex[resp.ref] = resp.data.i;
           });

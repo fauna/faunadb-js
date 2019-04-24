@@ -17,7 +17,7 @@ var FaunaDate = values.FaunaDate,
 
 var client;
 
-var classRef, nIndexRef, mIndexRef, nCoveredIndexRef, refN1, refM1, refN1M1, thimbleClassRef;
+var collectionRef, nIndexRef, mIndexRef, nCoveredIndexRef, refN1, refM1, refN1M1, thimbleCollectionRef;
 
 describe('query', function () {
   this.timeout(10000);
@@ -25,26 +25,26 @@ describe('query', function () {
     // Hideous way to ensure that the client is initialized.
     client = util.client();
 
-    return client.query(query.CreateClass({ name: 'widgets' })).then(function (instance) {
-      classRef = instance.ref;
+    return client.query(query.CreateCollection({ name: 'widgets' })).then(function (document) {
+      collectionRef = document.ref;
       var nIndexRefP = client.query(query.CreateIndex({
         name: 'widgets_by_n',
         active: true,
-        source: classRef,
+        source: collectionRef,
         terms: [ { 'field': ['data', 'n'] }]
       })).then(function(i) { nIndexRef = i.ref; });
 
       var mIndexRefP = client.query(query.CreateIndex({
         name: 'widgets_by_m',
         active: true,
-        source: classRef,
+        source: collectionRef,
         terms: [ { 'field': ['data', 'm'] }]
       })).then(function(i) { mIndexRef = i.ref; });
 
       var nCoveredIndexRefP = client.query(query.CreateIndex({
         name: 'widgets_cost_by_p',
         active: true,
-        source: classRef,
+        source: collectionRef,
         terms: [ { 'field': ['data', 'p' ] }],
         values: [ { 'field': ['data', 'cost' ] }]
       })).then(function(i) { nCoveredIndexRef = i.ref; });
@@ -57,9 +57,9 @@ describe('query', function () {
           refM1 = i.ref;
           return create({ n: 1, m: 1, p: 1, cost: 10 });
         }).then(function (i) { refN1M1 = i.ref; });
-        var thimbleClassRefP = client.query(query.CreateClass({ name: 'thimbles' })).then(function (i) { thimbleClassRef = i.ref; });
+        var thimbleCollectionRefP = client.query(query.CreateCollection({ name: 'thimbles' })).then(function (i) { thimbleCollectionRef = i.ref; });
 
-        return Promise.all([createP, thimbleClassRefP]);
+        return Promise.all([createP, thimbleCollectionRefP]);
       });
     });
   });
@@ -114,11 +114,11 @@ describe('query', function () {
       return create({ n: 1000 }).then(function (inst2) {
         return create({ n: 1000 }).then(function (inst3) {
           var p1 = client.query(paginate).then(function (data) {
-            assert.deepEqual(data.data, [inst1.ref, inst2.ref, inst3.ref], 'Should contains all instance with n=1000');
+            assert.deepEqual(data.data, [inst1.ref, inst2.ref, inst3.ref], 'Should contains all document with n=1000');
           });
 
           var p2 = client.query(query.At(inst1.ts, paginate)).then(function (data) {
-            assert.deepEqual(data.data, [inst1.ref], 'Should contains only the first instance with n=1000');
+            assert.deepEqual(data.data, [inst1.ref], 'Should contains only the first document with n=1000');
           });
 
           return Promise.all([p1, p2]);
@@ -314,8 +314,8 @@ describe('query', function () {
   // Read functions
 
   it('get', function () {
-    return create().then(function (instance) {
-      return assertQuery(query.Get(instance.ref), instance);
+    return create().then(function (document) {
+      return assertQuery(query.Get(document.ref), document);
     });
   });
 
@@ -360,10 +360,10 @@ describe('query', function () {
   // Write functions
 
   it('create', function () {
-    return create().then(function (instance) {
-      assert('ref' in instance);
-      assert('ts' in instance);
-      assert.deepEqual(instance.ref.class, classRef);
+    return create().then(function (document) {
+      assert('ref' in document);
+      assert('ts' in document);
+      assert.deepEqual(document.ref.class, collectionRef);
     });
   });
 
@@ -398,9 +398,9 @@ describe('query', function () {
   });
 
   it('insert', function () {
-    return createThimble({ weight: 1 }).then(function (instance) {
-      var ref = instance.ref;
-      var ts = instance.ts;
+    return createThimble({ weight: 1 }).then(function (document) {
+      var ref = document.ref;
+      var ts = document.ts;
       var prevTs = ts - 1;
 
       var inserted = { data: { weight: 0 } };
@@ -414,14 +414,14 @@ describe('query', function () {
   });
 
   it('remove', function () {
-    return createThimble({ weight: 0 }).then(function (instance) {
-      var ref = instance.ref;
+    return createThimble({ weight: 0 }).then(function (document) {
+      var ref = document.ref;
 
-      return client.query(query.Replace(ref, { data: { weight: 1 } })).then(function (newInstance) {
-        return assertQuery(query.Get(ref), newInstance).then(function () {
-          return client.query(query.Remove(ref, newInstance.ts, 'create'));
+      return client.query(query.Replace(ref, { data: { weight: 1 } })).then(function (newDocument) {
+        return assertQuery(query.Get(ref), newDocument).then(function () {
+          return client.query(query.Remove(ref, newDocument.ts, 'create'));
         }).then(function () {
-          return assertQuery(query.Get(ref), instance);
+          return assertQuery(query.Get(ref), document);
         });
       });
     });
@@ -550,15 +550,15 @@ describe('query', function () {
   // Authentication
 
   it('login/logout', function () {
-    return client.query(query.Create(classRef, { credentials: { password: 'sekrit' } })).then(function (result) {
-      var instanceRef = result.ref;
-      return client.query(query.Login(instanceRef, { password: 'sekrit' })).then(function (result2) {
+    return client.query(query.Create(collectionRef, { credentials: { password: 'sekrit' } })).then(function (result) {
+      var documentRef = result.ref;
+      return client.query(query.Login(documentRef, { password: 'sekrit' })).then(function (result2) {
         var secret = result2.secret;
         var instanceClient = util.getClient({ secret: secret });
 
-        var self = new values.Ref('self', new values.Ref('widgets', Native.CLASSES));
+        var self = new values.Ref('self', new values.Ref('widgets', Native.COLLECTIONS));
         return instanceClient.query(query.Select('ref', query.Get(self))).then(function (result3) {
-          assert.deepEqual(result3, instanceRef);
+          assert.deepEqual(result3, documentRef);
 
           return instanceClient.query(query.Logout(true));
         }).then(function (logoutResult) {
@@ -569,14 +569,14 @@ describe('query', function () {
   });
 
   it('identify', function () {
-    return client.query(query.Create(classRef, { credentials: { password: 'sekrit' } })).then(function (result) {
-      var instanceRef = result.ref;
-      return assertQuery(query.Identify(instanceRef, 'sekrit'), true);
+    return client.query(query.Create(collectionRef, { credentials: { password: 'sekrit' } })).then(function (result) {
+      var documentRef = result.ref;
+      return assertQuery(query.Identify(documentRef, 'sekrit'), true);
     });
   });
 
   it('has_identity', function () {
-    return client.query(query.Create(classRef, { credentials: { password: 'sekrit' } })).then(function (result) {
+    return client.query(query.Create(collectionRef, { credentials: { password: 'sekrit' } })).then(function (result) {
       return client.query(query.Login(result['ref'], { password: 'sekrit' })).then(function (login) {
         var new_client = util.getClient({ secret: login['secret'] });
 
@@ -589,7 +589,7 @@ describe('query', function () {
   });
 
   it('identity', function () {
-    return client.query(query.Create(classRef, { credentials: { password: 'sekrit' } })).then(function (result) {
+    return client.query(query.Create(collectionRef, { credentials: { password: 'sekrit' } })).then(function (result) {
       return client.query(query.Login(result['ref'], { password: 'sekrit' })).then(function (login) {
         var new_client = util.getClient({ secret: login['secret'] });
 
@@ -790,9 +790,9 @@ describe('query', function () {
     });
   });
 
-  it('class', function() {
-    return client.query(query.Class('widgets')).then(function(res) {
-      assert.deepEqual(res, classRef);
+  it('collection', function () {
+    return client.query(query.Collection('widgets')).then(function (res) {
+      assert.deepEqual(res, collectionRef);
     });
   });
 
@@ -1157,7 +1157,7 @@ describe('query', function () {
     return assertQuery(Ref(classRef, query.Concat(['123', '456'])), new values.Ref('123456', classRef));
   });
 
-  it('bytes', function () {
+  it('bytes', function() {
     return Promise.all([
       assertQuery(query.Bytes('AQIDBA=='), new Bytes('AQIDBA==')),
       assertQuery(query.Bytes(new Uint8Array([0, 0, 0, 0])), new Bytes('AAAAAA==')),
@@ -1175,18 +1175,18 @@ describe('query', function () {
           return childCli.query(
             query.Do(
               query.CreateDatabase({ name: 'a_db' }),
-              query.CreateClass({ name: 'a_class' }),
-              query.CreateIndex({ name: 'a_index', active: true, source: query.Ref('classes') }),
+              query.CreateCollection({ name: 'a_collection' }),
+              query.CreateIndex({ name: 'a_index', active: true, source: query.Ref('collections') }),
               query.CreateFunction({ name: 'a_function', body: query.Query(function(a) { return a }) }),
-              query.CreateRole({ name: 'a_role', privileges: { resource: query.Classes(), actions: { read: true }}}),
+              query.CreateRole({ name: 'a_role', privileges: { resource: query.Collections(), actions: { read: true }}}),
               query.Create(query.Ref('keys/123'), { database: query.Database('a_db'), role: 'server' })
             )
           ).then(function() {
             var childDb = query.Database('child-db');
             var childDbRef = new values.Ref('child-db', Native.DATABASES);
             var nestedDb = query.Database('child-db', query.Database('parent-db'));
-            var nestedClass = query.Class('a_class', nestedDb);
-            var nestedClassRef = new values.Ref('a_class', Native.CLASSES, new values.Ref(
+            var nestedCollection = query.Collection('a_collection', nestedDb);
+            var nestedCollectionRef = new values.Ref('a_collection', Native.COLLECTIONS, new values.Ref(
               'child-db', Native.DATABASES, new values.Ref(
                 'parent-db', Native.DATABASES
               )
@@ -1194,11 +1194,11 @@ describe('query', function () {
 
             return Promise.all([
               // Recursive from the top most database
-              assertQueryWithClient(adminCli, query.Exists(nestedClass), true),
-              assertQueryWithClient(adminCli, query.Paginate(query.Classes(nestedDb)), { data: [ nestedClassRef ] }),
+              assertQueryWithClient(adminCli, query.Exists(nestedCollection), true),
+              assertQueryWithClient(adminCli, query.Paginate(query.Collections(nestedDb)), { data: [ nestedCollectionRef ] }),
 
               // Non-recursive builtin references
-              assertQueryWithClient(childCli, query.Paginate(query.Classes()), { data: [ new values.Ref('a_class', Native.CLASSES) ] }),
+              assertQueryWithClient(childCli, query.Paginate(query.Collections()), { data: [ new values.Ref('a_collection', Native.COLLECTIONS) ] }),
               assertQueryWithClient(childCli, query.Paginate(query.Databases()), { data: [ new values.Ref('a_db', Native.DATABASES) ] }),
               assertQueryWithClient(childCli, query.Paginate(query.Indexes()), { data: [ new values.Ref('a_index', Native.INDEXES) ] }),
               assertQueryWithClient(childCli, query.Paginate(query.Functions()), { data: [ new values.Ref('a_function', Native.FUNCTIONS) ] }),
@@ -1208,7 +1208,7 @@ describe('query', function () {
               assertQueryWithClient(childCli, query.Paginate(query.Credentials()), { data: [] }),
 
               // Recursive built-in references
-              assertQueryWithClient(parentCli, query.Paginate(query.Classes(childDb)), { data: [ new values.Ref('a_class', Native.CLASSES, childDbRef) ] }),
+              assertQueryWithClient(parentCli, query.Paginate(query.Collections(childDb)), { data: [ new values.Ref('a_collection', Native.COLLECTIONS, childDbRef) ] }),
               assertQueryWithClient(parentCli, query.Paginate(query.Databases(childDb)), { data: [ new values.Ref('a_db', Native.DATABASES, childDbRef) ] }),
               assertQueryWithClient(parentCli, query.Paginate(query.Indexes(childDb)), { data: [ new values.Ref('a_index', Native.INDEXES, childDbRef) ] }),
               assertQueryWithClient(parentCli, query.Paginate(query.Functions(childDb)), { data: [ new values.Ref('a_function', Native.FUNCTIONS, childDbRef) ] }),
@@ -1224,7 +1224,7 @@ describe('query', function () {
   });
 
   it('nested ref from string', function() {
-    return assertQuery(query.Ref('classes/widget/123'), new values.Ref('123', new values.Ref('widget', Native.CLASSES)));
+    return assertQuery(query.Ref('collections/widget/123'), new values.Ref('123', new values.Ref('widget', Native.COLLECTIONS)));
   });
 
   // Check arity of all query functions
@@ -1276,10 +1276,12 @@ describe('query', function () {
       'Or': [0, 'at least 1'],
       'Index': [3, 'from 1 to 2'],
       'Class': [3, 'from 1 to 2'],
+      'Collection': [3, 'from 1 to 2'],
       'Database': [3, 'from 1 to 2'],
       'Function': [3, 'from 1 to 2'],
       'Role': [3, 'from 1 to 2'],
       'Classes': [2, 'up to 1'],
+      'Collections': [2, 'up to 1'],
       'Databases': [2, 'up to 1'],
       'Indexes': [2, 'up to 1'],
       'Functions': [2, 'up to 1'],
@@ -1340,11 +1342,11 @@ function create(data) {
     data.n = 0;
   }
 
-  return client.query(query.Create(classRef, { data: data }));
+  return client.query(query.Create(collectionRef, { data: data }));
 }
 
 function createThimble(data) {
-  return client.query(query.Create(thimbleClassRef, { data: data }));
+  return client.query(query.Create(thimbleCollectionRef, { data: data }));
 }
 
 function nSet(n) {

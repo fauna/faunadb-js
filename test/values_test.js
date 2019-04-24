@@ -18,15 +18,15 @@ var FaunaDate = values.FaunaDate,
 
 describe('Values', function() {
   var
-    ref = new Ref('123', new Ref('frogs', values.Native.CLASSES)),
-    jsonRef = '{"@ref":{"id":"123","class":{"@ref":{"id":"frogs","class":{"@ref":{"id":"classes"}}}}}}';
+    ref = new Ref('123', new Ref('frogs', values.Native.COLLECTIONS)),
+    jsonRef = '{"@ref":{"id":"123","class":{"@ref":{"id":"frogs","class":{"@ref":{"id":"collections"}}}}}}';
 
   it('ref', function () {
     assert.deepEqual(json.parseJSON(jsonRef), ref);
     assert.equal(json.toJSON(ref), jsonRef);
 
     assert.equal(ref.id, '123');
-    assert.deepEqual(ref.class, new Ref('frogs', values.Native.CLASSES));
+    assert.deepEqual(ref.class, new Ref('frogs', values.Native.COLLECTIONS));
     assert.equal(ref.database, undefined);
 
     assert.throws(function() { new Ref(); }, errors.InvalidValue, 'id cannot be null or undefined');
@@ -57,8 +57,9 @@ describe('Values', function() {
     assert.deepEqual(ft.date, epoch);
 
     // time offset not allowed
-    assert.throws(function () {
-      return new FaunaTime('1970-01-01T00:00:00.000+04:00');}, errors.InvalidValue);
+    assert.throws(function() {
+      return new FaunaTime('1970-01-01T00:00:00.000+04:00');
+    }, errors.InvalidValue);
   });
 
   it('time', function () {

@@ -9,13 +9,13 @@ var customInspect = util && util.inspect && util.inspect.custom;
 var stringify = (util && util.inspect) || JSON.stringify;
 
 /**
- * FaunaDB value types. Generally, these classes do not need to be instantiated
+ * FaunaDB value types. Generally, these collections do not need to be instantiated
  * directly; they can be constructed through helper methods in {@link module:query}.
  *
- * Instances of these classes will be returned in responses if the response object
+ * Instances of these collections will be returned in responses if the response object
  * contains these values. For example, a FaunaDB response containing
  *`{ "@ref": { "id": "123", "class": { "@ref": { "id": "frogs", "class": { "@ref": { "id": "classes" } } } } } }`
- * will be returned as `new values.Ref("123", new values.Ref("frogs", values.Native.CLASSES))`.
+ * will be returned as `new values.Ref("123", new values.Ref("frogs", values.Native.COLLECTIONS))`.
  *
  * See the [FaunaDB Query API Documentation](https://app.fauna.com/documentation/reference/queryapi#simple-type)
  * for more information.
@@ -41,7 +41,7 @@ util.inherits(Value, Expr);
  * @param {string} id
  *   The id portion of the ref.
  * @param {Ref} [clazz]
- *   The class portion of the ref.
+ *   The collection portion of the ref.
  * @param {Ref} [database]
  *   The database portion of the ref.
  *
@@ -59,10 +59,10 @@ function Ref(id, clazz, database) {
 util.inherits(Ref, Value);
 
 /**
- * Gets the class part out of the Ref.
+ * Gets the collection part out of the Ref.
  *
  * @member {string}
- * @name module:values~Ref#class
+ * @name module:values~Ref#collection
  */
 Object.defineProperty(Ref.prototype, 'class', { get: function() {
   return this.value['class'];
@@ -96,6 +96,7 @@ Ref.prototype.toJSON = function() {
 wrapToString(Ref, function() {
   var constructors = {
     classes: "Class",
+    collections: "Collection",
     databases: "Database",
     indexes: "Index",
     functions: "Function",
@@ -141,6 +142,7 @@ Ref.prototype.equals = function(other) {
 
 var Native = {
   CLASSES: new Ref('classes'),
+  COLLECTIONS: new Ref('collections'),
   INDEXES: new Ref('indexes'),
   DATABASES: new Ref('databases'),
   FUNCTIONS: new Ref('functions'),
@@ -150,7 +152,7 @@ var Native = {
 
 Native.fromName = function(name) {
   switch(name) {
-    case 'classes': return Native.CLASSES;
+    case 'classes': return Native.COLLECTIONS;
     case 'indexes': return Native.INDEXES;
     case 'databases': return Native.DATABASES;
     case 'functions': return Native.FUNCTIONS;

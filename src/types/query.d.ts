@@ -40,6 +40,7 @@ export module query {
   export function Insert(ref: ExprArg, ts: ExprArg, action: ExprArg, params: ExprArg): Expr;
   export function Remove(ref: ExprArg, ts: ExprArg, action: ExprArg): Expr;
   export function CreateClass(params: ExprArg): Expr;
+  export function CreateCollection(params: ExprArg): Expr;
   export function CreateDatabase(params: ExprArg): Expr;
   export function CreateIndex(params: ExprArg): Expr;
   export function CreateKey(params: ExprArg): Expr;
@@ -88,10 +89,12 @@ export module query {
   export function Database(name: ExprArg, scope?: ExprArg): Expr;
   export function Index(name: ExprArg, scope?: ExprArg): Expr;
   export function Class(name: ExprArg, scope?: ExprArg): Expr;
+  export function Collection(name: ExprArg, scope?: ExprArg): Expr;
   export function Function(name: ExprArg, scope?: ExprArg): Expr;
   export function Role(name: ExprArg, scope?: ExprArg): Expr;
   export function Databases(scope?: ExprArg): Expr;
   export function Classes(scope?: ExprArg): Expr;
+  export function Collections(scope?: ExprArg): Expr;
   export function Indexes(scope?: ExprArg): Expr;
   export function Functions(scope?: ExprArg): Expr;
   export function Roles(scope?: ExprArg): Expr;
