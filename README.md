@@ -8,9 +8,7 @@ A Javascript driver for [FaunaDB](https://fauna.com).
 
 [View reference JSDocs here](https://fauna.github.com/faunadb-js).
 
-See the [FaunaDB Documentation](https://fauna.com/documentation) and
-[Tutorials](https://fauna.com/tutorials) for guides and a complete database
-API reference.
+See the [FaunaDB Documentation](https://docs.fauna.com) for [CRUD Examples](https://docs.fauna.com/fauna/current/howto/crud_examples.html) and a complete database [API reference](https://docs.fauna.com/fauna/current/reference/queryapi/functions.html).
 
 ## Supported Runtimes
 
