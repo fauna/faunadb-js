@@ -93,19 +93,38 @@ function At(timestamp, expr) {
  *   The expression to run with the given bindings.
  * @return {Expr}
  * */
-function Let(vars, in_expr) {
+function Let(vars, expr) {
   arity.exact(2, arguments);
-  var expr = in_expr;
-  var bindings = Object.keys(vars).map(function (k) {
-    var b = {};
-    b[k] = wrap(vars[k]);
-    return b;
-  });
+  var bindings = [];
+
+  if (Array.isArray(vars)) {
+    bindings = vars.map(function (item) {
+      return wrapValues(item);
+    });
+  } else {
+    bindings = Object.keys(vars).map(function (k) {
+      var b = {};
+      b[k] = wrap(vars[k]);
+      return b;
+    });
+  }
 
   if (typeof expr === 'function') {
-    expr = expr.apply(null, Object.keys(vars).map(function(name) {
-      return Var(name);
-    }));
+    if (Array.isArray(vars)) {
+      var expr_vars = [];
+
+      vars.forEach(function (item) {
+        Object.keys(item).forEach(function(name) {
+          expr_vars.push(Var(name));
+        });
+      });
+
+      expr = expr.apply(null, expr_vars);
+    } else {
+      expr = expr.apply(null, Object.keys(vars).map(function(name) {
+        return Var(name);
+      }));
+    }
   }
 
   return new Expr({ let: bindings, in: wrap(expr) });

@@ -45,17 +45,36 @@ var exprToString = function(expr, caller) {
   if (expr === null)
     return 'null';
 
+  var printObject = function(obj) {
+    return '{' + Object.keys(obj).map(function(k) { return k + ': ' + exprToString(obj[k])}).join(', ') + '}';
+  };
+
+  var printArray = function(array, toStr) {
+    return array.map(function(item) { return toStr(item); }).join(', ');
+  };
+
   if (Array.isArray(expr)) {
-    var array = expr.map(function(item) { return exprToString(item); }).join(', ');
+    var array = printArray(expr, exprToString);
 
     return varArgsFunctions.indexOf(caller) != -1 ? array : '[' + array + ']';
   }
 
+  if ('let' in expr && 'in' in expr) {
+    var letExpr = '';
+
+    if (Array.isArray(expr['let']))
+      letExpr = '[' + printArray(expr['let'], printObject) + ']';
+    else
+      letExpr = printObject(expr['let']);
+
+    return 'Let(' + letExpr + ', ' + exprToString(expr['in']) + ')';
+  }
+
+  if ('object' in expr)
+    return printObject(expr['object']);
+
   var keys = Object.keys(expr);
   var fn = keys[0];
-
-  if (fn === 'object')
-    return '{' + Object.keys(expr.object).map(function(k) { return k + ': ' + exprToString(expr.object[k])}).join(', ') + '}';
 
   if (fn in specialCases)
     fn = specialCases[fn];

@@ -277,6 +277,17 @@ describe('Values', function() {
       new Query(q.Lambda(['x', 'y'], q.Add(q.Var('x'), q.Add(q.Var('y'), 1)))),
       'Query(Lambda(["x", "y"], Add(Var("x"), Add(Var("y"), 1))))'
     );
+
+    //let expr
+    assertPrint(
+      new Query(q.Lambda('_', q.Let({x: 10, y: 20}, q.Var('x')))),
+      'Query(Lambda("_", Let([{x: 10}, {y: 20}], Var("x"))))'
+    );
+
+    assertPrint(
+      new Query(q.Lambda('_', q.Let([{x: 10}, {y: 20}], q.Var('x')))),
+      'Query(Lambda("_", Let([{x: 10}, {y: 20}], Var("x"))))'
+    );
   });
 
   it('pretty print Expr with primitive types', function() {

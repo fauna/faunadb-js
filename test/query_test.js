@@ -131,8 +131,10 @@ describe('query', function () {
     return Promise.all([
       assertQuery(query.Let({ x: 1 }, query.Var('x')), 1),
       assertQuery(query.Let({ x: 1, y: 2 }, function(x, y) { return [x, y]; }), [1, 2]),
-      assertQuery(query.Let({ x: 1, y: query.Var('x') }, function(x, y) { return { a: x, b: y }; }), { a: 1, b: 1 })
-    ]);
+      assertQuery(query.Let([{ x: 1 }, { y: 2 }], function(x, y) { return [x, y]; }), [1, 2]),
+      assertQuery(query.Let({ x: 1, y: query.Var('x') }, function(x, y) { return { a: x, b: y }; }), { a: 1, b: 1 }),
+      assertQuery(query.Query(query.Lambda(_ => query.Let([{x: 1}, {y: 2}], function(x, y) { return [x, y]; }))), new values.Query({lambda: '_', expr: {let: {x: 1, y: 2}, in: [{var: 'x'}, {var: 'y'}]}}))
+   ]);
   });
 
   it('if', function () {
