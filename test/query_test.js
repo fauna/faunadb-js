@@ -1154,7 +1154,7 @@ describe('query', function () {
   });
 
   it('ref', function () {
-    return assertQuery(Ref(classRef, query.Concat(['123', '456'])), new values.Ref('123456', classRef));
+    return assertQuery(Ref(collectionRef, query.Concat(['123', '456'])), new values.Ref('123456', collectionRef));
   });
 
   it('bytes', function() {
