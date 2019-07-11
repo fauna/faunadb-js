@@ -79,6 +79,7 @@ export module query {
   export function TitleCase(value: ExprArg): Expr;
   export function Trim(expr: ExprArg): Expr;
   export function UpperCase(expr: ExprArg): Expr;
+  export function Format(string: ExprArg, values: ExprArg): Expr;
 
   export function Time(string: ExprArg): Expr;
   export function Epoch(number: ExprArg, unit: ExprArg): Expr;

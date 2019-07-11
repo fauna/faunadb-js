@@ -753,6 +753,15 @@ describe('query', function () {
     return Promise.all([p1, p2]);
   });
 
+  it('format', function () {
+    var p1 = assertQuery(query.Format('%3$s%1$s %2$s', 'DB', 'rocks', 'Fauna'), 'FaunaDB rocks');
+    var p2 = assertQuery(query.Format('%.4f', 3.14), '3.1400');
+    var p3 = assertQuery(query.Format('%s %d %.2f', 'Hey', 1995, 6.02), 'Hey 1995 6.02');
+    var p4 = assertQuery(query.Format('always 100%%'), 'always 100%');
+
+    return Promise.all([p1, p2, p3, p4]);
+  });
+
   // Time and date functions
 
   it('time', function () {
@@ -1246,6 +1255,7 @@ describe('query', function () {
       'Union': [0, 'at least 1'],
       'Intersection': [0, 'at least 1'],
       'Difference': [0, 'at least 1'],
+      'Format': [0, 'at least 1'],
       'Concat': [0, 'at least 1'],
       'Casefold': [0, 'at least 1'],
       'FindStr': [0, 'from 2 to 3'],
