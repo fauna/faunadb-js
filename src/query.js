@@ -732,6 +732,19 @@ function Union() {
 }
 
 /**
+ * Merge two or more objects..
+ *
+ * @param {...module:query~ExprArg} merge merge the first object.
+ * @param {...module:query~ExprArg} _with the second object or a list of objects
+ * @param {...module:query~ExprArg} lambda a lambda to resolve possible conflicts
+ * @return {Expr}
+ * */
+function Merge(merge, _with, lambda) {
+  arity.between(2, 3, arguments);
+  return new Expr(params({ 'merge': wrap(merge), 'with': wrap(_with) }, {'lambda': wrap(lambda) }));
+}
+
+/**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#sets).
  *
  * @param {...module:query~ExprArg} sets
@@ -2266,6 +2279,7 @@ module.exports = {
   Events: Events,
   Match: Match,
   Union: Union,
+  Merge: Merge,
   Intersection: Intersection,
   Difference: Difference,
   Distinct: Distinct,

@@ -508,6 +508,16 @@ describe('query', function () {
     return assertSet(query.Union(nSet(1), mSet(1)), [refN1, refM1, refN1M1]);
   });
 
+  it('merge', function () {
+    var p1 = assertQuery(query.Merge({}, {"x": 10, "y": 20}), {"x": 10, "y": 20});
+    var p2 = assertQuery(query.Merge({"one": 1}, {"two": 2}), {"one": 1, "two": 2});
+    var p3 = assertQuery(query.Merge({ x: 'x', y: 'y', z: 'z' }, { z: 'Zzz' }), { x: 'x', y: 'y', z: 'Zzz' });
+    var p4 = assertQuery(query.Merge({}, [{x: 'x'}, {y: 'y'}, {z: 'z'}] ), { x: 'x', y: 'y', z: 'z' });
+    var p5 = assertQuery(query.Merge({x: 'A'}, { x: 'x', y: 'y', z: 'z' }, query.Lambda( (key, left, right) => {return left;})), { x: 'A'});
+
+    return Promise.all([p1, p2, p3, p4, p5]);
+  });
+
   it('intersection', function () {
     return assertSet(query.Intersection(nSet(1), mSet(1)), [refN1M1]);
   });
@@ -1244,6 +1254,7 @@ describe('query', function () {
       'Create': [3, 'from 1 to 2'],
       'Match': [0, 'at least 1'],
       'Union': [0, 'at least 1'],
+      'Merge': [0, 'from 2 to 3'],
       'Intersection': [0, 'at least 1'],
       'Difference': [0, 'at least 1'],
       'Concat': [0, 'at least 1'],
