@@ -1,3 +1,12 @@
+## 2.7.0
+- Add stdlib time functions ToSeconds(), ToMillis(), ToMicros(), DayOfWeek(),
+  DayOfMonth(), DayOfYear(), Month(), Hour(), Minute(), Second()
+- Support new schema names: Class -> Collection; Instance -> Document
+  Deprecate CreateClass(), Class(), and Classes() in favor of
+  CreateCollection(), Collection(), Collections()
+- Fix rendering of Let() function
+- Add functions for RBAC: CreateRole(), Role(), Roles()
+
 ## 2.6.1
 - Make the FaunaClient.query(..) function generic for Typescript
 - Temporarily disable X-Last-Seen-Txn header due to CORS issues

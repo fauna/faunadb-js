@@ -46,13 +46,13 @@ This release can be installed via bower:
 Or via CDN:
 
 ```html
-<script src="//cdn.jsdelivr.net/gh/fauna/faunadb-js-release@2.6.1/faunadb.js"></script>
+<script src="//cdn.jsdelivr.net/gh/fauna/faunadb-js-release@2.7.0/faunadb.js"></script>
 ```
 
 The minified version of the driver can also be used via CDN:
 
 ```html
-<script src="//cdn.jsdelivr.net/gh/fauna/faunadb-js-release@2.6.1/faunadb-min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/fauna/faunadb-js-release@2.7.0/faunadb-min.js"></script>
 ```
 
 ### Use
