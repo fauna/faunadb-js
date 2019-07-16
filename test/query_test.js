@@ -365,7 +365,7 @@ describe('query', function () {
     return create().then(function (document) {
       assert('ref' in document);
       assert('ts' in document);
-      assert.deepEqual(document.ref.class, collectionRef);
+      assert.deepEqual(document.ref.collection, collectionRef);
     });
   });
 
@@ -465,13 +465,13 @@ describe('query', function () {
             assert.equal(events.length, 3);
 
             assert.equal(events[0].action, 'create');
-            assert.deepEqual(events[0].instance, ref);
+            assert.deepEqual(events[0].document, ref);
 
             assert.equal(events[1].action, 'update');
-            assert.deepEqual(events[1].instance, ref);
+            assert.deepEqual(events[1].document, ref);
 
             assert.equal(events[2].action, 'delete');
-            assert.deepEqual(events[2].instance, ref);
+            assert.deepEqual(events[2].document, ref);
           });
         });
       });
@@ -490,10 +490,10 @@ describe('query', function () {
             assert.equal(events.length, 2);
 
             assert.equal(events[0].action, 'add');
-            assert.deepEqual(events[0].instance, ref);
+            assert.deepEqual(events[0].document, ref);
 
             assert.equal(events[1].action, 'remove');
-            assert.deepEqual(events[1].instance, ref);
+            assert.deepEqual(events[1].document, ref);
           });
         });
       });

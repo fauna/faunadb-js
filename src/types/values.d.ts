@@ -7,15 +7,16 @@ export module values {
   }
 
   export class Ref extends Value {
-    constructor(id: string, cls?: Ref, db?: Ref);
+    constructor(id: string, col?: Ref, db?: Ref);
 
     id: string;
+    collection?: Ref;
     class?: Ref;
     database?: Ref;
   }
 
   export class Native {
-    static readonly CLASSES: Ref;
+    static readonly COLLECTIONS: Ref;
     static readonly INDEXES: Ref;
     static readonly DATABASES: Ref;
     static readonly KEYS: Ref;

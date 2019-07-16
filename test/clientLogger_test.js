@@ -60,7 +60,7 @@ describe('clientLogger', function () {
       assert.equal(readLine(), '    "create": {');
       assert.equal(readLine(), '      "@ref": {');
       assert.equal(readLine(), '        "id": "logging_tests",');
-      assert.equal(readLine(), '        "class": {');
+      assert.equal(readLine(), '        "collection": {');
       assert.equal(readLine(), '          "@ref": {');
       assert.equal(readLine(), '            "id": "collections"');
       assert.equal(readLine(), '          }');

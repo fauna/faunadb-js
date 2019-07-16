@@ -22,14 +22,14 @@ function json_parse(_, val) {
   } else if ('@ref' in val) {
     var ref = val['@ref'];
 
-    if (!('class' in ref) && !('database' in ref)) {
+    if (!('collection' in ref) && !('database' in ref)) {
       return values.Native.fromName(ref['id']);
     }
 
-    var cls = json_parse('class', ref['class']);
+    var col = json_parse('collection', ref['collection']);
     var db = json_parse('database', ref['database']);
 
-    return new values.Ref(ref['id'], cls, db);
+    return new values.Ref(ref['id'], col, db);
   } else if ('@obj' in val) {
     return val['@obj'];
   } else if ('@set' in val) {

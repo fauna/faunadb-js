@@ -19,14 +19,14 @@ var FaunaDate = values.FaunaDate,
 describe('Values', function() {
   var
     ref = new Ref('123', new Ref('frogs', values.Native.COLLECTIONS)),
-    jsonRef = '{"@ref":{"id":"123","class":{"@ref":{"id":"frogs","class":{"@ref":{"id":"collections"}}}}}}';
+    jsonRef = '{"@ref":{"id":"123","collection":{"@ref":{"id":"frogs","collection":{"@ref":{"id":"collections"}}}}}}';
 
   it('ref', function () {
     assert.deepEqual(json.parseJSON(jsonRef), ref);
     assert.equal(json.toJSON(ref), jsonRef);
 
     assert.equal(ref.id, '123');
-    assert.deepEqual(ref.class, new Ref('frogs', values.Native.COLLECTIONS));
+    assert.deepEqual(ref.collection, new Ref('frogs', values.Native.COLLECTIONS));
     assert.equal(ref.database, undefined);
 
     assert.throws(function() { new Ref(); }, errors.InvalidValue, 'id cannot be null or undefined');
@@ -40,7 +40,7 @@ describe('Values', function() {
   it('set', function () {
     var
       index = new Ref('frogs_by_size', values.Native.INDEXES),
-      jsonIndex = '{"@ref":{"id":"frogs_by_size","class":{"@ref":{"id":"indexes"}}}}',
+      jsonIndex = '{"@ref":{"id":"frogs_by_size","collection":{"@ref":{"id":"indexes"}}}}',
       match = new SetRef({ match: index, terms: ref }),
       jsonMatch = '{"@set":{"match":' + jsonIndex + ',"terms":' + jsonRef + '}}';
     assert.deepEqual(json.parseJSON(jsonMatch), match);
@@ -130,14 +130,14 @@ describe('Values', function() {
   };
 
   it('pretty print', function() {
-    assertPrint(new Ref('cls', values.Native.CLASSES), 'Class("cls")');
+    assertPrint(new Ref('col', values.Native.COLLECTIONS), 'Collection("col")');
     assertPrint(new Ref('db', values.Native.DATABASES), 'Database("db")');
     assertPrint(new Ref('idx', values.Native.INDEXES), 'Index("idx")');
     assertPrint(new Ref('fn', values.Native.FUNCTIONS), 'Function("fn")');
     assertPrint(new Ref('role', values.Native.ROLES), 'Role("role")');
     assertPrint(new Ref('key', values.Native.KEYS), 'Ref(Keys(), "key")');
 
-    assertPrint(values.Native.CLASSES, 'Classes()');
+    assertPrint(values.Native.COLLECTIONS, 'Collections()');
     assertPrint(values.Native.DATABASES, 'Databases()');
     assertPrint(values.Native.INDEXES, 'Indexes()');
     assertPrint(values.Native.FUNCTIONS, 'Functions()');
@@ -145,7 +145,7 @@ describe('Values', function() {
     assertPrint(values.Native.KEYS, 'Keys()');
 
     var db = new Ref("db", values.Native.DATABASES);
-    assertPrint(new Ref('cls', values.Native.CLASSES, db), 'Class("cls", Database("db"))');
+    assertPrint(new Ref('col', values.Native.COLLECTIONS, db), 'Collection("col", Database("db"))');
     assertPrint(new Ref('db', values.Native.DATABASES, db), 'Database("db", Database("db"))');
     assertPrint(new Ref('idx', values.Native.INDEXES, db), 'Index("idx", Database("db"))');
     assertPrint(new Ref('fn', values.Native.FUNCTIONS, db), 'Function("fn", Database("db"))');

@@ -1,5 +1,7 @@
 'use strict';
 
+var APIVersion = "2.7"
+
 var btoa = require('btoa-lite');
 var request = require('superagent');
 var errors = require('./errors');
@@ -30,7 +32,7 @@ var Promise = require('es6-promise').Promise;
  * FaunaDB types, such as {@link Ref}, {@link SetRef}, {@link FaunaTime}, and {@link FaunaDate} will
  * be converted into the appropriate object.
  *
- * (So if a response contains `{ "@ref": "classes/frogs/123" }`,
+ * (So if a response contains `{ "@ref": "collections/frogs/123" }`,
  * it will be returned as `new Ref("collections/frogs/123")`.)
  *
  * @constructor
@@ -48,6 +50,7 @@ var Promise = require('es6-promise').Promise;
  *   Callback that will be called after every completed request.
  */
 function Client(options) {
+
   var opts = util.applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
@@ -182,7 +185,7 @@ Client.prototype._performRequest = function (action, path, data, query) {
     rq.set('X-Last-Seen-Txn', this._lastSeen);
   }
 
-  rq.set('X-FaunaDB-API-Version', '2.1');
+  rq.set('X-FaunaDB-API-Version', APIVersion);
 
   rq.timeout(this._timeout);
 

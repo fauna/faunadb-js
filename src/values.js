@@ -1,6 +1,7 @@
 'use strict';
 
 var base64 = require('base64-js');
+var deprecate = require('util-deprecate');
 var errors = require('./errors');
 var Expr = require('./Expr');
 var util = require('util');
@@ -14,7 +15,7 @@ var stringify = (util && util.inspect) || JSON.stringify;
  *
  * Instances of these collections will be returned in responses if the response object
  * contains these values. For example, a FaunaDB response containing
- *`{ "@ref": { "id": "123", "class": { "@ref": { "id": "frogs", "class": { "@ref": { "id": "classes" } } } } } }`
+ *`{ "@ref": { "id": "123", "collection": { "@ref": { "id": "frogs", "collection": { "@ref": { "id": "collectiones" } } } } } }`
  * will be returned as `new values.Ref("123", new values.Ref("frogs", values.Native.COLLECTIONS))`.
  *
  * See the [FaunaDB Query API Documentation](https://app.fauna.com/documentation/reference/queryapi#simple-type)
@@ -40,7 +41,7 @@ util.inherits(Value, Expr);
  *
  * @param {string} id
  *   The id portion of the ref.
- * @param {Ref} [clazz]
+ * @param {Ref} [collection]
  *   The collection portion of the ref.
  * @param {Ref} [database]
  *   The database portion of the ref.
@@ -48,11 +49,11 @@ util.inherits(Value, Expr);
  * @extends module:values~Value
  * @constructor
  */
-function Ref(id, clazz, database) {
+function Ref(id, collection, database) {
   if (!id) throw new errors.InvalidValue('id cannot be null or undefined');
 
   this.value = { id: id };
-  if (clazz) this.value['class'] = clazz;
+  if (collection) this.value['collection'] = collection;
   if (database) this.value['database'] = database;
 }
 
@@ -64,9 +65,19 @@ util.inherits(Ref, Value);
  * @member {string}
  * @name module:values~Ref#collection
  */
-Object.defineProperty(Ref.prototype, 'class', { get: function() {
-  return this.value['class'];
+Object.defineProperty(Ref.prototype, 'collection', { get: function() {
+  return this.value['collection'];
 } });
+
+/**
+ * DEPRECATED. Gets the class part out of the Ref.
+ *
+ * @member {string}
+ * @name module:values~Ref#class
+ */
+Object.defineProperty(Ref.prototype, 'class', {get: deprecate(function() {
+  return this.value['collection'];
+}, 'class is deprecated, use collection instead')});
 
 /**
  * Gets the database part out of the Ref.
@@ -95,7 +106,6 @@ Ref.prototype.toJSON = function() {
 
 wrapToString(Ref, function() {
   var constructors = {
-    classes: "Class",
     collections: "Collection",
     databases: "Database",
     indexes: "Index",
@@ -104,10 +114,10 @@ wrapToString(Ref, function() {
   };
 
   var toString = function(ref, prevDb) {
-    if (ref.class === undefined && ref.database === undefined)
+    if (ref.collection === undefined && ref.database === undefined)
       return ref.id.charAt(0).toUpperCase() + ref.id.slice(1) + '(' + prevDb + ')';
 
-    var constructor = constructors[ref.class.id];
+    var constructor = constructors[ref.collection.id];
     if (constructor !== undefined) {
       var db = ref.database !== undefined ? ', ' +  ref.database.toString() : '';
       return constructor + '("' + ref.id + '"' + db + ')';
@@ -115,7 +125,7 @@ wrapToString(Ref, function() {
 
     var db = ref.database !== undefined ? ref.database.toString() : '';
 
-    return 'Ref(' + toString(ref.class, db) + ', "' + ref.id + '")';
+    return 'Ref(' + toString(ref.collection, db) + ', "' + ref.id + '")';
   };
 
   return toString(this, '');
@@ -134,14 +144,13 @@ Ref.prototype.valueOf = function() {
 Ref.prototype.equals = function(other) {
   return (other instanceof Ref) &&
     this.id === other.id &&
-    ((this.class === undefined && other.class === undefined) ||
-      this.class.equals(other.class)) &&
+    ((this.collection === undefined && other.collection === undefined) ||
+      this.collection.equals(other.collection)) &&
     ((this.database === undefined && other.database === undefined) ||
       this.database.equals(other.database))
 };
 
 var Native = {
-  CLASSES: new Ref('classes'),
   COLLECTIONS: new Ref('collections'),
   INDEXES: new Ref('indexes'),
   DATABASES: new Ref('databases'),
@@ -152,7 +161,7 @@ var Native = {
 
 Native.fromName = function(name) {
   switch(name) {
-    case 'classes': return Native.COLLECTIONS;
+    case 'collections': return Native.COLLECTIONS;
     case 'indexes': return Native.INDEXES;
     case 'databases': return Native.DATABASES;
     case 'functions': return Native.FUNCTIONS;

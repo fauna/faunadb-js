@@ -33,7 +33,7 @@ export module query {
   export function Paginate(set: ExprArg, opts?: object): Expr;
   export function Exists(ref: ExprArg, ts?: ExprArg): Expr;
 
-  export function Create(class_ref: ExprArg, params?: ExprArg): Expr;
+  export function Create(collection_ref: ExprArg, params?: ExprArg): Expr;
   export function Update(ref: ExprArg, params: ExprArg): Expr;
   export function Replace(ref: ExprArg, params: ExprArg): Expr;
   export function Delete(ref: ExprArg): Expr;

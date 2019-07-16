@@ -174,6 +174,7 @@ describe('page', function() {
       p.forEach(function(item) {
         assert.property(item, 'ts');
         assert.property(item, 'action');
+        assert.property(item, 'document');
         assert.property(item, 'instance');
         assert.property(item, 'data');
       });
@@ -199,6 +200,7 @@ describe('page', function() {
         var value = item.value;
         assert.property(value, 'ts');
         assert.property(value, 'action');
+        assert.property(value, 'document');
         assert.property(value, 'instance');
         assert.property(value, 'data');
       });

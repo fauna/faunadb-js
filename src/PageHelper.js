@@ -168,7 +168,17 @@ PageHelper.prototype._adjustCursors = function(page) {
 PageHelper.prototype._consumePages = function(lambda, reverse) {
   var self = this;
   return function (page) {
-    lambda(page.data);
+    var data = []
+    page.data.forEach(function(item) {
+      if (item.document) {
+        item.instance = item.document;
+      }
+      if (item.value && item.value.document) {
+        item.value.instance = item.value.document;
+      }
+      data.push(item);
+    });
+    lambda(data);
 
     var nextCursor;
     if (reverse) {
