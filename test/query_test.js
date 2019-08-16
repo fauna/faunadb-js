@@ -334,6 +334,35 @@ describe('query', function () {
     });
   });
 
+  it('reduce', function () {
+    var client = util.client();
+
+    return client.query(query.CreateCollection({name: 'reduce_cls'})).then(function(cls) {
+      return client.query(query.CreateIndex({name: 'reduce_idx', source: cls.ref, values: [{field: ['data', 'value']}], active: true})).then(function(index) {
+        return client.query(query.Foreach(range(1, 100), query.Lambda(i => query.Create(cls.ref, {data: {value: i}})))).then(function(insts) {
+          var lambda = query.Lambda((acc, value) => query.Add(acc, value));
+
+          //array
+          var p1 = client.query(query.Reduce(lambda, 10, range(1, 100))).then(function(returned) {
+            assert.equal(returned, 5060);
+          });
+
+          //page
+          var p2 = client.query(query.Reduce(lambda, 10, query.Paginate(query.Match(index.ref), {size: 100}))).then(function(returned) {
+            assert.deepEqual(returned, {data: [5060]});
+          });
+
+          //set
+          var p3 = client.query(query.Reduce(lambda, 10, query.Match(index.ref))).then(function(returned) {
+            assert.equal(returned, 5060);
+          });
+
+          return Promise.all([p1, p2, p3]);
+        });
+      });
+    });
+  });
+
   it('paginate', function () {
     var testSet = nSet(1);
     var p1 = assertQuery(query.Paginate(testSet), { data: [refN1, refN1M1] });
@@ -1387,4 +1416,13 @@ function getSetContents(set) {
   return client.query(query.Paginate(set, { size: 1000 })).then(function (result) {
     return result.data;
   });
+}
+
+function range(start, end) {
+  var values = [];
+
+  for (var i = start; i <= end; i++)
+    values.push(i);
+
+  return values;
 }
