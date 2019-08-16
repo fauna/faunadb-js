@@ -57,6 +57,7 @@ export module query {
   export function Distinct(set: ExprArg): Expr;
   export function Join(source: ExprArg, target: (ExprArg|Lambda)): Expr;
 
+  export function Range(set: ExprArg, from: ExprArg, to: ExprArg): Expr;
   export function Login(ref: ExprArg, params: ExprArg): Expr;
   export function Logout(delete_tokens: ExprArg): Expr;
   export function Identify(ref: ExprArg, password: ExprArg): Expr;

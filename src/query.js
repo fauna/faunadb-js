@@ -810,6 +810,22 @@ function Join(source, target) {
   return new Expr({ join: wrap(source), with: wrap(target) });
 }
 
+/**
+ * See the [docs](https://docs.fauna.com/fauna/current/api/fql/functions/range).
+ *
+ * @param {module:query~ExprArg} set
+ *   A SetRef of the source set
+ * @param {module:query~ExprArg} from
+ *   The lower bound
+ * @param {module:query~ExprArg} to
+ *   The upper bound
+ * @return {Expr}
+ */
+function Range(set, from, to) {
+  arity.exact(3, arguments);
+  return new Expr({ range: wrap(set), from: wrap(from), to: wrap(to) });
+}
+
 // Authentication
 
 /**
@@ -2301,6 +2317,7 @@ module.exports = {
   Difference: Difference,
   Distinct: Distinct,
   Join: Join,
+  Range: Range,
   Login: Login,
   Logout: Logout,
   Identify: Identify,

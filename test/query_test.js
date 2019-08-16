@@ -590,6 +590,34 @@ describe('query', function () {
 
   // Authentication
 
+  it('range', function () {
+    return client.query(query.CreateCollection({name: 'range_cls'})).then(function(cls) {
+      return client.query(query.CreateIndex({name: 'range_idx', source: cls.ref, values: [{field: ['data', 'value']}], active: true})).then(function(index) {
+        return client.query(query.Foreach(range(1, 20), query.Lambda(i => query.Create(cls.ref, {data: {value: i}})))).then(function() {
+          var m = query.Match(index.ref)
+
+          var p1 = client.query(query.Paginate(query.Range(m, 3, 7))).then(function(returned) {
+            assert.deepEqual(returned, {data: range(3, 7)});
+          });
+
+          var p2 = client.query(query.Paginate(query.Union(query.Range(m, 1, 10), query.Range(m, 11, 20)))).then(function(returned) {
+            assert.deepEqual(returned, {data: range(1, 20)});
+          });
+
+          var p3 = client.query(query.Paginate(query.Difference(query.Range(m, 1, 20), query.Range(m, 11, 20)))).then(function(returned) {
+            assert.deepEqual(returned, {data: range(1, 10)});
+          });
+
+          var p4 = client.query(query.Paginate(query.Intersection(query.Range(m, 1, 20), query.Range(m, 5, 15)))).then(function(returned) {
+            assert.deepEqual(returned, {data: range(5, 15)});
+          });
+
+          return Promise.all([p1, p2, p3, p4]);
+        });
+      });
+    });
+  });
+
   it('login/logout', function () {
     return client.query(query.Create(collectionRef, { credentials: { password: 'sekrit' } })).then(function (result) {
       var documentRef = result.ref;
