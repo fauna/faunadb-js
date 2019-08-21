@@ -13,6 +13,9 @@ var util = require('./_util');
 var PageHelper = require('./PageHelper');
 var Promise = require('es6-promise').Promise;
 
+var isNodeEnv = typeof window === 'undefined' && typeof self === 'undefined';
+var keepAliveAgent = isNodeEnv ? new require('https').Agent({ keepAlive: true }) : undefined;
+
 /**
  * The callback that will be executed after every completed request.
  *
@@ -169,6 +172,10 @@ Client.prototype._execute = function (action, path, data, query) {
 
 Client.prototype._performRequest = function (action, path, data, query) {
   var rq = request(action, this._baseUrl + '/' + path);
+  if (keepAliveAgent) {
+    rq.agent(keepAliveAgent);
+  }
+
   if (query) {
     rq.query(query);
   }
