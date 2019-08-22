@@ -448,6 +448,22 @@ function KeyFromSecret(secret) {
 }
 
 /**
+ * See the [docs](https://docs.fauna.com/fauna/current/api/fql/functions/reduce).
+ *
+ * @param {module:query~ExprArg} lambda
+ *   The accumulator function
+ * @param {module:query~ExprArg} initial
+ *   The initial value
+ * @param {module:query~ExprArg} collection
+ *   The colleciton to be reduced
+ * @return {Expr}
+ */
+function Reduce(lambda, initial, collection) {
+  arity.exact(3, arguments);
+  return new Expr({ reduce: wrap(lambda), initial: wrap(initial), collection: wrap(collection) });
+}
+
+/**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#read-functions).
  * You may want to utilize {@link Client#paginate} to obtain a {@link PageHelper},
  * rather than using this query function directly.
@@ -2260,6 +2276,7 @@ module.exports = {
   IsNonEmpty: IsNonEmpty,
   Get: Get,
   KeyFromSecret: KeyFromSecret,
+  Reduce: Reduce,
   Paginate: Paginate,
   Exists: Exists,
   Create: Create,

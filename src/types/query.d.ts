@@ -30,6 +30,7 @@ export module query {
 
   export function Get(ref: ExprArg, ts?: ExprArg): Expr;
   export function KeyFromSecret(secret: ExprArg): Expr;
+  export function Reduce(lambda: ExprArg, initial: ExprArg, collection: ExprArg): Expr;
   export function Paginate(set: ExprArg, opts?: object): Expr;
   export function Exists(ref: ExprArg, ts?: ExprArg): Expr;
 
