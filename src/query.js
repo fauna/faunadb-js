@@ -1107,6 +1107,20 @@ function UpperCase(value) {
   return new Expr({ uppercase: wrap(value) });
 }
 
+/**
+ * Format values into a string.
+ *
+ * @param  {string}  string string with format specifiers
+ * @param  {array}   values list of values to format
+ * @return {string}         a string
+ */
+function Format(string) {
+  arity.min(1, arguments);
+  var args = argsToArray(arguments);
+  args.shift();
+  return new Expr({ format: wrap(string), values: wrap(varargs(args)) });
+}
+
 // Time and date functions
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#time-and-date).
@@ -2340,6 +2354,7 @@ module.exports = {
   TitleCase: TitleCase,
   Trim: Trim,
   UpperCase: UpperCase,
+  Format: Format,
   Time: Time,
   Epoch: Epoch,
   Date: Date,
