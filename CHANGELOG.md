@@ -1,3 +1,6 @@
+## 2.8.0
+- Add stdlib functions: Reduce(), Merge(), Range(), Format()
+
 ## 2.7.0
 - Add stdlib time functions ToSeconds(), ToMillis(), ToMicros(), DayOfWeek(),
   DayOfMonth(), DayOfYear(), Month(), Hour(), Minute(), Second()
