@@ -27,6 +27,7 @@ export module query {
   export function Append(elements: ExprArg, collection: ExprArg): Expr;
   export function IsEmpty(collection: ExprArg): Expr;
   export function IsNonEmpty(collection: ExprArg): Expr;
+  export function Merge(...args: ExprArg[]): Expr;
 
   export function Get(ref: ExprArg, ts?: ExprArg): Expr;
   export function KeyFromSecret(secret: ExprArg): Expr;
