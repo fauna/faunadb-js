@@ -334,6 +334,35 @@ describe('query', function () {
     });
   });
 
+  it('reduce', function () {
+    var client = util.client();
+
+    return client.query(query.CreateCollection({name: 'reduce_cls'})).then(function(cls) {
+      return client.query(query.CreateIndex({name: 'reduce_idx', source: cls.ref, values: [{field: ['data', 'value']}], active: true})).then(function(index) {
+        return client.query(query.Foreach(range(1, 100), query.Lambda(i => query.Create(cls.ref, {data: {value: i}})))).then(function(insts) {
+          var lambda = query.Lambda((acc, value) => query.Add(acc, value));
+
+          //array
+          var p1 = client.query(query.Reduce(lambda, 10, range(1, 100))).then(function(returned) {
+            assert.equal(returned, 5060);
+          });
+
+          //page
+          var p2 = client.query(query.Reduce(lambda, 10, query.Paginate(query.Match(index.ref), {size: 100}))).then(function(returned) {
+            assert.deepEqual(returned, {data: [5060]});
+          });
+
+          //set
+          var p3 = client.query(query.Reduce(lambda, 10, query.Match(index.ref))).then(function(returned) {
+            assert.equal(returned, 5060);
+          });
+
+          return Promise.all([p1, p2, p3]);
+        });
+      });
+    });
+  });
+
   it('paginate', function () {
     var testSet = nSet(1);
     var p1 = assertQuery(query.Paginate(testSet), { data: [refN1, refN1M1] });
@@ -508,6 +537,16 @@ describe('query', function () {
     return assertSet(query.Union(nSet(1), mSet(1)), [refN1, refM1, refN1M1]);
   });
 
+  it('merge', function () {
+    var p1 = assertQuery(query.Merge({}, {"x": 10, "y": 20}), {"x": 10, "y": 20});
+    var p2 = assertQuery(query.Merge({"one": 1}, {"two": 2}), {"one": 1, "two": 2});
+    var p3 = assertQuery(query.Merge({ x: 'x', y: 'y', z: 'z' }, { z: 'Zzz' }), { x: 'x', y: 'y', z: 'Zzz' });
+    var p4 = assertQuery(query.Merge({}, [{x: 'x'}, {y: 'y'}, {z: 'z'}] ), { x: 'x', y: 'y', z: 'z' });
+    var p5 = assertQuery(query.Merge({x: 'A'}, { x: 'x', y: 'y', z: 'z' }, query.Lambda( (key, left, right) => {return left;})), { x: 'A'});
+
+    return Promise.all([p1, p2, p3, p4, p5]);
+  });
+
   it('intersection', function () {
     return assertSet(query.Intersection(nSet(1), mSet(1)), [refN1M1]);
   });
@@ -550,6 +589,34 @@ describe('query', function () {
   });
 
   // Authentication
+
+  it('range', function () {
+    return client.query(query.CreateCollection({name: 'range_cls'})).then(function(cls) {
+      return client.query(query.CreateIndex({name: 'range_idx', source: cls.ref, values: [{field: ['data', 'value']}], active: true})).then(function(index) {
+        return client.query(query.Foreach(range(1, 20), query.Lambda(i => query.Create(cls.ref, {data: {value: i}})))).then(function() {
+          var m = query.Match(index.ref)
+
+          var p1 = client.query(query.Paginate(query.Range(m, 3, 7))).then(function(returned) {
+            assert.deepEqual(returned, {data: range(3, 7)});
+          });
+
+          var p2 = client.query(query.Paginate(query.Union(query.Range(m, 1, 10), query.Range(m, 11, 20)))).then(function(returned) {
+            assert.deepEqual(returned, {data: range(1, 20)});
+          });
+
+          var p3 = client.query(query.Paginate(query.Difference(query.Range(m, 1, 20), query.Range(m, 11, 20)))).then(function(returned) {
+            assert.deepEqual(returned, {data: range(1, 10)});
+          });
+
+          var p4 = client.query(query.Paginate(query.Intersection(query.Range(m, 1, 20), query.Range(m, 5, 15)))).then(function(returned) {
+            assert.deepEqual(returned, {data: range(5, 15)});
+          });
+
+          return Promise.all([p1, p2, p3, p4]);
+        });
+      });
+    });
+  });
 
   it('login/logout', function () {
     return client.query(query.Create(collectionRef, { credentials: { password: 'sekrit' } })).then(function (result) {
@@ -751,6 +818,15 @@ describe('query', function () {
     var p2 = assertQuery(query.UpperCase("abc def"), "ABC DEF");
 
     return Promise.all([p1, p2]);
+  });
+
+  it('format', function () {
+    var p1 = assertQuery(query.Format('%3$s%1$s %2$s', 'DB', 'rocks', 'Fauna'), 'FaunaDB rocks');
+    var p2 = assertQuery(query.Format('%.4f', 3.14), '3.1400');
+    var p3 = assertQuery(query.Format('%s %d %.2f', 'Hey', 1995, 6.02), 'Hey 1995 6.02');
+    var p4 = assertQuery(query.Format('always 100%%'), 'always 100%');
+
+    return Promise.all([p1, p2, p3, p4]);
   });
 
   // Time and date functions
@@ -1244,8 +1320,10 @@ describe('query', function () {
       'Create': [3, 'from 1 to 2'],
       'Match': [0, 'at least 1'],
       'Union': [0, 'at least 1'],
+      'Merge': [0, 'from 2 to 3'],
       'Intersection': [0, 'at least 1'],
       'Difference': [0, 'at least 1'],
+      'Format': [0, 'at least 1'],
       'Concat': [0, 'at least 1'],
       'Casefold': [0, 'at least 1'],
       'FindStr': [0, 'from 2 to 3'],
@@ -1387,4 +1465,13 @@ function getSetContents(set) {
   return client.query(query.Paginate(set, { size: 1000 })).then(function (result) {
     return result.data;
   });
+}
+
+function range(start, end) {
+  var values = [];
+
+  for (var i = start; i <= end; i++)
+    values.push(i);
+
+  return values;
 }

@@ -30,6 +30,7 @@ export module query {
 
   export function Get(ref: ExprArg, ts?: ExprArg): Expr;
   export function KeyFromSecret(secret: ExprArg): Expr;
+  export function Reduce(lambda: ExprArg, initial: ExprArg, collection: ExprArg): Expr;
   export function Paginate(set: ExprArg, opts?: object): Expr;
   export function Exists(ref: ExprArg, ts?: ExprArg): Expr;
 
@@ -56,6 +57,7 @@ export module query {
   export function Distinct(set: ExprArg): Expr;
   export function Join(source: ExprArg, target: (ExprArg|Lambda)): Expr;
 
+  export function Range(set: ExprArg, from: ExprArg, to: ExprArg): Expr;
   export function Login(ref: ExprArg, params: ExprArg): Expr;
   export function Logout(delete_tokens: ExprArg): Expr;
   export function Identify(ref: ExprArg, password: ExprArg): Expr;
@@ -79,6 +81,7 @@ export module query {
   export function TitleCase(value: ExprArg): Expr;
   export function Trim(expr: ExprArg): Expr;
   export function UpperCase(expr: ExprArg): Expr;
+  export function Format(string: ExprArg, values: ExprArg): Expr;
 
   export function Time(string: ExprArg): Expr;
   export function Epoch(number: ExprArg, unit: ExprArg): Expr;
