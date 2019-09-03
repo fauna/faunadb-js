@@ -84,7 +84,14 @@ var exprToString = function(expr, caller) {
   var args = keys.map(function(k) {
     var v = expr[k];
     return exprToString(v, fn)
-  }).join(', ');
+  });
+
+  var shouldReverseArgs = ['filter', 'map', 'foreach'].some(fn => fn in expr)
+  if(shouldReverseArgs)
+    args.reverse();
+
+  args = args.join(', ');
+
   return fn + '(' + args + ')';
 };
 

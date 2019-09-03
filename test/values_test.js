@@ -288,6 +288,24 @@ describe('Values', function() {
       new Query(q.Lambda('_', q.Let([{x: 10}, {y: 20}], q.Var('x')))),
       'Query(Lambda("_", Let([{x: 10}, {y: 20}], Var("x"))))'
     );
+
+    // filter expr
+    assertPrint(
+      new Query(q.Filter([1, 2, 3], q.Lambda('i', q.Equals(0, q.Modulo(q.Var('i'), 2))))),
+      'Query(Filter([1, 2, 3], Lambda("i", Equals(0, Modulo(Var("i"), 2)))))'
+    );
+
+    // map expr
+    assertPrint(
+      new Query(q.Map([1, 2, 3], q.Lambda('i', q.Equals(0, q.Modulo(q.Var('i'), 2))))),
+      'Query(Map([1, 2, 3], Lambda("i", Equals(0, Modulo(Var("i"), 2)))))'
+    );
+
+    // foreach expr
+    assertPrint(
+      new Query(q.Foreach([1, 2, 3], q.Lambda('i', q.Equals(0, q.Modulo(q.Var('i'), 2))))),
+      'Query(Foreach([1, 2, 3], Lambda("i", Equals(0, Modulo(Var("i"), 2)))))'
+    );
   });
 
   it('pretty print Expr with primitive types', function() {
