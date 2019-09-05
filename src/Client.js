@@ -50,7 +50,7 @@ var Promise = require('es6-promise').Promise;
  *   Callback that will be called after every completed request.
  */
 function Client(options) {
-  var isNodeEnv = window === undefined
+  var isNodeEnv = typeof window === 'undefined';
   var opts = util.applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
