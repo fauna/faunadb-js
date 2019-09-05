@@ -13,8 +13,7 @@ export interface ClientConfig {
 
 export default class Client {
   constructor(opts?: ClientConfig);
-
-  query(expr: Expr): Promise<object>;
+  query<T = object>(expr: Expr): Promise<T>;
   paginate(expr: Expr): PageHelper;
   ping(scope?: string, timeout?: number): Promise<string>;
 }
