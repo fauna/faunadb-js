@@ -50,7 +50,7 @@ var Promise = require('es6-promise').Promise;
  *   Callback that will be called after every completed request.
  */
 function Client(options) {
-
+  var isNodeEnv = window === undefined
   var opts = util.applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
@@ -69,6 +69,9 @@ function Client(options) {
   this._secret = opts.secret;
   this._observer = opts.observer;
   this._lastSeen = null;
+  this._keepAlive = isNodeEnv
+                      ? new require(opts.scheme).Agent({ keepAlive: true })
+                      : undefined
 }
 
 /**
@@ -183,6 +186,10 @@ Client.prototype._performRequest = function (action, path, data, query) {
 
   if (this._lastSeen) {
     rq.set('X-Last-Seen-Txn', this._lastSeen);
+  }
+
+  if(this._keepAlive) {
+    rq.agent(this._keepAlive);
   }
 
   rq.set('X-FaunaDB-API-Version', APIVersion);
