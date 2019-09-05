@@ -59,7 +59,7 @@ export module values {
 
   export type Page<T = Document> = {
     data: T[];
-    after?: object;
-    before?: object;
+    after?: Expr;
+    before?: Expr;
   }
 }
