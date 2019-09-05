@@ -19,6 +19,7 @@ export module query {
   export function Call(ref: ExprArg, ...args: ExprArg[]): Expr;
   export function Query(lambda: (ExprArg|Lambda)): Expr;
   export function Map(collection: ExprArg, lambda_expr: (ExprArg|Lambda)): Expr;
+  export function Merge(object: ExprArg, values: ExprArg, resolver?: (Expr|Lambda)): Expr;
   export function Foreach(collection: ExprArg, lambda_expr: (ExprArg|Lambda)): Expr;
   export function Filter(collection: ExprArg, lambda_expr: (ExprArg|Lambda)): Expr;
   export function Take(number: ExprArg, collection: ExprArg): Expr;
