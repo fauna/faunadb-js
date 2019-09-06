@@ -50,4 +50,16 @@ export module values {
   export class Query extends Value {
     constructor(value: object);
   }
+
+  export type Document<T = object> = {
+    ref: Ref;
+    ts: number;
+    data: T;
+  }
+
+  export type Page<T> = {
+    data: T[];
+    after?: Expr;
+    before?: Expr;
+  }
 }
