@@ -155,8 +155,37 @@ describe('Values', function() {
     assertPrint(new FaunaTime('1970-01-01T00:00:00.123456789Z'), 'Time("1970-01-01T00:00:00.123456789Z")');
     assertPrint(new FaunaDate('1970-01-01'), 'Date("1970-01-01")');
 
-    assertPrint(new SetRef({'match': new Ref('idx', values.Native.INDEXES)}), 'SetRef({ match: Index("idx") })');
     assertPrint(new Bytes('1234'), 'Bytes("1234")');
+
+    function mkIndex(name) {
+      return new Ref(name, values.Native.INDEXES);
+    }
+
+    assertPrint(
+      new SetRef({"match": mkIndex('idx')}),
+      'Match(Index("idx"))'
+    );
+    //todo: add Map/Foreach when it supports sets
+    assertPrint(
+      new SetRef({'filter': {'lambda': 'ref', 'expr': true}, 'collection': values.Native.INDEXES}),
+      'Filter(Indexes(), Lambda("ref", true))'
+    );
+    assertPrint(
+      new SetRef({ union: [ new SetRef({ match: mkIndex("idx1") }), new SetRef({ match: mkIndex("idx4") }) ] }),
+      'Union(Match(Index("idx1")), Match(Index("idx4")))'
+    );
+    assertPrint(
+      new SetRef({ intersection: [ new SetRef({ match: mkIndex("idx1") }), new SetRef({ match: mkIndex("idx4") }) ] }),
+      'Intersection(Match(Index("idx1")), Match(Index("idx4")))'
+    );
+    assertPrint(
+      new SetRef({ difference: [ new SetRef({ match: mkIndex("idx1") }), new SetRef({ match: mkIndex("idx4") }) ] }),
+      'Difference(Match(Index("idx1")), Match(Index("idx4")))'
+    );
+    assertPrint(
+      new SetRef({ distinct: new SetRef({ match: mkIndex("idx1") }) }),
+      'Distinct(Match(Index("idx1")))'
+    );
   });
 
   it('pretty print Query', function() {

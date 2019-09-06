@@ -28,8 +28,12 @@ var specialCases = {
 };
 
 var exprToString = function(expr, caller) {
-  if (expr instanceof Expr)
+  if (expr instanceof Expr) {
+    if ('value' in expr)
+      return expr.toString();
+
     expr = expr.raw;
+  }
 
   var type = typeof expr;
 
