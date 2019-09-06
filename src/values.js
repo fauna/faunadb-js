@@ -189,7 +189,7 @@ function SetRef(value) {
 util.inherits(SetRef, Value);
 
 wrapToString(SetRef, function() {
-  return 'SetRef(' + stringify(this.value) + ')';
+  return Expr.toString(this.value);
 });
 
 /** @ignore */
