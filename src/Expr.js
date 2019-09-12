@@ -87,10 +87,13 @@ var exprToString = function(expr, caller) {
 
   var args = keys.map(function(k) {
     var v = expr[k];
-    return exprToString(v, fn)
+    return exprToString(v, fn);
   });
 
-  var shouldReverseArgs = ['filter', 'map', 'foreach'].some(fn => fn in expr)
+  var shouldReverseArgs = ['filter', 'map', 'foreach'].some(function(fn) {
+    return fn in expr;
+  });
+
   if(shouldReverseArgs)
     args.reverse();
 
