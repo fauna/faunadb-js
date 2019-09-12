@@ -1,3 +1,11 @@
+## 2.8.1
+- Keep alive connections on NodeJS environments
+- Enhance SetRef toString
+- Add generic type for client.query()
+- Add new types Document and Page
+- Fix rendering of Filter(), Map(), Foreach()
+- Fix npm security warnings
+
 ## 2.8.0
 - Add stdlib functions: Reduce(), Merge(), Range(), Format()
 
