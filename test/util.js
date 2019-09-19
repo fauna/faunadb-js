@@ -121,6 +121,7 @@ before(function () {
 });
 
 after(function () {
+  // disable line below to prevent db cleanup after the test
   return rootClient.query(query.Delete(dbRef));
 });
 

@@ -2164,6 +2164,20 @@ function ToDate(expr) {
   return new Expr({ to_date: wrap(expr) });
 }
 
+/**
+  * Move database to a new hierarchy.
+  *
+  * @param {string}  from database reference to be moved.
+  * @param {string}  to new parent database reference.
+  * @return {Expr}   The expression wrapping the provided object.
+  * @see <a href="https://app.fauna.com/documentation/reference/queryapi#write-functions">FaunaDB Write Functions</a>
+  */
+function MoveDatabase(from, to) {
+  arity.exact(2, arguments)
+  return new Expr({ move_database: wrap(from), to: wrap(to) });
+  //return Fn.apply("move_database", from, "to", to);
+}
+
 // Helpers
 
 /**
@@ -2315,7 +2329,7 @@ module.exports = {
   Delete: Delete,
   Insert: Insert,
   Remove: Remove,
-  CreateClass: deprecate(CreateClass, 'CreateClass() is deprecated, use CreateCOllection() instead'),
+  CreateClass: deprecate(CreateClass, 'CreateClass() is deprecated, use CreateCollection() instead'),
   CreateCollection: CreateCollection,
   CreateDatabase: CreateDatabase,
   CreateIndex: CreateIndex,
@@ -2435,5 +2449,6 @@ module.exports = {
   Month: Month,
   Year: Year,
   ToDate: ToDate,
+  MoveDatabase : MoveDatabase,
   wrap: wrap
 };
