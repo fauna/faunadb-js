@@ -2175,7 +2175,6 @@ function ToDate(expr) {
 function MoveDatabase(from, to) {
   arity.exact(2, arguments)
   return new Expr({ move_database: wrap(from), to: wrap(to) });
-  //return Fn.apply("move_database", from, "to", to);
 }
 
 // Helpers
