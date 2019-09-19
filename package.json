@@ -21,7 +21,7 @@
   "main": "index.js",
   "scripts": {
     "doc": "jsdoc -c ./jsdoc.json",
-    "test": "mocha test/query_test.js",
+    "test": "mocha test/",
     "coverage": "nyc mocha test/",
     "coverage-report": "nyc report --reporter=lcov",
     "jenkins-test": "JUNIT_REPORT_PATH=results/report.xml JUNIT_REPORT_STACK=1 nyc mocha --colors --reporter mocha-jenkins-reporter test/",
