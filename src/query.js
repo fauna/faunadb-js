@@ -916,8 +916,6 @@ function Casefold(string, normalizer) {
   return new Expr(params({ casefold: wrap(string) }, { normalizer: wrap(normalizer) }));
 }
 
-/* DOD START ****/
-
 /**
   * Returns true if the string contains the given substring, or false if otherwise
   *
@@ -981,8 +979,6 @@ function RegexEscape(value) {
   arity.exact(1, arguments);
   return new Expr({ regexescape: wrap(value) });
 }
-
-/* DOD END ****/
 
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
