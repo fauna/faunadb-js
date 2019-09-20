@@ -1,6 +1,6 @@
 'use strict';
 
-var APIVersion = "2.7"
+var APIVersion = '2.9';
 
 var btoa = require('btoa-lite');
 var request = require('superagent');
@@ -193,6 +193,7 @@ Client.prototype._performRequest = function (action, path, data, query) {
   }
 
   rq.set('X-FaunaDB-API-Version', APIVersion);
+  rq.set('X-Fauna-Driver', 'Javascript');
 
   rq.timeout(this._timeout);
 
