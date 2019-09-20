@@ -1,0 +1,111 @@
+version: 2.1
+description: FaunaDB Javascript Driver Tests
+
+executors:
+  core:
+    parameters:
+      node_version:
+        type: integer
+      version:
+        type: enum
+        enum: ["release", "nightly"]
+    resource_class: large
+    docker:
+      - image: circleci/node:<<parameters.node_version>>
+
+      - image: gcr.io/faunadb-cloud/faunadb/enterprise/<<parameters.version>>:latest
+        name: core
+        auth:
+          username: _json_key
+          password: $GCR_KEY
+
+    environment:
+      FAUNA_ROOT_KEY: secret
+      FAUNA_DOMAIN: core
+      FAUNA_SCHEME: http
+      FAUNA_PORT: 8443
+
+commands:
+  build_and_test:
+    description: "Run JS tests"
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-deps-{{ checksum "package-lock.json" }}
+
+      - run:
+          name: Install dependencies
+          command: npm install
+
+      - save_cache:
+          paths:
+          - node_modules
+          key: v1-deps-{{ checksum "package-lock.json" }}
+
+      - run:
+          name: Run Tests
+          command: npm run jenkins-test
+
+      - store_test_results:
+          path: results/
+
+jobs:
+  core-stable-8:
+    executor:
+      name: core
+      node_version: 8
+      version: release
+    steps:
+      - build_and_test
+
+  core-nightly-8:
+    executor:
+      name: core
+      node_version: 8
+      version: nightly
+    steps:
+      - build_and_test
+
+  core-stable-10:
+    executor:
+      name: core
+      node_version: 10
+      version: release
+    steps:
+      - build_and_test
+
+  core-nightly-10:
+    executor:
+      name: core
+      node_version: 10
+      version: nightly
+    steps:
+      - build_and_test
+
+  core-stable-11:
+    executor:
+      name: core
+      node_version: 11
+      version: release
+    steps:
+      - build_and_test
+
+  core-nightly-11:
+    executor:
+      name: core
+      node_version: 11
+      version: nightly
+    steps:
+      - build_and_test
+
+workflows:
+  build_and_test:
+    jobs:
+      - core-stable-8
+      - core-nightly-8
+      - core-stable-10
+      - core-nightly-10
+      - core-stable-11
+      - core-nightly-11
