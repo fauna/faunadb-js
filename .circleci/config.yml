@@ -27,13 +27,16 @@ executors:
 
 commands:
   build_and_test:
+    parameters:
+      node_version:
+        type: string
     description: "Run JS tests"
     steps:
       - checkout
 
       - restore_cache:
           keys:
-          - v1-deps-{{ checksum "package-lock.json" }}
+          - v1-deps-<<parameters.node_version>>-{{ checksum "package-lock.json" }}
 
       - run:
           name: Install dependencies
@@ -42,11 +45,18 @@ commands:
       - save_cache:
           paths:
           - node_modules
-          key: v1-deps-{{ checksum "package-lock.json" }}
+          key: v1-deps-<<parameters.node_version>>-{{ checksum "package-lock.json" }}
 
       - run:
           name: Run Tests
           command: npm run jenkins-test
+
+      - run:
+          name: Gather Results
+          when: always
+          command: |
+            mkdir results/junit
+            mv results/report.xml results/junit/
 
       - store_test_results:
           path: results/
@@ -58,7 +68,8 @@ jobs:
       node_version: 8
       version: release
     steps:
-      - build_and_test
+      - build_and_test:
+          node_version: 8
 
   core-nightly-8:
     executor:
@@ -66,7 +77,8 @@ jobs:
       node_version: 8
       version: nightly
     steps:
-      - build_and_test
+      - build_and_test:
+          node_version: 8
 
   core-stable-10:
     executor:
@@ -74,7 +86,8 @@ jobs:
       node_version: 10
       version: release
     steps:
-      - build_and_test
+      - build_and_test:
+          node_version: 10
 
   core-nightly-10:
     executor:
@@ -82,7 +95,8 @@ jobs:
       node_version: 10
       version: nightly
     steps:
-      - build_and_test
+      - build_and_test:
+          node_version: 10
 
   core-stable-11:
     executor:
@@ -90,7 +104,8 @@ jobs:
       node_version: 11
       version: release
     steps:
-      - build_and_test
+      - build_and_test:
+          node_version: 11
 
   core-nightly-11:
     executor:
@@ -98,7 +113,8 @@ jobs:
       node_version: 11
       version: nightly
     steps:
-      - build_and_test
+      - build_and_test:
+          node_version: 11
 
 workflows:
   build_and_test:
