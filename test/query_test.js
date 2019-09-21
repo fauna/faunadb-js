@@ -1028,6 +1028,21 @@ describe('query', function () {
     return Promise.all([p1, p2, p3, p4]);
   });
 
+  it('count', function () {
+    const values = Array.from({length: 100}, (v, k) => k+1); // array 1-100
+    return assertQuery(query.Count(values), 100);
+  });
+
+  it('sum', function () {
+    const values = Array.from({length: 100}, (v, k) => k+1); // array 1-100
+    return assertQuery(query.Sum(values), 5050);
+  });
+
+  it('mean', function () {
+    const values = Array.from({length: 100}, (v, k) => k+1); // array 1-100
+    return assertQuery(query.Mean(values), 50.5);
+  });
+
   it('acos', function () {
     return assertQuery(query.Trunc(query.Acos(0.5), 2), 1.04);
   });

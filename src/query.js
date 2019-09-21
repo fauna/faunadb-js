@@ -1703,6 +1703,45 @@ function Trunc(value, precision) {
 }
 
 /**
+  *
+  * Count the number of elements in the collection.
+  *
+  * @param {array}    - array of items
+  * @return {integer} - number of items in the collection
+  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/count">Count function</a>
+  */
+function Count(collection) {
+  arity.exact(1, arguments);
+  return new Expr({ count: wrap(collection) });
+}
+
+/**
+  *
+  * Sum the elements in the collection.
+  *
+  * @param {array} - collection of numbers
+  * @return {integer} - total of all numbers in collection
+  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/sum">Sum function</a>
+  */
+function Sum(collection) {
+  arity.exact(1, arguments);
+  return new Expr({ sum: wrap(collection) });
+}
+
+/**
+  *
+  * Returns the mean of all elements in the collection.
+  *
+  * @param {array} - collection the numbers
+  * @return {float} - the mean of all numbers in the collection
+  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/mean">Mean function</a>
+  */
+function Mean(collection) {
+  arity.exact(1, arguments);
+  return new Expr({ mean: wrap(collection) });
+}
+
+/**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
  *
  * @param {...module:query~ExprArg} terms
@@ -2397,6 +2436,9 @@ module.exports = {
   Sign: Sign,
   Sqrt: Sqrt,
   Trunc: Trunc,
+  Count: Count,
+  Sum: Sum,
+  Mean: Mean,
   Acos: Acos,
   Asin: Asin,
   Atan: Atan,
