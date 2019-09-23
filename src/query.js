@@ -2328,7 +2328,7 @@ module.exports = {
   Delete: Delete,
   Insert: Insert,
   Remove: Remove,
-  CreateClass: deprecate(CreateClass, 'CreateClass() is deprecated, use CreateCollection() instead'),
+  CreateClass: deprecate(CreateClass, 'CreateClass() is deprecated, use CreateCOllection() instead'),
   CreateCollection: CreateCollection,
   CreateDatabase: CreateDatabase,
   CreateIndex: CreateIndex,
