@@ -1,6 +1,6 @@
 'use strict';
 
-var APIVersion = '2.9';
+var APIVersion = '2.7';
 
 var btoa = require('btoa-lite');
 var request = require('superagent');
