@@ -2173,7 +2173,7 @@ function ToDate(expr) {
   * @see <a href="https://app.fauna.com/documentation/reference/queryapi#write-functions">FaunaDB Write Functions</a>
   */
 function MoveDatabase(from, to) {
-  arity.exact(2, arguments)
+  arity.exact(2, arguments);
   return new Expr({ move_database: wrap(from), to: wrap(to) });
 }
 
