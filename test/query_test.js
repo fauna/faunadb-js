@@ -856,7 +856,11 @@ describe('query', function () {
   it('now', function () {
     return Promise.all([
       assertQuery(query.Equals(query.Now(), query.Time("now")), true),
-      assertQuery(query.LTE(query.Now(), query.Now(), query.Now()), true)
+      client.query(query.Now()).then(function (t0) {
+        return client.query(query.Now()).then(function (t1) {
+          return assertQuery(query.LTE(t0, t1, query.Now()), true)
+        })
+      })
     ]);
   });
 
