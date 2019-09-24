@@ -853,6 +853,13 @@ describe('query', function () {
     return assertQuery(query.Date('1970-01-01'), new FaunaDate('1970-01-01'));
   });
 
+  it('now', function () {
+    return Promise.all([
+      assertQuery(query.Equals(query.Now(), query.Time("now")), true),
+      assertQuery(query.LTE(query.Now(), query.Now(), query.Now()), true)
+    ]);
+  });
+
   // Miscellaneous functions
   it('new_id', function() {
     return client.query(query.NewId()).then(function(res) {

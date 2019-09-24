@@ -87,6 +87,7 @@ export module query {
   export function Time(string: ExprArg): Expr;
   export function Epoch(number: ExprArg, unit: ExprArg): Expr;
   export function Date(string: ExprArg): Expr;
+  export function Now(): Expr;
 
   export function NextId(): Expr;
   export function NewId(): Expr;
