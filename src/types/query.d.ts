@@ -161,4 +161,6 @@ export module query {
   export function ToNumber(expr: ExprArg): Expr;
   export function ToTime(expr: ExprArg): Expr;
   export function ToDate(expr: ExprArg): Expr;
+
+  export function MoveDatabase(from: ExprArg, to: ExprArg): Expr;
 }

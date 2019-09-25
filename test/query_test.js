@@ -1354,6 +1354,27 @@ describe('query', function () {
     return assertQuery(query.Ref('collections/widget/123'), new values.Ref('123', new values.Ref('widget', Native.COLLECTIONS)));
   });
 
+  it('move database', function() {
+    const db_move = query.Database('db_move')
+    const db_destination = query.Database('db_destination')
+
+    return withNewDatabase().then(function(adminCli) {
+      return createNewDatabase(adminCli, 'db_move').then(function(dbMoveCli) {
+        return createNewDatabase(adminCli, 'db_destination').then(function(dbDestinationCli) {
+          return adminCli.query(
+            query.MoveDatabase(db_move, db_destination)
+          ).then(function() {
+            return Promise.all([
+              assertQueryWithClient(adminCli, query.Exists(db_move), false),
+              assertQueryWithClient(adminCli, query.Exists(db_destination), true),
+              assertQueryWithClient(dbDestinationCli, query.Exists(db_move), true)
+            ])
+          })
+        })
+      })
+    })
+  })
+
   // Check arity of all query functions
 
   it('arity', function () {
