@@ -691,6 +691,44 @@ describe('query', function () {
     ]);
   });
 
+  it('containsstr', function () {
+    return Promise.all([
+      assertQuery(query.ContainsStr("ABC","A"), true),
+      assertQuery(query.ContainsStr("ABC","D"), false),
+      assertQuery(query.ContainsStr("a big apple","g a"), true)
+    ]);
+  });
+
+  it('containsstrregex', function () {
+    return Promise.all([
+      assertQuery(query.ContainsStrRegex("ABCDEFGHIJK","[A-Z]"), true),
+      assertQuery(query.ContainsStrRegex("1234567890","[A-Z]"), false),
+      assertQuery(query.ContainsStrRegex("ABCDEFGHIJK","[a-z]"), false),
+    ]);
+  });
+
+  it('startswith', function () {
+    return Promise.all([
+      assertQuery(query.StartsWith("ABCDEFGHIJK","ABC"), true),
+      assertQuery(query.StartsWith("1234567890","1234567890"), true),
+      assertQuery(query.StartsWith("ABCDEFGHIJK","BCD"), false),
+    ]);
+  });
+
+  it('endswith', function () {
+    return Promise.all([
+      assertQuery(query.EndsWith("ABCDEFGHIJK","IJK"), true),
+      assertQuery(query.EndsWith("1234567890","1234567890"), true),
+      assertQuery(query.EndsWith("ABCDEFGHIJK","HIJ"), false),
+    ]);
+  });
+
+  it('regexescape', function () {
+    return Promise.all([
+      assertQuery(query.RegexEscape("ABCDEF"), "\\QABCDEF\\E"),
+    ]);
+  });
+
   it('findstr', function () {
     var p1 = assertQuery(query.FindStr("ABC","A"), 0);
     var p2 = assertQuery(query.FindStr("ABC","A",0), 0);

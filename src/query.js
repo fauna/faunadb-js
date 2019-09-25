@@ -917,6 +917,70 @@ function Casefold(string, normalizer) {
 }
 
 /**
+  * Returns true if the string contains the given substring, or false if otherwise
+  *
+  * @param {string} value  - the string to evaluate
+  * @param {string} search - the substring to search for
+  * @return {boolean}      - was the search result found
+  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/containsstr">FaunaDB ContainsStr Function</a>
+  */
+function ContainsStr(value, search) {
+  arity.exact(2, arguments);
+  return new Expr({ containsstr: wrap(value), search: wrap(search) });
+}
+
+/**
+  * Returns true if the string contains the given pattern, or false if otherwise
+  *
+  * @param {string} value   - the string to evaluate
+  * @param {string} pattern - the pattern to search for
+  * @return {boolean}       - was the regex search result found
+  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/containsstrregex">FaunaDB ContainsStrRegex Function</a>
+  */
+function ContainsStrRegex(value, pattern) {
+  arity.exact(2, arguments);
+  return new Expr({ containsstrregex: wrap(value), pattern: wrap(pattern) });
+}
+
+/**
+  * Returns true if the string starts with the given prefix value, or false if otherwise
+  *
+  * @param {string} value   - the string to evaluate
+  * @param {string} search  - the prefix to search for
+  * @return {boolean}       - does `value` start with `search`
+  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/startswith">FaunaDB StartsWith Function</a>
+  */
+function StartsWith(value, search) {
+  arity.exact(2, arguments);
+  return new Expr({ startswith: wrap(value), search: wrap(search) });
+}
+
+/**
+  * Returns true if the string ends with the given suffix value, or false if otherwise
+  *
+  * @param {string} value   - the string to evaluate
+  * @param {string} search  - the suffix to search for
+  * @return {boolean}       - does `value` end with `search`
+  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/endswith">FaunaDB EndsWith Function</a>
+  */
+function EndsWith(value, search) {
+  arity.exact(2, arguments);
+  return new Expr({ endswith: wrap(value), search: wrap(search) });
+}
+
+/**
+  * It takes a string and returns a regex which matches the input string verbatim.
+  *
+  * @param value      - the string to analyze
+  * @return {string}  - a regex which matches the input string verbatim
+  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/regexescape">FaunaDB RegexEscape Function</a>
+*/
+function RegexEscape(value) {
+  arity.exact(1, arguments);
+  return new Expr({ regexescape: wrap(value) });
+}
+
+/**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
  *
  * @param {string} value - A string to search.
@@ -2350,6 +2414,10 @@ module.exports = {
   HasIdentity: HasIdentity,
   Concat: Concat,
   Casefold: Casefold,
+  ContainsStr: ContainsStr,
+  ContainsStrRegex: ContainsStrRegex,
+  StartsWith: StartsWith,
+  EndsWith: EndsWith,
   FindStr: FindStr,
   FindStrRegex: FindStrRegex,
   Length: Length,
@@ -2359,6 +2427,7 @@ module.exports = {
   Repeat: Repeat,
   ReplaceStr: ReplaceStr,
   ReplaceStrRegex: ReplaceStrRegex,
+  RegexEscape: RegexEscape,
   RTrim: RTrim,
   Space: Space,
   SubString: SubString,

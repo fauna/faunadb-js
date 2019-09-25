@@ -67,6 +67,11 @@ export module query {
 
   export function Concat(strings: ExprArg, separator?: ExprArg): Expr;
   export function Casefold(string: ExprArg, normalizer?: ExprArg): Expr;
+  export function ContainsStr(value: ExprArg, search: ExprArg): Expr;
+  export function ContainsStrRegex(value: ExprArg, pattern: ExprArg): Expr;
+  export function StartsWith(value: ExprArg, search: ExprArg): Expr;
+  export function EndsWith(value: ExprArg, search: ExprArg): Expr;
+  export function RegexEscape(value: ExprArg): Expr;
   export function FindStr(value: ExprArg, find: ExprArg, start?: ExprArg): Expr;
   export function FindStrRegex(value: ExprArg, find: ExprArg, start?: ExprArg, numResults?: ExprArg): Expr;
   export function Length(expr: ExprArg): Expr;
