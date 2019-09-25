@@ -1160,6 +1160,17 @@ function Date(string) {
   return new Expr({ date: wrap(string) });
 }
 
+/**
+  * Returns the current snapshot time.
+  *
+  * @return {Expr}
+  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/now">Now function</a>
+  */
+function Now() {
+  arity.exact(0, arguments);
+  return new Expr({ now: wrap(null) });
+}
+
 // Miscellaneous functions
 
 /**
@@ -2358,6 +2369,7 @@ module.exports = {
   Time: Time,
   Epoch: Epoch,
   Date: Date,
+  Now: Now,
   NextId: deprecate(NextId, 'NextId() is deprecated, use NewId() instead'),
   NewId: NewId,
   Database: Database,
