@@ -1028,19 +1028,36 @@ describe('query', function () {
     return Promise.all([p1, p2, p3, p4]);
   });
 
-  it('count', function () {
+  it('count, sum, mean', function () {
     const values = Array.from({length: 100}, (v, k) => k+1); // array 1-100
-    return assertQuery(query.Count(values), 100);
-  });
 
-  it('sum', function () {
-    const values = Array.from({length: 100}, (v, k) => k+1); // array 1-100
-    return assertQuery(query.Sum(values), 5050);
-  });
+    return client.query(query.CreateCollection({name: 'math_collection'})).then(function(coll) {
+      return client.query(query.CreateIndex({ 
+        name: 'math_collection_index', 
+        source: coll.ref, 
+        values: [{field: ['data', 'value']}], 
+        active: true 
+      })).then(function(index) {
+        client.query(
+          query.Foreach(
+            values,
+            query.Lambda(
+              "i", 
+              query.Create(
+                coll.ref, 
+                { data: { value: query.Var("i") } }
+              )
+            )
+          )
+        )
+      })
+      return Promise.all([
+        assertQuery(query.Count(values), 100),
+        assertQuery(query.Sum(values), 5050),
+        assertQuery(query.Mean(values), 50.5)
+      ])
 
-  it('mean', function () {
-    const values = Array.from({length: 100}, (v, k) => k+1); // array 1-100
-    return assertQuery(query.Mean(values), 50.5);
+    })
   });
 
   it('acos', function () {
