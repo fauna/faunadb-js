@@ -1038,7 +1038,7 @@ describe('query', function () {
         values: [{field: ['data', 'value']}], 
         active: true 
       })).then(function(index) {
-        client.query(
+        return client.query(
           query.Foreach(
             values,
             query.Lambda(
@@ -1050,12 +1050,27 @@ describe('query', function () {
             )
           )
         )
+      }).then(function() {
+        return Promise.all([
+          assertQuery(query.Count(values), 100),
+          assertQuery(query.Sum(values), 5050),
+          assertQuery(query.Mean(values), 50.5),
+
+          assertQuery(query.Count(query.Match(query.Index('math_collection_index'))), 100),
+          assertQuery(query.Sum(query.Match(query.Index('math_collection_index'))), 5050),
+          assertQuery(query.Mean(query.Match(query.Index('math_collection_index'))), 50.5),
+          
+          assertQuery(
+            query.Select(["data"], 
+              query.Count(query.Paginate(query.Match(query.Index('math_collection_index')), { size: 1000 }))), [100]),
+          assertQuery(
+            query.Select(["data"], 
+              query.Sum(query.Paginate(query.Match(query.Index('math_collection_index')), { size: 1000 }))), [5050]),
+          assertQuery(
+            query.Select(["data"], 
+              query.Mean(query.Paginate(query.Match(query.Index('math_collection_index')), { size: 1000 }))), [50.5])
+        ])
       })
-      return Promise.all([
-        assertQuery(query.Count(values), 100),
-        assertQuery(query.Sum(values), 5050),
-        assertQuery(query.Mean(values), 50.5)
-      ])
 
     })
   });
