@@ -48,16 +48,18 @@ var Promise = require('es6-promise').Promise;
  * @param {?number} options.timeout Read timeout in seconds.
  * @param {?Client~observerCallback} options.observer
  *   Callback that will be called after every completed request.
+ * @param {?boolean} options.observer
+ *   Enable keepAlive for the connection for Node environments (default: false)
  */
 function Client(options) {
-  var isNodeEnv = typeof window === 'undefined';
   var opts = util.applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
     port: null,
     secret: null,
     timeout: 60,
-    observer: null
+    observer: null,
+    keepAlive: false
   });
 
   if (opts.port === null) {
@@ -69,9 +71,9 @@ function Client(options) {
   this._secret = opts.secret;
   this._observer = opts.observer;
   this._lastSeen = null;
-  this._keepAlive = isNodeEnv
-                      ? new require(opts.scheme).Agent({ keepAlive: true })
-                      : undefined
+  this._keepAlive = opts.keepAlive ?
+                      new require(opts.scheme).Agent({ keepAlive: true }) :
+                      undefined
 }
 
 /**
@@ -130,7 +132,7 @@ Client.prototype.syncLastTxnTime = function(time) {
   if (this._lastSeen == null) {
     this._lastSeen = time;
   } else if (this._lastSeen < time) {
-      this._lastSeen = time;
+    this._lastSeen = time;
   }
 };
 
@@ -188,7 +190,7 @@ Client.prototype._performRequest = function (action, path, data, query) {
     rq.set('X-Last-Seen-Txn', this._lastSeen);
   }
 
-  if(this._keepAlive) {
+  if (this._keepAlive) {
     rq.agent(this._keepAlive);
   }
 
