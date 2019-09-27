@@ -1077,6 +1077,53 @@ describe('query', function () {
     return Promise.all([p1, p2, p3, p4]);
   });
 
+  it('count, sum, mean', function () {
+    const values = Array.from({length: 100}, (v, k) => k+1); // array 1-100
+
+    return client.query(query.CreateCollection({name: 'math_collection'})).then(function(coll) {
+      return client.query(query.CreateIndex({ 
+        name: 'math_collection_index', 
+        source: coll.ref, 
+        values: [{field: ['data', 'value']}], 
+        active: true 
+      })).then(function(index) {
+        return client.query(
+          query.Foreach(
+            values,
+            query.Lambda(
+              "i", 
+              query.Create(
+                coll.ref, 
+                { data: { value: query.Var("i") } }
+              )
+            )
+          )
+        )
+      }).then(function() {
+        return Promise.all([
+          assertQuery(query.Count(values), 100),
+          assertQuery(query.Sum(values), 5050),
+          assertQuery(query.Mean(values), 50.5),
+
+          assertQuery(query.Count(query.Match(query.Index('math_collection_index'))), 100),
+          assertQuery(query.Sum(query.Match(query.Index('math_collection_index'))), 5050),
+          assertQuery(query.Mean(query.Match(query.Index('math_collection_index'))), 50.5),
+          
+          assertQuery(
+            query.Select(["data"], 
+              query.Count(query.Paginate(query.Match(query.Index('math_collection_index')), { size: 1000 }))), [100]),
+          assertQuery(
+            query.Select(["data"], 
+              query.Sum(query.Paginate(query.Match(query.Index('math_collection_index')), { size: 1000 }))), [5050]),
+          assertQuery(
+            query.Select(["data"], 
+              query.Mean(query.Paginate(query.Match(query.Index('math_collection_index')), { size: 1000 }))), [50.5])
+        ])
+      })
+
+    })
+  });
+
   it('acos', function () {
     return assertQuery(query.Trunc(query.Acos(0.5), 2), 1.04);
   });

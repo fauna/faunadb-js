@@ -133,6 +133,9 @@ export module query {
   export function Sign(expr: ExprArg): Expr;
   export function Sqrt(expr: ExprArg): Expr;
   export function Trunc(value: ExprArg, precision?: ExprArg): Expr;
+  export function Count(expr: ExprArg): Expr;
+  export function Sum(expr: ExprArg): Expr;
+  export function Mean(expr: ExprArg): Expr;
   export function Acos(expr: ExprArg): Expr;
   export function Asin(expr: ExprArg): Expr;
   export function Atan(expr: ExprArg): Expr;
