@@ -4,6 +4,7 @@ var assert = require('chai').assert;
 var errors = require('../src/errors');
 var query = require('../src/query');
 var util = require('./util');
+var Promise = require('es6-promise').Promise;
 
 var client;
 
@@ -39,7 +40,7 @@ describe('Client', function () {
   it('updates the last txntime for a query', function() {
     var firstSeen = client.getLastTxnTime();
 
-    var pEcho = client.query(42).then(function(res) {
+    var pEcho = client.query(42).then(function() {
       assert.isAtLeast(client.getLastTxnTime(), firstSeen);
     });
 
@@ -48,7 +49,7 @@ describe('Client', function () {
     });
 
     return Promise.all([pEcho, pCreate]);
-  })
+  });
 
   it('manually updates the last txntime for a bigger time', function() {
     var firstSeen = client.getLastTxnTime();
@@ -59,7 +60,7 @@ describe('Client', function () {
     var lastSeen = firstSeen + 1200;
     client.syncLastTxnTime(lastSeen);
     assert.equal(lastSeen, client.getLastTxnTime());
-  })
+  });
 
   it('extract response headers from observer', function() {
     var assertResults = function(result) {
@@ -71,13 +72,12 @@ describe('Client', function () {
       assertHeader(result.responseHeaders, 'x-query-bytes-out');
 
       assert.isAbove(result.endTime, result.startTime);
-    }
+    };
 
     var observedClient = util.getClient({ observer: assertResults });
 
     return observedClient.query(query.CreateCollection({ name: 'bar_collection' }));
-  })
-
+  });
 });
 
 function assertHeader(headers, name) {

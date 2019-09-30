@@ -12,6 +12,8 @@ var RequestResult = require('./RequestResult');
 var util = require('./_util');
 var PageHelper = require('./PageHelper');
 var Promise = require('es6-promise').Promise;
+var http = require('http');
+var https = require('https');
 
 /**
  * The callback that will be executed after every completed request.
@@ -51,7 +53,7 @@ var Promise = require('es6-promise').Promise;
  */
 function Client(options) {
   var isNodeEnv = typeof window === 'undefined';
-  var opts = util.applyDefaults(options, {
+    var opts = util.applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
     port: null,
@@ -59,19 +61,20 @@ function Client(options) {
     timeout: 60,
     observer: null
   });
+  var isHttps = opts.scheme === 'https';
 
   if (opts.port === null) {
-    opts.port = opts.scheme === 'https' ? 443 : 80;
+    opts.port = isHttps ? 443 : 80;
   }
-
+  
   this._baseUrl = opts.scheme + '://' + opts.domain + ':' + opts.port;
   this._timeout = Math.floor(opts.timeout * 1000);
   this._secret = opts.secret;
   this._observer = opts.observer;
   this._lastSeen = null;
-  this._keepAlive = isNodeEnv
-                      ? new require(opts.scheme).Agent({ keepAlive: true })
-                      : undefined
+  this._keepAlive = isNodeEnv ?
+                      new (isHttps ? https : http).Agent({ keepAlive: true }) :
+                      undefined
 }
 
 /**
@@ -130,7 +133,7 @@ Client.prototype.syncLastTxnTime = function(time) {
   if (this._lastSeen == null) {
     this._lastSeen = time;
   } else if (this._lastSeen < time) {
-      this._lastSeen = time;
+    this._lastSeen = time;
   }
 };
 
@@ -188,7 +191,7 @@ Client.prototype._performRequest = function (action, path, data, query) {
     rq.set('X-Last-Seen-Txn', this._lastSeen);
   }
 
-  if(this._keepAlive) {
+  if (this._keepAlive) {
     rq.agent(this._keepAlive);
   }
 
