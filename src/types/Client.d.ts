@@ -9,7 +9,6 @@ export interface ClientConfig {
   secret: string;
   timeout?: number;
   observer?: (res: RequestResult) => void;
-  keepAlive?: boolean;
 }
 
 export default class Client {

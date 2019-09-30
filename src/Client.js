@@ -12,6 +12,8 @@ var RequestResult = require('./RequestResult');
 var util = require('./_util');
 var PageHelper = require('./PageHelper');
 var Promise = require('es6-promise').Promise;
+var http = require('http');
+var https = require('https');
 
 /**
  * The callback that will be executed after every completed request.
@@ -48,31 +50,30 @@ var Promise = require('es6-promise').Promise;
  * @param {?number} options.timeout Read timeout in seconds.
  * @param {?Client~observerCallback} options.observer
  *   Callback that will be called after every completed request.
- * @param {?boolean} options.observer
- *   Enable keepAlive for the connection for Node environments (default: false)
  */
 function Client(options) {
-  var opts = util.applyDefaults(options, {
+  var isNodeEnv = typeof window === 'undefined';
+    var opts = util.applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
     port: null,
     secret: null,
     timeout: 60,
-    observer: null,
-    keepAlive: false
+    observer: null
   });
+  var isHttps = opts.scheme === 'https';
 
   if (opts.port === null) {
-    opts.port = opts.scheme === 'https' ? 443 : 80;
+    opts.port = isHttps ? 443 : 80;
   }
-
+  
   this._baseUrl = opts.scheme + '://' + opts.domain + ':' + opts.port;
   this._timeout = Math.floor(opts.timeout * 1000);
   this._secret = opts.secret;
   this._observer = opts.observer;
   this._lastSeen = null;
-  this._keepAlive = opts.keepAlive ?
-                      new require(opts.scheme).Agent({ keepAlive: true }) :
+  this._keepAlive = isNodeEnv ?
+                      new (isHttps ? https : http).Agent({ keepAlive: true }) :
                       undefined
 }
 
