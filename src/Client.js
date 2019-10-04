@@ -50,6 +50,8 @@ var https = require('https');
  * @param {?number} options.timeout Read timeout in seconds.
  * @param {?Client~observerCallback} options.observer
  *   Callback that will be called after every completed request.
+ * @param {?boolean} options.keepAlive
+ *   Configures http/https keepAlive option (ignored in browser environments)
  */
 function Client(options) {
   var isNodeEnv = typeof window === 'undefined';
@@ -59,7 +61,8 @@ function Client(options) {
     port: null,
     secret: null,
     timeout: 60,
-    observer: null
+    observer: null,
+    keepAlive: true
   });
   var isHttps = opts.scheme === 'https';
 
@@ -72,9 +75,10 @@ function Client(options) {
   this._secret = opts.secret;
   this._observer = opts.observer;
   this._lastSeen = null;
-  this._keepAlive = isNodeEnv ?
-                      new (isHttps ? https : http).Agent({ keepAlive: true }) :
-                      undefined
+
+  if (isNodeEnv && opts.keepAlive) {
+    this._keepAliveEnabledAgent = new (isHttps ? https : http).Agent({ keepAlive: true });
+  }
 }
 
 /**
@@ -191,8 +195,8 @@ Client.prototype._performRequest = function (action, path, data, query) {
     rq.set('X-Last-Seen-Txn', this._lastSeen);
   }
 
-  if (this._keepAlive) {
-    rq.agent(this._keepAlive);
+  if (this._keepAliveEnabledAgent) {
+    rq.agent(this._keepAliveEnabledAgent);
   }
 
   rq.set('X-FaunaDB-API-Version', APIVersion);
