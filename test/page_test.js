@@ -138,32 +138,6 @@ describe('page', function() {
     });
   });
 
-  it('honors passed in cursor via the cursor option', function() {
-    var i = 50;
-    var page = new PageHelper(client, query.Match(indexRef), { cursor: { after: 50 } });
-    return page.each(function(p) {
-      p.forEach(function(item) {
-        assert.equal(i, refsToIndex[item[1]]);
-        i += 1;
-      });
-    }).then(function() {
-      assert.equal(i, NUM_INSTANCES);
-    });
-  });
-
-  it('honors passed in cursor in the reverse direction via the cursor option', function() {
-    var i = 50;
-    var page = new PageHelper(client, query.Match(indexRef), { cursor: { before: 51 } });
-    return page.eachReverse(function(p) {
-      p.reverse().forEach(function(item) {
-        assert.equal(i, refsToIndex[item[1]]);
-        i -= 1;
-      });
-    }).then(function() {
-      assert.equal(i, -1);
-    });
-  });
-
   it('honors size', function() {
     var i = 0;
     var numPages = 20;
