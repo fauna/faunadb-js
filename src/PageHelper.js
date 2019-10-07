@@ -59,12 +59,14 @@ function PageHelper(client, set, params) {
 
   objectAssign(this.params, params);
 
-  if ('before' in params) {
-    this.before = params.before;
-    delete this.params.before;
-  } else if ('after' in params) {
-    this.after = params.after;
-    delete this.params.after;
+  var cursorParams = this.params.cursor || this.params;
+
+  if ('before' in cursorParams) {
+    this.before = cursorParams.before;
+    delete cursorParams.before;
+  } else if ('after' in cursorParams) {
+    this.after = cursorParams.after;
+    delete cursorParams.after;
   }
 
   this.client = client;
@@ -203,16 +205,17 @@ PageHelper.prototype._consumePages = function(lambda, reverse) {
 PageHelper.prototype._retrieveNextPage = function(cursor, reverse) {
   var opts = {};
   objectAssign(opts, this.params);
+  var cursorOpts = opts.cursor || opts;
 
   if (cursor !== undefined) {
     if (reverse) {
-      opts.before = cursor;
+      cursorOpts.before = cursor;
     } else {
-      opts.after = cursor;
+      cursorOpts.after = cursor;
     }
   } else {
     if (reverse) {
-      opts.before = null;
+      cursorOpts.before = null;
     }
   }
 
