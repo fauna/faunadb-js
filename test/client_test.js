@@ -78,6 +78,15 @@ describe('Client', function () {
 
     return observedClient.query(query.CreateCollection({ name: 'bar_collection' }));
   });
+
+  it ('keeps connection alive', function() {
+    var aliveClient = util.getClient({ keepAlive: true });
+    var p1 = assert.notEqual(aliveClient._keepAliveEnabledAgent, undefined);
+    var notAliveClient = util.getClient({ keepAlive: false });
+    var p2 = assert.equal(notAliveClient._keepAliveEnabledAgent, undefined);
+  
+    return Promise.all([p1, p2]);
+  });
 });
 
 function assertHeader(headers, name) {
