@@ -1,7 +1,7 @@
 ## Future release
 - Add TimeAdd, TimeSubtract, TimeDiff
 - Add SelectAsIndex
-- Replaced `SuperAgent` with `Isomorphic-unfetch`
+- Replaced `superagent` with [`isomorphic-unfetch`](https://github.com/developit/unfetch/tree/master/packages/isomorphic-unfetch)
 
 ## 2.9.1 (current)
 - Add Count, Mean, Sum, Min, Max
