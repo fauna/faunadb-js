@@ -93,6 +93,14 @@ export module query {
   export function Epoch(number: ExprArg, unit: ExprArg): Expr;
   export function Date(string: ExprArg): Expr;
   export function Now(): Expr;
+  export function DayOfWeek(expr: ExprArg): Expr;
+  export function DayOfYear(expr: ExprArg): Expr;
+  export function DayOfMonth(expr: ExprArg): Expr;
+  export function Hour(expr: ExprArg): Expr;
+  export function Minute(expr: ExprArg): Expr;
+  export function Second(expr: ExprArg): Expr;
+  export function Year(expr: ExprArg): Expr;
+  export function Month(expr: ExprArg): Expr;
 
   export function NextId(): Expr;
   export function NewId(): Expr;
@@ -164,6 +172,9 @@ export module query {
   export function ToNumber(expr: ExprArg): Expr;
   export function ToTime(expr: ExprArg): Expr;
   export function ToDate(expr: ExprArg): Expr;
+  export function ToSeconds(expr: ExprArg): Expr;
+  export function ToMillis(expr: ExprArg): Expr;
+  export function ToMicros(expr: ExprArg): Expr;
 
   export function MoveDatabase(from: ExprArg, to: ExprArg): Expr;
 }
