@@ -3,7 +3,7 @@
 var APIVersion = '2.7';
 
 var btoa = require('btoa-lite');
-var request = require('superagent');
+var fetch = require('isomorphic-unfetch');
 var errors = require('./errors');
 var query = require('./query');
 var values = require('./values');
@@ -14,6 +14,7 @@ var PageHelper = require('./PageHelper');
 var Promise = require('es6-promise').Promise;
 var http = require('http');
 var https = require('https');
+var URL = require('url').URL;
 
 /**
  * The callback that will be executed after every completed request.
@@ -55,7 +56,7 @@ var https = require('https');
  */
 function Client(options) {
   var isNodeEnv = typeof window === 'undefined';
-    var opts = util.applyDefaults(options, {
+  var opts = util.applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
     port: null,
@@ -69,7 +70,7 @@ function Client(options) {
   if (opts.port === null) {
     opts.port = isHttps ? 443 : 80;
   }
-  
+
   this._baseUrl = opts.scheme + '://' + opts.domain + ':' + opts.port;
   this._timeout = Math.floor(opts.timeout * 1000);
   this._secret = opts.secret;
@@ -141,7 +142,7 @@ Client.prototype.syncLastTxnTime = function(time) {
   }
 };
 
-Client.prototype._execute = function (action, path, data, query) {
+Client.prototype._execute = function (method, path, data, query) {
   query = defaults(query, null);
 
   if (path instanceof values.Ref) {
@@ -154,18 +155,21 @@ Client.prototype._execute = function (action, path, data, query) {
 
   var startTime = Date.now();
   var self = this;
-  return this._performRequest(action, path, data, query).then(function (response, rawQuery) {
+  var body = ['GET', 'HEAD'].indexOf(method) >= 0 ? undefined : JSON.stringify(data);
+
+  return this._performRequest(method, path, body, query).then(function (response) {
     var endTime = Date.now();
-    var responseObject = json.parseJSON(response.text);
+    var responseText = response.text;
+    var responseObject = json.parseJSON(responseText);
     var requestResult = new RequestResult(
       self,
-      action, path, query, rawQuery, data,
-      response.text, responseObject, response.status, response.header,
+      method, path, query, body, data,
+      responseText, responseObject, response.status, responseHeadersAsObject(response),
       startTime, endTime);
+    var txnTimeHeaderKey = 'x-txn-time';
 
-    if ('x-txn-time' in response.header) {
-      var time = parseInt(response.header['x-txn-time'], 10);
-      self.syncLastTxnTime(time);
+    if (response.headers.has(txnTimeHeaderKey)) {
+      self.syncLastTxnTime(parseInt(response.headers.get(txnTimeHeaderKey), 10));
     }
 
     if (self._observer != null) {
@@ -177,47 +181,29 @@ Client.prototype._execute = function (action, path, data, query) {
   });
 };
 
-Client.prototype._performRequest = function (action, path, data, query) {
-  var rq = request(action, this._baseUrl + '/' + path);
-  if (query) {
-    rq.query(query);
-  }
-
-  var rawQuery = JSON.stringify(data);
-  rq.type('json');
-  rq.send(rawQuery);
-
-  if (this._secret) {
-    rq.set('Authorization', secretHeader(this._secret));
-  }
-
-  if (this._lastSeen) {
-    rq.set('X-Last-Seen-Txn', this._lastSeen);
-  }
-
-  if (this._keepAliveEnabledAgent) {
-    rq.agent(this._keepAliveEnabledAgent);
-  }
-
-  rq.set('X-FaunaDB-API-Version', APIVersion);
-  rq.set('X-Fauna-Driver', 'Javascript');
-
-  rq.timeout(this._timeout);
-
-  return new Promise(function (resolve, reject) {
-    rq.end(function (error, result) {
-      // superagent treates 4xx and 5xx status codes as exceptions. We'll handle those ourselves.
-      if (error && error.response === undefined) {
-        reject(error);
-      } else if (error &&
-          error.response &&
-          !(error.response.status >= 400 && error.response.status <= 599)) {
-        reject(error);
-      } else {
-        resolve(result, rawQuery);
-      }
-    });
+Client.prototype._performRequest = function (method, path, body, query) {
+  var url = new URL(this._baseUrl + '/' + path);
+  Object.keys(query || {}).forEach(function(key) {
+    return url.searchParams.append(key, query[key]);
   });
+
+  return fetch(url.toString(), {
+    agent: this._keepAliveEnabledAgent,
+    body: body,
+    headers: util.removeNullAndUndefinedValues({
+      Authorization: this._secret && secretHeader(this._secret),
+      'X-FaunaDB-API-Version': APIVersion,
+      'X-Fauna-Driver': 'Javascript',
+      'X-Last-Seen-Txn': this._lastSeen
+    }),
+    method: method,
+    timeout: this._timeout
+  }).then(function(response) {
+      return response.text().then(function(text) {
+        response.text = text;
+        return response;
+      });
+    });
 };
 
 function defaults(obj, def) {
@@ -230,6 +216,23 @@ function defaults(obj, def) {
 
 function secretHeader(secret) {
   return 'Basic ' + btoa(secret + ':');
+}
+
+function responseHeadersAsObject(response) {
+  var responseHeaders = response.headers;
+  var headers = {};
+
+  if (typeof responseHeaders.forEach === 'function') {
+    responseHeaders.forEach(function(value, name) {
+      headers[name] = value;
+    });
+  } else {
+    responseHeaders.entries().forEach(function(pair) {
+      headers[pair[0]] = pair[1];
+    });
+  }
+
+  return headers;
 }
 
 module.exports = Client;

@@ -39,8 +39,8 @@
     "btoa-lite": "^1.0.0",
     "es6-promise": "^4.1.1",
     "fn-annotate": "^1.1.3",
+    "isomorphic-unfetch": "^3.0.0",
     "object-assign": "^4.1.0",
-    "superagent": "^3.8.1",
     "util-deprecate": "^1.0.2"
   },
   "devDependencies": {

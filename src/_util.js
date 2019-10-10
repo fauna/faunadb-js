@@ -27,6 +27,21 @@ function applyDefaults(provided, defaults) {
 }
 
 /**
+ * Returns a new object without any keys where the value would be null or undefined.
+ * @private
+ * */
+function removeNullAndUndefinedValues(object) {
+  var res = {};
+  for (var key in object) {
+    var val = object[key];
+    if (val !== null && val !== undefined) {
+      res[key] = val;
+    }
+  }
+  return res;
+}
+
+/**
  * Returns a new object without any keys where the value would be undefined.
  * @private
  * */
@@ -43,5 +58,6 @@ function removeUndefinedValues(object) {
 
 module.exports = {
   applyDefaults: applyDefaults,
+  removeNullAndUndefinedValues: removeNullAndUndefinedValues,
   removeUndefinedValues: removeUndefinedValues
 };
