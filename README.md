@@ -57,7 +57,7 @@ The minified version of the driver can also be used via CDN:
 
 ### Use
 
-The [tutorials]((https://docs.fauna.com/fauna/current/howto/) in the
+The [tutorials](https://docs.fauna.com/fauna/current/howto/) in the
 FaunaDB documentation contain driver-specific examples.
 
 #### Requiring the Driver
