@@ -2,7 +2,10 @@
 - Add TimeAdd, TimeSubtract, TimeDiff
 - Add SelectAsIndex
 
-## 2.9.1 (current)
+## 2.9.2 (current)
+- Bug fix related to `require('url')` in browsers
+
+## 2.9.1
 - Add Count, Mean, Sum, Min, Max
 - Add StartsWith, EndsWith, ContainsStr, ContainsStrRegex, RegexEscape
 - Add MoveDatabase
