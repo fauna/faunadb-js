@@ -27,7 +27,7 @@
     "jenkins-test": "JUNIT_REPORT_PATH=results/report.xml JUNIT_REPORT_STACK=1 nyc mocha --colors --reporter mocha-jenkins-reporter test/",
     "jenkins-coverage": "nyc report --reporter=lcovonly",
     "browserify": "browserify index.js --standalone faunadb -o dist/faunadb.js",
-    "browserify-min": "browserify index.js --standalone faunadb | uglifyjs -c -m -o dist/faunadb-min.js",
+    "browserify-min": "browserify index.js --standalone faunadb | terser -c -m -o dist/faunadb-min.js",
     "browser-test-mac": "karma start browserTest.conf.js --browsers Chrome,Safari,Firefox",
     "browser-test-win": "karma start browserTest.conf.js --browsers Chrome,Firefox,IE",
     "browser-test-linux": "karma start browserTest.conf.js --browsers Chrome,Firefox",
@@ -61,6 +61,7 @@
     "mocha": "^5.2.0",
     "mocha-jenkins-reporter": "^0.4.0",
     "nyc": "^14.1.1",
+    "terser": "^4.3.9",
     "typescript": "^3.0.1",
     "uglify-js": "^3.1.10",
     "watchify": "^3.11.1"
