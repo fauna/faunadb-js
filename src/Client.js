@@ -14,7 +14,7 @@ var PageHelper = require('./PageHelper');
 var Promise = require('es6-promise').Promise;
 var http = require('http');
 var https = require('https');
-var URL = require('url').URL;
+var URL = require('universal-url').URL;
 
 /**
  * The callback that will be executed after every completed request.
