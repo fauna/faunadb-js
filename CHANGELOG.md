@@ -1,15 +1,16 @@
 ## Future release
 - Add TimeAdd, TimeSubtract, TimeDiff
 - Add SelectAsIndex
-- Replaced `superagent` with [`isomorphic-unfetch`](https://github.com/developit/unfetch/tree/master/packages/isomorphic-unfetch)
 
 ## 2.9.1 (current)
 - Add Count, Mean, Sum, Min, Max
 - Add StartsWith, EndsWith, ContainsStr, ContainsStrRegex, RegexEscape
 - Add MoveDatabase
 - Add Now
-- Add KeepAlive option for clients in Node
+- Add `keepAlive` option for clients in Node
 - Dynamic require removed (bug fix)
+- Replaced `superagent` with [`isomorphic-unfetch`](https://github.com/developit/unfetch/tree/master/packages/isomorphic-unfetch)
+- Typescript definitions for date and time related functions
 
 ## 2.8.1
 - Keep alive connections enabled on NodeJS environments
