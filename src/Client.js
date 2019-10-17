@@ -14,7 +14,7 @@ var util = require('./_util');
 var PageHelper = require('./PageHelper');
 var http = require('http');
 var https = require('https');
-var URL = require('universal-url').URL;
+var parse = require('url-parse');
 
 /**
  * The callback that will be executed after every completed request.
@@ -182,12 +182,11 @@ Client.prototype._execute = function (method, path, data, query) {
 };
 
 Client.prototype._performRequest = function (method, path, body, query) {
-  var url = new URL(this._baseUrl + '/' + path);
-  Object.keys(query || {}).forEach(function(key) {
-    return url.searchParams.append(key, query[key]);
-  });
+  var url = parse(this._baseUrl);
+  url.set('pathname', path);
+  url.set('query', query);
 
-  return fetch(url.toString(), {
+  return fetch(url.href, {
     agent: this._keepAliveEnabledAgent,
     body: body,
     headers: util.removeNullAndUndefinedValues({
