@@ -1,8 +1,8 @@
 'use strict';
 
+require('es6-promise/auto');
 var query = require('./query');
 var objectAssign = require('object-assign');
-var Promise = require('es6-promise').Promise;
 
 /**
  * A FaunaDB Lambda expression to be passed into one of the collection

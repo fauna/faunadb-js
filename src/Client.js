@@ -2,6 +2,7 @@
 
 var APIVersion = '2.7';
 
+require('es6-promise/auto');
 var btoa = require('btoa-lite');
 var fetch = require('isomorphic-unfetch');
 var errors = require('./errors');
@@ -11,10 +12,9 @@ var json = require('./_json');
 var RequestResult = require('./RequestResult');
 var util = require('./_util');
 var PageHelper = require('./PageHelper');
-var Promise = require('es6-promise').Promise;
 var http = require('http');
 var https = require('https');
-var URL = require('universal-url').URL;
+var parse = require('url-parse');
 
 /**
  * The callback that will be executed after every completed request.
@@ -182,12 +182,11 @@ Client.prototype._execute = function (method, path, data, query) {
 };
 
 Client.prototype._performRequest = function (method, path, body, query) {
-  var url = new URL(this._baseUrl + '/' + path);
-  Object.keys(query || {}).forEach(function(key) {
-    return url.searchParams.append(key, query[key]);
-  });
+  var url = parse(this._baseUrl);
+  url.set('pathname', path);
+  url.set('query', query);
 
-  return fetch(url.toString(), {
+  return fetch(url.href, {
     agent: this._keepAliveEnabledAgent,
     body: body,
     headers: util.removeNullAndUndefinedValues({
