@@ -1,10 +1,10 @@
 'use strict';
 
+require('es6-promise/auto');
 var assert = require('chai').assert;
 var errors = require('../src/errors');
 var query = require('../src/query');
 var util = require('./util');
-var Promise = require('es6-promise').Promise;
 
 var client;
 

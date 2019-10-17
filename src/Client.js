@@ -2,6 +2,7 @@
 
 var APIVersion = '2.7';
 
+require('es6-promise/auto');
 var btoa = require('btoa-lite');
 var fetch = require('isomorphic-unfetch');
 var errors = require('./errors');
@@ -11,7 +12,6 @@ var json = require('./_json');
 var RequestResult = require('./RequestResult');
 var util = require('./_util');
 var PageHelper = require('./PageHelper');
-var Promise = require('es6-promise').Promise;
 var http = require('http');
 var https = require('https');
 var URL = require('universal-url').URL;
