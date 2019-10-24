@@ -12,8 +12,6 @@ var json = require('./_json');
 var RequestResult = require('./RequestResult');
 var util = require('./_util');
 var PageHelper = require('./PageHelper');
-var http = require('http');
-var https = require('https');
 var parse = require('url-parse');
 
 /**
@@ -78,7 +76,9 @@ function Client(options) {
   this._lastSeen = null;
 
   if (isNodeEnv && opts.keepAlive) {
-    this._keepAliveEnabledAgent = new (isHttps ? https : http).Agent({ keepAlive: true });
+    this._keepAliveEnabledAgent = new (
+      isHttps ? require('https') : require('http')
+    ).Agent({ keepAlive: true });
   }
 }
 
