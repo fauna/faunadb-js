@@ -44,13 +44,13 @@ See [faunadb on NPM](https://npmjs.com/package/faunadb) for more information.
 Via CDN:
 
 ```html
-<script src="//cdn.jsdelivr.net/npm/faunadb-js@2.9.3/dist/faunadb.js"></script>
+<script src="//cdn.jsdelivr.net/npm/faunadb@2.9.3/dist/faunadb.js"></script>
 ```
 
 The minified version of the driver can also be used via CDN:
 
 ```html
-<script src="//cdn.jsdelivr.net/npm/faunadb-js@2.9.3/dist/faunadb-min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/faunadb@2.9.3/dist/faunadb-min.js"></script>
 ```
 
 ### Use
