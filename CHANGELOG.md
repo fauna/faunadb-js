@@ -2,7 +2,11 @@
 - Add TimeAdd, TimeSubtract, TimeDiff
 - Add SelectAsIndex
 
-## 2.9.2 (current)
+## 2.9.3 (current)
+- Replaced `isomorphic-unfetch` with [`cross-fetch`](https://github.com/lquixada/cross-fetch)
+- No longer requiring http/s libraries in browser environments
+
+## 2.9.2
 - Bug fix related to `require('url')` in browsers
 
 ## 2.9.1
@@ -14,6 +18,7 @@
 - Dynamic require removed (bug fix)
 - Replaced `superagent` with [`isomorphic-unfetch`](https://github.com/developit/unfetch/tree/master/packages/isomorphic-unfetch)
 - Typescript definitions for date and time related functions
+- Added support for `cursor` option with `PageHelper`
 
 ## 2.8.1
 - Keep alive connections enabled on NodeJS environments

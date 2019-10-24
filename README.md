@@ -33,26 +33,24 @@ This Driver supports and is tested on:
 
 `npm install --save faunadb`
 
+or
+
+`yarn add faunadb`
+
 See [faunadb on NPM](https://npmjs.com/package/faunadb) for more information.
 
 #### Browsers
 
-The browser release can be found in the [fauna/faunadb-js-release](https://github.com/fauna/faunadb-js-release) repository.
-
-This release can be installed via bower:
-
-`bower install faunadb`
-
-Or via CDN:
+Via CDN:
 
 ```html
-<script src="//cdn.jsdelivr.net/gh/fauna/faunadb-js-release@2.9.2/faunadb.js"></script>
+<script src="//cdn.jsdelivr.net/npm/faunadb@2.9.3/dist/faunadb.js"></script>
 ```
 
 The minified version of the driver can also be used via CDN:
 
 ```html
-<script src="//cdn.jsdelivr.net/gh/fauna/faunadb-js-release@2.9.2/faunadb-min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/faunadb@2.9.3/dist/faunadb-min.js"></script>
 ```
 
 ### Use
@@ -137,7 +135,7 @@ more information on the pagination helper.
 
 ## Client Development
 
-Run `npm install` to install dependencies.
+Run `npm install` or `yarn` to install dependencies.
 
 ### Code
 
