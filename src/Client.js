@@ -4,7 +4,7 @@ var APIVersion = '2.7';
 
 require('es6-promise/auto');
 var btoa = require('btoa-lite');
-var fetch = require('isomorphic-unfetch');
+var fetch = require('cross-fetch');
 var errors = require('./errors');
 var query = require('./query');
 var values = require('./values');
