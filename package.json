@@ -1,6 +1,6 @@
 {
   "name": "faunadb",
-  "version": "2.9.2",
+  "version": "2.9.3",
   "description": "FaunaDB Javascript driver for Node.JS and Browsers",
   "homepage": "https://fauna.com",
   "repository": "fauna/faunadb-js",
@@ -16,7 +16,8 @@
   },
   "files": [
     "index.d.ts",
-    "src/"
+    "src/",
+    "dist/"
   ],
   "main": "index.js",
   "scripts": {
@@ -63,7 +64,6 @@
     "nyc": "^14.1.1",
     "terser": "^4.3.9",
     "typescript": "^3.0.1",
-    "uglify-js": "^3.1.10",
     "watchify": "^3.11.1"
   }
 }
