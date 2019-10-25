@@ -1243,6 +1243,62 @@ describe('query', function () {
     return Promise.all([p1, p2]);
   });
 
+  it('to_object', function () {
+    var obj = { k0: 10, k1: 20 };
+    var p1 = assertQuery(query.ToObject([["k0", 10], ["k1", 20]]), obj);
+    var collName = util.randomString('collection_');
+    var indexName = util.randomString('index_');
+    var p2 = client.query(
+      query.CreateCollection({ name: collName }),
+    ).then(function() {
+      return client.query(
+        query.CreateIndex({
+          name: indexName,
+          active: true,
+          source: query.Collection(collName),
+          values: [
+            { field: ["data", "key"] },
+            { field: ["data", "value"] }
+          ]
+        })
+      );
+    }).then(function() {
+      return client.query(
+        query.Do(
+          query.Create(
+            query.Collection(collName),
+            { data: { key: "k0", value: 10 } }
+          ),
+          query.Create(
+            query.Collection(collName), 
+            { data: { key: "k1", value: 20 } }
+          )
+        )
+      );
+    }).then(function() {
+      return assertQuery(
+        query.ToObject(
+          query.Select(
+            ["data"],
+            query.Paginate(query.Match(query.Index(indexName)))
+          )
+        ),
+        obj
+      )
+    });
+
+    return Promise.all([p1, p2]);
+  });
+
+  it('to_array', function () {
+    return assertQuery(query.ToArray({ k0: 10, k1: 20 }), [["k0", 10], ["k1", 20]]);
+  });
+
+  it('to_array_and_to_object', function () {
+    var obj = { k0: 10, k1: 20 };
+    return assertQuery(query.ToObject(query.ToArray(obj)), obj);
+  });
+
   it('to_time', function () {
     return assertQuery(query.ToTime("1970-01-01T00:00:00Z"), new FaunaTime("1970-01-01T00:00:00Z"));
   });

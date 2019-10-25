@@ -2123,6 +2123,30 @@ function ToNumber(expr) {
 }
 
 /**
+ * Converts an expression to an Object.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to an Object.
+ * @return {Expr}
+ */
+function ToObject(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ to_object: wrap(expr) });
+}
+
+/**
+ * Converts an expression to an Array.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to an Array.
+ * @return {Expr}
+ */
+function ToArray(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ to_array: wrap(expr) });
+}
+
+/**
  * Converts an expression to a time literal.
  *
  * @param {module:query~ExprArg} expression
@@ -2558,6 +2582,8 @@ module.exports = {
   Not: Not,
   ToString: ToString,
   ToNumber: ToNumber,
+  ToObject: ToObject,
+  ToArray: ToArray,
   ToTime: ToTime,
   ToSeconds: ToSeconds,
   ToMicros: ToMicros,

@@ -170,6 +170,8 @@ export module query {
 
   export function ToString(expr: ExprArg): Expr;
   export function ToNumber(expr: ExprArg): Expr;
+  export function ToObject(expr: ExprArg): Expr;
+  export function ToArray(expr: ExprArg): Expr;
   export function ToTime(expr: ExprArg): Expr;
   export function ToDate(expr: ExprArg): Expr;
   export function ToSeconds(expr: ExprArg): Expr;
