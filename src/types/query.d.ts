@@ -144,6 +144,8 @@ export module query {
   export function Count(expr: ExprArg): Expr;
   export function Sum(expr: ExprArg): Expr;
   export function Mean(expr: ExprArg): Expr;
+  export function Any(expr: ExprArg): Expr;
+  export function All(expr: ExprArg): Expr;
   export function Acos(expr: ExprArg): Expr;
   export function Asin(expr: ExprArg): Expr;
   export function Atan(expr: ExprArg): Expr;
