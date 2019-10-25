@@ -2238,6 +2238,31 @@ function ToArray(expr) {
 }
 
 /**
+ * Converts an expression to a double value, if possible.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to a double.
+ * @return {Expr}
+ */
+function ToDouble(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ to_double: wrap(expr) });
+}
+
+/**
+ * Converts an expression to an integer value, if possible.
+ *
+ * @param {module:query~ExprArg} expression
+ *   An expression to convert to an integer.
+ * @return {Expr}
+ */
+function ToInteger(expr) {
+  arity.exact(1, arguments);
+  return new Expr({ to_integer: wrap(expr) });
+}
+
+
+/**
  * Converts an expression to a time literal.
  *
  * @param {module:query~ExprArg} expression
@@ -2681,6 +2706,8 @@ module.exports = {
   ToNumber: ToNumber,
   ToObject: ToObject,
   ToArray: ToArray,
+  ToDouble: ToDouble,
+  ToInteger: ToInteger,
   ToTime: ToTime,
   ToSeconds: ToSeconds,
   ToMicros: ToMicros,
