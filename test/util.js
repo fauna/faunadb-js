@@ -18,6 +18,7 @@ var testConfig;
 try {
   testConfig = require('../testConfig.json');
 } catch (err) {
+  console.log(err);
   console.log('testConfig.json not found, defaulting to environment variables');
   if (typeof env.FAUNA_DOMAIN === 'undefined' ||
       typeof env.FAUNA_SCHEME === 'undefined' ||
