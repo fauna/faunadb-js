@@ -1,6 +1,5 @@
 'use strict';
 
-require('es6-promise/auto');
 var query = require('./query');
 var objectAssign = require('object-assign');
 

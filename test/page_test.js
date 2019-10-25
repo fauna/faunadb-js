@@ -1,6 +1,5 @@
 'use strict';
 
-require('es6-promise/auto');
 var assert = require('chai').assert;
 var query = require('../src/query');
 var PageHelper = require('../src/PageHelper');

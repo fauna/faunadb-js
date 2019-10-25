@@ -139,9 +139,8 @@ Run `npm install` or `yarn` to install dependencies.
 
 ### Code
 
-As the driver targets multiple JS runtimes, it is developed in vanilla ES5.  We
-use the [es6-promise](https://github.com/stefanpenner/es6-promise) polyfill in
-order to provide Promise support.
+This project includes no polyfills. Support for Internet Explorer 11 requires 
+a `Promise` polyfill. 
 
 ### Testing
 

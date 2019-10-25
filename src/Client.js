@@ -2,7 +2,6 @@
 
 var APIVersion = '2.7';
 
-require('es6-promise/auto');
 var btoa = require('btoa-lite');
 var fetch = require('cross-fetch');
 var errors = require('./errors');
