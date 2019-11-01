@@ -1123,6 +1123,86 @@ describe('query', function () {
     })
   });
 
+  it('any, all', function () {
+    var collName = util.randomString('collection_');
+    var indexName = util.randomString('index_');
+
+    return client.query(query.CreateCollection({ name: collName }))
+      .then(function() {
+        return client.query(
+          query.CreateIndex({
+            name: indexName,
+            source: query.Collection(collName),
+            active: true,
+            terms: [{ field: ["data", "foo"] }],
+            values: [{ field: ["data", "value"] }]
+          })
+        );
+      })
+      .then(function() {
+        var coll = query.Collection(collName);
+
+        return client.query(
+          query.Do(
+            query.Create(coll, { data: { foo: "true", value: true } }),
+            query.Create(coll, { data: { foo: "true", value: true } }),
+            query.Create(coll, { data: { foo: "true", value: true } }),
+
+            query.Create(coll, { data: { foo: "false", value: false } }),
+            query.Create(coll, { data: { foo: "false", value: false } }),
+            query.Create(coll, { data: { foo: "false", value: false } }),
+
+            query.Create(coll, { data: { foo: "mixed", value: true } }),
+            query.Create(coll, { data: { foo: "mixed", value: false } }),
+            query.Create(coll, { data: { foo: "mixed", value: true } }),
+            query.Create(coll, { data: { foo: "mixed", value: false } }),
+          )
+        )
+      })
+      .then(function() {
+        var index = query.Index(indexName);
+        var dataPath = ["data", 0];
+
+        var p1 = assertQuery(query.Any([false, false, false]), false);
+        var p2 = assertQuery(query.Any([true, false, true]), true);
+        var p3 = assertQuery(
+          query.Select(dataPath, query.Any(query.Paginate(query.Match(index, "true")))),
+          true
+        );
+        var p4 = assertQuery(
+          query.Select(dataPath, query.Any(query.Paginate(query.Match(index, "false")))),
+          false
+        );
+        var p5 = assertQuery(
+          query.Select(dataPath, query.Any(query.Paginate(query.Match(index, "mixed")))),
+          true
+        );
+        var p6 = assertQuery(query.Any(query.Match(index, "true")), true);
+        var p7 = assertQuery(query.Any(query.Match(index, "false")), false);
+        var p8 = assertQuery(query.Any(query.Match(index, "mixed")), true);
+
+        var p9 = assertQuery(query.All([true, true, true]), true);
+        var p10 = assertQuery(query.All([true, false, true]), false);
+        var p11 = assertQuery(
+          query.Select(dataPath, query.All(query.Paginate(query.Match(index, "true")))),
+          true
+        );
+        var p12 = assertQuery(
+          query.Select(dataPath, query.All(query.Paginate(query.Match(index, "false")))),
+          false
+        );
+        var p13 = assertQuery(
+          query.Select(dataPath, query.All(query.Paginate(query.Match(index, "mixed")))),
+          false
+        );
+        var p14 = assertQuery(query.All(query.Match(index, "true")), true);
+        var p15 = assertQuery(query.All(query.Match(index, "false")), false);
+        var p16 = assertQuery(query.All(query.Match(index, "mixed")), false);
+
+        return Promise.all([p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16]);
+      });
+  });
+
   it('acos', function () {
     return assertQuery(query.Trunc(query.Acos(0.5), 2), 1.04);
   });

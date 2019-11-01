@@ -1817,6 +1817,32 @@ function Mean(collection) {
 }
 
 /**
+  *
+  * Evaluates to true if any element of the collection is true.
+  *
+  * @param {array} - collection the collection
+  * @return {Expr}
+  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/any">Any function</a>
+  */
+function Any(collection) {
+  arity.exact(1, arguments);
+  return new Expr({ any: wrap(collection) });
+}
+
+/**
+  *
+  * Evaluates to true if all elements of the collection are true.
+  *
+  * @param {array} - collection the collection
+  * @return {Expr}
+  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/all">All function</a>
+  */
+function All(collection) {
+  arity.exact(1, arguments);
+  return new Expr({ all: wrap(collection) });
+}
+
+/**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#mathematical-functions).
  *
  * @param {...module:query~ExprArg} terms
@@ -2557,6 +2583,8 @@ module.exports = {
   Count: Count,
   Sum: Sum,
   Mean: Mean,
+  Any: Any,
+  All: All,
   Acos: Acos,
   Asin: Asin,
   Atan: Atan,
