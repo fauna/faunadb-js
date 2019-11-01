@@ -36,20 +36,20 @@ commands:
 
       - restore_cache:
           keys:
-          - v1-deps-<<parameters.node_version>>-{{ checksum "package-lock.json" }}
+          - v1-deps-<<parameters.node_version>>-{{ checksum "yarn.lock" }}
 
       - run:
           name: Install dependencies
-          command: npm install
+          command: yarn
 
       - save_cache:
           paths:
           - node_modules
-          key: v1-deps-<<parameters.node_version>>-{{ checksum "package-lock.json" }}
+          key: v1-deps-<<parameters.node_version>>-{{ checksum "yarn.lock" }}
 
       - run:
           name: Run Tests
-          command: npm run jenkins-test
+          command: yarn jenkins-test
 
       - run:
           name: Gather Results

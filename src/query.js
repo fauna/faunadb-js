@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 
-var annotate = require('fn-annotate');
-var deprecate = require('util-deprecate');
-var Expr = require('./Expr');
-var errors = require('./errors');
-var values = require('./values');
-var objectAssign = require('object-assign');
+var annotate = require('fn-annotate')
+var deprecate = require('util-deprecate')
+var Expr = require('./Expr')
+var errors = require('./errors')
+var values = require('./values')
+var objectAssign = require('object-assign')
 
 /**
  * This module contains functions used to construct FaunaDB Queries.
@@ -39,10 +39,12 @@ var objectAssign = require('object-assign');
  * @return {Expr}
  */
 function Ref() {
-  arity.between(1, 2, arguments);
+  arity.between(1, 2, arguments)
   switch (arguments.length) {
-    case 1: return new Expr({ '@ref': wrap(arguments[0]) });
-    case 2: return new Expr({ ref: wrap(arguments[0]), id: wrap(arguments[1]) });
+    case 1:
+      return new Expr({ '@ref': wrap(arguments[0]) })
+    case 2:
+      return new Expr({ ref: wrap(arguments[0]), id: wrap(arguments[1]) })
   }
 }
 
@@ -52,8 +54,8 @@ function Ref() {
  * @return {Expr}
  */
 function Bytes(bytes) {
-  arity.exact(1, arguments);
-  return new values.Bytes(bytes);
+  arity.exact(1, arguments)
+  return new values.Bytes(bytes)
 }
 
 // Basic forms
@@ -66,8 +68,8 @@ function Bytes(bytes) {
  * @return {Expr}
  * */
 function Abort(msg) {
-  arity.exact(1, arguments);
-  return new Expr({ abort: wrap(msg) });
+  arity.exact(1, arguments)
+  return new Expr({ abort: wrap(msg) })
 }
 
 /**
@@ -80,8 +82,8 @@ function Abort(msg) {
  * @return {Expr}
  * */
 function At(timestamp, expr) {
-  arity.exact(2, arguments);
-  return new Expr({ at: wrap(timestamp), expr: wrap(expr) });
+  arity.exact(2, arguments)
+  return new Expr({ at: wrap(timestamp), expr: wrap(expr) })
 }
 
 /**
@@ -94,40 +96,43 @@ function At(timestamp, expr) {
  * @return {Expr}
  * */
 function Let(vars, expr) {
-  arity.exact(2, arguments);
-  var bindings = [];
+  arity.exact(2, arguments)
+  var bindings = []
 
   if (Array.isArray(vars)) {
-    bindings = vars.map(function (item) {
-      return wrapValues(item);
-    });
+    bindings = vars.map(function(item) {
+      return wrapValues(item)
+    })
   } else {
-    bindings = Object.keys(vars).map(function (k) {
-      var b = {};
-      b[k] = wrap(vars[k]);
-      return b;
-    });
+    bindings = Object.keys(vars).map(function(k) {
+      var b = {}
+      b[k] = wrap(vars[k])
+      return b
+    })
   }
 
   if (typeof expr === 'function') {
     if (Array.isArray(vars)) {
-      var expr_vars = [];
+      var expr_vars = []
 
-      vars.forEach(function (item) {
+      vars.forEach(function(item) {
         Object.keys(item).forEach(function(name) {
-          expr_vars.push(Var(name));
-        });
-      });
+          expr_vars.push(Var(name))
+        })
+      })
 
-      expr = expr.apply(null, expr_vars);
+      expr = expr.apply(null, expr_vars)
     } else {
-      expr = expr.apply(null, Object.keys(vars).map(function(name) {
-        return Var(name);
-      }));
+      expr = expr.apply(
+        null,
+        Object.keys(vars).map(function(name) {
+          return Var(name)
+        })
+      )
     }
   }
 
-  return new Expr({ let: bindings, in: wrap(expr) });
+  return new Expr({ let: bindings, in: wrap(expr) })
 }
 
 /**
@@ -138,8 +143,8 @@ function Let(vars, expr) {
  * @return {Expr}
  * */
 function Var(varName) {
-  arity.exact(1, arguments);
-  return new Expr({ var: wrap(varName) });
+  arity.exact(1, arguments)
+  return new Expr({ var: wrap(varName) })
 }
 
 /**
@@ -154,8 +159,8 @@ function Var(varName) {
  * @return {Expr}
  * */
 function If(condition, then, _else) {
-  arity.exact(3, arguments);
-  return new Expr({ if: wrap(condition), then: wrap(then), else: wrap(_else) });
+  arity.exact(3, arguments)
+  return new Expr({ if: wrap(condition), then: wrap(then), else: wrap(_else) })
 }
 
 /**
@@ -166,9 +171,9 @@ function If(condition, then, _else) {
  * @return {Expr}
  * */
 function Do() {
-  arity.min(1, arguments);
-  var args = argsToArray(arguments);
-  return new Expr({ do: wrap(args) });
+  arity.min(1, arguments)
+  var args = argsToArray(arguments)
+  return new Expr({ do: wrap(args) })
 }
 
 /** See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
@@ -178,9 +183,21 @@ function Do() {
  * @return {Expr}
  * */
 var objectFunction = function(fields) {
-  arity.exact(1, arguments);
-  return new Expr({ object: wrapValues(fields) });
-};
+  arity.exact(1, arguments)
+  return new Expr({ object: wrapValues(fields) })
+}
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
+ *
+ * Directly produces a FaunaDB Lambda expression as described in the FaunaDB reference
+ * documentation.
+ *
+ * @param {module:query~ExprArg} var
+ *   The names of the variables to be bound in this lambda expression.
+ * @param {module:query~ExprArg} expr
+ *   The lambda expression.
+ * @return {Expr}
+ */
 
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
@@ -199,35 +216,25 @@ var objectFunction = function(fields) {
  *   Takes the provided function and produces the appropriate FaunaDB query expression.
  * @return {Expr}
  *
- *//**
- * See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
- *
- * Directly produces a FaunaDB Lambda expression as described in the FaunaDB reference
- * documentation.
- *
- * @param {module:query~ExprArg} var
- *   The names of the variables to be bound in this lambda expression.
- * @param {module:query~ExprArg} expr
- *   The lambda expression.
- * @return {Expr}
- */
-function Lambda() {
-  arity.between(1, 2, arguments);
-  switch(arguments.length) {
+ */ function Lambda() {
+  arity.between(1, 2, arguments)
+  switch (arguments.length) {
     case 1:
-      var value = arguments[0];
+      var value = arguments[0]
       if (typeof value === 'function') {
-        return _lambdaFunc(value);
+        return _lambdaFunc(value)
       } else if (value instanceof Expr) {
-        return value;
+        return value
       } else {
-        throw new errors.InvalidValue('Lambda function takes either a Function or an Expr.');
+        throw new errors.InvalidValue(
+          'Lambda function takes either a Function or an Expr.'
+        )
       }
     case 2:
-      var var_name = arguments[0];
-      var expr = arguments[1];
+      var var_name = arguments[0]
+      var expr = arguments[1]
 
-      return _lambdaExpr(var_name, expr);
+      return _lambdaExpr(var_name, expr)
   }
 }
 
@@ -235,14 +242,24 @@ function Lambda() {
  * @private
  */
 function _lambdaFunc(func) {
-  var vars = annotate(func);
+  var vars = annotate(func)
   switch (vars.length) {
     case 0:
-      throw new errors.InvalidValue('Provided Function must take at least 1 argument.');
+      throw new errors.InvalidValue(
+        'Provided Function must take at least 1 argument.'
+      )
     case 1:
-      return _lambdaExpr(vars[0], func(Var(vars[0])));
+      return _lambdaExpr(vars[0], func(Var(vars[0])))
     default:
-      return _lambdaExpr(vars, func.apply(null, vars.map(function(name) { return Var(name); })));
+      return _lambdaExpr(
+        vars,
+        func.apply(
+          null,
+          vars.map(function(name) {
+            return Var(name)
+          })
+        )
+      )
   }
 }
 
@@ -250,7 +267,7 @@ function _lambdaFunc(func) {
  * @private
  */
 function _lambdaExpr(var_name, expr) {
-  return new Expr({ lambda: wrap(var_name), expr: wrap(expr) });
+  return new Expr({ lambda: wrap(var_name), expr: wrap(expr) })
 }
 
 /**
@@ -269,10 +286,10 @@ function _lambdaExpr(var_name, expr) {
  * @return {Expr}
  * */
 function Call(ref) {
-  arity.min(1, arguments);
-  var args = argsToArray(arguments);
-  args.shift();
-  return new Expr({ call: wrap(ref), arguments: wrap(varargs(args)) });
+  arity.min(1, arguments)
+  var args = argsToArray(arguments)
+  args.shift()
+  return new Expr({ call: wrap(ref), arguments: wrap(varargs(args)) })
 }
 
 /**
@@ -290,8 +307,8 @@ function Call(ref) {
  * @return {Expr}
  * */
 function Query(lambda) {
-  arity.exact(1, arguments);
-  return new Expr({ query: wrap(lambda) });
+  arity.exact(1, arguments)
+  return new Expr({ query: wrap(lambda) })
 }
 
 // Collection functions
@@ -305,8 +322,8 @@ function Query(lambda) {
  * @return {Expr}
  * */
 function Map(collection, lambda_expr) {
-  arity.exact(2, arguments);
-  return new Expr({ map: wrap(lambda_expr), collection: wrap(collection) });
+  arity.exact(2, arguments)
+  return new Expr({ map: wrap(lambda_expr), collection: wrap(collection) })
 }
 
 /**
@@ -319,8 +336,8 @@ function Map(collection, lambda_expr) {
  * @return {Expr}
  * */
 function Foreach(collection, lambda_expr) {
-  arity.exact(2, arguments);
-  return new Expr({ foreach: wrap(lambda_expr), collection: wrap(collection) });
+  arity.exact(2, arguments)
+  return new Expr({ foreach: wrap(lambda_expr), collection: wrap(collection) })
 }
 
 /**
@@ -333,8 +350,8 @@ function Foreach(collection, lambda_expr) {
  * @return {Expr}
  * */
 function Filter(collection, lambda_expr) {
-  arity.exact(2, arguments);
-  return new Expr({ filter: wrap(lambda_expr), collection: wrap(collection) });
+  arity.exact(2, arguments)
+  return new Expr({ filter: wrap(lambda_expr), collection: wrap(collection) })
 }
 
 /**
@@ -347,8 +364,8 @@ function Filter(collection, lambda_expr) {
  * @return {Expr}
  * */
 function Take(number, collection) {
-  arity.exact(2, arguments);
-  return new Expr({ take: wrap(number), collection: wrap(collection) });
+  arity.exact(2, arguments)
+  return new Expr({ take: wrap(number), collection: wrap(collection) })
 }
 
 /**
@@ -361,8 +378,8 @@ function Take(number, collection) {
  * @return {Expr}
  * */
 function Drop(number, collection) {
-  arity.exact(2, arguments);
-  return new Expr({ drop: wrap(number), collection: wrap(collection) });
+  arity.exact(2, arguments)
+  return new Expr({ drop: wrap(number), collection: wrap(collection) })
 }
 
 /**
@@ -375,8 +392,8 @@ function Drop(number, collection) {
  * @return {Expr}
  */
 function Prepend(elements, collection) {
-  arity.exact(2, arguments);
-  return new Expr({ prepend: wrap(elements), collection: wrap(collection) });
+  arity.exact(2, arguments)
+  return new Expr({ prepend: wrap(elements), collection: wrap(collection) })
 }
 
 /**
@@ -389,8 +406,8 @@ function Prepend(elements, collection) {
  * @return {Expr}
  */
 function Append(elements, collection) {
-  arity.exact(2, arguments);
-  return new Expr({ append: wrap(elements), collection: wrap(collection) });
+  arity.exact(2, arguments)
+  return new Expr({ append: wrap(elements), collection: wrap(collection) })
 }
 
 /**
@@ -401,8 +418,8 @@ function Append(elements, collection) {
  * @return {Expr}
  */
 function IsEmpty(collection) {
-  arity.exact(1, arguments);
-  return new Expr({ is_empty: wrap(collection) });
+  arity.exact(1, arguments)
+  return new Expr({ is_empty: wrap(collection) })
 }
 
 /**
@@ -413,8 +430,8 @@ function IsEmpty(collection) {
  * @return {Expr}
  */
 function IsNonEmpty(collection) {
-  arity.exact(1, arguments);
-  return new Expr({ is_nonempty: wrap(collection) });
+  arity.exact(1, arguments)
+  return new Expr({ is_nonempty: wrap(collection) })
 }
 
 // Read functions
@@ -429,10 +446,10 @@ function IsNonEmpty(collection) {
  * @return {Expr}
  */
 function Get(ref, ts) {
-  arity.between(1, 2, arguments);
-  ts = defaults(ts, null);
+  arity.between(1, 2, arguments)
+  ts = defaults(ts, null)
 
-  return new Expr(params({ get: wrap(ref) }, { ts: wrap(ts) }));
+  return new Expr(params({ get: wrap(ref) }, { ts: wrap(ts) }))
 }
 
 /**
@@ -443,8 +460,8 @@ function Get(ref, ts) {
  * @return {Expr}
  */
 function KeyFromSecret(secret) {
-  arity.exact(1, arguments);
-  return new Expr({ key_from_secret: wrap(secret) });
+  arity.exact(1, arguments)
+  return new Expr({ key_from_secret: wrap(secret) })
 }
 
 /**
@@ -459,8 +476,12 @@ function KeyFromSecret(secret) {
  * @return {Expr}
  */
 function Reduce(lambda, initial, collection) {
-  arity.exact(3, arguments);
-  return new Expr({ reduce: wrap(lambda), initial: wrap(initial), collection: wrap(collection) });
+  arity.exact(3, arguments)
+  return new Expr({
+    reduce: wrap(lambda),
+    initial: wrap(initial),
+    collection: wrap(collection),
+  })
 }
 
 /**
@@ -479,10 +500,10 @@ function Reduce(lambda, initial, collection) {
  * @return {Expr}
  */
 function Paginate(set, opts) {
-  arity.between(1, 2, arguments);
-  opts = defaults(opts, {});
+  arity.between(1, 2, arguments)
+  opts = defaults(opts, {})
 
-  return new Expr(objectAssign({ paginate: wrap(set) }, wrapValues(opts)));
+  return new Expr(objectAssign({ paginate: wrap(set) }, wrapValues(opts)))
 }
 
 /**
@@ -495,10 +516,10 @@ function Paginate(set, opts) {
  * @return {Expr}
  */
 function Exists(ref, ts) {
-  arity.between(1, 2, arguments);
-  ts = defaults(ts, null);
+  arity.between(1, 2, arguments)
+  ts = defaults(ts, null)
 
-  return new Expr(params({ exists: wrap(ref) }, { ts: wrap(ts) }));
+  return new Expr(params({ exists: wrap(ref) }, { ts: wrap(ts) }))
 }
 
 // Write functions
@@ -513,8 +534,8 @@ function Exists(ref, ts) {
  * @return {Expr}
  */
 function Create(collection_ref, params) {
-  arity.between(1, 2, arguments);
-  return new Expr({ create: wrap(collection_ref), params: wrap(params) });
+  arity.between(1, 2, arguments)
+  return new Expr({ create: wrap(collection_ref), params: wrap(params) })
 }
 
 /**
@@ -527,8 +548,8 @@ function Create(collection_ref, params) {
  * @return {Expr}
  */
 function Update(ref, params) {
-  arity.exact(2, arguments);
-  return new Expr({ update: wrap(ref), params: wrap(params) });
+  arity.exact(2, arguments)
+  return new Expr({ update: wrap(ref), params: wrap(params) })
 }
 
 /**
@@ -541,8 +562,8 @@ function Update(ref, params) {
  * @return {Expr}
  */
 function Replace(ref, params) {
-  arity.exact(2, arguments);
-  return new Expr({ replace: wrap(ref), params: wrap(params) });
+  arity.exact(2, arguments)
+  return new Expr({ replace: wrap(ref), params: wrap(params) })
 }
 
 /**
@@ -553,8 +574,8 @@ function Replace(ref, params) {
  * @return {Expr}
  */
 function Delete(ref) {
-  arity.exact(1, arguments);
-  return new Expr({ delete: wrap(ref) });
+  arity.exact(1, arguments)
+  return new Expr({ delete: wrap(ref) })
 }
 
 /**
@@ -571,8 +592,13 @@ function Delete(ref) {
  * @return {Expr}
  */
 function Insert(ref, ts, action, params) {
-  arity.exact(4, arguments);
-  return new Expr({ insert: wrap(ref), ts: wrap(ts), action: wrap(action), params: wrap(params) });
+  arity.exact(4, arguments)
+  return new Expr({
+    insert: wrap(ref),
+    ts: wrap(ts),
+    action: wrap(action),
+    params: wrap(params),
+  })
 }
 
 /**
@@ -587,8 +613,8 @@ function Insert(ref, ts, action, params) {
  * @return {Expr}
  */
 function Remove(ref, ts, action) {
-  arity.exact(3, arguments);
-  return new Expr({ remove: wrap(ref), ts: wrap(ts), action: wrap(action) });
+  arity.exact(3, arguments)
+  return new Expr({ remove: wrap(ref), ts: wrap(ts), action: wrap(action) })
 }
 
 /**
@@ -598,12 +624,12 @@ function Remove(ref, ts, action) {
  *   An object of parameters used to create a class.
  *     - name (required): the name of the class to create
  * @return {Expr}
- * 
+ *
  * @deprecated use CreateCollection instead
  */
 function CreateClass(params) {
-  arity.exact(1, arguments);
-  return new Expr({ create_class: wrap(params) });
+  arity.exact(1, arguments)
+  return new Expr({ create_class: wrap(params) })
 }
 
 /**
@@ -615,8 +641,8 @@ function CreateClass(params) {
  * @return {Expr}
  */
 function CreateCollection(params) {
-  arity.exact(1, arguments);
-  return new Expr({ create_collection: wrap(params) });
+  arity.exact(1, arguments)
+  return new Expr({ create_collection: wrap(params) })
 }
 
 /**
@@ -628,8 +654,8 @@ function CreateCollection(params) {
  * @return {Expr}
  */
 function CreateDatabase(params) {
-  arity.exact(1, arguments);
-  return new Expr({ create_database: wrap(params) });
+  arity.exact(1, arguments)
+  return new Expr({ create_database: wrap(params) })
 }
 
 /**
@@ -646,8 +672,8 @@ function CreateDatabase(params) {
  * @return {Expr}
  */
 function CreateIndex(params) {
-  arity.exact(1, arguments);
-  return new Expr({ create_index: wrap(params) });
+  arity.exact(1, arguments)
+  return new Expr({ create_index: wrap(params) })
 }
 
 /**
@@ -660,8 +686,8 @@ function CreateIndex(params) {
  * @return {Expr}
  */
 function CreateKey(params) {
-  arity.exact(1, arguments);
-  return new Expr({ create_key: wrap(params) });
+  arity.exact(1, arguments)
+  return new Expr({ create_key: wrap(params) })
 }
 
 /**
@@ -674,8 +700,8 @@ function CreateKey(params) {
  * @return {Expr}
  */
 function CreateFunction(params) {
-  arity.exact(1, arguments);
-  return new Expr({ create_function: wrap(params) });
+  arity.exact(1, arguments)
+  return new Expr({ create_function: wrap(params) })
 }
 
 /**
@@ -689,8 +715,8 @@ function CreateFunction(params) {
  * @return {Expr}
  */
 function CreateRole(params) {
-  arity.exact(1, arguments);
-  return new Expr({ create_role: wrap(params) });
+  arity.exact(1, arguments)
+  return new Expr({ create_role: wrap(params) })
 }
 
 // Sets
@@ -703,8 +729,8 @@ function CreateRole(params) {
  * @return {Expr}
  */
 function Singleton(ref) {
-  arity.exact(1, arguments);
-  return new Expr({ singleton: wrap(ref) });
+  arity.exact(1, arguments)
+  return new Expr({ singleton: wrap(ref) })
 }
 
 /**
@@ -715,8 +741,8 @@ function Singleton(ref) {
  * @return {Expr}
  */
 function Events(ref_set) {
-  arity.exact(1, arguments);
-  return new Expr({ events: wrap(ref_set) });
+  arity.exact(1, arguments)
+  return new Expr({ events: wrap(ref_set) })
 }
 
 /**
@@ -729,10 +755,10 @@ function Events(ref_set) {
  * @return {Expr}
  */
 function Match(index) {
-  arity.min(1, arguments);
-  var args = argsToArray(arguments);
-  args.shift();
-  return new Expr({ match: wrap(index), terms: wrap(varargs(args)) });
+  arity.min(1, arguments)
+  var args = argsToArray(arguments)
+  args.shift()
+  return new Expr({ match: wrap(index), terms: wrap(varargs(args)) })
 }
 
 /**
@@ -743,8 +769,8 @@ function Match(index) {
  * @return {Expr}
  */
 function Union() {
-  arity.min(1, arguments);
-  return new Expr({ union: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ union: wrap(varargs(arguments)) })
 }
 
 /**
@@ -756,8 +782,10 @@ function Union() {
  * @return {Expr}
  * */
 function Merge(merge, _with, lambda) {
-  arity.between(2, 3, arguments);
-  return new Expr(params({ 'merge': wrap(merge), 'with': wrap(_with) }, {'lambda': wrap(lambda) }));
+  arity.between(2, 3, arguments)
+  return new Expr(
+    params({ merge: wrap(merge), with: wrap(_with) }, { lambda: wrap(lambda) })
+  )
 }
 
 /**
@@ -768,8 +796,8 @@ function Merge(merge, _with, lambda) {
  * @return {Expr}
  * */
 function Intersection() {
-  arity.min(1, arguments);
-  return new Expr({ intersection: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ intersection: wrap(varargs(arguments)) })
 }
 
 /**
@@ -780,8 +808,8 @@ function Intersection() {
  * @return {Expr}
  * */
 function Difference() {
-  arity.min(1, arguments);
-  return new Expr({ difference: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ difference: wrap(varargs(arguments)) })
 }
 
 /**
@@ -792,8 +820,8 @@ function Difference() {
  * @return {Expr}
  * */
 function Distinct(set) {
-  arity.exact(1, arguments);
-  return new Expr({ distinct: wrap(set) });
+  arity.exact(1, arguments)
+  return new Expr({ distinct: wrap(set) })
 }
 
 /**
@@ -806,8 +834,8 @@ function Distinct(set) {
  * @return {Expr}
  */
 function Join(source, target) {
-  arity.exact(2, arguments);
-  return new Expr({ join: wrap(source), with: wrap(target) });
+  arity.exact(2, arguments)
+  return new Expr({ join: wrap(source), with: wrap(target) })
 }
 
 /**
@@ -822,8 +850,8 @@ function Join(source, target) {
  * @return {Expr}
  */
 function Range(set, from, to) {
-  arity.exact(3, arguments);
-  return new Expr({ range: wrap(set), from: wrap(from), to: wrap(to) });
+  arity.exact(3, arguments)
+  return new Expr({ range: wrap(set), from: wrap(from), to: wrap(to) })
 }
 
 // Authentication
@@ -839,8 +867,8 @@ function Range(set, from, to) {
  * @return {Expr}
  * */
 function Login(ref, params) {
-  arity.exact(2, arguments);
-  return new Expr({ login: wrap(ref), params: wrap(params) });
+  arity.exact(2, arguments)
+  return new Expr({ login: wrap(ref), params: wrap(params) })
 }
 
 /**
@@ -851,8 +879,8 @@ function Login(ref, params) {
  * @return {Expr}
  */
 function Logout(delete_tokens) {
-  arity.exact(1, arguments);
-  return new Expr({ logout: wrap(delete_tokens) });
+  arity.exact(1, arguments)
+  return new Expr({ logout: wrap(delete_tokens) })
 }
 
 /**
@@ -865,8 +893,8 @@ function Logout(delete_tokens) {
  * @return {Expr}
  */
 function Identify(ref, password) {
-  arity.exact(2, arguments);
-  return new Expr({ identify: wrap(ref), password: wrap(password) });
+  arity.exact(2, arguments)
+  return new Expr({ identify: wrap(ref), password: wrap(password) })
 }
 
 /**
@@ -875,8 +903,8 @@ function Identify(ref, password) {
  * @return {Expr}
  */
 function Identity() {
-  arity.exact(0, arguments);
-  return new Expr({ identity: null });
+  arity.exact(0, arguments)
+  return new Expr({ identity: null })
 }
 
 /**
@@ -885,8 +913,8 @@ function Identity() {
  * @return {Expr}
  */
 function HasIdentity() {
-  arity.exact(0, arguments);
-  return new Expr({ has_identity: null });
+  arity.exact(0, arguments)
+  return new Expr({ has_identity: null })
 }
 
 // String functions
@@ -899,9 +927,11 @@ function HasIdentity() {
  * @return {string} a single combined string
  */
 function Concat(strings, separator) {
-  arity.min(1, arguments);
-  separator = defaults(separator, null);
-  return new Expr(params({ concat: wrap(strings) }, { separator: wrap(separator) }));
+  arity.min(1, arguments)
+  separator = defaults(separator, null)
+  return new Expr(
+    params({ concat: wrap(strings) }, { separator: wrap(separator) })
+  )
 }
 
 /**
@@ -912,72 +942,74 @@ function Concat(strings, separator) {
  * @return {string} a normalized string
  */
 function Casefold(string, normalizer) {
-  arity.min(1, arguments);
-  return new Expr(params({ casefold: wrap(string) }, { normalizer: wrap(normalizer) }));
+  arity.min(1, arguments)
+  return new Expr(
+    params({ casefold: wrap(string) }, { normalizer: wrap(normalizer) })
+  )
 }
 
 /**
-  * Returns true if the string contains the given substring, or false if otherwise
-  *
-  * @param {string} value  - the string to evaluate
-  * @param {string} search - the substring to search for
-  * @return {boolean}      - was the search result found
-  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/containsstr">FaunaDB ContainsStr Function</a>
-  */
+ * Returns true if the string contains the given substring, or false if otherwise
+ *
+ * @param {string} value  - the string to evaluate
+ * @param {string} search - the substring to search for
+ * @return {boolean}      - was the search result found
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/containsstr">FaunaDB ContainsStr Function</a>
+ */
 function ContainsStr(value, search) {
-  arity.exact(2, arguments);
-  return new Expr({ containsstr: wrap(value), search: wrap(search) });
+  arity.exact(2, arguments)
+  return new Expr({ containsstr: wrap(value), search: wrap(search) })
 }
 
 /**
-  * Returns true if the string contains the given pattern, or false if otherwise
-  *
-  * @param {string} value   - the string to evaluate
-  * @param {string} pattern - the pattern to search for
-  * @return {boolean}       - was the regex search result found
-  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/containsstrregex">FaunaDB ContainsStrRegex Function</a>
-  */
+ * Returns true if the string contains the given pattern, or false if otherwise
+ *
+ * @param {string} value   - the string to evaluate
+ * @param {string} pattern - the pattern to search for
+ * @return {boolean}       - was the regex search result found
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/containsstrregex">FaunaDB ContainsStrRegex Function</a>
+ */
 function ContainsStrRegex(value, pattern) {
-  arity.exact(2, arguments);
-  return new Expr({ containsstrregex: wrap(value), pattern: wrap(pattern) });
+  arity.exact(2, arguments)
+  return new Expr({ containsstrregex: wrap(value), pattern: wrap(pattern) })
 }
 
 /**
-  * Returns true if the string starts with the given prefix value, or false if otherwise
-  *
-  * @param {string} value   - the string to evaluate
-  * @param {string} search  - the prefix to search for
-  * @return {boolean}       - does `value` start with `search`
-  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/startswith">FaunaDB StartsWith Function</a>
-  */
+ * Returns true if the string starts with the given prefix value, or false if otherwise
+ *
+ * @param {string} value   - the string to evaluate
+ * @param {string} search  - the prefix to search for
+ * @return {boolean}       - does `value` start with `search`
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/startswith">FaunaDB StartsWith Function</a>
+ */
 function StartsWith(value, search) {
-  arity.exact(2, arguments);
-  return new Expr({ startswith: wrap(value), search: wrap(search) });
+  arity.exact(2, arguments)
+  return new Expr({ startswith: wrap(value), search: wrap(search) })
 }
 
 /**
-  * Returns true if the string ends with the given suffix value, or false if otherwise
-  *
-  * @param {string} value   - the string to evaluate
-  * @param {string} search  - the suffix to search for
-  * @return {boolean}       - does `value` end with `search`
-  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/endswith">FaunaDB EndsWith Function</a>
-  */
+ * Returns true if the string ends with the given suffix value, or false if otherwise
+ *
+ * @param {string} value   - the string to evaluate
+ * @param {string} search  - the suffix to search for
+ * @return {boolean}       - does `value` end with `search`
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/endswith">FaunaDB EndsWith Function</a>
+ */
 function EndsWith(value, search) {
-  arity.exact(2, arguments);
-  return new Expr({ endswith: wrap(value), search: wrap(search) });
+  arity.exact(2, arguments)
+  return new Expr({ endswith: wrap(value), search: wrap(search) })
 }
 
 /**
-  * It takes a string and returns a regex which matches the input string verbatim.
-  *
-  * @param value      - the string to analyze
-  * @return {string}  - a regex which matches the input string verbatim
-  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/regexescape">FaunaDB RegexEscape Function</a>
-*/
+ * It takes a string and returns a regex which matches the input string verbatim.
+ *
+ * @param value      - the string to analyze
+ * @return {string}  - a regex which matches the input string verbatim
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/regexescape">FaunaDB RegexEscape Function</a>
+ */
 function RegexEscape(value) {
-  arity.exact(1, arguments);
-  return new Expr({ regexescape: wrap(value) });
+  arity.exact(1, arguments)
+  return new Expr({ regexescape: wrap(value) })
 }
 
 /**
@@ -989,9 +1021,11 @@ function RegexEscape(value) {
  * @return {int} location of the found string or -1 if not found
  */
 function FindStr(value, find, start) {
-  arity.between(2, 3, arguments);
-  start = defaults(start, null);
-  return new Expr(params({ findstr: wrap(value), find: wrap(find) }, { start: wrap(start) }));
+  arity.between(2, 3, arguments)
+  start = defaults(start, null)
+  return new Expr(
+    params({ findstr: wrap(value), find: wrap(find) }, { start: wrap(start) })
+  )
 }
 
 /**
@@ -1004,9 +1038,14 @@ function FindStr(value, find, start) {
  * @return {Array} an array of object describing where the search pattern was located
  */
 function FindStrRegex(value, pattern, start, numResults) {
-  arity.between(2, 4, arguments);
-  start = defaults(start, null);
-  return new Expr(params({ findstrregex: wrap(value), pattern: wrap(pattern) }, { start: wrap(start), num_results: wrap(numResults) }));
+  arity.between(2, 4, arguments)
+  start = defaults(start, null)
+  return new Expr(
+    params(
+      { findstrregex: wrap(value), pattern: wrap(pattern) },
+      { start: wrap(start), num_results: wrap(numResults) }
+    )
+  )
 }
 
 /**
@@ -1016,8 +1055,8 @@ function FindStrRegex(value, pattern, start, numResults) {
  * @return {int} the length of the string in codepoints
  */
 function Length(value) {
-  arity.exact(1, arguments);
-  return new Expr({ length: wrap(value) });
+  arity.exact(1, arguments)
+  return new Expr({ length: wrap(value) })
 }
 
 /**
@@ -1027,8 +1066,8 @@ function Length(value) {
  * @return {string} the string converted to lowercase
  */
 function LowerCase(value) {
-  arity.exact(1, arguments);
-  return new Expr({ lowercase: wrap(value) });
+  arity.exact(1, arguments)
+  return new Expr({ lowercase: wrap(value) })
 }
 
 /**
@@ -1038,8 +1077,8 @@ function LowerCase(value) {
  * @return {string} the string with leading white space removed
  */
 function LTrim(value) {
-  arity.exact(1, arguments);
-  return new Expr({ ltrim: wrap(value) });
+  arity.exact(1, arguments)
+  return new Expr({ ltrim: wrap(value) })
 }
 
 /**
@@ -1054,11 +1093,13 @@ function LTrim(value) {
  * @return {Array|Value}
  */
 function NGram(terms, min, max) {
-  arity.between(1, 3, arguments);
+  arity.between(1, 3, arguments)
   min = defaults(min, null)
   max = defaults(max, null)
 
-  return new Expr(params({ ngram: wrap(terms) }, { min: wrap(min), max: wrap(max) }));
+  return new Expr(
+    params({ ngram: wrap(terms) }, { min: wrap(min), max: wrap(max) })
+  )
 }
 
 /**
@@ -1069,9 +1110,9 @@ function NGram(terms, min, max) {
  * @return {string} a string which was repeated
  */
 function Repeat(value, number) {
-  arity.between(1, 2, arguments);
-  number = defaults(number, null);
-  return new Expr(params({ repeat: wrap(value) }, { number: wrap(number) }));
+  arity.between(1, 2, arguments)
+  number = defaults(number, null)
+  return new Expr(params({ repeat: wrap(value) }, { number: wrap(number) }))
 }
 
 /**
@@ -1083,8 +1124,12 @@ function Repeat(value, number) {
  * @return {String} all the occurrences of find substituted with replace string
  */
 function ReplaceStr(value, find, replace) {
-  arity.exact(3, arguments);
-  return new Expr({ replacestr: wrap(value), find: wrap(find), replace: wrap(replace) });
+  arity.exact(3, arguments)
+  return new Expr({
+    replacestr: wrap(value),
+    find: wrap(find),
+    replace: wrap(replace),
+  })
 }
 
 /**
@@ -1097,9 +1142,18 @@ function ReplaceStr(value, find, replace) {
  * @return {string} all the occurrences of find pattern substituted with replace string
  */
 function ReplaceStrRegex(value, pattern, replace, first) {
-  arity.between(3, 4, arguments);
-  first = defaults(first, null);
-  return new Expr(params({ replacestrregex: wrap(value), pattern: wrap(pattern), replace: wrap(replace) }, { first: wrap(first) }));
+  arity.between(3, 4, arguments)
+  first = defaults(first, null)
+  return new Expr(
+    params(
+      {
+        replacestrregex: wrap(value),
+        pattern: wrap(pattern),
+        replace: wrap(replace),
+      },
+      { first: wrap(first) }
+    )
+  )
 }
 
 /**
@@ -1109,8 +1163,8 @@ function ReplaceStrRegex(value, pattern, replace, first) {
  * @return {string} the string with trailing whitespaces removed
  */
 function RTrim(value) {
-  arity.exact(1, arguments);
-  return new Expr({ rtrim: wrap(value) });
+  arity.exact(1, arguments)
+  return new Expr({ rtrim: wrap(value) })
 }
 
 /**
@@ -1120,8 +1174,8 @@ function RTrim(value) {
  * @return {string} a string with spaces
  */
 function Space(num) {
-  arity.exact(1, arguments);
-  return new Expr({ space: wrap(num) });
+  arity.exact(1, arguments)
+  return new Expr({ space: wrap(num) })
 }
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#string-functions).
@@ -1132,10 +1186,15 @@ function Space(num) {
  * @return {string}
  */
 function SubString(value, start, length) {
-  arity.between(1, 3, arguments);
-  start = defaults(start, null);
-  length = defaults(length, null);
-  return new Expr(params({ substring: wrap(value) }, { start: wrap(start), length: wrap(length) } ));
+  arity.between(1, 3, arguments)
+  start = defaults(start, null)
+  length = defaults(length, null)
+  return new Expr(
+    params(
+      { substring: wrap(value) },
+      { start: wrap(start), length: wrap(length) }
+    )
+  )
 }
 
 /**
@@ -1145,8 +1204,8 @@ function SubString(value, start, length) {
  * @return {string}  A string converted to titlecase
  */
 function TitleCase(value) {
-  arity.exact(1, arguments);
-  return new Expr({ titlecase: wrap(value) });
+  arity.exact(1, arguments)
+  return new Expr({ titlecase: wrap(value) })
 }
 
 /**
@@ -1156,8 +1215,8 @@ function TitleCase(value) {
  * @return {string} a string with leading and trailing whitespace removed
  */
 function Trim(value) {
-  arity.exact(1, arguments);
-  return new Expr({ trim: wrap(value) });
+  arity.exact(1, arguments)
+  return new Expr({ trim: wrap(value) })
 }
 
 /**
@@ -1167,8 +1226,8 @@ function Trim(value) {
  * @return {string} An uppercase string
  */
 function UpperCase(value) {
-  arity.exact(1, arguments);
-  return new Expr({ uppercase: wrap(value) });
+  arity.exact(1, arguments)
+  return new Expr({ uppercase: wrap(value) })
 }
 
 /**
@@ -1179,10 +1238,10 @@ function UpperCase(value) {
  * @return {string}         a string
  */
 function Format(string) {
-  arity.min(1, arguments);
-  var args = argsToArray(arguments);
-  args.shift();
-  return new Expr({ format: wrap(string), values: wrap(varargs(args)) });
+  arity.min(1, arguments)
+  var args = argsToArray(arguments)
+  args.shift()
+  return new Expr({ format: wrap(string), values: wrap(varargs(args)) })
 }
 
 // Time and date functions
@@ -1194,8 +1253,8 @@ function Format(string) {
  * @return {Expr}
  */
 function Time(string) {
-  arity.exact(1, arguments);
-  return new Expr({ time: wrap(string) });
+  arity.exact(1, arguments)
+  return new Expr({ time: wrap(string) })
 }
 
 /**
@@ -1208,8 +1267,8 @@ function Time(string) {
  * @return {Expr}
  */
 function Epoch(number, unit) {
-  arity.exact(2, arguments);
-  return new Expr({ epoch: wrap(number), unit: wrap(unit) });
+  arity.exact(2, arguments)
+  return new Expr({ epoch: wrap(number), unit: wrap(unit) })
 }
 
 /**
@@ -1224,8 +1283,12 @@ function Epoch(number, unit) {
  * @return {Expr}
  */
 function TimeAdd(base, offset, unit) {
-  arity.exact(3, arguments);
-  return new Expr({ time_add: wrap(base), offset: wrap(offset), unit: wrap(unit) });
+  arity.exact(3, arguments)
+  return new Expr({
+    time_add: wrap(base),
+    offset: wrap(offset),
+    unit: wrap(unit),
+  })
 }
 
 /**
@@ -1240,8 +1303,12 @@ function TimeAdd(base, offset, unit) {
  * @return {Expr}
  */
 function TimeSubtract(base, offset, unit) {
-  arity.exact(3, arguments);
-  return new Expr({ time_subtract: wrap(base), offset: wrap(offset), unit: wrap(unit) });
+  arity.exact(3, arguments)
+  return new Expr({
+    time_subtract: wrap(base),
+    offset: wrap(offset),
+    unit: wrap(unit),
+  })
 }
 
 /**
@@ -1257,8 +1324,12 @@ function TimeSubtract(base, offset, unit) {
  * @return {Expr}
  */
 function TimeDiff(start, finish, unit) {
-  arity.exact(3, arguments);
-  return new Expr({ time_diff: wrap(start), other: wrap(finish), unit: wrap(unit) });
+  arity.exact(3, arguments)
+  return new Expr({
+    time_diff: wrap(start),
+    other: wrap(finish),
+    unit: wrap(unit),
+  })
 }
 
 /**
@@ -1269,19 +1340,19 @@ function TimeDiff(start, finish, unit) {
  * @return {Expr}
  */
 function Date(string) {
-  arity.exact(1, arguments);
-  return new Expr({ date: wrap(string) });
+  arity.exact(1, arguments)
+  return new Expr({ date: wrap(string) })
 }
 
 /**
-  * Returns the current snapshot time.
-  *
-  * @return {Expr}
-  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/now">Now function</a>
-  */
+ * Returns the current snapshot time.
+ *
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/now">Now function</a>
+ */
 function Now() {
-  arity.exact(0, arguments);
-  return new Expr({ now: wrap(null) });
+  arity.exact(0, arguments)
+  return new Expr({ now: wrap(null) })
 }
 
 // Miscellaneous functions
@@ -1293,8 +1364,8 @@ function Now() {
  * @return {Expr}
  */
 function NextId() {
-  arity.exact(0, arguments);
-  return new Expr({ next_id: null });
+  arity.exact(0, arguments)
+  return new Expr({ next_id: null })
 }
 
 /**
@@ -1303,8 +1374,8 @@ function NextId() {
  * @return {Expr}
  */
 function NewId() {
-  arity.exact(0, arguments);
-  return new Expr({ new_id: null });
+  arity.exact(0, arguments)
+  return new Expr({ new_id: null })
 }
 
 /**
@@ -1317,10 +1388,12 @@ function NewId() {
  * @return {Expr}
  */
 function Database(name, scope) {
-  arity.between(1, 2, arguments);
-  switch(arguments.length) {
-    case 1: return new Expr({ database: wrap(name) });
-    case 2: return new Expr({ database: wrap(name), scope: wrap(scope) });
+  arity.between(1, 2, arguments)
+  switch (arguments.length) {
+    case 1:
+      return new Expr({ database: wrap(name) })
+    case 2:
+      return new Expr({ database: wrap(name), scope: wrap(scope) })
   }
 }
 
@@ -1334,10 +1407,12 @@ function Database(name, scope) {
  * @return {Expr}
  */
 function Index(name, scope) {
-  arity.between(1, 2, arguments);
-  switch(arguments.length) {
-    case 1: return new Expr({ index: wrap(name) });
-    case 2: return new Expr({ index: wrap(name), scope: wrap(scope) });
+  arity.between(1, 2, arguments)
+  switch (arguments.length) {
+    case 1:
+      return new Expr({ index: wrap(name) })
+    case 2:
+      return new Expr({ index: wrap(name), scope: wrap(scope) })
   }
 }
 
@@ -1349,14 +1424,16 @@ function Index(name, scope) {
  * @param {module:query~ExprArg} [scope]
  *   The Ref of the class's scope.
  * @return {Expr}
- * 
+ *
  * @deprecated Class is deprecated, use Collection instead
  */
 function Class(name, scope) {
-  arity.between(1, 2, arguments);
-  switch(arguments.length) {
-    case 1: return new Expr({ class: wrap(name) });
-    case 2: return new Expr({ class: wrap(name), scope: wrap(scope) });
+  arity.between(1, 2, arguments)
+  switch (arguments.length) {
+    case 1:
+      return new Expr({ class: wrap(name) })
+    case 2:
+      return new Expr({ class: wrap(name), scope: wrap(scope) })
   }
 }
 
@@ -1370,10 +1447,12 @@ function Class(name, scope) {
  * @return {Expr}
  */
 function Collection(name, scope) {
-  arity.between(1, 2, arguments);
+  arity.between(1, 2, arguments)
   switch (arguments.length) {
-    case 1: return new Expr({ collection: wrap(name) });
-    case 2: return new Expr({ collection: wrap(name), scope: wrap(scope) });
+    case 1:
+      return new Expr({ collection: wrap(name) })
+    case 2:
+      return new Expr({ collection: wrap(name), scope: wrap(scope) })
   }
 }
 
@@ -1387,10 +1466,12 @@ function Collection(name, scope) {
  * @return {Expr}
  */
 function FunctionFn(name, scope) {
-  arity.between(1, 2, arguments);
-  switch(arguments.length) {
-    case 1: return new Expr({ function: wrap(name) });
-    case 2: return new Expr({ function: wrap(name), scope: wrap(scope) });
+  arity.between(1, 2, arguments)
+  switch (arguments.length) {
+    case 1:
+      return new Expr({ function: wrap(name) })
+    case 2:
+      return new Expr({ function: wrap(name), scope: wrap(scope) })
   }
 }
 
@@ -1404,9 +1485,9 @@ function FunctionFn(name, scope) {
  * @return {Expr}
  */
 function Role(name, scope) {
-  arity.between(1, 2, arguments);
-  scope = defaults(scope, null);
-  return new Expr(params({ role: wrap(name) }, { scope: wrap(scope) }));
+  arity.between(1, 2, arguments)
+  scope = defaults(scope, null)
+  return new Expr(params({ role: wrap(name) }, { scope: wrap(scope) }))
 }
 
 /**
@@ -1419,9 +1500,9 @@ function Role(name, scope) {
  * @return {Expr}
  */
 function Classes(scope) {
-  arity.max(1, arguments);
-  scope = defaults(scope, null);
-  return new Expr({ classes: wrap(scope) });
+  arity.max(1, arguments)
+  scope = defaults(scope, null)
+  return new Expr({ classes: wrap(scope) })
 }
 
 /**
@@ -1434,9 +1515,9 @@ function Classes(scope) {
  * @return {Expr}
  */
 function Collections(scope) {
-  arity.max(1, arguments);
-  scope = defaults(scope, null);
-  return new Expr({ collections: wrap(scope) });
+  arity.max(1, arguments)
+  scope = defaults(scope, null)
+  return new Expr({ collections: wrap(scope) })
 }
 
 /**
@@ -1449,9 +1530,9 @@ function Collections(scope) {
  * @return {Expr}
  */
 function Databases(scope) {
-  arity.max(1, arguments);
-  scope = defaults(scope, null);
-  return new Expr({ databases: wrap(scope) });
+  arity.max(1, arguments)
+  scope = defaults(scope, null)
+  return new Expr({ databases: wrap(scope) })
 }
 
 /**
@@ -1464,9 +1545,9 @@ function Databases(scope) {
  * @return {Expr}
  */
 function Indexes(scope) {
-  arity.max(1, arguments);
-  scope = defaults(scope, null);
-  return new Expr({ indexes: wrap(scope) });
+  arity.max(1, arguments)
+  scope = defaults(scope, null)
+  return new Expr({ indexes: wrap(scope) })
 }
 
 /**
@@ -1479,9 +1560,9 @@ function Indexes(scope) {
  * @return {Expr}
  */
 function Functions(scope) {
-  arity.max(1, arguments);
-  scope = defaults(scope, null);
-  return new Expr({ functions: wrap(scope) });
+  arity.max(1, arguments)
+  scope = defaults(scope, null)
+  return new Expr({ functions: wrap(scope) })
 }
 
 /**
@@ -1494,9 +1575,9 @@ function Functions(scope) {
  * @return {Expr}
  */
 function Roles(scope) {
-  arity.max(1, arguments);
-  scope = defaults(scope, null);
-  return new Expr({ roles: wrap(scope) });
+  arity.max(1, arguments)
+  scope = defaults(scope, null)
+  return new Expr({ roles: wrap(scope) })
 }
 
 /**
@@ -1509,9 +1590,9 @@ function Roles(scope) {
  * @return {Expr}
  */
 function Keys(scope) {
-  arity.max(1, arguments);
-  scope = defaults(scope, null);
-  return new Expr({ keys: wrap(scope) });
+  arity.max(1, arguments)
+  scope = defaults(scope, null)
+  return new Expr({ keys: wrap(scope) })
 }
 
 /**
@@ -1524,9 +1605,9 @@ function Keys(scope) {
  * @return {Expr}
  */
 function Tokens(scope) {
-  arity.max(1, arguments);
-  scope = defaults(scope, null);
-  return new Expr({ tokens: wrap(scope) });
+  arity.max(1, arguments)
+  scope = defaults(scope, null)
+  return new Expr({ tokens: wrap(scope) })
 }
 
 /**
@@ -1539,9 +1620,9 @@ function Tokens(scope) {
  * @return {Expr}
  */
 function Credentials(scope) {
-  arity.max(1, arguments);
-  scope = defaults(scope, null);
-  return new Expr({ credentials: wrap(scope) });
+  arity.max(1, arguments)
+  scope = defaults(scope, null)
+  return new Expr({ credentials: wrap(scope) })
 }
 
 /**
@@ -1552,8 +1633,8 @@ function Credentials(scope) {
  * @return {Expr}
  */
 function Equals() {
-  arity.min(1, arguments);
-  return new Expr({ equals: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ equals: wrap(varargs(arguments)) })
 }
 
 /**
@@ -1566,8 +1647,8 @@ function Equals() {
  * @return {Expr}
  */
 function Contains(path, _in) {
-  arity.exact(2, arguments);
-  return new Expr({ contains: wrap(path), in: wrap(_in) });
+  arity.exact(2, arguments)
+  return new Expr({ contains: wrap(path), in: wrap(_in) })
 }
 
 /**
@@ -1582,12 +1663,12 @@ function Contains(path, _in) {
  * @return {Expr}
  */
 function Select(path, from, _default) {
-  arity.between(2, 3, arguments);
-  var exprObj = { select: wrap(path), from: wrap(from) };
+  arity.between(2, 3, arguments)
+  var exprObj = { select: wrap(path), from: wrap(from) }
   if (_default !== undefined) {
-    exprObj.default = wrap(_default);
+    exprObj.default = wrap(_default)
   }
-  return new Expr(exprObj);
+  return new Expr(exprObj)
 }
 
 /**
@@ -1598,12 +1679,12 @@ function Select(path, from, _default) {
  * @param {module:query~ExprArg} from
  *   The object to select from
  * @return {Expr}
- * 
+ *
  * @deprecated use SelectAsIndex instead
  */
 function SelectAll(path, from) {
-  arity.exact(2, arguments);
-  return new Expr({ select_all: wrap(path), from: wrap(from) });
+  arity.exact(2, arguments)
+  return new Expr({ select_all: wrap(path), from: wrap(from) })
 }
 
 /**
@@ -1616,8 +1697,8 @@ function SelectAll(path, from) {
  * @return {Expr}
  */
 function SelectAsIndex(path, from) {
-  arity.exact(2, arguments);
-  return new Expr({ select_as_index: wrap(path), from: wrap(from) });
+  arity.exact(2, arguments)
+  return new Expr({ select_as_index: wrap(path), from: wrap(from) })
 }
 
 /**
@@ -1628,8 +1709,8 @@ function SelectAsIndex(path, from) {
  * @return {Expr}
  */
 function Abs(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ abs: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ abs: wrap(expr) })
 }
 
 /**
@@ -1640,8 +1721,8 @@ function Abs(expr) {
  * @return {Expr}
  */
 function Add() {
-  arity.min(1, arguments);
-  return new Expr({ add: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ add: wrap(varargs(arguments)) })
 }
 
 /**
@@ -1652,8 +1733,8 @@ function Add() {
  * @return {Expr}
  */
 function BitAnd() {
-  arity.min(1, arguments);
-  return new Expr({ bitand: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ bitand: wrap(varargs(arguments)) })
 }
 
 /**
@@ -1664,8 +1745,8 @@ function BitAnd() {
  * @return {Expr}
  */
 function BitNot(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ bitnot: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ bitnot: wrap(expr) })
 }
 
 /**
@@ -1676,8 +1757,8 @@ function BitNot(expr) {
  * @return {Expr}
  */
 function BitOr() {
-  arity.min(1, arguments);
-  return new Expr({ bitor: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ bitor: wrap(varargs(arguments)) })
 }
 
 /**
@@ -1688,8 +1769,8 @@ function BitOr() {
  * @return {Expr}
  */
 function BitXor() {
-  arity.min(1, arguments);
-  return new Expr({ bitxor: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ bitxor: wrap(varargs(arguments)) })
 }
 
 /**
@@ -1700,8 +1781,8 @@ function BitXor() {
  * @return {Expr}
  */
 function Ceil(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ ceil: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ ceil: wrap(expr) })
 }
 
 /**
@@ -1712,8 +1793,8 @@ function Ceil(expr) {
  * @return {Expr}
  */
 function Divide() {
-  arity.min(1, arguments);
-  return new Expr({ divide: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ divide: wrap(varargs(arguments)) })
 }
 
 /**
@@ -1724,8 +1805,8 @@ function Divide() {
  * @return {Expr}
  */
 function Floor(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ floor: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ floor: wrap(expr) })
 }
 
 /**
@@ -1736,8 +1817,8 @@ function Floor(expr) {
  * @return {Expr}
  */
 function Max() {
-  arity.min(1, arguments);
-  return new Expr({ max: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ max: wrap(varargs(arguments)) })
 }
 
 /**
@@ -1748,8 +1829,8 @@ function Max() {
  * @return {Expr}
  */
 function Min() {
-  arity.min(1, arguments);
-  return new Expr({ min: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ min: wrap(varargs(arguments)) })
 }
 
 /**
@@ -1760,8 +1841,8 @@ function Min() {
  * @return {Expr}
  */
 function Modulo() {
-  arity.min(1, arguments);
-  return new Expr({ modulo: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ modulo: wrap(varargs(arguments)) })
 }
 
 /**
@@ -1772,8 +1853,8 @@ function Modulo() {
  * @return {Expr}
  */
 function Multiply() {
-  arity.min(1, arguments);
-  return new Expr({ multiply: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ multiply: wrap(varargs(arguments)) })
 }
 
 /**
@@ -1786,9 +1867,11 @@ function Multiply() {
  * @return {Expr}
  */
 function Round(value, precision) {
-  arity.min(1, arguments);
-  precision = defaults(precision, null);
-  return new Expr(params({ round: wrap(value) }, { precision: wrap(precision) }));
+  arity.min(1, arguments)
+  precision = defaults(precision, null)
+  return new Expr(
+    params({ round: wrap(value) }, { precision: wrap(precision) })
+  )
 }
 
 /**
@@ -1799,8 +1882,8 @@ function Round(value, precision) {
  * @return {Expr}
  */
 function Subtract() {
-  arity.min(1, arguments);
-  return new Expr({ subtract: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ subtract: wrap(varargs(arguments)) })
 }
 
 /**
@@ -1811,8 +1894,8 @@ function Subtract() {
  * @return {Expr}
  */
 function Sign(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ sign: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ sign: wrap(expr) })
 }
 
 /**
@@ -1823,8 +1906,8 @@ function Sign(expr) {
  * @return {Expr}
  */
 function Sqrt(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ sqrt: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ sqrt: wrap(expr) })
 }
 
 /**
@@ -1837,74 +1920,76 @@ function Sqrt(expr) {
  * @return {Expr}
  */
 function Trunc(value, precision) {
-  arity.min(1, arguments);
-  precision = defaults(precision, null);
-  return new Expr(params({ trunc: wrap(value) }, { precision: wrap(precision) }));
+  arity.min(1, arguments)
+  precision = defaults(precision, null)
+  return new Expr(
+    params({ trunc: wrap(value) }, { precision: wrap(precision) })
+  )
 }
 
 /**
-  *
-  * Count the number of elements in the collection.
-  *
-  * @param {array}    - array of items
-  * @return {integer} - number of items in the collection
-  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/count">Count function</a>
-  */
+ *
+ * Count the number of elements in the collection.
+ *
+ * @param {array}    - array of items
+ * @return {integer} - number of items in the collection
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/count">Count function</a>
+ */
 function Count(collection) {
-  arity.exact(1, arguments);
-  return new Expr({ count: wrap(collection) });
+  arity.exact(1, arguments)
+  return new Expr({ count: wrap(collection) })
 }
 
 /**
-  *
-  * Sum the elements in the collection.
-  *
-  * @param {array} - collection of numbers
-  * @return {integer} - total of all numbers in collection
-  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/sum">Sum function</a>
-  */
+ *
+ * Sum the elements in the collection.
+ *
+ * @param {array} - collection of numbers
+ * @return {integer} - total of all numbers in collection
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/sum">Sum function</a>
+ */
 function Sum(collection) {
-  arity.exact(1, arguments);
-  return new Expr({ sum: wrap(collection) });
+  arity.exact(1, arguments)
+  return new Expr({ sum: wrap(collection) })
 }
 
 /**
-  *
-  * Returns the mean of all elements in the collection.
-  *
-  * @param {array} - collection the numbers
-  * @return {float} - the mean of all numbers in the collection
-  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/mean">Mean function</a>
-  */
+ *
+ * Returns the mean of all elements in the collection.
+ *
+ * @param {array} - collection the numbers
+ * @return {float} - the mean of all numbers in the collection
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/mean">Mean function</a>
+ */
 function Mean(collection) {
-  arity.exact(1, arguments);
-  return new Expr({ mean: wrap(collection) });
+  arity.exact(1, arguments)
+  return new Expr({ mean: wrap(collection) })
 }
 
 /**
-  *
-  * Evaluates to true if any element of the collection is true.
-  *
-  * @param {array} - collection the collection
-  * @return {Expr}
-  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/any">Any function</a>
-  */
+ *
+ * Evaluates to true if any element of the collection is true.
+ *
+ * @param {array} - collection the collection
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/any">Any function</a>
+ */
 function Any(collection) {
-  arity.exact(1, arguments);
-  return new Expr({ any: wrap(collection) });
+  arity.exact(1, arguments)
+  return new Expr({ any: wrap(collection) })
 }
 
 /**
-  *
-  * Evaluates to true if all elements of the collection are true.
-  *
-  * @param {array} - collection the collection
-  * @return {Expr}
-  * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/all">All function</a>
-  */
+ *
+ * Evaluates to true if all elements of the collection are true.
+ *
+ * @param {array} - collection the collection
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/all">All function</a>
+ */
 function All(collection) {
-  arity.exact(1, arguments);
-  return new Expr({ all: wrap(collection) });
+  arity.exact(1, arguments)
+  return new Expr({ all: wrap(collection) })
 }
 
 /**
@@ -1915,8 +2000,8 @@ function All(collection) {
  * @return {Expr}
  */
 function Acos(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ acos: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ acos: wrap(expr) })
 }
 
 /**
@@ -1927,8 +2012,8 @@ function Acos(expr) {
  * @return {Expr}
  */
 function Asin(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ asin: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ asin: wrap(expr) })
 }
 
 /**
@@ -1939,8 +2024,8 @@ function Asin(expr) {
  * @return {Expr}
  */
 function Atan(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ atan: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ atan: wrap(expr) })
 }
 
 /**
@@ -1951,8 +2036,8 @@ function Atan(expr) {
  * @return {Expr}
  */
 function Cos(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ cos: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ cos: wrap(expr) })
 }
 
 /**
@@ -1963,8 +2048,8 @@ function Cos(expr) {
  * @return {Expr}
  */
 function Cosh(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ cosh: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ cosh: wrap(expr) })
 }
 
 /**
@@ -1975,8 +2060,8 @@ function Cosh(expr) {
  * @return {Expr}
  */
 function Degrees(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ degrees: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ degrees: wrap(expr) })
 }
 
 /**
@@ -1987,8 +2072,8 @@ function Degrees(expr) {
  * @return {Expr}
  */
 function Exp(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ exp: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ exp: wrap(expr) })
 }
 
 /**
@@ -2001,9 +2086,9 @@ function Exp(expr) {
  * @return {Expr}
  */
 function Hypot(value, side) {
-  arity.min(1, arguments);
-  side = defaults(side, null);
-  return new Expr(params({ hypot: wrap(value) }, { b: wrap(side) }));
+  arity.min(1, arguments)
+  side = defaults(side, null)
+  return new Expr(params({ hypot: wrap(value) }, { b: wrap(side) }))
 }
 
 /**
@@ -2014,8 +2099,8 @@ function Hypot(value, side) {
  * @return {Expr}
  */
 function Ln(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ ln: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ ln: wrap(expr) })
 }
 
 /**
@@ -2026,8 +2111,8 @@ function Ln(expr) {
  * @return {Expr}
  */
 function Log(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ log: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ log: wrap(expr) })
 }
 
 /**
@@ -2040,9 +2125,9 @@ function Log(expr) {
  * @return {Expr}
  */
 function Pow(value, exponent) {
-  arity.min(1, arguments);
-  exponent = defaults(exponent, null);
-  return new Expr(params({ pow: wrap(value) }, { exp: wrap(exponent) }));
+  arity.min(1, arguments)
+  exponent = defaults(exponent, null)
+  return new Expr(params({ pow: wrap(value) }, { exp: wrap(exponent) }))
 }
 
 /**
@@ -2053,8 +2138,8 @@ function Pow(value, exponent) {
  * @return {Expr}
  */
 function Radians(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ radians: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ radians: wrap(expr) })
 }
 
 /**
@@ -2065,8 +2150,8 @@ function Radians(expr) {
  * @return {Expr}
  */
 function Sin(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ sin: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ sin: wrap(expr) })
 }
 
 /**
@@ -2077,8 +2162,8 @@ function Sin(expr) {
  * @return {Expr}
  */
 function Sinh(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ sinh: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ sinh: wrap(expr) })
 }
 
 /**
@@ -2089,8 +2174,8 @@ function Sinh(expr) {
  * @return {Expr}
  */
 function Tan(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ tan: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ tan: wrap(expr) })
 }
 
 /**
@@ -2101,8 +2186,8 @@ function Tan(expr) {
  * @return {Expr}
  */
 function Tanh(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ tanh: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ tanh: wrap(expr) })
 }
 
 /**
@@ -2113,8 +2198,8 @@ function Tanh(expr) {
  * @return {Expr}
  */
 function LT() {
-  arity.min(1, arguments);
-  return new Expr({ lt: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ lt: wrap(varargs(arguments)) })
 }
 
 /**
@@ -2125,8 +2210,8 @@ function LT() {
  * @return {Expr}
  */
 function LTE() {
-  arity.min(1, arguments);
-  return new Expr({ lte: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ lte: wrap(varargs(arguments)) })
 }
 
 /**
@@ -2137,8 +2222,8 @@ function LTE() {
  * @return {Expr}
  */
 function GT() {
-  arity.min(1, arguments);
-  return new Expr({ gt: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ gt: wrap(varargs(arguments)) })
 }
 
 /**
@@ -2149,8 +2234,8 @@ function GT() {
  * @return {Expr}
  */
 function GTE() {
-  arity.min(1, arguments);
-  return new Expr({ gte: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ gte: wrap(varargs(arguments)) })
 }
 
 /**
@@ -2161,8 +2246,8 @@ function GTE() {
  * @return {Expr}
  */
 function And() {
-  arity.min(1, arguments);
-  return new Expr({ and: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ and: wrap(varargs(arguments)) })
 }
 
 /**
@@ -2173,8 +2258,8 @@ function And() {
  * @return {Expr}
  */
 function Or() {
-  arity.min(1, arguments);
-  return new Expr({ or: wrap(varargs(arguments)) });
+  arity.min(1, arguments)
+  return new Expr({ or: wrap(varargs(arguments)) })
 }
 
 /**
@@ -2185,8 +2270,8 @@ function Or() {
  * @return {Expr}
  */
 function Not(boolean) {
-  arity.exact(1, arguments);
-  return new Expr({ not: wrap(boolean) });
+  arity.exact(1, arguments)
+  return new Expr({ not: wrap(boolean) })
 }
 
 /**
@@ -2197,8 +2282,8 @@ function Not(boolean) {
  * @return {Expr}
  */
 function ToString(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ to_string: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ to_string: wrap(expr) })
 }
 
 /**
@@ -2209,8 +2294,8 @@ function ToString(expr) {
  * @return {Expr}
  */
 function ToNumber(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ to_number: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ to_number: wrap(expr) })
 }
 
 /**
@@ -2221,8 +2306,8 @@ function ToNumber(expr) {
  * @return {Expr}
  */
 function ToObject(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ to_object: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ to_object: wrap(expr) })
 }
 
 /**
@@ -2233,8 +2318,8 @@ function ToObject(expr) {
  * @return {Expr}
  */
 function ToArray(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ to_array: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ to_array: wrap(expr) })
 }
 
 /**
@@ -2245,8 +2330,8 @@ function ToArray(expr) {
  * @return {Expr}
  */
 function ToDouble(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ to_double: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ to_double: wrap(expr) })
 }
 
 /**
@@ -2257,10 +2342,9 @@ function ToDouble(expr) {
  * @return {Expr}
  */
 function ToInteger(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ to_integer: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ to_integer: wrap(expr) })
 }
-
 
 /**
  * Converts an expression to a time literal.
@@ -2270,8 +2354,8 @@ function ToInteger(expr) {
  * @return {Expr}
  */
 function ToTime(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ to_time: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ to_time: wrap(expr) })
 }
 
 /**
@@ -2282,8 +2366,8 @@ function ToTime(expr) {
  * @return {Expr}
  */
 function ToSeconds(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ to_seconds: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ to_seconds: wrap(expr) })
 }
 
 /**
@@ -2294,8 +2378,8 @@ function ToSeconds(expr) {
  * @return {Expr}
  */
 function ToMillis(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ to_millis: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ to_millis: wrap(expr) })
 }
 
 /**
@@ -2306,8 +2390,8 @@ function ToMillis(expr) {
  * @return {Expr}
  */
 function ToMicros(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ to_micros: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ to_micros: wrap(expr) })
 }
 
 /**
@@ -2318,8 +2402,8 @@ function ToMicros(expr) {
  * @return {Expr}
  */
 function DayOfWeek(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ day_of_week: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ day_of_week: wrap(expr) })
 }
 
 /**
@@ -2330,8 +2414,8 @@ function DayOfWeek(expr) {
  * @return {Expr}
  */
 function DayOfYear(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ day_of_year: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ day_of_year: wrap(expr) })
 }
 
 /**
@@ -2342,8 +2426,8 @@ function DayOfYear(expr) {
  * @return {Expr}
  */
 function DayOfMonth(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ day_of_month: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ day_of_month: wrap(expr) })
 }
 
 /**
@@ -2354,8 +2438,8 @@ function DayOfMonth(expr) {
  * @return {Expr}
  */
 function Hour(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ hour: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ hour: wrap(expr) })
 }
 
 /**
@@ -2366,8 +2450,8 @@ function Hour(expr) {
  * @return {Expr}
  */
 function Minute(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ minute: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ minute: wrap(expr) })
 }
 
 /**
@@ -2378,8 +2462,8 @@ function Minute(expr) {
  * @return {Expr}
  */
 function Second(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ second: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ second: wrap(expr) })
 }
 
 /**
@@ -2390,8 +2474,8 @@ function Second(expr) {
  * @return {Expr}
  */
 function Month(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ month: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ month: wrap(expr) })
 }
 
 /**
@@ -2402,8 +2486,8 @@ function Month(expr) {
  * @return {Expr}
  */
 function Year(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ year: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ year: wrap(expr) })
 }
 
 /**
@@ -2414,21 +2498,21 @@ function Year(expr) {
  * @return {Expr}
  */
 function ToDate(expr) {
-  arity.exact(1, arguments);
-  return new Expr({ to_date: wrap(expr) });
+  arity.exact(1, arguments)
+  return new Expr({ to_date: wrap(expr) })
 }
 
 /**
-  * Move database to a new hierarchy.
-  *
-  * @param {string}  from database reference to be moved.
-  * @param {string}  to new parent database reference.
-  * @return {Expr}   The expression wrapping the provided object.
-  * @see <a href="https://app.fauna.com/documentation/reference/queryapi#write-functions">FaunaDB Write Functions</a>
-  */
+ * Move database to a new hierarchy.
+ *
+ * @param {string}  from database reference to be moved.
+ * @param {string}  to new parent database reference.
+ * @return {Expr}   The expression wrapping the provided object.
+ * @see <a href="https://app.fauna.com/documentation/reference/queryapi#write-functions">FaunaDB Write Functions</a>
+ */
 function MoveDatabase(from, to) {
-  arity.exact(2, arguments);
-  return new Expr({ move_database: wrap(from), to: wrap(to) });
+  arity.exact(2, arguments)
+  return new Expr({ move_database: wrap(from), to: wrap(to) })
 }
 
 // Helpers
@@ -2437,15 +2521,26 @@ function MoveDatabase(from, to) {
  * @ignore
  */
 function arity(min, max, args) {
-  if ((min !== null && args.length < min) || (max !== null && args.length > max)) {
-    throw new errors.InvalidArity(min, max, args.length);
+  if (
+    (min !== null && args.length < min) ||
+    (max !== null && args.length > max)
+  ) {
+    throw new errors.InvalidArity(min, max, args.length)
   }
 }
 
-arity.exact = function (n, args) { arity(n, n, args); };
-arity.max = function (n, args) { arity(null, n, args); };
-arity.min = function (n, args) { arity(n, null, args); };
-arity.between = function (min, max, args) { arity(min, max, args); };
+arity.exact = function(n, args) {
+  arity(n, n, args)
+}
+arity.max = function(n, args) {
+  arity(null, n, args)
+}
+arity.min = function(n, args) {
+  arity(n, null, args)
+}
+arity.between = function(min, max, args) {
+  arity(min, max, args)
+}
 
 /** Adds optional parameters to the query.
  *
@@ -2453,12 +2548,12 @@ arity.between = function (min, max, args) { arity(min, max, args); };
  * */
 function params(mainParams, optionalParams) {
   for (var key in optionalParams) {
-    var val = optionalParams[key];
+    var val = optionalParams[key]
     if (val !== null) {
-      mainParams[key] = val;
+      mainParams[key] = val
     }
   }
-  return mainParams;
+  return mainParams
 }
 
 /**
@@ -2469,17 +2564,19 @@ function params(mainParams, optionalParams) {
  * @ignore
  */
 function varargs(values) {
-  var valuesAsArr = Array.isArray(values) ? values : Array.prototype.slice.call(values);
-  return values.length === 1 ? values[0] : valuesAsArr;
+  var valuesAsArr = Array.isArray(values)
+    ? values
+    : Array.prototype.slice.call(values)
+  return values.length === 1 ? values[0] : valuesAsArr
 }
 
 /**
  * @ignore
  */
 function argsToArray(args) {
-  var rv = [];
-  rv.push.apply(rv, args);
-  return rv;
+  var rv = []
+  rv.push.apply(rv, args)
+  return rv
 }
 
 /**
@@ -2487,9 +2584,9 @@ function argsToArray(args) {
  */
 function defaults(param, def) {
   if (param === undefined) {
-    return def;
+    return def
   } else {
-    return param;
+    return param
   }
 }
 
@@ -2503,27 +2600,29 @@ function defaults(param, def) {
  * @private
  */
 function wrap(obj) {
-  arity.exact(1, arguments);
+  arity.exact(1, arguments)
   if (obj === null) {
-    return null;
+    return null
   } else if (obj instanceof Expr) {
-    return obj;
+    return obj
   } else if (typeof obj === 'symbol') {
     return obj.toString().replace(/Symbol\((.*)\)/, function(str, symbol) {
-      return symbol;
-    });
+      return symbol
+    })
   } else if (typeof obj === 'function') {
-    return Lambda(obj);
+    return Lambda(obj)
   } else if (Array.isArray(obj)) {
-    return new Expr(obj.map(function (elem) {
-      return wrap(elem);
-    }));
+    return new Expr(
+      obj.map(function(elem) {
+        return wrap(elem)
+      })
+    )
   } else if (obj instanceof Uint8Array || obj instanceof ArrayBuffer) {
-    return new values.Bytes(obj);
+    return new values.Bytes(obj)
   } else if (typeof obj === 'object') {
-    return new Expr({ object: wrapValues(obj) });
+    return new Expr({ object: wrapValues(obj) })
   } else {
-    return obj;
+    return obj
   }
 }
 
@@ -2537,15 +2636,15 @@ function wrap(obj) {
  */
 function wrapValues(obj) {
   if (obj !== null) {
-    var rv = {};
+    var rv = {}
 
     Object.keys(obj).forEach(function(key) {
-      rv[key] = wrap(obj[key]);
-    });
+      rv[key] = wrap(obj[key])
+    })
 
-    return rv;
+    return rv
   } else {
-    return null;
+    return null
   }
 }
 
@@ -2582,7 +2681,10 @@ module.exports = {
   Delete: Delete,
   Insert: Insert,
   Remove: Remove,
-  CreateClass: deprecate(CreateClass, 'CreateClass() is deprecated, use CreateCOllection() instead'),
+  CreateClass: deprecate(
+    CreateClass,
+    'CreateClass() is deprecated, use CreateCOllection() instead'
+  ),
   CreateCollection: CreateCollection,
   CreateDatabase: CreateDatabase,
   CreateIndex: CreateIndex,
@@ -2642,7 +2744,10 @@ module.exports = {
   Collection: Collection,
   Function: FunctionFn,
   Role: Role,
-  Classes: deprecate(Classes, 'Classes() is deprecated, use Collections() instead'),
+  Classes: deprecate(
+    Classes,
+    'Classes() is deprecated, use Collections() instead'
+  ),
   Collections: Collections,
   Databases: Databases,
   Indexes: Indexes,
@@ -2654,7 +2759,10 @@ module.exports = {
   Equals: Equals,
   Contains: Contains,
   Select: Select,
-  SelectAll: deprecate(SelectAll, 'SelectAll() is deprecated, use SelectAsIndex() instead'),
+  SelectAll: deprecate(
+    SelectAll,
+    'SelectAll() is deprecated, use SelectAsIndex() instead'
+  ),
   SelectAsIndex: SelectAsIndex,
   Abs: Abs,
   Add: Add,
@@ -2721,6 +2829,6 @@ module.exports = {
   Month: Month,
   Year: Year,
   ToDate: ToDate,
-  MoveDatabase : MoveDatabase,
-  wrap: wrap
-};
+  MoveDatabase: MoveDatabase,
+  wrap: wrap,
+}

@@ -1,17 +1,17 @@
-'use strict';
+'use strict'
 
-var APIVersion = '2.7';
+var APIVersion = '2.7'
 
-var btoa = require('btoa-lite');
-var fetch = require('cross-fetch');
-var errors = require('./errors');
-var query = require('./query');
-var values = require('./values');
-var json = require('./_json');
-var RequestResult = require('./RequestResult');
-var util = require('./_util');
-var PageHelper = require('./PageHelper');
-var parse = require('url-parse');
+var btoa = require('btoa-lite')
+var fetch = require('cross-fetch')
+var errors = require('./errors')
+var query = require('./query')
+var values = require('./values')
+var json = require('./_json')
+var RequestResult = require('./RequestResult')
+var util = require('./_util')
+var PageHelper = require('./PageHelper')
+var parse = require('url-parse')
 
 /**
  * The callback that will be executed after every completed request.
@@ -52,7 +52,7 @@ var parse = require('url-parse');
  *   Configures http/https keepAlive option (ignored in browser environments)
  */
 function Client(options) {
-  var isNodeEnv = typeof window === 'undefined';
+  var isNodeEnv = typeof window === 'undefined'
   var opts = util.applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
@@ -60,24 +60,25 @@ function Client(options) {
     secret: null,
     timeout: 60,
     observer: null,
-    keepAlive: true
-  });
-  var isHttps = opts.scheme === 'https';
+    keepAlive: true,
+  })
+  var isHttps = opts.scheme === 'https'
 
   if (opts.port === null) {
-    opts.port = isHttps ? 443 : 80;
+    opts.port = isHttps ? 443 : 80
   }
 
-  this._baseUrl = opts.scheme + '://' + opts.domain + ':' + opts.port;
-  this._timeout = Math.floor(opts.timeout * 1000);
-  this._secret = opts.secret;
-  this._observer = opts.observer;
-  this._lastSeen = null;
+  this._baseUrl = opts.scheme + '://' + opts.domain + ':' + opts.port
+  this._timeout = Math.floor(opts.timeout * 1000)
+  this._secret = opts.secret
+  this._observer = opts.observer
+  this._lastSeen = null
 
   if (isNodeEnv && opts.keepAlive) {
-    this._keepAliveEnabledAgent = new (
-      isHttps ? require('https') : require('http')
-    ).Agent({ keepAlive: true });
+    this._keepAliveEnabledAgent = new (isHttps
+      ? require('https')
+      : require('http')
+    ).Agent({ keepAlive: true })
   }
 }
 
@@ -89,9 +90,9 @@ function Client(options) {
  *   The query to execute. Created from query functions such as {@link add}.
  * @return {external:Promise<Object>} FaunaDB response object.
  */
-Client.prototype.query = function (expression) {
-  return this._execute('POST', '', query.wrap(expression));
-};
+Client.prototype.query = function(expression) {
+  return this._execute('POST', '', query.wrap(expression))
+}
 
 /**
  * Returns a {@link PageHelper} for the given Query expression.
@@ -103,87 +104,97 @@ Client.prototype.query = function (expression) {
  * @returns {PageHelper} A PageHelper that wraps the provided expression.
  */
 Client.prototype.paginate = function(expression, params) {
-  params = defaults(params, {});
+  params = defaults(params, {})
 
-  return new PageHelper(this, expression, params);
-};
+  return new PageHelper(this, expression, params)
+}
 
 /**
  * Sends a `ping` request to FaunaDB.
  * @return {external:Promise<string>} Ping response.
  */
-Client.prototype.ping = function (scope, timeout) {
-  return this._execute('GET', 'ping', null, { scope: scope, timeout: timeout });
-};
+Client.prototype.ping = function(scope, timeout) {
+  return this._execute('GET', 'ping', null, { scope: scope, timeout: timeout })
+}
 
 /**
  * Get the freshest timestamp reported to this client.
  * @returns {number} the last seen transaction time
  */
 Client.prototype.getLastTxnTime = function() {
-  return this._lastSeen;
-};
+  return this._lastSeen
+}
 
 /**
-  * Sync the freshest timestamp seen by this client.
-  *
-  * This has no effect if staler than currently stored timestamp.
-  * WARNING: This should be used only when coordinating timestamps across
-  *          multiple clients. Moving the timestamp arbitrarily forward into
-  *          the future will cause transactions to stall.
+ * Sync the freshest timestamp seen by this client.
+ *
+ * This has no effect if staler than currently stored timestamp.
+ * WARNING: This should be used only when coordinating timestamps across
+ *          multiple clients. Moving the timestamp arbitrarily forward into
+ *          the future will cause transactions to stall.
  * @param time {number} the last seen transaction time
  */
 Client.prototype.syncLastTxnTime = function(time) {
-  if (this._lastSeen == null) {
-    this._lastSeen = time;
-  } else if (this._lastSeen < time) {
-    this._lastSeen = time;
+  if (this._lastSeen == null || this._lastSeen < time) {
+    this._lastSeen = time
   }
-};
+}
 
-Client.prototype._execute = function (method, path, data, query) {
-  query = defaults(query, null);
+Client.prototype._execute = function(method, path, data, query) {
+  query = defaults(query, null)
 
   if (path instanceof values.Ref) {
-    path = path.value;
+    path = path.value
   }
 
   if (query !== null) {
-    query = util.removeUndefinedValues(query);
+    query = util.removeUndefinedValues(query)
   }
 
-  var startTime = Date.now();
-  var self = this;
-  var body = ['GET', 'HEAD'].indexOf(method) >= 0 ? undefined : JSON.stringify(data);
+  var startTime = Date.now()
+  var self = this
+  var body =
+    ['GET', 'HEAD'].indexOf(method) >= 0 ? undefined : JSON.stringify(data)
 
-  return this._performRequest(method, path, body, query).then(function (response) {
-    var endTime = Date.now();
-    var responseText = response.text;
-    var responseObject = json.parseJSON(responseText);
+  return this._performRequest(method, path, body, query).then(function(
+    response
+  ) {
+    var endTime = Date.now()
+    var responseText = response.text
+    var responseObject = json.parseJSON(responseText)
     var requestResult = new RequestResult(
       self,
-      method, path, query, body, data,
-      responseText, responseObject, response.status, responseHeadersAsObject(response),
-      startTime, endTime);
-    var txnTimeHeaderKey = 'x-txn-time';
+      method,
+      path,
+      query,
+      body,
+      data,
+      responseText,
+      responseObject,
+      response.status,
+      responseHeadersAsObject(response),
+      startTime,
+      endTime
+    )
+    var txnTimeHeaderKey = 'x-txn-time'
 
     if (response.headers.has(txnTimeHeaderKey)) {
-      self.syncLastTxnTime(parseInt(response.headers.get(txnTimeHeaderKey), 10));
+      self.syncLastTxnTime(parseInt(response.headers.get(txnTimeHeaderKey), 10))
     }
 
     if (self._observer != null) {
-      self._observer(requestResult);
+      self._observer(requestResult)
     }
 
-    errors.FaunaHTTPError.raiseForStatusCode(requestResult);
-    return responseObject['resource'];
-  });
-};
+    errors.FaunaHTTPError.raiseForStatusCode(requestResult)
+    return responseObject['resource']
+  })
+}
 
-Client.prototype._performRequest = function (method, path, body, query) {
-  var url = parse(this._baseUrl);
-  url.set('pathname', path);
-  url.set('query', query);
+Client.prototype._performRequest = function(method, path, body, query) {
+  var url = parse(this._baseUrl)
+  url.set('pathname', path)
+  url.set('query', query)
 
   return fetch(url.href, {
     agent: this._keepAliveEnabledAgent,
@@ -192,45 +203,45 @@ Client.prototype._performRequest = function (method, path, body, query) {
       Authorization: this._secret && secretHeader(this._secret),
       'X-FaunaDB-API-Version': APIVersion,
       'X-Fauna-Driver': 'Javascript',
-      'X-Last-Seen-Txn': this._lastSeen
+      'X-Last-Seen-Txn': this._lastSeen,
     }),
     method: method,
-    timeout: this._timeout
+    timeout: this._timeout,
   }).then(function(response) {
-      return response.text().then(function(text) {
-        response.text = text;
-        return response;
-      });
-    });
-};
+    return response.text().then(function(text) {
+      response.text = text
+      return response
+    })
+  })
+}
 
 function defaults(obj, def) {
   if (obj === undefined) {
-    return def;
+    return def
   } else {
-    return obj;
+    return obj
   }
 }
 
 function secretHeader(secret) {
-  return 'Basic ' + btoa(secret + ':');
+  return 'Basic ' + btoa(secret + ':')
 }
 
 function responseHeadersAsObject(response) {
-  var responseHeaders = response.headers;
-  var headers = {};
+  var responseHeaders = response.headers
+  var headers = {}
 
   if (typeof responseHeaders.forEach === 'function') {
     responseHeaders.forEach(function(value, name) {
-      headers[name] = value;
-    });
+      headers[name] = value
+    })
   } else {
     responseHeaders.entries().forEach(function(pair) {
-      headers[pair[0]] = pair[1];
-    });
+      headers[pair[0]] = pair[1]
+    })
   }
 
-  return headers;
+  return headers
 }
 
-module.exports = Client;
+module.exports = Client

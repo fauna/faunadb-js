@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 /**
  * A representation of a FaunaDB Query Expression. Generally, you shouldn't need
@@ -8,100 +8,138 @@
  * @constructor
  */
 function Expr(obj) {
-  this.raw = obj;
+  this.raw = obj
 }
 
 Expr.prototype.toJSON = function() {
-  return this.raw;
-};
+  return this.raw
+}
 
-var varArgsFunctions = ['Do', 'Call', 'Union', 'Intersection', 'Difference', 'Equals',
-                        'Add', 'BitAnd', 'BitOr', 'BitXor',  'Divide', 'Max', 'Min',
-                        'Modulo', 'Multiply', 'Subtract',
-                        'LT', 'LTE', 'GT', 'GTE', 'And', 'Or'];
+var varArgsFunctions = [
+  'Do',
+  'Call',
+  'Union',
+  'Intersection',
+  'Difference',
+  'Equals',
+  'Add',
+  'BitAnd',
+  'BitOr',
+  'BitXor',
+  'Divide',
+  'Max',
+  'Min',
+  'Modulo',
+  'Multiply',
+  'Subtract',
+  'LT',
+  'LTE',
+  'GT',
+  'GTE',
+  'And',
+  'Or',
+]
 var specialCases = {
   is_nonempty: 'is_non_empty',
   lt: 'LT',
   lte: 'LTE',
   gt: 'GT',
-  gte: 'GTE'
-};
+  gte: 'GTE',
+}
 
 var exprToString = function(expr, caller) {
   if (expr instanceof Expr) {
-    if ('value' in expr)
-      return expr.toString();
+    if ('value' in expr) return expr.toString()
 
-    expr = expr.raw;
+    expr = expr.raw
   }
 
-  var type = typeof expr;
+  var type = typeof expr
 
-  if (type === 'string')
-    return '"' + expr + '"';
+  if (type === 'string') {
+    return '"' + expr + '"'
+  }
 
-  if (type === 'symbol' || type === 'number' || type === 'boolean')
-    return expr.toString();
+  if (type === 'symbol' || type === 'number' || type === 'boolean') {
+    return expr.toString()
+  }
 
-  if (type === 'undefined')
-    return 'undefined';
+  if (type === 'undefined') {
+    return 'undefined'
+  }
 
-  if (expr === null)
-    return 'null';
+  if (expr === null) {
+    return 'null'
+  }
 
   var printObject = function(obj) {
-    return '{' + Object.keys(obj).map(function(k) { return k + ': ' + exprToString(obj[k])}).join(', ') + '}';
-  };
+    return (
+      '{' +
+      Object.keys(obj)
+        .map(function(k) {
+          return k + ': ' + exprToString(obj[k])
+        })
+        .join(', ') +
+      '}'
+    )
+  }
 
   var printArray = function(array, toStr) {
-    return array.map(function(item) { return toStr(item); }).join(', ');
-  };
+    return array
+      .map(function(item) {
+        return toStr(item)
+      })
+      .join(', ')
+  }
 
   if (Array.isArray(expr)) {
-    var array = printArray(expr, exprToString);
+    var array = printArray(expr, exprToString)
 
-    return varArgsFunctions.indexOf(caller) != -1 ? array : '[' + array + ']';
+    return varArgsFunctions.indexOf(caller) != -1 ? array : '[' + array + ']'
   }
 
   if ('let' in expr && 'in' in expr) {
-    var letExpr = '';
+    var letExpr = ''
 
     if (Array.isArray(expr['let']))
-      letExpr = '[' + printArray(expr['let'], printObject) + ']';
-    else
-      letExpr = printObject(expr['let']);
+      letExpr = '[' + printArray(expr['let'], printObject) + ']'
+    else letExpr = printObject(expr['let'])
 
-    return 'Let(' + letExpr + ', ' + exprToString(expr['in']) + ')';
+    return 'Let(' + letExpr + ', ' + exprToString(expr['in']) + ')'
   }
 
-  if ('object' in expr)
-    return printObject(expr['object']);
+  if ('object' in expr) return printObject(expr['object'])
 
-  var keys = Object.keys(expr);
-  var fn = keys[0];
+  var keys = Object.keys(expr)
+  var fn = keys[0]
 
-  if (fn in specialCases)
-    fn = specialCases[fn];
+  if (fn in specialCases) fn = specialCases[fn]
 
-  fn = fn.split('_').map(function(str) { return str.charAt(0).toUpperCase() + str.slice(1); }).join('');
+  fn = fn
+    .split('_')
+    .map(function(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1)
+    })
+    .join('')
 
   var args = keys.map(function(k) {
-    var v = expr[k];
-    return exprToString(v, fn);
-  });
+    var v = expr[k]
+    return exprToString(v, fn)
+  })
 
   var shouldReverseArgs = ['filter', 'map', 'foreach'].some(function(fn) {
-    return fn in expr;
-  });
+    return fn in expr
+  })
 
-  if(shouldReverseArgs)
-    args.reverse();
+  if (shouldReverseArgs) {
+    args.reverse()
+  }
 
-  args = args.join(', ');
+  args = args.join(', ')
 
-  return fn + '(' + args + ')';
-};
+  return fn + '(' + args + ')'
+}
 
-Expr.toString = exprToString;
+Expr.toString = exprToString
 
-module.exports = Expr;
+module.exports = Expr

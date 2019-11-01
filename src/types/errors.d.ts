@@ -1,22 +1,22 @@
-import RequestResult from "./RequestResult";
+import RequestResult from './RequestResult'
 
 export module errors {
   export class FaunaError extends Error {
-    constructor(message: string);
+    constructor(message: string)
 
-    name: string;
-    message: string;
+    name: string
+    message: string
   }
 
   export class InvalidValue extends FaunaError {}
 
   export class FaunaHttpError extends FaunaError {
-    static raiseForStatusCode(requestResult: RequestResult): void;
+    static raiseForStatusCode(requestResult: RequestResult): void
 
-    constructor(requestResult: RequestResult);
+    constructor(requestResult: RequestResult)
 
-    requestResult: RequestResult;
-    errors(): object;
+    requestResult: RequestResult
+    errors(): object
   }
 
   export class BadRequest extends FaunaHttpError {}
