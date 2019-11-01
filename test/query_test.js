@@ -1397,6 +1397,19 @@ describe('query', function () {
   it('to_array_and_to_object', function () {
     var obj = { k0: 10, k1: 20 };
     return assertQuery(query.ToObject(query.ToArray(obj)), obj);
+  })
+
+  it('to_double', function () {
+    var p1 = assertQuery(query.ToDouble(3.14), 3.14);
+    var p2 = assertQuery(query.ToString(query.ToDouble(10)), "10.0");
+    var p3 = assertQuery(query.ToDouble("3.14"), 3.14);
+    return Promise.all([p1, p2, p3]);
+  });
+
+  it('to_integer', function () {
+    var p1 = assertQuery(query.ToString(query.ToInteger(10.0)), "10");
+    var p2 = assertQuery(query.ToInteger("10"), 10);
+    return Promise.all([p1, p2]);
   });
 
   it('to_time', function () {
