@@ -976,16 +976,16 @@ describe('query', function () {
     return Promise.all([p1, p2]);
   });
 
-  it('select_all', function () {
+  it('select_as_index', function () {
     var obj1 = {foo: 'bar'};
     var obj2 = {foo: 'baz'};
-    return assertQuery(query.SelectAll('foo', [obj1, obj2]), ['bar', 'baz']);
+    return assertQuery(query.SelectAsIndex('foo', [obj1, obj2]), ['bar', 'baz']);
   });
 
-  it('select_all for array', function () {
+  it('select_as_index for array', function () {
     var obj1 = {foo: [0, 1]};
     var obj2 = {foo: [2, 3]};
-    return assertQuery(query.SelectAll(['foo', 0], [obj1, obj2]), [0, 2]);
+    return assertQuery(query.SelectAsIndex(['foo', 0], [obj1, obj2]), [0, 2]);
   });
 
   it('abs', function () {

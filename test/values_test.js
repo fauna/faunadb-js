@@ -213,8 +213,8 @@ describe('Values', function() {
 
     //underscored names
     assertPrint(
-      new Query(q.Lambda('ref', q.SelectAll(['data', 'name'], q.Get(q.Var('ref'))))),
-      'Query(Lambda("ref", SelectAll(["data", "name"], Get(Var("ref")))))'
+      new Query(q.Lambda('ref', q.SelectAsIndex(['data', 'name'], q.Get(q.Var('ref'))))),
+      'Query(Lambda("ref", SelectAsIndex(["data", "name"], Get(Var("ref")))))'
     );
     assertPrint(
       new Query(q.Lambda('coll', q.IsEmpty(q.Var('coll')))),
