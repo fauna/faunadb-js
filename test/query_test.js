@@ -886,6 +886,27 @@ describe('query', function () {
     return Promise.all([p1, p2]);
   });
 
+  it('time_add', function () {
+    var p1 = assertQuery(query.TimeAdd(query.Epoch(0, 'second'), 1, 'hour'), new FaunaTime('1970-01-01T01:00:00Z'));
+    var p2 = assertQuery(query.TimeAdd(query.Date('1970-01-01'), 1, 'day'), new FaunaDate('1970-01-02'));
+
+    return Promise.all([p1, p2]);
+  });
+
+  it('time_subtract', function () {
+    var p1 = assertQuery(query.TimeSubtract(query.Epoch(0, 'second'), 1, 'hour'), new FaunaTime('1969-12-31T23:00:00Z'));
+    var p2 = assertQuery(query.TimeSubtract(query.Date('1970-01-01'), 1, 'day'), new FaunaDate('1969-12-31'));
+
+    return Promise.all([p1, p2]);
+  });
+
+  it('time_diff', function () {
+    var p1 = assertQuery(query.TimeDiff(query.Epoch(0, 'second'), query.Epoch(1, 'second'), 'second'), 1);
+    var p2 = assertQuery(query.TimeDiff(query.Date('1970-01-01'), query.Date('1970-01-02'), 'day'), 1);
+
+    return Promise.all([p1, p2]);
+  });
+
   it('date', function () {
     return assertQuery(query.Date('1970-01-01'), new FaunaDate('1970-01-01'));
   });

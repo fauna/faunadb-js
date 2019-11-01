@@ -91,6 +91,9 @@ export module query {
 
   export function Time(string: ExprArg): Expr;
   export function Epoch(number: ExprArg, unit: ExprArg): Expr;
+  export function TimeAdd(base: ExprArg, offset: ExprArg, unit: ExprArg): Expr;
+  export function TimeSubtract(base: ExprArg, offset: ExprArg, unit: ExprArg): Expr;
+  export function TimeDiff(start: ExprArg, finish: ExprArg, unit: ExprArg): Expr;
   export function Date(string: ExprArg): Expr;
   export function Now(): Expr;
   export function DayOfWeek(expr: ExprArg): Expr;

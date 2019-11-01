@@ -1213,6 +1213,55 @@ function Epoch(number, unit) {
 }
 
 /**
+ * See the [docs](https://docs.fauna.com/fauna/current/api/fql/functions/timeadd).
+ *
+ * Returns a new time or date with the offset in terms of the unit
+ * added.
+ *
+ * @param base the base time or data
+ * @param offset the number of units
+ * @param unit the unit type
+ * @return {Expr}
+ */
+function TimeAdd(base, offset, unit) {
+  arity.exact(3, arguments);
+  return new Expr({ time_add: wrap(base), offset: wrap(offset), unit: wrap(unit) });
+}
+
+/**
+ * See the [docs](https://docs.fauna.com/fauna/current/api/fql/functions/timesubtract).
+ *
+ * Returns a new time or date with the offset in terms of the unit
+ * subtracted.
+ *
+ * @param base the base time or data
+ * @param offset the number of units
+ * @param unit the unit type
+ * @return {Expr}
+ */
+function TimeSubtract(base, offset, unit) {
+  arity.exact(3, arguments);
+  return new Expr({ time_subtract: wrap(base), offset: wrap(offset), unit: wrap(unit) });
+}
+
+/**
+ * See the [docs](https://docs.fauna.com/fauna/current/api/fql/functions/timediff).
+ *
+ * Returns the number of intervals in terms of the unit between
+ * two times or dates. Both start and finish must be of the same
+ * type.
+ *
+ * @param start the starting time or date, inclusive
+ * @param finish the ending time or date, exclusive
+ * @param unit the unit type
+ * @return {Expr}
+ */
+function TimeDiff(start, finish, unit) {
+  arity.exact(3, arguments);
+  return new Expr({ time_diff: wrap(start), other: wrap(finish), unit: wrap(unit) });
+}
+
+/**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#time-and-date).
  *
  * @param {module:query~ExprArg} string
@@ -2538,6 +2587,9 @@ module.exports = {
   UpperCase: UpperCase,
   Format: Format,
   Time: Time,
+  TimeAdd: TimeAdd,
+  TimeSubtract: TimeSubtract,
+  TimeDiff: TimeDiff,
   Epoch: Epoch,
   Date: Date,
   Now: Now,
