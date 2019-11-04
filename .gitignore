@@ -11,6 +11,3 @@ typings/
 faunadb*.tgz
 doc/
 dist/
-coverage/
-.nyc_output/
-results/
