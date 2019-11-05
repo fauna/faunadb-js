@@ -1,6 +1,5 @@
 'use strict'
 
-var assert = require('chai').assert
 var query = require('../src/query')
 var PageHelper = require('../src/PageHelper')
 var util = require('./util')
@@ -15,9 +14,8 @@ var collectionRef,
   refsToIndex = {}
 var tsCollectionRef, tsIndexRef, tsInstance1Ref, tsInstance1Ts
 
-describe('page', function() {
-  this.timeout(10000)
-  before(function() {
+describe('page', () => {
+  beforeAll(() => {
     client = util.client()
 
     var p1 = client
@@ -79,18 +77,18 @@ describe('page', function() {
     return Promise.all([p1, p2])
   })
 
-  it('pages', function() {
+  test('pages', () => {
     var page = new PageHelper(client, query.Match(indexRef))
     return page.each(function(p) {
       p.forEach(function(item) {
         var i = item[0]
         var ref = item[1]
-        assert.deepEqual(ref, instanceRefs[i])
+        expect(ref).toEqual(instanceRefs[i])
       })
     })
   })
 
-  it('maps pagination', function() {
+  test('maps pagination', () => {
     var i = 0
     var page = new PageHelper(client, query.Match(indexRef))
     return page
@@ -99,16 +97,16 @@ describe('page', function() {
       })
       .each(function(p) {
         p.forEach(function(item) {
-          assert.equal(i, refsToIndex[item])
+          expect(i).toEqual(refsToIndex[item])
           i += 1
         })
       })
       .then(function() {
-        assert.equal(i, NUM_INSTANCES)
+        expect(i).toEqual(NUM_INSTANCES)
       })
   })
 
-  it('filters pagination', function() {
+  test('filters pagination', () => {
     var i = 0
     var page = new PageHelper(client, query.Match(indexRef))
     return page
@@ -117,61 +115,61 @@ describe('page', function() {
       })
       .each(function(p) {
         p.forEach(function(item) {
-          assert.equal(i, refsToIndex[item[1]])
+          expect(i).toEqual(refsToIndex[item[1]])
           i += 2
         })
       })
       .then(function() {
-        assert.equal(i, NUM_INSTANCES)
+        expect(i).toEqual(NUM_INSTANCES)
       })
   })
 
-  it('reverses pagination', function() {
+  test('reverses pagination', () => {
     var i = NUM_INSTANCES - 1
     var page = new PageHelper(client, query.Match(indexRef), { before: null })
     return page
       .eachReverse(function(p) {
         p.reverse().forEach(function(item) {
-          assert.equal(i, refsToIndex[item[1]])
+          expect(i).toEqual(refsToIndex[item[1]])
           i -= 1
         })
       })
       .then(function() {
-        assert.equal(i, -1) // ensure we made it to the end of the set
+        expect(i).toEqual(-1) // ensure we made it to the end of the set
       })
   })
 
-  it('honors passed in cursor', function() {
+  test('honors passed in cursor', () => {
     var i = 50
     var page = new PageHelper(client, query.Match(indexRef), { after: 50 })
     return page
       .each(function(p) {
         p.forEach(function(item) {
-          assert.equal(i, refsToIndex[item[1]])
+          expect(i).toEqual(refsToIndex[item[1]])
           i += 1
         })
       })
       .then(function() {
-        assert.equal(i, NUM_INSTANCES)
+        expect(i).toEqual(NUM_INSTANCES)
       })
   })
 
-  it('honors passed in cursor in the reverse direction', function() {
+  test('honors passed in cursor in the reverse direction', () => {
     var i = 50
     var page = new PageHelper(client, query.Match(indexRef), { before: 51 })
     return page
       .eachReverse(function(p) {
         p.reverse().forEach(function(item) {
-          assert.equal(i, refsToIndex[item[1]])
+          expect(i).toEqual(refsToIndex[item[1]])
           i -= 1
         })
       })
       .then(function() {
-        assert.equal(i, -1)
+        expect(i).toEqual(-1)
       })
   })
 
-  it('honors passed in cursor via the cursor option', function() {
+  test('honors passed in cursor via the cursor option', () => {
     var i = 50
     var page = new PageHelper(client, query.Match(indexRef), {
       cursor: { after: 50 },
@@ -179,16 +177,16 @@ describe('page', function() {
     return page
       .each(function(p) {
         p.forEach(function(item) {
-          assert.equal(i, refsToIndex[item[1]])
+          expect(i).toEqual(refsToIndex[item[1]])
           i += 1
         })
       })
       .then(function() {
-        assert.equal(i, NUM_INSTANCES)
+        expect(i).toEqual(NUM_INSTANCES)
       })
   })
 
-  it('honors passed in cursor in the reverse direction via the cursor option', function() {
+  test('honors passed in cursor in the reverse direction via the cursor option', () => {
     var i = 50
     var page = new PageHelper(client, query.Match(indexRef), {
       cursor: { before: 51 },
@@ -196,16 +194,16 @@ describe('page', function() {
     return page
       .eachReverse(function(p) {
         p.reverse().forEach(function(item) {
-          assert.equal(i, refsToIndex[item[1]])
+          expect(i).toEqual(refsToIndex[item[1]])
           i -= 1
         })
       })
       .then(function() {
-        assert.equal(i, -1)
+        expect(i).toEqual(-1)
       })
   })
 
-  it('honors size', function() {
+  test('honors size', () => {
     var i = 0
     var numPages = 20
     var pageSize = NUM_INSTANCES / numPages
@@ -214,54 +212,54 @@ describe('page', function() {
     return page
       .each(function(item) {
         // Note that this relies on numPages being a factor of NUM_INSTANCES
-        assert.equal(item.length, pageSize)
+        expect(item.length).toEqual(pageSize)
         i += 1
       })
       .then(function() {
-        assert.equal(i, numPages)
+        expect(i).toEqual(numPages)
       })
   })
 
-  it('honors ts', function() {
+  test('honors ts', () => {
     var page = new PageHelper(client, query.Match(tsIndexRef))
     var p1 = page.each(function(item) {
-      assert.equal(item.length, 2)
+      expect(item.length).toEqual(2)
     })
 
     var page2 = new PageHelper(client, query.Match(tsIndexRef), {
       ts: tsInstance1Ts,
     })
     var p2 = page2.each(function(item) {
-      assert.equal(item.length, 1)
-      assert.deepEqual(item[0], tsInstance1Ref)
+      expect(item.length).toEqual(1)
+      expect(item[0]).toEqual(tsInstance1Ref)
     })
 
     return Promise.all([p1, p2])
   })
 
-  it('honors events', function() {
+  test('honors events', () => {
     var page = new PageHelper(client, query.Match(indexRef), { events: true })
     return page.each(function(p) {
       p.forEach(function(item) {
-        assert.property(item, 'ts')
-        assert.property(item, 'action')
-        assert.property(item, 'document')
-        assert.property(item, 'instance')
-        assert.property(item, 'data')
+        expect('ts' in item).toBeTruthy()
+        expect('action' in item).toBeTruthy()
+        expect('document' in item).toBeTruthy()
+        expect('instance' in item).toBeTruthy()
+        expect('data' in item).toBeTruthy()
       })
     })
   })
 
-  it('honors sources', function() {
+  test('honors sources', () => {
     var page = new PageHelper(client, query.Match(indexRef), { sources: true })
     return page.each(function(p) {
       p.forEach(function(item) {
-        assert.property(item, 'sources')
+        expect('sources' in item).toBeTruthy()
       })
     })
   })
 
-  it('honors a combination of parameters', function() {
+  test('honors a combination of parameters', () => {
     var page = new PageHelper(client, query.Match(indexRef), {
       before: null,
       events: true,
@@ -269,38 +267,38 @@ describe('page', function() {
     })
     return page.each(function(p) {
       p.forEach(function(item) {
-        assert.property(item, 'value')
-        assert.property(item, 'sources')
+        expect('value' in item).toBeTruthy()
+        expect('sources' in item).toBeTruthy()
 
         var value = item.value
-        assert.property(value, 'ts')
-        assert.property(value, 'action')
-        assert.property(value, 'document')
-        assert.property(value, 'instance')
-        assert.property(value, 'data')
+        expect('ts' in value).toBeTruthy()
+        expect('action' in value).toBeTruthy()
+        expect('document' in value).toBeTruthy()
+        expect('instance' in value).toBeTruthy()
+        expect('data' in value).toBeTruthy()
       })
     })
   })
 
-  it('iteratively paginates pages', function() {
+  test('iteratively paginates pages', () => {
     var page = new PageHelper(client, query.Match(indexRef), { size: 2 })
 
     return page
       .nextPage()
       .then(function(p) {
-        assert.equal(p.length, 2)
-        assert.equal(0, refsToIndex[p[0][1]])
-        assert.equal(1, refsToIndex[p[1][1]])
+        expect(p.length).toEqual(2)
+        expect(0).toEqual(refsToIndex[p[0][1]])
+        expect(1).toEqual(refsToIndex[p[1][1]])
         return page.nextPage()
       })
       .then(function(p) {
-        assert.equal(p.length, 2)
-        assert.equal(2, refsToIndex[p[0][1]])
-        assert.equal(3, refsToIndex[p[1][1]])
+        expect(p.length).toEqual(2)
+        expect(2).toEqual(refsToIndex[p[0][1]])
+        expect(3).toEqual(refsToIndex[p[1][1]])
       })
   })
 
-  it('iteratively paginates pages in the reverse direction', function() {
+  test('iteratively paginates pages in the reverse direction', () => {
     var page = new PageHelper(client, query.Match(indexRef), {
       before: null,
       size: 2,
@@ -309,15 +307,15 @@ describe('page', function() {
     return page
       .previousPage()
       .then(function(p) {
-        assert.equal(p.length, 2)
-        assert.equal(98, refsToIndex[p[0][1]])
-        assert.equal(99, refsToIndex[p[1][1]])
+        expect(p.length).toEqual(2)
+        expect(98).toEqual(refsToIndex[p[0][1]])
+        expect(99).toEqual(refsToIndex[p[1][1]])
         return page.previousPage()
       })
       .then(function(p) {
-        assert.equal(p.length, 2)
-        assert.equal(96, refsToIndex[p[0][1]])
-        assert.equal(97, refsToIndex[p[1][1]])
+        expect(p.length).toEqual(2)
+        expect(96).toEqual(refsToIndex[p[0][1]])
+        expect(97).toEqual(refsToIndex[p[1][1]])
       })
   })
-})
+}, 10000)

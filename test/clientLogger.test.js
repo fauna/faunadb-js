@@ -1,6 +1,5 @@
 'use strict'
 
-var assert = require('chai').assert
 var logger = require('../src/clientLogger').logger
 var query = require('../src/query')
 var objectAssign = require('object-assign')
@@ -17,8 +16,8 @@ if (!String.prototype.startsWith) {
   }
 }
 
-describe('clientLogger', function() {
-  before(function() {
+describe('clientLogger', () => {
+  beforeAll(() => {
     // Hideous way to ensure the client is initialized.
     client = util.client()
     return client
@@ -28,55 +27,55 @@ describe('clientLogger', function() {
       })
   })
 
-  it('logging', function() {
+  test('logging', () => {
     return captureLogged(function(loggingClient) {
       return loggingClient.ping()
     }).then(function(res) {
       var readLine = lineReader(res)
-      assert.equal(readLine(), 'Fauna GET /ping')
-      assert.equal(readLine(), '  Response headers: {')
+      expect(readLine()).toEqual('Fauna GET /ping')
+      expect(readLine()).toEqual('  Response headers: {')
 
       // Skip through headers
       while (true) {
         var line = readLine()
         if (!line.startsWith('    ')) {
-          assert.equal(line, '  }')
+          expect(line).toEqual('  }')
           break
         }
       }
 
-      assert.equal(readLine(), '  Response JSON: {')
-      assert.equal(readLine(), '    "resource": "Scope write is OK"')
-      assert.equal(readLine(), '  }')
-      assert.match(readLine(), /^  Response \(200\): Network latency \d+ms$/)
+      expect(readLine()).toEqual('  Response JSON: {')
+      expect(readLine()).toEqual('    "resource": "Scope write is OK"')
+      expect(readLine()).toEqual('  }')
+      expect(readLine()).toMatch(/^  Response \(200\): Network latency \d+ms$/)
     })
   })
 
-  it('request content', function() {
+  test('request content', () => {
     return captureLogged(function(client) {
       return client.query(query.Create(collectionRef, { data: {} }))
     }).then(function(res) {
       var readLine = lineReader(res)
-      assert.equal(readLine(), 'Fauna POST /')
-      assert.equal(readLine(), '  Request JSON: {')
-      assert.equal(readLine(), '    "create": {')
-      assert.equal(readLine(), '      "@ref": {')
-      assert.equal(readLine(), '        "id": "logging_tests",')
-      assert.equal(readLine(), '        "collection": {')
-      assert.equal(readLine(), '          "@ref": {')
-      assert.equal(readLine(), '            "id": "collections"')
-      assert.equal(readLine(), '          }')
-      assert.equal(readLine(), '        }')
-      assert.equal(readLine(), '      }')
-      assert.equal(readLine(), '    },')
-      assert.equal(readLine(), '    "params": {')
-      assert.equal(readLine(), '      "object": {')
-      assert.equal(readLine(), '        "data": {')
-      assert.equal(readLine(), '          "object": {}')
-      assert.equal(readLine(), '        }')
-      assert.equal(readLine(), '      }')
-      assert.equal(readLine(), '    }')
-      assert.equal(readLine(), '  }')
+      expect(readLine()).toEqual('Fauna POST /')
+      expect(readLine()).toEqual('  Request JSON: {')
+      expect(readLine()).toEqual('    "create": {')
+      expect(readLine()).toEqual('      "@ref": {')
+      expect(readLine()).toEqual('        "id": "logging_tests",')
+      expect(readLine()).toEqual('        "collection": {')
+      expect(readLine()).toEqual('          "@ref": {')
+      expect(readLine()).toEqual('            "id": "collections"')
+      expect(readLine()).toEqual('          }')
+      expect(readLine()).toEqual('        }')
+      expect(readLine()).toEqual('      }')
+      expect(readLine()).toEqual('    },')
+      expect(readLine()).toEqual('    "params": {')
+      expect(readLine()).toEqual('      "object": {')
+      expect(readLine()).toEqual('        "data": {')
+      expect(readLine()).toEqual('          "object": {}')
+      expect(readLine()).toEqual('        }')
+      expect(readLine()).toEqual('      }')
+      expect(readLine()).toEqual('    }')
+      expect(readLine()).toEqual('  }')
       // Ignore the rest
     })
   })

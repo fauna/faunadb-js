@@ -1,6 +1,5 @@
 # FaunaDB Javascript Driver
 
-[![Coverage Status](https://img.shields.io/codecov/c/github/fauna/faunadb-js/master.svg?maxAge=21600)](https://codecov.io/gh/fauna/faunadb-js/branch/master)
 [![Npm Version](https://img.shields.io/npm/v/faunadb.svg?maxAge=21600)](https://www.npmjs.com/package/faunadb)
 [![License](https://img.shields.io/badge/license-MPL_2.0-blue.svg?maxAge=2592000)](https://raw.githubusercontent.com/fauna/faunadb-js/master/LICENSE)
 
@@ -140,7 +139,7 @@ more information on the pagination helper.
 
 ## Client Development
 
-Run `npm install` or `yarn` to install dependencies.
+Run `yarn` to install dependencies.
 
 ### Code
 
@@ -149,15 +148,11 @@ a `Promise` polyfill.
 
 ### Testing
 
-- `npm run test`: This will run tests against the current version of Node.js.
+- `yarn test`: This will run tests against the current version of Node.js.
   [nvm](https://github.com/creationix/nvm) is useful for managing multiple
   versions of Node.js for testing.
-- `npm run coverage`: This will run tests with coverage enabled.
-- `npm run browser-test-{mac|linux|win}`: This will run tests against
-  platform-specific browsers. [Karma](https://karma-runner.github.io/1.0/index.html)
-  is used as the test runner.
 
-Both Node.js and browser tests will read a `testConfig.json` file located in
+Tests will read a `testConfig.json` file located in
 the root directory of this project for Fauna client configuration. A minimal
 `testConfig.json` file would contain your FaunaDB key:
 
@@ -181,7 +176,7 @@ Alpine-based NodeJS image can be provided via `RUNTIME_IMAGE`).
 
 ### Documentation
 
-- `npm run doc` will generate JSDoc documentation for the project.
+- `yarn doc` will generate JSDoc documentation for the project.
 
 ## License
 

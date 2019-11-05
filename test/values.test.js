@@ -1,7 +1,6 @@
 'use strict'
 
 var util = require('util')
-var assert = require('chai').assert
 var errors = require('../src/errors')
 var json = require('../src/_json')
 var Expr = require('../src/Expr')
@@ -15,167 +14,136 @@ var FaunaDate = values.FaunaDate,
   Bytes = values.Bytes,
   Query = values.Query
 
-describe('Values', function() {
+describe('Values', () => {
   var ref = new Ref('123', new Ref('frogs', values.Native.COLLECTIONS)),
     jsonRef =
       '{"@ref":{"id":"123","collection":{"@ref":{"id":"frogs","collection":{"@ref":{"id":"collections"}}}}}}'
 
-  it('ref', function() {
-    assert.deepEqual(json.parseJSON(jsonRef), ref)
-    assert.equal(json.toJSON(ref), jsonRef)
+  test('ref', () => {
+    expect(json.parseJSON(jsonRef)).toEqual(ref)
+    expect(json.toJSON(ref)).toEqual(jsonRef)
 
-    assert.equal(ref.id, '123')
-    assert.deepEqual(
-      ref.collection,
-      new Ref('frogs', values.Native.COLLECTIONS)
-    )
-    assert.equal(ref.database, undefined)
+    expect(ref.id).toEqual('123')
+    expect(ref.collection).toEqual(new Ref('frogs', values.Native.COLLECTIONS))
+    expect(ref.database).toEqual(undefined)
 
-    assert.throws(
-      function() {
-        new Ref()
-      },
-      errors.InvalidValue,
-      'id cannot be null or undefined'
-    )
+    expect(function() {
+      new Ref()
+    }).toThrow()
   })
 
-  it('serializes expr', function() {
+  test('serializes expr', () => {
     var expr = new Expr({ some: 'stringField', num: 2 })
-    assert.equal(json.toJSON(expr), '{"some":"stringField","num":2}')
+    expect(json.toJSON(expr)).toEqual('{"some":"stringField","num":2}')
   })
 
-  it('set', function() {
+  test('set', () => {
     var index = new Ref('frogs_by_size', values.Native.INDEXES),
       jsonIndex =
         '{"@ref":{"id":"frogs_by_size","collection":{"@ref":{"id":"indexes"}}}}',
       match = new SetRef({ match: index, terms: ref }),
       jsonMatch = '{"@set":{"match":' + jsonIndex + ',"terms":' + jsonRef + '}}'
-    assert.deepEqual(json.parseJSON(jsonMatch), match)
-    assert.equal(json.toJSON(match), jsonMatch)
+    expect(json.parseJSON(jsonMatch)).toEqual(match)
+    expect(json.toJSON(match)).toEqual(jsonMatch)
   })
 
-  it('time conversion', function() {
+  test('time conversion', () => {
     var dt = new Date()
-    assert.deepEqual(new FaunaTime(dt).date, dt)
+    expect(new FaunaTime(dt).date).toEqual(dt)
 
     var epoch = new Date(Date.UTC(1970, 0, 1))
     var ft = new FaunaTime(epoch)
-    assert.deepEqual(ft, new FaunaTime('1970-01-01T00:00:00.000Z'))
-    assert.deepEqual(ft.date, epoch)
+    expect(ft).toEqual(new FaunaTime('1970-01-01T00:00:00.000Z'))
+    expect(ft.date).toEqual(epoch)
 
     // time offset not allowed
-    assert.throws(function() {
+    expect(function() {
       return new FaunaTime('1970-01-01T00:00:00.000+04:00')
-    }, errors.InvalidValue)
+    }).toThrow()
   })
 
-  it('time', function() {
+  test('time', () => {
     var test_ts = new FaunaTime('1970-01-01T00:00:00.123456789Z')
     var test_ts_json = '{"@ts":"1970-01-01T00:00:00.123456789Z"}'
-    assert.equal(json.toJSON(test_ts), test_ts_json)
-    assert.deepEqual(json.parseJSON(test_ts_json), test_ts)
+    expect(json.toJSON(test_ts)).toEqual(test_ts_json)
+    expect(json.parseJSON(test_ts_json)).toEqual(test_ts)
   })
 
-  it('date conversion', function() {
+  test('date conversion', () => {
     var now = new Date(Date.now())
     var dt = new Date(
       Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
     )
-    assert.deepEqual(new FaunaDate(dt).date, dt)
+    expect(new FaunaDate(dt).date).toEqual(dt)
 
     var epoch = new Date(Date.UTC(1970, 0, 1))
     var fd = new FaunaDate(epoch)
-    assert.deepEqual(fd, new FaunaDate('1970-01-01'))
-    assert.deepEqual(fd.date, epoch)
+    expect(fd).toEqual(new FaunaDate('1970-01-01'))
+    expect(fd.date).toEqual(epoch)
   })
 
-  it('date', function() {
+  test('date', () => {
     var test_date = new FaunaDate(new Date(1970, 0, 1))
     var test_date_json = '{"@date":"1970-01-01"}'
-    assert.equal(json.toJSON(test_date), test_date_json)
-    assert.deepEqual(json.parseJSON(test_date_json), test_date)
+    expect(json.toJSON(test_date)).toEqual(test_date_json)
+    expect(json.parseJSON(test_date_json)).toEqual(test_date)
   })
 
-  it('bytes - string base64', function() {
+  test('bytes - string base64', () => {
     var test_bytes = new Bytes('AQIDBA==')
     var test_bytes_json = '{"@bytes":"AQIDBA=="}'
-    assert.equal(json.toJSON(test_bytes), test_bytes_json)
-    assert.deepEqual(json.parseJSON(test_bytes_json), test_bytes)
+    expect(json.toJSON(test_bytes)).toEqual(test_bytes_json)
+    expect(json.parseJSON(test_bytes_json)).toEqual(test_bytes)
   })
 
-  it('bytes - Uint8Array', function() {
+  test('bytes - Uint8Array', () => {
     var test_bytes = new Bytes(new Uint8Array([1, 2, 3, 4]))
     var test_bytes_json = '{"@bytes":"AQIDBA=="}'
-    assert.equal(json.toJSON(test_bytes), test_bytes_json)
-    assert.deepEqual(json.parseJSON(test_bytes_json), test_bytes)
+    expect(json.toJSON(test_bytes)).toEqual(test_bytes_json)
+    expect(json.parseJSON(test_bytes_json)).toEqual(test_bytes)
   })
 
-  it('bytes - ArrayBuffer', function() {
+  test('bytes - ArrayBuffer', () => {
     var test_bytes = new Bytes(new ArrayBuffer(4))
     var test_bytes_json = '{"@bytes":"AAAAAA=="}'
-    assert.equal(json.toJSON(test_bytes), test_bytes_json)
-    assert.deepEqual(json.parseJSON(test_bytes_json), test_bytes)
+    expect(json.toJSON(test_bytes)).toEqual(test_bytes_json)
+    expect(json.parseJSON(test_bytes_json)).toEqual(test_bytes)
   })
 
-  it('bytes - errors', function() {
-    assert.throws(
-      function() {
-        new Bytes(10)
-      },
-      errors.InvalidValue,
-      'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: 10'
-    )
-    assert.throws(
-      function() {
-        new Bytes(3.14)
-      },
-      errors.InvalidValue,
-      'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: 3.14'
-    )
-    assert.throws(
-      function() {
-        new Bytes({})
-      },
-      errors.InvalidValue,
-      'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: {}'
-    )
-    assert.throws(
-      function() {
-        new Bytes([])
-      },
-      errors.InvalidValue,
-      'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: []'
-    )
-    assert.throws(
-      function() {
-        new Bytes(null)
-      },
-      errors.InvalidValue,
-      'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: null'
-    )
-    assert.throws(
-      function() {
-        new Bytes(undefined)
-      },
-      errors.InvalidValue,
-      'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: undefined'
-    )
+  test('bytes - errors', () => {
+    expect(function() {
+      new Bytes(10)
+    }).toThrow()
+    expect(function() {
+      new Bytes(3.14)
+    }).toThrow()
+    expect(function() {
+      new Bytes({})
+    }).toThrow()
+    expect(function() {
+      new Bytes([])
+    }).toThrow()
+    expect(function() {
+      new Bytes(null)
+    }).toThrow()
+    expect(function() {
+      new Bytes(undefined)
+    }).toThrow()
   })
 
-  it('query', function() {
+  test('query', () => {
     var test_query = new Query({ lambda: 'x', expr: { var: 'x' } })
     var test_query_json = '{"@query":{"lambda":"x","expr":{"var":"x"}}}'
-    assert.equal(json.toJSON(test_query), test_query_json)
-    assert.deepEqual(json.parseJSON(test_query_json), test_query)
+    expect(json.toJSON(test_query)).toEqual(test_query_json)
+    expect(json.parseJSON(test_query_json)).toEqual(test_query)
   })
 
   var assertPrint = function(value, expected) {
-    assert.equal(expected, util.inspect(value, { depth: null }))
-    assert.equal(expected, value.toString())
+    expect(expected).toEqual(util.inspect(value, { depth: null }))
+    expect(expected).toEqual(value.toString())
   }
 
-  it('pretty print', function() {
+  test('pretty print', () => {
     assertPrint(new Ref('col', values.Native.COLLECTIONS), 'Collection("col")')
     assertPrint(new Ref('db', values.Native.DATABASES), 'Database("db")')
     assertPrint(new Ref('idx', values.Native.INDEXES), 'Index("idx")')
@@ -270,7 +238,7 @@ describe('Values', function() {
     )
   })
 
-  it('pretty print Query', function() {
+  test('pretty print Query', () => {
     assertPrint(
       new Query(q.Lambda('x', q.Var('x'))),
       'Query(Lambda("x", Var("x")))'
@@ -450,7 +418,7 @@ describe('Values', function() {
     )
   })
 
-  it('pretty print Expr with primitive types', function() {
+  test('pretty print Expr with primitive types', () => {
     assertPrint(
       new Query(q.Lambda('_', { x: true, y: false, z: 'str', w: 10 })),
       'Query(Lambda("_", {x: true, y: false, z: "str", w: 10}))'

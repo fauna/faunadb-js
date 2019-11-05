@@ -1,6 +1,5 @@
 'use strict'
 
-var assert = require('chai').assert
 var errors = require('../src/errors')
 var values = require('../src/values')
 var query = require('../src/query')
@@ -25,9 +24,8 @@ var collectionRef,
   refN1M1,
   thimbleCollectionRef
 
-describe('query', function() {
-  this.timeout(10000)
-  before(function() {
+describe('query', () => {
+  beforeAll(() => {
     // Hideous way to ensure that the client is initialized.
     client = util.client()
 
@@ -101,35 +99,35 @@ describe('query', function() {
       })
   })
 
-  it('echo values', function() {
+  test('echo values', () => {
     var pInteger = client.query(10).then(function(res) {
-      assert.equal(res, 10)
+      expect(res).toEqual(10)
     })
 
     var pNumber = client.query(3.14).then(function(res) {
-      assert.equal(res, 3.14)
+      expect(res).toEqual(3.14)
     })
 
     var pString = client.query('string').then(function(res) {
-      assert.equal(res, 'string')
+      expect(res).toEqual('string')
     })
 
     var pObject = client
       .query({ a: 1, b: 'string', c: 3.14, d: null })
       .then(function(res) {
-        assert.deepEqual(res, { a: 1, b: 'string', c: 3.14, d: null })
+        expect(res).toEqual({ a: 1, b: 'string', c: 3.14, d: null })
       })
 
     var pArray = client.query([1, 'string', 3.14, null]).then(function(res) {
-      assert.deepEqual(res, [1, 'string', 3.14, null])
+      expect(res).toEqual([1, 'string', 3.14, null])
     })
 
     var pNull = client.query(null).then(function(res) {
-      assert.equal(res, null)
+      expect(res).toEqual(null)
     })
 
     var pSymbol = client.query(Symbol('foo')).then(function(res) {
-      assert.equal(res, 'foo')
+      expect(res).toEqual('foo')
     })
 
     return Promise.all([
@@ -145,14 +143,14 @@ describe('query', function() {
 
   // Basic forms
 
-  it('abort', function() {
+  test('abort', () => {
     return util.assertRejected(
       client.query(query.Abort('abort message')),
       errors.BadRequest
     )
   })
 
-  it('at', function() {
+  test('at', () => {
     var client = util.client()
 
     var paginate = query.Paginate(nSet(1000))
@@ -161,21 +159,13 @@ describe('query', function() {
       return create({ n: 1000 }).then(function(inst2) {
         return create({ n: 1000 }).then(function(inst3) {
           var p1 = client.query(paginate).then(function(data) {
-            assert.deepEqual(
-              data.data,
-              [inst1.ref, inst2.ref, inst3.ref],
-              'Should contains all document with n=1000'
-            )
+            expect(data.data).toEqual([inst1.ref, inst2.ref, inst3.ref])
           })
 
           var p2 = client
             .query(query.At(inst1.ts, paginate))
             .then(function(data) {
-              assert.deepEqual(
-                data.data,
-                [inst1.ref],
-                'Should contains only the first document with n=1000'
-              )
+              expect(data.data).toEqual([inst1.ref])
             })
 
           return Promise.all([p1, p2])
@@ -184,7 +174,7 @@ describe('query', function() {
     })
   })
 
-  it('let/var', function() {
+  test('let/var', () => {
     return Promise.all([
       assertQuery(query.Let({ x: 1 }, query.Var('x')), 1),
       assertQuery(
@@ -221,13 +211,13 @@ describe('query', function() {
     ])
   })
 
-  it('if', function() {
+  test('if', () => {
     var p1 = assertQuery(query.If(true, 't', 'f'), 't')
     var p2 = assertQuery(query.If(false, 't', 'f'), 'f')
     return Promise.all([p1, p2])
   })
 
-  it('do', function() {
+  test('do', () => {
     var p1 = create().then(function(i) {
       var ref = i.ref
       return assertQuery(query.Do(query.Delete(ref), 1), 1).then(function() {
@@ -242,38 +232,36 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('object', function() {
+  test('object', () => {
     var obj = query.Object({ x: query.Let({ x: 1 }, query.Var('x')) })
     return assertQuery(obj, { x: 1 })
   })
 
-  it('lambda', function() {
-    assert.throws(function() {
+  test('lambda', () => {
+    expect(function() {
       query.Lambda(function() {
         return 0
       })
-    })
+    }).toThrow()
 
-    assert.deepEqual(
+    expect(
       util.unwrapExpr(
         query.Lambda(function(a) {
           return query.Add(a, a)
         })
-      ),
-      { lambda: 'a', expr: { add: [{ var: 'a' }, { var: 'a' }] } }
-    )
+      )
+    ).toEqual({ lambda: 'a', expr: { add: [{ var: 'a' }, { var: 'a' }] } })
 
     var multi_args = query.Lambda(function(a, b) {
       return [b, a]
     })
-    assert.deepEqual(util.unwrapExpr(multi_args), {
+    expect(util.unwrapExpr(multi_args)).toEqual({
       lambda: ['a', 'b'],
       expr: [{ var: 'b' }, { var: 'a' }],
     })
 
     // function() works too
-    assert.deepEqual(
-      multi_args,
+    expect(multi_args).toEqual(
       query.Lambda(function(a, b) {
         return [b, a]
       })
@@ -285,7 +273,7 @@ describe('query', function() {
     ])
   })
 
-  it('call function', function() {
+  test('call function', () => {
     var body = query.Query(function(a, b) {
       return query.Concat([a, b], '/')
     })
@@ -300,7 +288,7 @@ describe('query', function() {
       })
   })
 
-  it('call with object', function() {
+  test('call with object', () => {
     var body = query.Query(function(obj) {
       return query.Let(
         { a: query.Select('a', obj), b: query.Select('b', obj) },
@@ -325,21 +313,21 @@ describe('query', function() {
       })
   })
 
-  it('echo query', function() {
+  test('echo query', () => {
     var lambda = function(x) {
       return x
     }
 
     return client.query(query.Query(lambda)).then(function(body) {
       return client.query(body).then(function(bodyEchoed) {
-        assert.deepEqual(body, bodyEchoed)
+        expect(body).toEqual(bodyEchoed)
       })
     })
   })
 
   // Collection functions
 
-  it('map', function() {
+  test('map', () => {
     var p1 = assertQuery(
       query.Map([1, 2, 3], function(a) {
         return query.Multiply([2, a])
@@ -363,7 +351,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3])
   })
 
-  it('foreach', function() {
+  test('foreach', () => {
     return Promise.all([create(), create()])
       .then(function(results) {
         return [results[0].ref, results[1].ref]
@@ -380,7 +368,7 @@ describe('query', function() {
       })
   })
 
-  it('filter', function() {
+  test('filter', () => {
     var p1 = assertQuery(
       query.Filter([1, 2, 3, 4], function(a) {
         return query.Equals(query.Modulo(a, 2), 0)
@@ -398,7 +386,7 @@ describe('query', function() {
     return Promise.all([p1, p2])
   })
 
-  it('take', function() {
+  test('take', () => {
     var p1 = assertQuery(query.Take(1, [1, 2]), [1])
     var p2 = assertQuery(query.Take(3, [1, 2]), [1, 2])
     var p3 = assertQuery(query.Take(-1, [1, 2]), [])
@@ -406,7 +394,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3])
   })
 
-  it('drop', function() {
+  test('drop', () => {
     var p1 = assertQuery(query.Drop(1, [1, 2]), [2])
     var p2 = assertQuery(query.Drop(3, [1, 2]), [])
     var p3 = assertQuery(query.Drop(-1, [1, 2]), [1, 2])
@@ -414,7 +402,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3])
   })
 
-  it('prepend', function() {
+  test('prepend', () => {
     var p1 = assertQuery(query.Prepend([1, 2, 3], [4, 5, 6]), [
       1,
       2,
@@ -429,7 +417,7 @@ describe('query', function() {
     return Promise.all([p1, p2])
   })
 
-  it('append', function() {
+  test('append', () => {
     var p1 = assertQuery(query.Append([4, 5, 6], [1, 2, 3]), [1, 2, 3, 4, 5, 6])
     // Fails for non-array.
     var p2 = assertBadQuery(query.Append([1, 2], 'foo'))
@@ -437,7 +425,7 @@ describe('query', function() {
     return Promise.all([p1, p2])
   })
 
-  it('is_empty', function() {
+  test('is_empty', () => {
     return create({ n: 100 }).then(function() {
       var p1 = assertQuery(query.IsEmpty([]), true)
       var p2 = assertQuery(query.IsEmpty([1, 2, 3]), false)
@@ -449,7 +437,7 @@ describe('query', function() {
     })
   })
 
-  it('is_nonempty', function() {
+  test('is_nonempty', () => {
     return create({ n: 100 }).then(function() {
       var p1 = assertQuery(query.IsNonEmpty([]), false)
       var p2 = assertQuery(query.IsNonEmpty([1, 2, 3]), true)
@@ -463,13 +451,13 @@ describe('query', function() {
 
   // Read functions
 
-  it('get', function() {
+  test('get', () => {
     return create().then(function(document) {
       return assertQuery(query.Get(document.ref), document)
     })
   })
 
-  it('key_from_secret', function() {
+  test('key_from_secret', () => {
     var client = util.rootClient
 
     return client
@@ -479,12 +467,12 @@ describe('query', function() {
         var p2 = client.query(query.KeyFromSecret(key.secret))
 
         return Promise.all([p1, p2]).then(function(keys) {
-          assert.deepEqual(keys[0], keys[1])
+          expect(keys[0]).toEqual(keys[1])
         })
       })
   })
 
-  it('reduce', function() {
+  test('reduce', () => {
     var client = util.client()
 
     return client
@@ -516,7 +504,7 @@ describe('query', function() {
                 var p1 = client
                   .query(query.Reduce(lambda, 10, range(1, 100)))
                   .then(function(returned) {
-                    assert.equal(returned, 5060)
+                    expect(returned).toEqual(5060)
                   })
 
                 //page
@@ -529,14 +517,14 @@ describe('query', function() {
                     )
                   )
                   .then(function(returned) {
-                    assert.deepEqual(returned, { data: [5060] })
+                    expect(returned).toEqual({ data: [5060] })
                   })
 
                 //set
                 var p3 = client
                   .query(query.Reduce(lambda, 10, query.Match(index.ref)))
                   .then(function(returned) {
-                    assert.equal(returned, 5060)
+                    expect(returned).toEqual(5060)
                   })
 
                 return Promise.all([p1, p2, p3])
@@ -545,7 +533,7 @@ describe('query', function() {
       })
   })
 
-  it('paginate', function() {
+  test('paginate', () => {
     var testSet = nSet(1)
     var p1 = assertQuery(query.Paginate(testSet), { data: [refN1, refN1M1] })
     var p2 = assertQuery(query.Paginate(testSet, { size: 1 }), {
@@ -562,7 +550,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3])
   })
 
-  it('exists', function() {
+  test('exists', () => {
     return create().then(function(i) {
       var ref = i.ref
       return assertQuery(query.Exists(ref), true)
@@ -577,41 +565,41 @@ describe('query', function() {
 
   // Write functions
 
-  it('create', function() {
+  test('create', () => {
     return create().then(function(document) {
-      assert('ref' in document)
-      assert('ts' in document)
-      assert.deepEqual(document.ref.collection, collectionRef)
+      expect('ref' in document).toBeTruthy()
+      expect('ts' in document).toBeTruthy()
+      expect(document.ref.collection).toEqual(collectionRef)
     })
   })
 
-  it('update', function() {
+  test('update', () => {
     return create().then(function(i) {
       var ref = i.ref
       return client
         .query(query.Update(ref, { data: { m: 9 } }))
         .then(function(got) {
-          assert.deepEqual(got.data, { n: 0, m: 9 })
+          expect(got.data).toEqual({ n: 0, m: 9 })
           return client.query(query.Update(ref, { data: { m: null } }))
         })
         .then(function(got) {
-          assert.deepEqual(got.data, { n: 0 })
+          expect(got.data).toEqual({ n: 0 })
         })
     })
   })
 
-  it('replace', function() {
+  test('replace', () => {
     return create()
       .then(function(i) {
         var ref = i.ref
         return client.query(query.Replace(ref, { data: { m: 9 } }))
       })
       .then(function(got) {
-        assert.deepEqual(got.data, { m: 9 })
+        expect(got.data).toEqual({ m: 9 })
       })
   })
 
-  it('delete', function() {
+  test('delete', () => {
     return create().then(function(i) {
       var ref = i.ref
       client.query(query.Delete(ref)).then(function() {
@@ -620,7 +608,7 @@ describe('query', function() {
     })
   })
 
-  it('insert', function() {
+  test('insert', () => {
     return createThimble({ weight: 1 }).then(function(document) {
       var ref = document.ref
       var ts = document.ts
@@ -634,12 +622,12 @@ describe('query', function() {
           return client.query(query.Get(ref, prevTs))
         })
         .then(function(old) {
-          assert.deepEqual(old.data, { weight: 0 })
+          expect(old.data).toEqual({ weight: 0 })
         })
     })
   })
 
-  it('remove', function() {
+  test('remove', () => {
     return createThimble({ weight: 0 }).then(function(document) {
       var ref = document.ref
 
@@ -657,7 +645,7 @@ describe('query', function() {
     })
   })
 
-  it('create function', function() {
+  test('create function', () => {
     var body = query.Query(function(x) {
       return x
     })
@@ -669,7 +657,7 @@ describe('query', function() {
       })
   })
 
-  it('create role', function() {
+  test('create role', () => {
     return withNewDatabase().then(function(client) {
       return client
         .query(
@@ -695,7 +683,7 @@ describe('query', function() {
 
   // Sets
 
-  it('events', function() {
+  test('events', () => {
     return create().then(function(created) {
       var ref = created['ref']
 
@@ -708,23 +696,23 @@ describe('query', function() {
               .then(function(result) {
                 var events = result['data']
 
-                assert.equal(events.length, 3)
+                expect(events.length).toEqual(3)
 
-                assert.equal(events[0].action, 'create')
-                assert.deepEqual(events[0].document, ref)
+                expect(events[0].action).toEqual('create')
+                expect(events[0].document).toEqual(ref)
 
-                assert.equal(events[1].action, 'update')
-                assert.deepEqual(events[1].document, ref)
+                expect(events[1].action).toEqual('update')
+                expect(events[1].document).toEqual(ref)
 
-                assert.equal(events[2].action, 'delete')
-                assert.deepEqual(events[2].document, ref)
+                expect(events[2].action).toEqual('delete')
+                expect(events[2].document).toEqual(ref)
               })
           })
         })
     })
   })
 
-  it('singleton', function() {
+  test('singleton', () => {
     return create().then(function(created) {
       var ref = created['ref']
 
@@ -737,28 +725,28 @@ describe('query', function() {
               .then(function(result) {
                 var events = result['data']
 
-                assert.equal(events.length, 2)
+                expect(events.length).toEqual(2)
 
-                assert.equal(events[0].action, 'add')
-                assert.deepEqual(events[0].document, ref)
+                expect(events[0].action).toEqual('add')
+                expect(events[0].document).toEqual(ref)
 
-                assert.equal(events[1].action, 'remove')
-                assert.deepEqual(events[1].document, ref)
+                expect(events[1].action).toEqual('remove')
+                expect(events[1].document).toEqual(ref)
               })
           })
         })
     })
   })
 
-  it('match', function() {
+  test('match', () => {
     return assertSet(nSet(1), [refN1, refN1M1])
   })
 
-  it('union', function() {
+  test('union', () => {
     return assertSet(query.Union(nSet(1), mSet(1)), [refN1, refM1, refN1M1])
   })
 
-  it('merge', function() {
+  test('merge', () => {
     var p1 = assertQuery(query.Merge({}, { x: 10, y: 20 }), { x: 10, y: 20 })
     var p2 = assertQuery(query.Merge({ one: 1 }, { two: 2 }), {
       one: 1,
@@ -786,15 +774,15 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4, p5])
   })
 
-  it('intersection', function() {
+  test('intersection', () => {
     return assertSet(query.Intersection(nSet(1), mSet(1)), [refN1M1])
   })
 
-  it('difference', function() {
+  test('difference', () => {
     return assertSet(query.Difference(nSet(1), mSet(1)), [refN1]) // but not refN1M1
   })
 
-  it('distinct', function() {
+  test('distinct', () => {
     var nonDistinctP = assertSet(query.Match(nCoveredIndexRef, 1), [10, 10, 15])
     var distinctP = assertSet(
       query.Distinct(query.Match(nCoveredIndexRef, 1)),
@@ -804,7 +792,7 @@ describe('query', function() {
     return Promise.all([nonDistinctP, distinctP])
   })
 
-  it('join', function() {
+  test('join', () => {
     return create({ n: 12 })
       .then(function(res1) {
         return create({ n: 12 }).then(function(res2) {
@@ -838,7 +826,7 @@ describe('query', function() {
 
   // Authentication
 
-  it('range', function() {
+  test('range', () => {
     return client
       .query(query.CreateCollection({ name: 'range_cls' }))
       .then(function(cls) {
@@ -867,7 +855,7 @@ describe('query', function() {
                 var p1 = client
                   .query(query.Paginate(query.Range(m, 3, 7)))
                   .then(function(returned) {
-                    assert.deepEqual(returned, { data: range(3, 7) })
+                    expect(returned).toEqual({ data: range(3, 7) })
                   })
 
                 var p2 = client
@@ -877,7 +865,7 @@ describe('query', function() {
                     )
                   )
                   .then(function(returned) {
-                    assert.deepEqual(returned, { data: range(1, 20) })
+                    expect(returned).toEqual({ data: range(1, 20) })
                   })
 
                 var p3 = client
@@ -890,7 +878,7 @@ describe('query', function() {
                     )
                   )
                   .then(function(returned) {
-                    assert.deepEqual(returned, { data: range(1, 10) })
+                    expect(returned).toEqual({ data: range(1, 10) })
                   })
 
                 var p4 = client
@@ -903,7 +891,7 @@ describe('query', function() {
                     )
                   )
                   .then(function(returned) {
-                    assert.deepEqual(returned, { data: range(5, 15) })
+                    expect(returned).toEqual({ data: range(5, 15) })
                   })
 
                 return Promise.all([p1, p2, p3, p4])
@@ -912,7 +900,7 @@ describe('query', function() {
       })
   })
 
-  it('login/logout', function() {
+  test('login/logout', () => {
     return client
       .query(
         query.Create(collectionRef, { credentials: { password: 'sekrit' } })
@@ -932,18 +920,18 @@ describe('query', function() {
             return instanceClient
               .query(query.Select('ref', query.Get(self)))
               .then(function(result3) {
-                assert.deepEqual(result3, documentRef)
+                expect(result3).toEqual(documentRef)
 
                 return instanceClient.query(query.Logout(true))
               })
               .then(function(logoutResult) {
-                assert.isTrue(logoutResult)
+                expect(logoutResult).toBe(true)
               })
           })
       })
   })
 
-  it('identify', function() {
+  test('identify', () => {
     return client
       .query(
         query.Create(collectionRef, { credentials: { password: 'sekrit' } })
@@ -954,7 +942,7 @@ describe('query', function() {
       })
   })
 
-  it('has_identity', function() {
+  test('has_identity', () => {
     return client
       .query(
         query.Create(collectionRef, { credentials: { password: 'sekrit' } })
@@ -973,7 +961,7 @@ describe('query', function() {
       })
   })
 
-  it('identity', function() {
+  test('identity', () => {
     return client
       .query(
         query.Create(collectionRef, { credentials: { password: 'sekrit' } })
@@ -995,7 +983,7 @@ describe('query', function() {
 
   // String functions
 
-  it('concat', function() {
+  test('concat', () => {
     var p1 = assertQuery(query.Concat(['a', 'b', 'c']), 'abc')
     var p2 = assertQuery(query.Concat([]), '')
     var p3 = assertQuery(query.Concat(['a', 'b', 'c'], '.'), 'a.b.c')
@@ -1003,7 +991,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3])
   })
 
-  it('casefold', function() {
+  test('casefold', () => {
     return Promise.all([
       assertQuery(query.Casefold('Hen Wen'), 'hen wen'),
 
@@ -1017,7 +1005,7 @@ describe('query', function() {
     ])
   })
 
-  it('containsstr', function() {
+  test('containsstr', () => {
     return Promise.all([
       assertQuery(query.ContainsStr('ABC', 'A'), true),
       assertQuery(query.ContainsStr('ABC', 'D'), false),
@@ -1025,7 +1013,7 @@ describe('query', function() {
     ])
   })
 
-  it('containsstrregex', function() {
+  test('containsstrregex', () => {
     return Promise.all([
       assertQuery(query.ContainsStrRegex('ABCDEFGHIJK', '[A-Z]'), true),
       assertQuery(query.ContainsStrRegex('1234567890', '[A-Z]'), false),
@@ -1033,7 +1021,7 @@ describe('query', function() {
     ])
   })
 
-  it('startswith', function() {
+  test('startswith', () => {
     return Promise.all([
       assertQuery(query.StartsWith('ABCDEFGHIJK', 'ABC'), true),
       assertQuery(query.StartsWith('1234567890', '1234567890'), true),
@@ -1041,7 +1029,7 @@ describe('query', function() {
     ])
   })
 
-  it('endswith', function() {
+  test('endswith', () => {
     return Promise.all([
       assertQuery(query.EndsWith('ABCDEFGHIJK', 'IJK'), true),
       assertQuery(query.EndsWith('1234567890', '1234567890'), true),
@@ -1049,13 +1037,13 @@ describe('query', function() {
     ])
   })
 
-  it('regexescape', function() {
+  test('regexescape', () => {
     return Promise.all([
       assertQuery(query.RegexEscape('ABCDEF'), '\\QABCDEF\\E'),
     ])
   })
 
-  it('findstr', function() {
+  test('findstr', () => {
     var p1 = assertQuery(query.FindStr('ABC', 'A'), 0)
     var p2 = assertQuery(query.FindStr('ABC', 'A', 0), 0)
     var p3 = assertQuery(query.FindStr('ABC', 'A', 1), -1)
@@ -1064,7 +1052,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('findstrregex', function() {
+  test('findstrregex', () => {
     var p1 = assertQuery(query.FindStrRegex('ABC', 'A'), [
       { start: 0, end: 0, data: 'A' },
     ])
@@ -1080,7 +1068,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3])
   })
 
-  it('length', function() {
+  test('length', () => {
     var p1 = assertQuery(query.Length(''), 0)
     var p2 = assertQuery(query.Length('A'), 1)
     var p3 = assertQuery(query.Length('ApPle'), 5)
@@ -1089,7 +1077,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('lowercase', function() {
+  test('lowercase', () => {
     var p1 = assertQuery(query.LowerCase(''), '')
     var p2 = assertQuery(query.LowerCase('A'), 'a')
     var p3 = assertQuery(query.LowerCase('ApPle'), 'apple')
@@ -1098,7 +1086,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('ltrim', function() {
+  test('ltrim', () => {
     var p1 = assertQuery(query.LTrim(''), '')
     var p2 = assertQuery(query.LTrim('    A'), 'A')
     var p3 = assertQuery(query.LTrim('\t\n\t\n  Apple'), 'Apple')
@@ -1107,7 +1095,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('ngram', function() {
+  test('ngram', () => {
     return Promise.all([
       assertQuery(query.NGram('what'), ['w', 'wh', 'h', 'ha', 'a', 'at', 't']),
       assertQuery(query.NGram('what', 2, 3), ['wh', 'wha', 'ha', 'hat', 'at']),
@@ -1135,14 +1123,14 @@ describe('query', function() {
     ])
   })
 
-  it('repeat', function() {
+  test('repeat', () => {
     var p1 = assertQuery(query.Repeat('A'), 'AA')
     var p2 = assertQuery(query.Repeat('ABC', 3), 'ABCABCABC')
 
     return Promise.all([p1, p2])
   })
 
-  it('replacestr', function() {
+  test('replacestr', () => {
     var p1 = assertQuery(query.ReplaceStr('ABCDE', 'AB', 'AA'), 'AACDE')
     var p2 = assertQuery(
       query.ReplaceStr('One Fish Two Fish', 'Fish', 'Cat'),
@@ -1152,7 +1140,7 @@ describe('query', function() {
     return Promise.all([p1, p2])
   })
 
-  it('replacestrregex', function() {
+  test('replacestrregex', () => {
     var p1 = assertQuery(query.ReplaceStrRegex('ABCDE', 'AB', 'AA'), 'AACDE')
     var p2 = assertQuery(
       query.ReplaceStrRegex('One Fish Two fish', '[Ff]ish', 'Cat'),
@@ -1162,28 +1150,28 @@ describe('query', function() {
     return Promise.all([p1, p2])
   })
 
-  it('rtrim', function() {
+  test('rtrim', () => {
     var p1 = assertQuery(query.RTrim('A\t\n   '), 'A')
     var p2 = assertQuery(query.RTrim('ABC DE F '), 'ABC DE F')
 
     return Promise.all([p1, p2])
   })
 
-  it('space', function() {
+  test('space', () => {
     var p1 = assertQuery(query.Space(0), '')
     var p2 = assertQuery(query.Space(5), '     ')
 
     return Promise.all([p1, p2])
   })
 
-  it('substring', function() {
+  test('substring', () => {
     var p1 = assertQuery(query.SubString('ABCDEF', -3), 'DEF')
     var p2 = assertQuery(query.SubString('ABCDEF', 0, 3), 'ABC')
 
     return Promise.all([p1, p2])
   })
 
-  it('titlecase', function() {
+  test('titlecase', () => {
     var p1 = assertQuery(
       query.TitleCase('one fISH tWo FISH'),
       'One Fish Two Fish'
@@ -1193,21 +1181,21 @@ describe('query', function() {
     return Promise.all([p1, p2])
   })
 
-  it('trim', function() {
+  test('trim', () => {
     var p1 = assertQuery(query.Trim('   A   '), 'A')
     var p2 = assertQuery(query.Trim('\t\nABC DEF\t\n   '), 'ABC DEF')
 
     return Promise.all([p1, p2])
   })
 
-  it('uppercase', function() {
+  test('uppercase', () => {
     var p1 = assertQuery(query.UpperCase('a'), 'A')
     var p2 = assertQuery(query.UpperCase('abc def'), 'ABC DEF')
 
     return Promise.all([p1, p2])
   })
 
-  it('format', function() {
+  test('format', () => {
     var p1 = assertQuery(
       query.Format('%3$s%1$s %2$s', 'DB', 'rocks', 'Fauna'),
       'FaunaDB rocks'
@@ -1224,18 +1212,18 @@ describe('query', function() {
 
   // Time and date functions
 
-  it('time', function() {
+  test('time', () => {
     var time = '1970-01-01T00:00:00.123456789Z'
     var p1 = assertQuery(query.Time(time), new FaunaTime(time))
     // 'now' refers to the current time.
     var p2 = client.query(query.Time('now')).then(function(result) {
-      assert.instanceOf(result, FaunaTime)
+      expect(result).toBeInstanceOf(FaunaTime)
     })
 
     return Promise.all([p1, p2])
   })
 
-  it('epoch', function() {
+  test('epoch', () => {
     var p1 = assertQuery(
       query.Epoch(12, 'second'),
       new FaunaTime('1970-01-01T00:00:12Z')
@@ -1245,7 +1233,7 @@ describe('query', function() {
     return Promise.all([p1, p2])
   })
 
-  it('time_add', function() {
+  test('time_add', () => {
     var p1 = assertQuery(
       query.TimeAdd(query.Epoch(0, 'second'), 1, 'hour'),
       new FaunaTime('1970-01-01T01:00:00Z')
@@ -1258,7 +1246,7 @@ describe('query', function() {
     return Promise.all([p1, p2])
   })
 
-  it('time_subtract', function() {
+  test('time_subtract', () => {
     var p1 = assertQuery(
       query.TimeSubtract(query.Epoch(0, 'second'), 1, 'hour'),
       new FaunaTime('1969-12-31T23:00:00Z')
@@ -1271,7 +1259,7 @@ describe('query', function() {
     return Promise.all([p1, p2])
   })
 
-  it('time_diff', function() {
+  test('time_diff', () => {
     var p1 = assertQuery(
       query.TimeDiff(
         query.Epoch(0, 'second'),
@@ -1288,11 +1276,11 @@ describe('query', function() {
     return Promise.all([p1, p2])
   })
 
-  it('date', function() {
+  test('date', () => {
     return assertQuery(query.Date('1970-01-01'), new FaunaDate('1970-01-01'))
   })
 
-  it('now', function() {
+  test('now', () => {
     return Promise.all([
       assertQuery(query.Equals(query.Now(), query.Time('now')), true),
       client.query(query.Now()).then(function(t0) {
@@ -1304,27 +1292,27 @@ describe('query', function() {
   })
 
   // Miscellaneous functions
-  it('new_id', function() {
+  test('new_id', () => {
     return client.query(query.NewId()).then(function(res) {
       var parsed = parseInt(res)
-      assert.isNotNaN(parsed)
-      assert.isNumber(parsed)
+      expect(parsed).not.toBe()
+      expect(typeof parsed).toBe('number')
     })
   })
 
-  it('index', function() {
+  test('index', () => {
     return client.query(query.Index('widgets_by_n')).then(function(res) {
-      assert.deepEqual(res, nIndexRef)
+      expect(res).toEqual(nIndexRef)
     })
   })
 
-  it('collection', function() {
+  test('collection', () => {
     return client.query(query.Collection('widgets')).then(function(res) {
-      assert.deepEqual(res, collectionRef)
+      expect(res).toEqual(collectionRef)
     })
   })
 
-  it('equals', function() {
+  test('equals', () => {
     var p1 = assertQuery(query.Equals(1, 1, 1), true)
     var p2 = assertQuery(query.Equals(1, 1, 2), false)
     var p3 = assertQuery(query.Equals(1), true)
@@ -1332,7 +1320,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('contains', function() {
+  test('contains', () => {
     var obj = { a: { b: 1 } }
     var p1 = assertQuery(query.Contains(['a', 'b'], obj), true)
     var p2 = assertQuery(query.Contains('a', obj), true)
@@ -1340,7 +1328,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3])
   })
 
-  it('select', function() {
+  test('select', () => {
     var obj = { a: { b: 1 } }
     var p1 = assertQuery(query.Select('a', obj), { b: 1 })
     var p2 = assertQuery(query.Select(['a', 'b'], obj), 1)
@@ -1350,66 +1338,66 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4, p5])
   })
 
-  it('select for array', function() {
+  test('select for array', () => {
     var arr = [1, 2, 3]
     var p1 = assertQuery(query.Select(2, arr), 3)
     var p2 = assertBadQuery(query.Select(3, arr), errors.NotFound)
     return Promise.all([p1, p2])
   })
 
-  it('select_as_index', function() {
+  test('select_as_index', () => {
     var obj1 = { foo: 'bar' }
     var obj2 = { foo: 'baz' }
     return assertQuery(query.SelectAsIndex('foo', [obj1, obj2]), ['bar', 'baz'])
   })
 
-  it('select_as_index for array', function() {
+  test('select_as_index for array', () => {
     var obj1 = { foo: [0, 1] }
     var obj2 = { foo: [2, 3] }
     return assertQuery(query.SelectAsIndex(['foo', 0], [obj1, obj2]), [0, 2])
   })
 
-  it('abs', function() {
+  test('abs', () => {
     var p1 = assertQuery(query.Abs(10), 10)
     var p2 = assertQuery(query.Abs(-10), 10)
     return Promise.all([p1, p2])
   })
 
-  it('add', function() {
+  test('add', () => {
     return assertQuery(query.Add(2, 3, 5), 10)
   })
 
-  it('bitand', function() {
+  test('bitand', () => {
     var p1 = assertQuery(query.BitAnd(1, 0), 0)
     var p2 = assertQuery(query.BitAnd(7, 3), 3)
     return Promise.all([p1, p2])
   })
 
-  it('bitnot', function() {
+  test('bitnot', () => {
     var p1 = assertQuery(query.BitNot(0), -1)
     var p2 = assertQuery(query.BitNot(1), -2)
     return Promise.all([p1, p2])
   })
 
-  it('bitor', function() {
+  test('bitor', () => {
     var p1 = assertQuery(query.BitOr(0, 1, 0, 1), 1)
     var p2 = assertQuery(query.BitOr(1, 2, 4), 7)
     return Promise.all([p1, p2])
   })
 
-  it('bitxor', function() {
+  test('bitxor', () => {
     var p1 = assertQuery(query.BitXor(0, 1), 1)
     var p2 = assertQuery(query.BitXor(1, 2, 4), 7)
     return Promise.all([p1, p2])
   })
 
-  it('ceil', function() {
+  test('ceil', () => {
     var p1 = assertQuery(query.Ceil(1.2), 2)
     var p2 = assertQuery(query.Ceil(1.8), 2)
     return Promise.all([p1, p2])
   })
 
-  it('divide', function() {
+  test('divide', () => {
     // TODO: can't make this query because 2.0 === 2
     // await assertQuery(query.Divide(2, 3, 5), 2/15)
     var p1 = assertQuery(query.Divide(2), 2)
@@ -1417,21 +1405,21 @@ describe('query', function() {
     return Promise.all([p1, p2])
   })
 
-  it('floor', function() {
+  test('floor', () => {
     var p1 = assertQuery(query.Floor(1.2), 1)
     var p2 = assertQuery(query.Floor(1.8), 1)
     return Promise.all([p1, p2])
   })
 
-  it('max', function() {
+  test('max', () => {
     return assertQuery(query.Max(2, 3, 5, 4), 5)
   })
 
-  it('min', function() {
+  test('min', () => {
     return assertQuery(query.Min(2, 3, 5, 4), 2)
   })
 
-  it('modulo', function() {
+  test('modulo', () => {
     var p1 = assertQuery(query.Modulo(5, 2), 1)
     // This is (15 % 10) % 2
     var p2 = assertQuery(query.Modulo(15, 10, 2), 1)
@@ -1440,11 +1428,11 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('multiply', function() {
+  test('multiply', () => {
     return assertQuery(query.Multiply(2, 3, 5), 30)
   })
 
-  it('round', function() {
+  test('round', () => {
     var p1 = assertQuery(query.Round(155.678, -1), 160)
     var p2 = assertQuery(query.Round(155.678, 0), 156)
     var p3 = assertQuery(query.Round(155.678, 1), 155.7)
@@ -1452,25 +1440,25 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('subtract', function() {
+  test('subtract', () => {
     var p1 = assertQuery(query.Subtract(2, 3, 5), -6)
     var p2 = assertQuery(query.Subtract(2), 2)
     return Promise.all([p1, p2])
   })
 
-  it('sign', function() {
+  test('sign', () => {
     var p1 = assertQuery(query.Sign(1.2), 1)
     var p2 = assertQuery(query.Sign(1.8), 1)
     return Promise.all([p1, p2])
   })
 
-  it('sqrt', function() {
+  test('sqrt', () => {
     var p1 = assertQuery(query.Sqrt(16), 4)
     var p2 = assertQuery(query.Sqrt(4), 2)
     return Promise.all([p1, p2])
   })
 
-  it('trunc', function() {
+  test('trunc', () => {
     var p1 = assertQuery(query.Trunc(155.678, -1), 150)
     var p2 = assertQuery(query.Trunc(155.678, 0), 155)
     var p3 = assertQuery(query.Trunc(155.678, 1), 155.6)
@@ -1478,7 +1466,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('count, sum, mean', function() {
+  test('count, sum, mean', () => {
     const values = Array.from({ length: 100 }, (v, k) => k + 1) // array 1-100
 
     return client
@@ -1564,7 +1552,7 @@ describe('query', function() {
       })
   })
 
-  it('any, all', function() {
+  test('any, all', () => {
     var collName = util.randomString('collection_')
     var indexName = util.randomString('index_')
 
@@ -1680,91 +1668,91 @@ describe('query', function() {
       })
   })
 
-  it('acos', function() {
+  test('acos', () => {
     return assertQuery(query.Trunc(query.Acos(0.5), 2), 1.04)
   })
 
-  it('asin', function() {
+  test('asin', () => {
     var p1 = assertQuery(query.Trunc(query.Asin(0.5), 2), 0.52)
     var p2 = assertQuery(query.Trunc(query.Asin(0), 2), 0)
     return Promise.all([p1, p2])
   })
 
-  it('atan', function() {
+  test('atan', () => {
     var p1 = assertQuery(query.Trunc(query.Atan(0.5), 2), 0.46)
     var p2 = assertQuery(query.Trunc(query.Atan(0), 2), 0)
     return Promise.all([p1, p2])
   })
 
-  it('cos', function() {
+  test('cos', () => {
     return assertQuery(query.Cos(0), 1)
   })
 
-  it('cosh', function() {
+  test('cosh', () => {
     return assertQuery(query.Trunc(query.Cosh(7.6), 1), 999)
   })
 
-  it('degres', function() {
+  test('degres', () => {
     return assertQuery(query.Trunc(query.Degrees(6.29), 0), 360)
   })
 
-  it('exp', function() {
+  test('exp', () => {
     return assertQuery(query.Trunc(query.Exp(5), 0), 148)
   })
 
-  it('hypot', function() {
+  test('hypot', () => {
     return assertQuery(query.Hypot(query.Hypot(3, 4), 0), 5)
   })
 
-  it('ln', function() {
+  test('ln', () => {
     return assertQuery(query.Trunc(query.Ln(1), 0), 0)
   })
 
-  it('log', function() {
+  test('log', () => {
     return assertQuery(query.Trunc(query.Log(100), 0), 2)
   })
 
-  it('pow', function() {
+  test('pow', () => {
     return assertQuery(query.Pow(3, 2), 9)
   })
 
-  it('radians', function() {
+  test('radians', () => {
     return assertQuery(query.Trunc(query.Radians(360), 1), 6.2)
   })
 
-  it('sin', function() {
+  test('sin', () => {
     return assertQuery(query.Trunc(query.Sin(0), 0), 0)
   })
 
-  it('sinh', function() {
+  test('sinh', () => {
     return assertQuery(query.Trunc(query.Sinh(4), 0), 27)
   })
 
-  it('tan', function() {
+  test('tan', () => {
     return assertQuery(query.Trunc(query.Tan(0), 0), 0)
   })
 
-  it('tanh', function() {
+  test('tanh', () => {
     return assertQuery(query.Trunc(query.Tanh(100), 0), 1)
   })
 
-  it('lt', function() {
+  test('lt', () => {
     return assertQuery(query.LT(1, 2), true)
   })
 
-  it('lte', function() {
+  test('lte', () => {
     return assertQuery(query.LTE(1, 1), true)
   })
 
-  it('gt', function() {
+  test('gt', () => {
     return assertQuery(query.GT(2, 1), true)
   })
 
-  it('gte', function() {
+  test('gte', () => {
     return assertQuery(query.GTE(1, 1), true)
   })
 
-  it('and', function() {
+  test('and', () => {
     var p1 = assertQuery(query.And(true, true, false), false)
     var p2 = assertQuery(query.And(true, true, true), true)
     var p3 = assertQuery(query.And(true), true)
@@ -1772,7 +1760,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('or', function() {
+  test('or', () => {
     var p1 = assertQuery(query.Or(false, false, true), true)
     var p2 = assertQuery(query.Or(false, false, false), false)
     var p3 = assertQuery(query.Or(true), true)
@@ -1780,25 +1768,25 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('not', function() {
+  test('not', () => {
     var p1 = assertQuery(query.Not(true), false)
     var p2 = assertQuery(query.Not(false), true)
     return Promise.all([p1, p2])
   })
 
-  it('to_string', function() {
+  test('to_string', () => {
     var p1 = assertQuery(query.ToString(42), '42')
     var p2 = assertQuery(query.ToString('42'), '42')
     return Promise.all([p1, p2])
   })
 
-  it('to_number', function() {
+  test('to_number', () => {
     var p1 = assertQuery(query.ToNumber(42), 42)
     var p2 = assertQuery(query.ToNumber('42'), 42)
     return Promise.all([p1, p2])
   })
 
-  it('to_object', function() {
+  test('to_object', () => {
     var obj = { k0: 10, k1: 20 }
     var p1 = assertQuery(query.ToObject([['k0', 10], ['k1', 20]]), obj)
     var collName = util.randomString('collection_')
@@ -1842,39 +1830,39 @@ describe('query', function() {
     return Promise.all([p1, p2])
   })
 
-  it('to_array', function() {
+  test('to_array', () => {
     return assertQuery(query.ToArray({ k0: 10, k1: 20 }), [
       ['k0', 10],
       ['k1', 20],
     ])
   })
 
-  it('to_array_and_to_object', function() {
+  test('to_array_and_to_object', () => {
     var obj = { k0: 10, k1: 20 }
     return assertQuery(query.ToObject(query.ToArray(obj)), obj)
   })
 
-  it('to_double', function() {
+  test('to_double', () => {
     var p1 = assertQuery(query.ToDouble(3.14), 3.14)
     var p2 = assertQuery(query.ToString(query.ToDouble(10)), '10.0')
     var p3 = assertQuery(query.ToDouble('3.14'), 3.14)
     return Promise.all([p1, p2, p3])
   })
 
-  it('to_integer', function() {
+  test('to_integer', () => {
     var p1 = assertQuery(query.ToString(query.ToInteger(10.0)), '10')
     var p2 = assertQuery(query.ToInteger('10'), 10)
     return Promise.all([p1, p2])
   })
 
-  it('to_time', function() {
+  test('to_time', () => {
     return assertQuery(
       query.ToTime('1970-01-01T00:00:00Z'),
       new FaunaTime('1970-01-01T00:00:00Z')
     )
   })
 
-  it('to_millis', function() {
+  test('to_millis', () => {
     var p1 = assertQuery(query.ToMillis(query.Time('1970-01-01T00:00:00Z')), 0)
     var p2 = assertQuery(
       query.ToMillis(query.Epoch(2147483648000, 'millisecond')),
@@ -1885,7 +1873,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('to_seconds', function() {
+  test('to_seconds', () => {
     var p1 = assertQuery(query.ToSeconds(query.Epoch(0, 'second')), 0)
     var p2 = assertQuery(
       query.ToSeconds(query.Epoch(2147483648, 'second')),
@@ -1896,7 +1884,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('to_micros', function() {
+  test('to_micros', () => {
     var p1 = assertQuery(query.ToMicros(query.Epoch(0, 'second')), 0)
     var p2 = assertQuery(
       query.ToMicros(query.Epoch(2147483648000000, 'microsecond')),
@@ -1907,7 +1895,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('day_of_month', function() {
+  test('day_of_month', () => {
     var p1 = assertQuery(query.DayOfMonth(query.Epoch(0, 'second')), 1)
     var p2 = assertQuery(
       query.DayOfMonth(query.Epoch(2147483648, 'second')),
@@ -1918,7 +1906,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('day_of_week', function() {
+  test('day_of_week', () => {
     var p1 = assertQuery(query.DayOfWeek(query.Epoch(0, 'second')), 4)
     var p2 = assertQuery(query.DayOfWeek(query.Epoch(2147483648, 'second')), 2)
     var p3 = assertQuery(query.DayOfWeek(0), 4)
@@ -1926,7 +1914,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('day_of_year', function() {
+  test('day_of_year', () => {
     var p1 = assertQuery(query.DayOfYear(query.Epoch(0, 'second')), 1)
     var p2 = assertQuery(query.DayOfYear(query.Epoch(2147483648, 'second')), 19)
     var p3 = assertQuery(query.DayOfYear(0), 1)
@@ -1934,7 +1922,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('month', function() {
+  test('month', () => {
     var p1 = assertQuery(query.Month(query.Epoch(0, 'second')), 1)
     var p2 = assertQuery(query.Month(query.Epoch(2147483648, 'second')), 1)
     var p3 = assertQuery(query.Month(0), 1)
@@ -1942,7 +1930,7 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('year', function() {
+  test('year', () => {
     var p1 = assertQuery(query.Year(query.Epoch(0, 'second')), 1970)
     var p2 = assertQuery(query.Year(query.Epoch(2147483648, 'second')), 2038)
     var p3 = assertQuery(query.Year(0), 1970)
@@ -1950,30 +1938,30 @@ describe('query', function() {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  it('hour', function() {
+  test('hour', () => {
     return assertQuery(query.Hour(query.Epoch(0, 'second')), 0)
   })
 
-  it('minute', function() {
+  test('minute', () => {
     return assertQuery(query.Minute(query.Epoch(0, 'second')), 0)
   })
 
-  it('second', function() {
+  test('second', () => {
     return assertQuery(query.Second(query.Epoch(0, 'second')), 0)
   })
 
-  it('to_date', function() {
+  test('to_date', () => {
     return assertQuery(query.ToDate('1970-01-01'), new FaunaDate('1970-01-01'))
   })
 
-  it('ref', function() {
+  test('ref', () => {
     return assertQuery(
       Ref(collectionRef, query.Concat(['123', '456'])),
       new values.Ref('123456', collectionRef)
     )
   })
 
-  it('bytes', function() {
+  test('bytes', () => {
     return Promise.all([
       assertQuery(query.Bytes('AQIDBA=='), new Bytes('AQIDBA==')),
       assertQuery(
@@ -1987,7 +1975,7 @@ describe('query', function() {
     ])
   })
 
-  it('recursive refs', function() {
+  test('recursive refs', () => {
     return withNewDatabase().then(function(adminCli) {
       return createNewDatabase(adminCli, 'parent-db').then(function(parentCli) {
         return createNewDatabase(parentCli, 'child-db').then(function(
@@ -2163,14 +2151,14 @@ describe('query', function() {
     })
   })
 
-  it('nested ref from string', function() {
+  test('nested ref from string', () => {
     return assertQuery(
       query.Ref('collections/widget/123'),
       new values.Ref('123', new values.Ref('widget', Native.COLLECTIONS))
     )
   })
 
-  it('move database', function() {
+  test('move database', () => {
     const db_move = query.Database('db_move')
     const db_destination = query.Database('db_destination')
 
@@ -2203,7 +2191,7 @@ describe('query', function() {
 
   // Check arity of all query functions
 
-  it('arity', function() {
+  test('arity', () => {
     // By default assume all functions should have strict arity
     var testParams = {
       Ref: [3, 'from 1 to 2'],
@@ -2277,20 +2265,15 @@ describe('query', function() {
             arity +
             ' were given'
         )
-      assert.throws(
-        function() {
-          query[fun].apply(null, new Array(arity))
-        },
-        errors.InvalidArity,
-        errorMessage,
-        fun
-      )
+      expect(function() {
+        query[fun].apply(null, new Array(arity))
+      }).toThrow()
     }
   })
 
   // Helpers
 
-  it('varargs', function() {
+  test('varargs', () => {
     // Works for lists too
     var p1 = assertQuery(query.Add([2, 3, 5]), 10)
     // Works for a variable equal to a list
@@ -2300,7 +2283,7 @@ describe('query', function() {
     )
     return Promise.all([p1, p2])
   })
-})
+}, 10000)
 
 function withNewDatabase() {
   return util.rootClient
@@ -2352,7 +2335,7 @@ function mSet(m) {
 
 function assertQueryWithClient(client, query, expected) {
   return client.query(query).then(function(result) {
-    assert.deepEqual(result, expected)
+    expect(result).toEqual(expected)
   })
 }
 
@@ -2370,7 +2353,7 @@ function assertBadQuery(query, errorType) {
 
 function assertSet(set, expected) {
   return getSetContents(set).then(function(result) {
-    assert.deepEqual(result, expected)
+    expect(result).toEqual(expected)
   })
 }
 
