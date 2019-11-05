@@ -49,17 +49,7 @@ commands:
 
       - run:
           name: Run Tests
-          command: yarn jenkins-test
-
-      - run:
-          name: Gather Results
-          when: always
-          command: |
-            mkdir results/junit
-            mv results/report.xml results/junit/
-
-      - store_test_results:
-          path: results/
+          command: yarn test
 
 jobs:
   core-stable-8:

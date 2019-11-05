@@ -1,6 +1,5 @@
 'use strict'
 
-var chai = require('chai')
 var Client = require('../src/Client')
 var Expr = require('../src/Expr')
 var values = require('../src/values')
@@ -8,7 +7,6 @@ var query = require('../src/query')
 var objectAssign = require('object-assign')
 var util = require('../src/_util')
 
-var assert = chai.assert
 var Database = query.Database
 var Value = values.Value
 
@@ -62,7 +60,7 @@ function assertRejected(promise, errorType) {
   return promise.then(
     function() {
       succeeded = true
-      assert(!succeeded, 'Expected promise to fail.')
+      expect(!succeeded).toBeTruthy()
     },
     function(error) {
       if (!(error instanceof errorType)) {
@@ -119,7 +117,7 @@ var dbRef = query.Database(dbName)
 
 // global before/after for every test
 
-before(function() {
+beforeAll(() => {
   return rootClient
     .query(query.CreateDatabase({ name: dbName }))
     .then(function() {
@@ -136,7 +134,7 @@ before(function() {
     })
 })
 
-after(function() {
+afterAll(() => {
   // disable line below to prevent db cleanup after the test
   return rootClient.query(query.Delete(dbRef))
 })
