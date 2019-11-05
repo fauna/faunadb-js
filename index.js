@@ -7,5 +7,5 @@ module.exports = {
   clientLogger: require('./src/clientLogger'),
   errors: require('./src/errors'),
   values: require('./src/values'),
-  query: require('./src/query')
-};
+  query: require('./src/query'),
+}
