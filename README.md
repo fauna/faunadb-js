@@ -17,13 +17,13 @@ reference](https://docs.fauna.com/fauna/current/reference/queryapi/).
 
 This Driver supports and is tested on:
 
-* Node.js
-  * LTS
-  * Stable
-* Chrome
-* Firefox
-* Safari
-* Internet Explorer 11
+- Node.js
+  - LTS
+  - Stable
+- Chrome
+- Firefox
+- Safari
+- Internet Explorer 11
 
 ## Using the Client
 
@@ -36,8 +36,6 @@ This Driver supports and is tested on:
 or
 
 `yarn add faunadb`
-
-See [faunadb on NPM](https://npmjs.com/package/faunadb) for more information.
 
 #### Browsers
 
@@ -55,22 +53,23 @@ The minified version of the driver can also be used via CDN:
 
 ### Use
 
-The [tutorials]((https://docs.fauna.com/fauna/current/howto/) in the
+The [tutorials](https://docs.fauna.com/fauna/current/howto/) in the
 FaunaDB documentation contain driver-specific examples.
 
 #### Requiring the Driver
 
 ```javascript
 var faunadb = require('faunadb'),
-  q = faunadb.query;
+  q = faunadb.query
 ```
 
 This is the recommended require stanza. The `faunadb.query` module contains all
 of the functions to create FaunaDB Query expressions.
 
 #### Instantiating a Client and Issuing Queries
+
 ```javascript
-var client = new faunadb.Client({ secret: 'YOUR_FAUNADB_SECRET' });
+var client = new faunadb.Client({ secret: 'YOUR_FAUNADB_SECRET' })
 ```
 
 Once the client has been instantiated, it can be used to issue queries. For
@@ -78,7 +77,9 @@ example, to create an document in an existing collection named `test` with the d
 `{ testField: 'testValue' }`:
 
 ```javascript
-var createP = client.query(q.Create(q.Collection('test'), { data: { testField: 'testValue' } }));
+var createP = client.query(
+  q.Create(q.Collection('test'), { data: { testField: 'testValue' } })
+)
 ```
 
 All methods on `faunadb.Client` return [ES6 Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
@@ -87,8 +88,8 @@ document:
 
 ```javascript
 createP.then(function(response) {
-  console.log(response.ref); // Would log the ref to console.
-});
+  console.log(response.ref) // Would log the ref to console.
+})
 ```
 
 `response` is a JSON object containing the FaunaDB response. See the JSDocs for
@@ -104,7 +105,7 @@ Using the helper to page over sets lets the driver handle cursoring and
 pagination state. For example, `client.paginate`:
 
 ```javascript
-var helper = client.paginate(q.Match(q.Index('test_index'), 'example-term'));
+var helper = client.paginate(q.Match(q.Index('test_index'), 'example-term'))
 ```
 
 The return value, `helper`, is an instance of `PageHelper`. The `each` method will execute a
@@ -112,8 +113,8 @@ callback function on each consumed page.
 
 ```javascript
 helper.each(function(page) {
-  console.log(page); // Will log the page's contents, for example: [ Ref("collections/test/1234"), ... ]
-});
+  console.log(page) // Will log the page's contents, for example: [ Ref("collections/test/1234"), ... ]
+})
 ```
 
 Note that `each` returns a `Promise<void>` that is fulfilled on the completion
@@ -125,9 +126,13 @@ via the `map` and `filter` functions.
 For example, to retrieve the matched documents:
 
 ```javascript
-helper.map(function(ref) { return q.Get(ref); }).each(function(page) {
-  console.log(page); // Will now log the retrieved documents.
-});
+helper
+  .map(function(ref) {
+    return q.Get(ref)
+  })
+  .each(function(page) {
+    console.log(page) // Will now log the retrieved documents.
+  })
 ```
 
 [See the JSDocs](https://fauna.github.com/faunadb-js/PageHelper.html) for
@@ -139,17 +144,17 @@ Run `npm install` or `yarn` to install dependencies.
 
 ### Code
 
-This project includes no polyfills. Support for Internet Explorer 11 requires 
-a `Promise` polyfill. 
+This project includes no polyfills. Support for Internet Explorer 11 requires
+a `Promise` polyfill.
 
 ### Testing
 
-* `npm run test`: This will run tests against the current version of Node.js.
+- `npm run test`: This will run tests against the current version of Node.js.
   [nvm](https://github.com/creationix/nvm) is useful for managing multiple
   versions of Node.js for testing.
-* `npm run coverage`: This will run tests with coverage enabled.
-* `npm run browser-test-{mac|linux|win}`: This will run tests against
-  platform-specific browsers.  [Karma](https://karma-runner.github.io/1.0/index.html)
+- `npm run coverage`: This will run tests with coverage enabled.
+- `npm run browser-test-{mac|linux|win}`: This will run tests against
+  platform-specific browsers. [Karma](https://karma-runner.github.io/1.0/index.html)
   is used as the test runner.
 
 Both Node.js and browser tests will read a `testConfig.json` file located in
@@ -176,7 +181,7 @@ Alpine-based NodeJS image can be provided via `RUNTIME_IMAGE`).
 
 ### Documentation
 
-* `npm run doc` will generate JSDoc documentation for the project.
+- `npm run doc` will generate JSDoc documentation for the project.
 
 ## License
 

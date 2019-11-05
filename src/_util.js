@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 /**
  * Used for functions that take an options objects.
@@ -8,22 +8,22 @@
  * @private
  */
 function applyDefaults(provided, defaults) {
-  var out = {};
+  var out = {}
 
   for (var providedKey in provided) {
     if (!(providedKey in defaults)) {
-      throw new Error('No such option ' + providedKey);
+      throw new Error('No such option ' + providedKey)
     }
-    out[providedKey] = provided[providedKey];
+    out[providedKey] = provided[providedKey]
   }
 
   for (var defaultsKey in defaults) {
     if (!(defaultsKey in out)) {
-      out[defaultsKey] = defaults[defaultsKey];
+      out[defaultsKey] = defaults[defaultsKey]
     }
   }
 
-  return out;
+  return out
 }
 
 /**
@@ -31,14 +31,14 @@ function applyDefaults(provided, defaults) {
  * @private
  * */
 function removeNullAndUndefinedValues(object) {
-  var res = {};
+  var res = {}
   for (var key in object) {
-    var val = object[key];
+    var val = object[key]
     if (val !== null && val !== undefined) {
-      res[key] = val;
+      res[key] = val
     }
   }
-  return res;
+  return res
 }
 
 /**
@@ -46,18 +46,18 @@ function removeNullAndUndefinedValues(object) {
  * @private
  * */
 function removeUndefinedValues(object) {
-  var res = {};
+  var res = {}
   for (var key in object) {
-    var val = object[key];
+    var val = object[key]
     if (val !== undefined) {
-      res[key] = val;
+      res[key] = val
     }
   }
-  return res;
+  return res
 }
 
 module.exports = {
   applyDefaults: applyDefaults,
   removeNullAndUndefinedValues: removeNullAndUndefinedValues,
-  removeUndefinedValues: removeUndefinedValues
-};
+  removeUndefinedValues: removeUndefinedValues,
+}

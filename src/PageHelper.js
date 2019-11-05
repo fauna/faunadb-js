@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-var query = require('./query');
-var objectAssign = require('object-assign');
+var query = require('./query')
+var objectAssign = require('object-assign')
 
 /**
  * A FaunaDB Lambda expression to be passed into one of the collection
@@ -47,36 +47,36 @@ var objectAssign = require('object-assign');
  */
 function PageHelper(client, set, params) {
   if (params === undefined) {
-    params = {};
+    params = {}
   }
 
-  this.reverse = false;
-  this.params = {};
+  this.reverse = false
+  this.params = {}
 
-  this.before = undefined;
-  this.after = undefined;
+  this.before = undefined
+  this.after = undefined
 
-  objectAssign(this.params, params);
+  objectAssign(this.params, params)
 
-  var cursorParams = this.params.cursor || this.params;
+  var cursorParams = this.params.cursor || this.params
 
   if ('before' in cursorParams) {
-    this.before = cursorParams.before;
-    delete cursorParams.before;
+    this.before = cursorParams.before
+    delete cursorParams.before
   } else if ('after' in cursorParams) {
-    this.after = cursorParams.after;
-    delete cursorParams.after;
+    this.after = cursorParams.after
+    delete cursorParams.after
   }
 
-  this.client = client;
-  this.set = set;
+  this.client = client
+  this.set = set
 
   /**
    * @member {Array.<Function>}
    * @type {Array.<Function>}
    * @private
    */
-  this._faunaFunctions = [];
+  this._faunaFunctions = []
 }
 
 /**
@@ -90,10 +90,12 @@ function PageHelper(client, set, params) {
  *
  */
 PageHelper.prototype.map = function(lambda) {
-  var rv = this._clone();
-  rv._faunaFunctions.push(function(q) { return query.Map(q, lambda); });
-  return rv;
-};
+  var rv = this._clone()
+  rv._faunaFunctions.push(function(q) {
+    return query.Map(q, lambda)
+  })
+  return rv
+}
 
 /**
  * Wraps the set to be paginated with a FaunaDB Filter funciton.
@@ -105,10 +107,12 @@ PageHelper.prototype.map = function(lambda) {
  * @return {PageHelper}
  */
 PageHelper.prototype.filter = function(lambda) {
-  var rv = this._clone();
-  rv._faunaFunctions.push(function(q) { return query.Filter(q, lambda); });
-  return rv;
-};
+  var rv = this._clone()
+  rv._faunaFunctions.push(function(q) {
+    return query.Filter(q, lambda)
+  })
+  return rv
+}
 
 /**
  * Executes the provided function for each page.
@@ -118,8 +122,10 @@ PageHelper.prototype.filter = function(lambda) {
  * @returns {external:Promise.<void>}
  */
 PageHelper.prototype.each = function(lambda) {
-  return this._retrieveNextPage(this.after, false).then(this._consumePages(lambda, false));
-};
+  return this._retrieveNextPage(this.after, false).then(
+    this._consumePages(lambda, false)
+  )
+}
 
 /**
  * Executes the provided function for each page, in the reverse direction.
@@ -127,8 +133,10 @@ PageHelper.prototype.each = function(lambda) {
  * @returns {external:Promise.<void>}
  */
 PageHelper.prototype.eachReverse = function(lambda) {
-  return this._retrieveNextPage(this.before, true).then(this._consumePages(lambda, true));
-};
+  return this._retrieveNextPage(this.before, true).then(
+    this._consumePages(lambda, true)
+  )
+}
 
 /**
  * Queries for the previous page from the current cursor point; this mutates
@@ -138,9 +146,11 @@ PageHelper.prototype.eachReverse = function(lambda) {
  * @returns {external:Promise.<object>}
  */
 PageHelper.prototype.previousPage = function() {
-  var self = this;
-  return this._retrieveNextPage(this.before, true).then(this._adjustCursors.bind(self));
-};
+  var self = this
+  return this._retrieveNextPage(this.before, true).then(
+    this._adjustCursors.bind(self)
+  )
+}
 
 /**
  * Queries for the next page from the current cursor point; this mutates
@@ -150,51 +160,55 @@ PageHelper.prototype.previousPage = function() {
  * @returns {external:Promise.<object>}
  */
 PageHelper.prototype.nextPage = function() {
-  var self = this;
-  return this._retrieveNextPage(this.after, false).then(this._adjustCursors.bind(self));
-};
+  var self = this
+  return this._retrieveNextPage(this.after, false).then(
+    this._adjustCursors.bind(self)
+  )
+}
 
 PageHelper.prototype._adjustCursors = function(page) {
   if (page.after !== undefined) {
-    this.after = page.after;
+    this.after = page.after
   }
 
   if (page.before !== undefined) {
-    this.before = page.before;
+    this.before = page.before
   }
 
-  return page.data;
-};
+  return page.data
+}
 
 PageHelper.prototype._consumePages = function(lambda, reverse) {
-  var self = this;
-  return function (page) {
+  var self = this
+  return function(page) {
     var data = []
     page.data.forEach(function(item) {
       if (item.document) {
-        item.instance = item.document;
+        item.instance = item.document
       }
       if (item.value && item.value.document) {
-        item.value.instance = item.value.document;
+        item.value.instance = item.value.document
       }
-      data.push(item);
-    });
-    lambda(data);
+      data.push(item)
+    })
+    lambda(data)
 
-    var nextCursor;
+    var nextCursor
     if (reverse) {
-      nextCursor = page.before;
+      nextCursor = page.before
     } else {
-      nextCursor = page.after;
+      nextCursor = page.after
     }
 
     if (nextCursor !== undefined) {
-      return self._retrieveNextPage(nextCursor, reverse).then(self._consumePages(lambda, reverse));
+      return self
+        ._retrieveNextPage(nextCursor, reverse)
+        .then(self._consumePages(lambda, reverse))
     } else {
-      return Promise.resolve();
+      return Promise.resolve()
     }
-  };
-};
+  }
+}
 
 /**
  *
@@ -202,32 +216,32 @@ PageHelper.prototype._consumePages = function(lambda, reverse) {
  * @private
  */
 PageHelper.prototype._retrieveNextPage = function(cursor, reverse) {
-  var opts = {};
-  objectAssign(opts, this.params);
-  var cursorOpts = opts.cursor || opts;
+  var opts = {}
+  objectAssign(opts, this.params)
+  var cursorOpts = opts.cursor || opts
 
   if (cursor !== undefined) {
     if (reverse) {
-      cursorOpts.before = cursor;
+      cursorOpts.before = cursor
     } else {
-      cursorOpts.after = cursor;
+      cursorOpts.after = cursor
     }
   } else {
     if (reverse) {
-      cursorOpts.before = null;
+      cursorOpts.before = null
     }
   }
 
-  var q = query.Paginate(this.set, opts);
+  var q = query.Paginate(this.set, opts)
 
   if (this._faunaFunctions.length > 0) {
     this._faunaFunctions.forEach(function(lambda) {
-      q = lambda(q);
-    });
+      q = lambda(q)
+    })
   }
 
-  return this.client.query(q);
-};
+  return this.client.query(q)
+}
 
 /**
  * @private
@@ -239,8 +253,8 @@ PageHelper.prototype._clone = function() {
     set: { value: this.set },
     _faunaFunctions: { value: this._faunaFunctions },
     before: { value: this.before },
-    after: { value: this.after }
-  });
-};
+    after: { value: this.after },
+  })
+}
 
-module.exports = PageHelper;
+module.exports = PageHelper

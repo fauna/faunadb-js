@@ -1,13 +1,13 @@
-'use strict';
+'use strict'
 
-var base64 = require('base64-js');
-var deprecate = require('util-deprecate');
-var errors = require('./errors');
-var Expr = require('./Expr');
-var util = require('util');
+var base64 = require('base64-js')
+var deprecate = require('util-deprecate')
+var errors = require('./errors')
+var Expr = require('./Expr')
+var util = require('util')
 
-var customInspect = util && util.inspect && util.inspect.custom;
-var stringify = (util && util.inspect) || JSON.stringify;
+var customInspect = util && util.inspect && util.inspect.custom
+var stringify = (util && util.inspect) || JSON.stringify
 
 /**
  * FaunaDB value types. Generally, these collections do not need to be instantiated
@@ -31,9 +31,9 @@ var stringify = (util && util.inspect) || JSON.stringify;
  * @abstract
  * @constructor
  */
-function Value() { }
+function Value() {}
 
-util.inherits(Value, Expr);
+util.inherits(Value, Expr)
 
 /**
  * FaunaDB ref.
@@ -50,14 +50,14 @@ util.inherits(Value, Expr);
  * @constructor
  */
 function Ref(id, collection, database) {
-  if (!id) throw new errors.InvalidValue('id cannot be null or undefined');
+  if (!id) throw new errors.InvalidValue('id cannot be null or undefined')
 
-  this.value = { id: id };
-  if (collection) this.value['collection'] = collection;
-  if (database) this.value['database'] = database;
+  this.value = { id: id }
+  if (collection) this.value['collection'] = collection
+  if (database) this.value['database'] = database
 }
 
-util.inherits(Ref, Value);
+util.inherits(Ref, Value)
 
 /**
  * Gets the collection part out of the Ref.
@@ -65,9 +65,11 @@ util.inherits(Ref, Value);
  * @member {string}
  * @name module:values~Ref#collection
  */
-Object.defineProperty(Ref.prototype, 'collection', { get: function() {
-  return this.value['collection'];
-} });
+Object.defineProperty(Ref.prototype, 'collection', {
+  get: function() {
+    return this.value['collection']
+  },
+})
 
 /**
  * DEPRECATED. Gets the class part out of the Ref.
@@ -75,9 +77,11 @@ Object.defineProperty(Ref.prototype, 'collection', { get: function() {
  * @member {string}
  * @name module:values~Ref#class
  */
-Object.defineProperty(Ref.prototype, 'class', {get: deprecate(function() {
-  return this.value['collection'];
-}, 'class is deprecated, use collection instead')});
+Object.defineProperty(Ref.prototype, 'class', {
+  get: deprecate(function() {
+    return this.value['collection']
+  }, 'class is deprecated, use collection instead'),
+})
 
 /**
  * Gets the database part out of the Ref.
@@ -85,9 +89,11 @@ Object.defineProperty(Ref.prototype, 'class', {get: deprecate(function() {
  * @member {Ref}
  * @name module:values~Ref#database
  */
-Object.defineProperty(Ref.prototype, 'database', { get: function() {
-  return this.value['database'];
-} });
+Object.defineProperty(Ref.prototype, 'database', {
+  get: function() {
+    return this.value['database']
+  },
+})
 
 /**
  * Gets the id part out of the Ref.
@@ -95,46 +101,50 @@ Object.defineProperty(Ref.prototype, 'database', { get: function() {
  * @member {Ref}
  * @name module:values~Ref#id
  */
-Object.defineProperty(Ref.prototype, 'id', { get: function() {
-  return this.value['id'];
-} });
+Object.defineProperty(Ref.prototype, 'id', {
+  get: function() {
+    return this.value['id']
+  },
+})
 
 /** @ignore */
 Ref.prototype.toJSON = function() {
-  return { '@ref': this.value };
-};
+  return { '@ref': this.value }
+}
 
 wrapToString(Ref, function() {
   var constructors = {
-    collections: "Collection",
-    databases: "Database",
-    indexes: "Index",
-    functions: "Function",
-    roles: "Role"
-  };
+    collections: 'Collection',
+    databases: 'Database',
+    indexes: 'Index',
+    functions: 'Function',
+    roles: 'Role',
+  }
 
   var toString = function(ref, prevDb) {
     if (ref.collection === undefined && ref.database === undefined)
-      return ref.id.charAt(0).toUpperCase() + ref.id.slice(1) + '(' + prevDb + ')';
+      return (
+        ref.id.charAt(0).toUpperCase() + ref.id.slice(1) + '(' + prevDb + ')'
+      )
 
-    var constructor = constructors[ref.collection.id];
+    var constructor = constructors[ref.collection.id]
     if (constructor !== undefined) {
-      var db = ref.database !== undefined ? ', ' +  ref.database.toString() : '';
-      return constructor + '("' + ref.id + '"' + db + ')';
+      var db = ref.database !== undefined ? ', ' + ref.database.toString() : ''
+      return constructor + '("' + ref.id + '"' + db + ')'
     }
 
-    var db = ref.database !== undefined ? ref.database.toString() : '';
+    var db = ref.database !== undefined ? ref.database.toString() : ''
 
-    return 'Ref(' + toString(ref.collection, db) + ', "' + ref.id + '")';
-  };
+    return 'Ref(' + toString(ref.collection, db) + ', "' + ref.id + '")'
+  }
 
-  return toString(this, '');
-});
+  return toString(this, '')
+})
 
 /** @ignore */
 Ref.prototype.valueOf = function() {
-  return this.value;
-};
+  return this.value
+}
 
 /**
  * Whether these are both Refs and have the same value.
@@ -142,13 +152,15 @@ Ref.prototype.valueOf = function() {
  * @returns {boolean}
  */
 Ref.prototype.equals = function(other) {
-  return (other instanceof Ref) &&
+  return (
+    other instanceof Ref &&
     this.id === other.id &&
     ((this.collection === undefined && other.collection === undefined) ||
       this.collection.equals(other.collection)) &&
     ((this.database === undefined && other.database === undefined) ||
       this.database.equals(other.database))
-};
+  )
+}
 
 var Native = {
   COLLECTIONS: new Ref('collections'),
@@ -156,20 +168,26 @@ var Native = {
   DATABASES: new Ref('databases'),
   FUNCTIONS: new Ref('functions'),
   ROLES: new Ref('roles'),
-  KEYS: new Ref('keys')
-};
+  KEYS: new Ref('keys'),
+}
 
 Native.fromName = function(name) {
-  switch(name) {
-    case 'collections': return Native.COLLECTIONS;
-    case 'indexes': return Native.INDEXES;
-    case 'databases': return Native.DATABASES;
-    case 'functions': return Native.FUNCTIONS;
-    case 'roles': return Native.ROLES;
-    case 'keys': return Native.KEYS;
+  switch (name) {
+    case 'collections':
+      return Native.COLLECTIONS
+    case 'indexes':
+      return Native.INDEXES
+    case 'databases':
+      return Native.DATABASES
+    case 'functions':
+      return Native.FUNCTIONS
+    case 'roles':
+      return Native.ROLES
+    case 'keys':
+      return Native.KEYS
   }
-  return new Ref(name);
-};
+  return new Ref(name)
+}
 
 /**
  * FaunaDB Set.
@@ -183,19 +201,19 @@ Native.fromName = function(name) {
  */
 function SetRef(value) {
   /** Raw query object. */
-  this.value = value;
+  this.value = value
 }
 
-util.inherits(SetRef, Value);
+util.inherits(SetRef, Value)
 
 wrapToString(SetRef, function() {
-  return Expr.toString(this.value);
-});
+  return Expr.toString(this.value)
+})
 
 /** @ignore */
 SetRef.prototype.toJSON = function() {
-  return { '@set': this.value };
-};
+  return { '@set': this.value }
+}
 
 /** FaunaDB time. See the [docs](https://app.fauna.com/documentation/reference/queryapi#special-type).
  *
@@ -205,15 +223,15 @@ SetRef.prototype.toJSON = function() {
  */
 function FaunaTime(value) {
   if (value instanceof Date) {
-    value = value.toISOString();
+    value = value.toISOString()
   } else if (!(value.charAt(value.length - 1) === 'Z')) {
-    throw new errors.InvalidValue('Only allowed timezone is \'Z\', got: ' + value);
+    throw new errors.InvalidValue("Only allowed timezone is 'Z', got: " + value)
   }
 
-  this.value = value;
+  this.value = value
 }
 
-util.inherits(FaunaTime, Value);
+util.inherits(FaunaTime, Value)
 
 /**
  * Returns the date wrapped by this object.
@@ -222,18 +240,20 @@ util.inherits(FaunaTime, Value);
  * @member {Date}
  * @name module:values~FaunaTime#date
  */
-Object.defineProperty(FaunaTime.prototype, 'date', { get: function() {
-  return new Date(this.value);
-} });
+Object.defineProperty(FaunaTime.prototype, 'date', {
+  get: function() {
+    return new Date(this.value)
+  },
+})
 
 wrapToString(FaunaTime, function() {
-  return 'Time("' + this.value + '")';
-});
+  return 'Time("' + this.value + '")'
+})
 
 /** @ignore */
 FaunaTime.prototype.toJSON = function() {
-  return { '@ts': this.value };
-};
+  return { '@ts': this.value }
+}
 
 /** FaunaDB date. See the [docs](https://app.fauna.com/documentation/reference/queryapi#special-type).
  *
@@ -245,34 +265,36 @@ FaunaTime.prototype.toJSON = function() {
 function FaunaDate(value) {
   if (value instanceof Date) {
     // The first 10 characters 'YYYY-MM-DD' are the date portion.
-    value = value.toISOString().slice(0, 10);
+    value = value.toISOString().slice(0, 10)
   }
 
   /**
    * ISO8601 date.
    * @type {string}
    */
-  this.value = value;
+  this.value = value
 }
 
-util.inherits(FaunaDate, Value);
+util.inherits(FaunaDate, Value)
 
 /**
  * @member {Date}
  * @name module:values~FaunaDate#date
  */
-Object.defineProperty(FaunaDate.prototype, 'date', { get: function() {
-  return new Date(this.value);
-} });
+Object.defineProperty(FaunaDate.prototype, 'date', {
+  get: function() {
+    return new Date(this.value)
+  },
+})
 
 wrapToString(FaunaDate, function() {
-  return 'Date("' + this.value + '")';
-});
+  return 'Date("' + this.value + '")'
+})
 
 /** @ignore */
-FaunaDate.prototype.toJSON = function()  {
-  return { '@date': this.value };
-};
+FaunaDate.prototype.toJSON = function() {
+  return { '@date': this.value }
+}
 
 /** FaunaDB bytes. See the [docs](https://app.fauna.com/documentation/reference/queryapi#special-type).
  *
@@ -284,26 +306,29 @@ FaunaDate.prototype.toJSON = function()  {
  */
 function Bytes(value) {
   if (value instanceof ArrayBuffer) {
-    this.value = new Uint8Array(value);
+    this.value = new Uint8Array(value)
   } else if (typeof value === 'string') {
-    this.value = base64.toByteArray(value);
+    this.value = base64.toByteArray(value)
   } else if (value instanceof Uint8Array) {
-    this.value = value;
+    this.value = value
   } else {
-    throw new errors.InvalidValue('Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: ' + stringify(value));
+    throw new errors.InvalidValue(
+      'Bytes type expect argument to be either Uint8Array|ArrayBuffer|string, got: ' +
+        stringify(value)
+    )
   }
 }
 
-util.inherits(Bytes, Value);
+util.inherits(Bytes, Value)
 
 wrapToString(Bytes, function() {
-  return 'Bytes("' + base64.fromByteArray(this.value) + '")';
-});
+  return 'Bytes("' + base64.fromByteArray(this.value) + '")'
+})
 
 /** @ignore */
-Bytes.prototype.toJSON = function()  {
-  return { '@bytes': base64.fromByteArray(this.value) };
-};
+Bytes.prototype.toJSON = function() {
+  return { '@bytes': base64.fromByteArray(this.value) }
+}
 
 /** FaunaDB query. See the [docs](https://app.fauna.com/documentation/reference/queryapi#special-type).
  *
@@ -312,27 +337,27 @@ Bytes.prototype.toJSON = function()  {
  * @constructor
  */
 function Query(value) {
-  this.value = value;
+  this.value = value
 }
 
-util.inherits(Query, Value);
+util.inherits(Query, Value)
 
 wrapToString(Query, function() {
-  return 'Query(' + Expr.toString(this.value) + ')';
-});
+  return 'Query(' + Expr.toString(this.value) + ')'
+})
 
 /** @ignore */
-Query.prototype.toJSON = function()  {
-  return { '@query': this.value };
-};
+Query.prototype.toJSON = function() {
+  return { '@query': this.value }
+}
 
 /** @ignore */
 function wrapToString(type, fn) {
-  type.prototype.toString = fn;
-  type.prototype.inspect = fn;
+  type.prototype.toString = fn
+  type.prototype.inspect = fn
 
   if (customInspect) {
-    type.prototype[customInspect] = fn;
+    type.prototype[customInspect] = fn
   }
 }
 
@@ -344,5 +369,5 @@ module.exports = {
   FaunaTime: FaunaTime,
   FaunaDate: FaunaDate,
   Bytes: Bytes,
-  Query: Query
-};
+  Query: Query,
+}
