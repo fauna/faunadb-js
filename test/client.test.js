@@ -89,6 +89,28 @@ describe('Client', () => {
 
     return Promise.all([p1, p2])
   })
+
+  test('sets authorization header per query', async function() {
+    const resultWithoutOptions = await client.query(query.Do(1))
+    const resultWithOptions = await client.query(query.Do(1), {
+      secret: util.clientSecret,
+    })
+
+    return expect(resultWithoutOptions).toEqual(resultWithOptions)
+  })
+
+  test('sets authorization header per paginate', async function() {
+    const resultWithoutOptions = await client
+      .paginate(query.Collections())
+      .nextPage()
+    const resultWithOptions = await client
+      .paginate(query.Collections(), null, {
+        secret: util.clientSecret,
+      })
+      .nextPage()
+
+    return expect(resultWithoutOptions).toEqual(resultWithOptions)
+  })
 })
 
 function assertHeader(headers, name) {

@@ -43,11 +43,18 @@ var objectAssign = require('object-assign')
  *   The set to paginate.
  * @param {?Object} params
  *   Parameters to be passed to the FaunaDB Paginate function.
+ * @param {?Object} options
+ *   Object that configures the current pagination, overriding FaunaDB client options.
+ * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://app.fauna.com/documentation/intro/security))
  * @constructor
  */
-function PageHelper(client, set, params) {
+function PageHelper(client, set, params, options) {
   if (params === undefined) {
     params = {}
+  }
+
+  if (options === undefined) {
+    options = {}
   }
 
   this.reverse = false
@@ -67,6 +74,9 @@ function PageHelper(client, set, params) {
     this.after = cursorParams.after
     delete cursorParams.after
   }
+
+  this.options = {}
+  objectAssign(this.options, options)
 
   this.client = client
   this.set = set
@@ -240,7 +250,7 @@ PageHelper.prototype._retrieveNextPage = function(cursor, reverse) {
     })
   }
 
-  return this.client.query(q)
+  return this.client.query(q, this.options)
 }
 
 /**

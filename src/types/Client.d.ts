@@ -12,9 +12,13 @@ export interface ClientConfig {
   keepAlive?: boolean
 }
 
+export interface QueryOptions {
+  secret?: string
+}
+
 export default class Client {
   constructor(opts?: ClientConfig)
-  query<T = object>(expr: Expr): Promise<T>
-  paginate(expr: Expr): PageHelper
+  query<T = object>(expr: Expr, options?: QueryOptions): Promise<T>
+  paginate(expr: Expr, params?: object, options?: QueryOptions): PageHelper
   ping(scope?: string, timeout?: number): Promise<string>
 }
