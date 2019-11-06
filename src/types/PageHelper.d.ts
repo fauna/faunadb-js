@@ -1,9 +1,14 @@
-import Client from './Client'
+import Client, { QueryOptions } from './Client'
 import Expr from './Expr'
 import { Lambda } from './query'
 
 export default class PageHelper {
-  constructor(client: Client, set: Expr, params?: object)
+  constructor(
+    client: Client,
+    set: Expr,
+    params?: object,
+    options?: QueryOptions
+  )
 
   map(lambda: Lambda): PageHelper
   filter(lambda: Lambda): PageHelper

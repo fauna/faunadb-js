@@ -88,10 +88,14 @@ function Client(options) {
  * and the query functions in this documentation.
  * @param expression {Expr}
  *   The query to execute. Created from query functions such as {@link add}.
+ * @param {?Object} options
+ *   Object that configures the current query, overriding FaunaDB client options.
+ * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://app.fauna.com/documentation/intro/security))
  * @return {external:Promise<Object>} FaunaDB response object.
  */
-Client.prototype.query = function(expression) {
-  return this._execute('POST', '', query.wrap(expression))
+
+Client.prototype.query = function(expression, options) {
+  return this._execute('POST', '', query.wrap(expression), null, options)
 }
 
 /**
@@ -101,12 +105,16 @@ Client.prototype.query = function(expression) {
  *   The Query expression to paginate over.
  * @param params {Object}
  *   Options to be passed to the paginate function. See [paginate](https://app.fauna.com/documentation/reference/queryapi#read-functions).
+ * @param options {?Object}
+ *   Object that configures the current pagination queries, overriding FaunaDB client options.
+ * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://app.fauna.com/documentation/intro/security))
  * @returns {PageHelper} A PageHelper that wraps the provided expression.
  */
-Client.prototype.paginate = function(expression, params) {
+Client.prototype.paginate = function(expression, params, options) {
   params = defaults(params, {})
+  options = defaults(options, {})
 
-  return new PageHelper(this, expression, params)
+  return new PageHelper(this, expression, params, options)
 }
 
 /**
@@ -140,7 +148,7 @@ Client.prototype.syncLastTxnTime = function(time) {
   }
 }
 
-Client.prototype._execute = function(method, path, data, query) {
+Client.prototype._execute = function(method, path, data, query, options) {
   query = defaults(query, null)
 
   if (path instanceof values.Ref) {
@@ -156,7 +164,7 @@ Client.prototype._execute = function(method, path, data, query) {
   var body =
     ['GET', 'HEAD'].indexOf(method) >= 0 ? undefined : JSON.stringify(data)
 
-  return this._performRequest(method, path, body, query).then(function(
+  return this._performRequest(method, path, body, query, options).then(function(
     response
   ) {
     var endTime = Date.now()
@@ -191,16 +199,24 @@ Client.prototype._execute = function(method, path, data, query) {
   })
 }
 
-Client.prototype._performRequest = function(method, path, body, query) {
+Client.prototype._performRequest = function(
+  method,
+  path,
+  body,
+  query,
+  options
+) {
   var url = parse(this._baseUrl)
   url.set('pathname', path)
   url.set('query', query)
+  options = defaults(options, {})
+  const secret = options.secret || this._secret
 
   return fetch(url.href, {
     agent: this._keepAliveEnabledAgent,
     body: body,
     headers: util.removeNullAndUndefinedValues({
-      Authorization: this._secret && secretHeader(this._secret),
+      Authorization: secret && secretHeader(secret),
       'X-FaunaDB-API-Version': APIVersion,
       'X-Fauna-Driver': 'Javascript',
       'X-Last-Seen-Txn': this._lastSeen,

@@ -137,6 +137,27 @@ helper
 [See the JSDocs](https://fauna.github.com/faunadb-js/PageHelper.html) for
 more information on the pagination helper.
 
+#### Per-query options
+
+Some options (currently only `secret`) can be overriden on a per-query basis:
+
+```javascript
+var createP = client.query(
+  q.Create(q.Collection('test'), { data: { testField: 'testValue' } }),
+  { secret: 'YOUR_FAUNADB_SECRET' }
+)
+```
+
+```javascript
+var helper = client.paginate(
+  q.Match(q.Index('test_index'), 'example-term'),
+  null,
+  {
+    secret: 'YOUR_FAUNADB_SECRET',
+  }
+)
+```
+
 ## Client Development
 
 Run `yarn` to install dependencies.
