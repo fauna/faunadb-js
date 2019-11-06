@@ -39,6 +39,30 @@ export module query {
   export function IsEmpty(collection: ExprArg): Expr
   export function IsNonEmpty(collection: ExprArg): Expr
 
+  export function IsNumber(expr: ExprArg): Expr
+  export function IsDouble(expr: ExprArg): Expr
+  export function IsInteger(expr: ExprArg): Expr
+  export function IsBoolean(expr: ExprArg): Expr
+  export function IsNull(expr: ExprArg): Expr
+  export function IsBytes(expr: ExprArg): Expr
+  export function IsTimestamp(expr: ExprArg): Expr
+  export function IsDate(expr: ExprArg): Expr
+  export function IsString(expr: ExprArg): Expr
+  export function IsArray(expr: ExprArg): Expr
+  export function IsObject(expr: ExprArg): Expr
+  export function IsRef(expr: ExprArg): Expr
+  export function IsSet(expr: ExprArg): Expr
+  export function IsDoc(expr: ExprArg): Expr
+  export function IsLambda(expr: ExprArg): Expr
+  export function IsCollection(expr: ExprArg): Expr
+  export function IsDatabase(expr: ExprArg): Expr
+  export function IsIndex(expr: ExprArg): Expr
+  export function IsFunction(expr: ExprArg): Expr
+  export function IsKey(expr: ExprArg): Expr
+  export function IsToken(expr: ExprArg): Expr
+  export function IsCredentials(expr: ExprArg): Expr
+  export function IsRole(expr: ExprArg): Expr
+
   export function Get(ref: ExprArg, ts?: ExprArg): Expr
   export function KeyFromSecret(secret: ExprArg): Expr
   export function Reduce(

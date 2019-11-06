@@ -47,11 +47,14 @@ function takeObjectKeys(object) {
   return out
 }
 
-function getClient(opts) {
-  var cfg = util.removeUndefinedValues(
+function getCfg() {
+  return util.removeUndefinedValues(
     takeObjectKeys(testConfig, 'domain', 'scheme', 'port')
   )
-  return new Client(objectAssign({ secret: clientSecret }, cfg, opts))
+}
+
+function getClient(opts) {
+  return new Client(objectAssign({ secret: clientSecret }, getCfg(), opts))
 }
 
 function assertRejected(promise, errorType) {
@@ -140,6 +143,7 @@ afterAll(() => {
 })
 
 module.exports = {
+  getCfg: getCfg,
   getClient: getClient,
   assertRejected: assertRejected,
   client: client,

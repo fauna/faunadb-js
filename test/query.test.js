@@ -4,6 +4,7 @@ var errors = require('../src/errors')
 var values = require('../src/values')
 var query = require('../src/query')
 var util = require('./util')
+var Client = require('../src/Client')
 
 var Ref = query.Ref
 
@@ -14,6 +15,8 @@ var FaunaDate = values.FaunaDate,
   Native = values.Native
 
 var client
+var serverClient
+var adminClient
 
 var collectionRef,
   nIndexRef,
@@ -25,9 +28,22 @@ var collectionRef,
   thimbleCollectionRef
 
 describe('query', () => {
-  beforeAll(() => {
+  beforeAll(async () => {
     // Hideous way to ensure that the client is initialized.
     client = util.client()
+
+    const rootClient = util.rootClient
+    const cfg = util.getCfg()
+    const dbRef = await rootClient.query(util.dbRef).then(pluckRef)
+    const serverKey = await rootClient.query(
+      query.CreateKey({ database: dbRef, role: 'server' })
+    )
+    const adminKey = await rootClient.query(
+      query.CreateKey({ database: dbRef, role: 'admin' })
+    )
+
+    serverClient = new Client({ ...cfg, secret: serverKey.secret })
+    adminClient = new Client({ ...cfg, secret: adminKey.secret })
 
     return client
       .query(query.CreateCollection({ name: 'widgets' }))
@@ -447,6 +463,156 @@ describe('query', () => {
 
       return Promise.all([p1, p2, p3, p4])
     })
+  })
+
+  // Type check functions
+
+  test('type check', async function() {
+    const coll = await serverClient
+      .query(query.CreateCollection({ name: util.randomString('collection_') }))
+      .then(pluckRef)
+    const index = await serverClient
+      .query(
+        query.CreateIndex({
+          name: util.randomString('index_'),
+          source: coll,
+          active: true,
+        })
+      )
+      .then(pluckRef)
+    const doc = await serverClient
+      .query(query.Create(coll, { credentials: { password: 'sekret' } }))
+      .then(pluckRef)
+    const db = await adminClient
+      .query(query.CreateDatabase({ name: util.randomString('db_') }))
+      .then(pluckRef)
+    const fn = await serverClient
+      .query(
+        query.CreateFunction({
+          name: util.randomString('fn_'),
+          body: query.Query(query.Lambda('x', query.Var('x'))),
+        })
+      )
+      .then(pluckRef)
+    const key = await adminClient
+      .query(query.CreateKey({ database: db, role: 'admin' }))
+      .then(pluckRef)
+    const tok = await serverClient.query(
+      query.Login(doc, { password: 'sekret' })
+    )
+    const role = await adminClient
+      .query(
+        query.CreateRole({
+          name: util.randomString('role_'),
+          membership: [],
+          privileges: [],
+        })
+      )
+      .then(pluckRef)
+    const sessionClient = new Client({ ...util.getCfg(), secret: tok.secret })
+    const cred = await sessionClient
+      .query(query.Get(query.Ref('credentials/self')))
+      .then(pluckRef)
+    const token = tok.ref
+
+    const trueExprs = [
+      query.IsNumber(3.14),
+      query.IsNumber(10),
+      query.IsDouble(3.14),
+      query.IsInteger(10),
+      query.IsBoolean(true),
+      query.IsBoolean(false),
+      query.IsNull(null),
+      query.IsBytes(new Uint8Array([1, 2, 3, 4])),
+      query.IsTimestamp(query.Now()),
+      query.IsTimestamp(query.Epoch(1, 'second')),
+      query.IsTimestamp(query.Time('1970-01-01T00:00:00Z')),
+      query.IsDate(query.ToDate(query.Now())),
+      query.IsDate(query.Date('1970-01-01')),
+      query.IsString('string'),
+      query.IsArray([10]),
+      query.IsObject({ x: 10 }),
+      query.IsObject(query.Paginate(query.Collections())),
+      query.IsObject(query.Get(doc)),
+      query.IsRef(coll),
+      query.IsSet(query.Collections()),
+      query.IsSet(query.Match(index)),
+      query.IsSet(query.Union(query.Match(index))),
+      query.IsDoc(doc),
+      query.IsDoc(query.Get(doc)),
+      query.IsLambda(query.Query(query.Lambda('x', query.Var('x')))),
+      query.IsCollection(coll),
+      query.IsCollection(query.Get(coll)),
+      query.IsDatabase(db),
+      query.IsDatabase(query.Get(db)),
+      query.IsIndex(index),
+      query.IsIndex(query.Get(index)),
+      query.IsFunction(fn),
+      query.IsFunction(query.Get(fn)),
+      query.IsKey(key),
+      query.IsKey(query.Get(key)),
+      query.IsToken(token),
+      query.IsToken(query.Get(token)),
+      query.IsCredentials(cred),
+      query.IsCredentials(query.Get(cred)),
+      query.IsRole(role),
+      query.IsRole(query.Get(role)),
+    ]
+
+    const p1 = assertQueryWithClient(
+      adminClient,
+      trueExprs,
+      trueExprs.map(() => true)
+    )
+
+    const falseExprs = [
+      query.IsNumber('string'),
+      query.IsNumber([]),
+      query.IsDouble(10),
+      query.IsInteger(3.14),
+      query.IsBoolean('string'),
+      query.IsBoolean(10),
+      query.IsNull('string'),
+      query.IsBytes([0x1, 0x2, 0x3, 0x4]),
+      query.IsTimestamp(query.ToDate(query.Now())),
+      query.IsTimestamp(10),
+      query.IsDate(query.Now()),
+      query.IsDate(10),
+      query.IsString([]),
+      query.IsString(10),
+      query.IsArray({ x: 10 }),
+      query.IsObject([10]),
+      query.IsRef(query.Match(index)),
+      query.IsRef(10),
+      query.IsSet('string'),
+      query.IsDoc({}),
+      query.IsLambda(fn),
+      query.IsLambda(query.Get(fn)),
+      query.IsCollection(db),
+      query.IsCollection(query.Get(db)),
+      query.IsDatabase(coll),
+      query.IsDatabase(query.Get(coll)),
+      query.IsIndex(coll),
+      query.IsIndex(query.Get(db)),
+      query.IsFunction(index),
+      query.IsFunction(query.Get(coll)),
+      query.IsKey(db),
+      query.IsKey(query.Get(index)),
+      query.IsToken(index),
+      query.IsToken(query.Get(cred)),
+      query.IsCredentials(token),
+      query.IsCredentials(query.Get(role)),
+      query.IsRole(coll),
+      query.IsRole(query.Get(index)),
+    ]
+
+    const p2 = assertQueryWithClient(
+      adminClient,
+      falseExprs,
+      falseExprs.map(() => false)
+    )
+
+    return Promise.all([p1, p2])
   })
 
   // Read functions
@@ -2371,4 +2537,8 @@ function range(start, end) {
   for (var i = start; i <= end; i++) values.push(i)
 
   return values
+}
+
+function pluckRef(response) {
+  return response.ref
 }

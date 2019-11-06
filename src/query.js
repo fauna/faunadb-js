@@ -434,6 +434,307 @@ function IsNonEmpty(collection) {
   return new Expr({ is_nonempty: wrap(collection) })
 }
 
+// Type check functions
+
+/**
+ * Check if the expression is a number.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isnumber">IsNumber</a>
+ */
+function IsNumber(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_number: wrap(expr) })
+}
+
+/**
+ * Check if the expression is a double.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isdouble">IsDouble</a>
+ */
+function IsDouble(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_double: wrap(expr) })
+}
+
+/**
+ * Check if the expression is an integer.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isinteger">IsInteger</a>
+ */
+function IsInteger(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_integer: wrap(expr) })
+}
+
+/**
+ * Check if the expression is a boolean.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isboolean">IsBoolean</a>
+ */
+function IsBoolean(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_boolean: wrap(expr) })
+}
+
+/**
+ * Check if the expression is null.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isnull">IsNull</a>
+ */
+function IsNull(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_null: wrap(expr) })
+}
+
+/**
+ * Check if the expression is a byte array.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isbytes">IsBytes</a>
+ */
+function IsBytes(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_bytes: wrap(expr) })
+}
+
+/**
+ * Check if the expression is a timestamp.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/istimestamp">IsTimestamp</a>
+ */
+function IsTimestamp(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_timestamp: wrap(expr) })
+}
+
+/**
+ * Check if the expression is a date.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isdate">IsDate</a>
+ */
+function IsDate(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_date: wrap(expr) })
+}
+
+/**
+ * Check if the expression is a string.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isstring">IsString</a>
+ */
+function IsString(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_string: wrap(expr) })
+}
+
+/**
+ * Check if the expression is an array.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isarray">IsArray</a>
+ */
+function IsArray(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_array: wrap(expr) })
+}
+
+/**
+ * Check if the expression is an object.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isobject">IsObject</a>
+ */
+function IsObject(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_object: wrap(expr) })
+}
+
+/**
+ * Check if the expression is a reference.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isref">IsRef</a>
+ */
+function IsRef(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_ref: wrap(expr) })
+}
+
+/**
+ * Check if the expression is a set.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isset">IsSet</a>
+ */
+function IsSet(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_set: wrap(expr) })
+}
+
+/**
+ * Check if the expression is a document (either a reference or an instance).
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isdoc">IsDoc</a>
+ */
+function IsDoc(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_doc: wrap(expr) })
+}
+
+/**
+ * Check if the expression is a lambda.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/islambda">IsLambda</a>
+ */
+function IsLambda(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_lambda: wrap(expr) })
+}
+
+/**
+ * Check if the expression is a collection.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/iscollection">IsCollection</a>
+ */
+function IsCollection(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_collection: wrap(expr) })
+}
+
+/**
+ * Check if the expression is a database.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isdatabase">IsDatabase</a>
+ */
+function IsDatabase(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_database: wrap(expr) })
+}
+
+/**
+ * Check if the expression is an index.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isindex">IsIndex</a>
+ */
+function IsIndex(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_index: wrap(expr) })
+}
+
+/**
+ * Check if the expression is a function.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isfunction">IsFunction</a>
+ */
+function IsFunction(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_function: wrap(expr) })
+}
+
+/**
+ * Check if the expression is a key.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/iskey">IsKey</a>
+ */
+function IsKey(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_key: wrap(expr) })
+}
+
+/**
+ * Check if the expression is a token.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/istoken">IsToken</a>
+ */
+function IsToken(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_token: wrap(expr) })
+}
+
+/**
+ * Check if the expression is credentials.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/iscredentials">IsCredentials</a>
+ */
+function IsCredentials(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_credentials: wrap(expr) })
+}
+
+/**
+ * Check if the expression is a role.
+ *
+ * @param {module:query~ExprArg} expr
+ *   The expression to check
+ * @return {Expr}
+ * @see <a href="https://docs.fauna.com/fauna/current/api/fql/functions/isrole">IsRole</a>
+ */
+function IsRole(expr) {
+  arity.exact(1, arguments)
+  return new Expr({ is_role: wrap(expr) })
+}
+
 // Read functions
 
 /**
@@ -2670,6 +2971,29 @@ module.exports = {
   Append: Append,
   IsEmpty: IsEmpty,
   IsNonEmpty: IsNonEmpty,
+  IsNumber: IsNumber,
+  IsDouble: IsDouble,
+  IsInteger: IsInteger,
+  IsBoolean: IsBoolean,
+  IsNull: IsNull,
+  IsBytes: IsBytes,
+  IsTimestamp: IsTimestamp,
+  IsDate: IsDate,
+  IsString: IsString,
+  IsArray: IsArray,
+  IsObject: IsObject,
+  IsRef: IsRef,
+  IsSet: IsSet,
+  IsDoc: IsDoc,
+  IsLambda: IsLambda,
+  IsCollection: IsCollection,
+  IsDatabase: IsDatabase,
+  IsIndex: IsIndex,
+  IsFunction: IsFunction,
+  IsKey: IsKey,
+  IsToken: IsToken,
+  IsCredentials: IsCredentials,
+  IsRole: IsRole,
   Get: Get,
   KeyFromSecret: KeyFromSecret,
   Reduce: Reduce,
