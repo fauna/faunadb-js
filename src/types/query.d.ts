@@ -1,6 +1,6 @@
 import Expr from './Expr'
 
-type ExprVal = Expr | string | number | boolean | object
+type ExprVal = Expr | string | number | boolean | object | null
 type ExprArg = ExprVal | Array<ExprVal>
 export type Lambda = (...vars: any[]) => Expr
 
