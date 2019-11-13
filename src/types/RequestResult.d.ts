@@ -2,7 +2,6 @@ import Client from './Client'
 
 export default class RequestResult {
   constructor(
-    client: Client,
     method: string,
     path: string,
     query: object,
@@ -16,6 +15,5 @@ export default class RequestResult {
     endTime: Date
   )
 
-  auth: string
   timeTaken: number
 }
