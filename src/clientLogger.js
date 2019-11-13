@@ -51,8 +51,8 @@ var json = require('./_json');
  * client.ping() // Logs the request and response.
  */
 function logger(loggerFunction) {
-  return function(requestResult) {
-    return loggerFunction(showRequestResult(requestResult));
+  return function(requestResult, client) {
+    return loggerFunction(showRequestResult(requestResult), client);
   };
 }
 

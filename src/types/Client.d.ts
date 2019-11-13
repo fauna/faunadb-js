@@ -8,7 +8,7 @@ export interface ClientConfig {
   port?: number;
   secret: string;
   timeout?: number;
-  observer?: (res: RequestResult) => void;
+  observer?: (res: RequestResult, client: Client) => void;
   keepAlive?: boolean;
 }
 

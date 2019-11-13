@@ -162,7 +162,6 @@ Client.prototype._execute = function (method, path, data, query) {
     var responseText = response.text;
     var responseObject = json.parseJSON(responseText);
     var requestResult = new RequestResult(
-      self,
       method, path, query, body, data,
       responseText, responseObject, response.status, responseHeadersAsObject(response),
       startTime, endTime);
@@ -173,7 +172,7 @@ Client.prototype._execute = function (method, path, data, query) {
     }
 
     if (self._observer != null) {
-      self._observer(requestResult);
+      self._observer(requestResult, self);
     }
 
     errors.FaunaHTTPError.raiseForStatusCode(requestResult);

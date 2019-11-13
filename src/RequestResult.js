@@ -4,8 +4,6 @@
  * A structure containing the request and response context for a given FaunaDB request.
  * Provided to an observer function optionally defined in the {@link Client} constructor.
  *
- * @param {Client} client
- *   The FaunaDB client used to execute the request.
  * @param {'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'} method
  *   The HTTP method used in the request.
  * @param {string} path
@@ -30,10 +28,7 @@
  *   The time the response was received by the client.
  * @constructor
  */
-function RequestResult(client, method, path, query, requestRaw, requestContent, responseRaw, responseContent, statusCode, responseHeaders, startTime, endTime) {
-  /** @type {Client} */
-  this.client = client;
-
+function RequestResult(method, path, query, requestRaw, requestContent, responseRaw, responseContent, statusCode, responseHeaders, startTime, endTime) {
   /** @type {'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'} */
   this.method = method;
 
@@ -75,14 +70,6 @@ function RequestResult(client, method, path, query, requestRaw, requestContent, 
   /** @type {number} */
   this.endTime = endTime;
 }
-
-/**
- * Returns the auth object configured in the client.
- * @type {{user: string, pass: string}}
- */
-Object.defineProperty(RequestResult.prototype, 'auth', { get: function() {
-  return this.client._secret;
-} });
 
 /**
  * `this.endTime - this.startTime`: Time taken in milliseconds.

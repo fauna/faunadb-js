@@ -87,7 +87,7 @@ function captureLogged(clientAction, clientParams) {
 
   var logged;
   var loggedClient = util.getClient(objectAssign({
-    observer: logger(function (str) {
+    observer: logger(function (str, client) {
       logged = str;
     })
   }, clientParams));
