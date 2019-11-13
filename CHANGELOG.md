@@ -2,7 +2,10 @@
 - Add TimeAdd, TimeSubtract, TimeDiff
 - Add SelectAsIndex
 
-## 2.9.3 (current)
+## 2.9.4 (current)
+- Remove `client` from `RequestResult` to prevent accidental logging of secret
+
+## 2.9.3
 - Replaced `isomorphic-unfetch` with [`cross-fetch`](https://github.com/lquixada/cross-fetch)
 - No longer requiring http/s libraries in browser environments
 
