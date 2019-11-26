@@ -1,15 +1,23 @@
-## Future release
-- Add TimeAdd, TimeSubtract, TimeDiff
-- Add SelectAsIndex
+## 2.10.0
 
-## 2.9.3 (current)
+- Add ToDouble, ToInteger
+- Add ToObject, ToArray
+- Add Any, All
+- Add TimeAdd, TimeSubtract, TimeDiff
+- Removed `es6-promise` dependency
+- Removed `client` from `RequestResult` to prevent accidental logging of secret
+
+## 2.9.3
+
 - Replaced `isomorphic-unfetch` with [`cross-fetch`](https://github.com/lquixada/cross-fetch)
 - No longer requiring http/s libraries in browser environments
 
 ## 2.9.2
+
 - Bug fix related to `require('url')` in browsers
 
 ## 2.9.1
+
 - Add Count, Mean, Sum, Min, Max
 - Add StartsWith, EndsWith, ContainsStr, ContainsStrRegex, RegexEscape
 - Add MoveDatabase
@@ -21,6 +29,7 @@
 - Added support for `cursor` option with `PageHelper`
 
 ## 2.8.1
+
 - Keep alive connections enabled on NodeJS environments
 - Enhance SetRef toString()
 - Add generic type for client.query()
@@ -29,9 +38,11 @@
 - Fix npm security warnings
 
 ## 2.8.0
+
 - Add stdlib functions: Reduce(), Merge(), Range(), Format()
 
 ## 2.7.0
+
 - Add stdlib time functions ToSeconds(), ToMillis(), ToMicros(), DayOfWeek(),
   DayOfMonth(), DayOfYear(), Month(), Hour(), Minute(), Second()
 - Support new schema names: Class -> Collection; Instance -> Document
@@ -41,10 +52,12 @@
 - Add functions for RBAC: CreateRole(), Role(), Roles()
 
 ## 2.6.1
+
 - Make the FaunaClient.query(..) function generic for Typescript
 - Temporarily disable X-Last-Seen-Txn header due to CORS issues
 
 ## 2.6.0
+
 - Add stdlib math functions Abs(), Asin(), Acos(), Atan(), BitAnd(), BitNot(),
   BitOr(), BitXor(), Ceil(), Cos(), Cosh(), Degrees(), Divide(), Exp(), Floor(),
   Hypot(), Ln(), Log(), Max(), Min(), Modulo(), Pow(), Radians(), Round(),
@@ -56,19 +69,23 @@
 - Expose last seen txn time via `getLastTxnTime()`
 
 ## 2.5.2 (September 26, 2018)
+
 - Fix README example
 - Fix min/max parameters on ngram function
 - Update documentation with correct links
 
 ## 2.5.1 (September 7, 2018)
+
 - Fix a bug on `Do()` function that was preventing expressions with only one statement
 - Fix bug on string formatter of expressions types
 - Adds support for Symbol type
 
 ## 2.5.0 (August 1, 2018)
+
 - Add support for the X-Last-Seen-Txn header
 
 ## 2.1.0 (July 25, 2018)
+
 - Bug fix: Typescript functions that receive lambda should support lambdas created
   by `Lambda()` function.
 - Adds `to_string`, `to_number`, `to_time`, and `to_date` functions
@@ -76,15 +93,18 @@
 - Adds `@bytes` constructor on query api
 
 ## 2.0.2 (March 28, 2018)
+
 - Bug fix: functions with optional scope parameter were failing when scope was
   omitted.
 
 ## 2.0.1 (March 24, 2018)
+
 - Adds `ngram` function
 - Adds `is_empty` and `is_nonempty` functions
 - Provide a raw view of the query in the RequestResult
 
 ## 2.0.0 (March 19, 2018)
+
 - Adds support for @query type (user defined functions)
 - Adds support for recursive references
 - Removes `get`, `post`, `put`, `patch` and `delete` methods from `Client` class
@@ -97,22 +117,28 @@
 - Adds `select_all` function
 
 ## 1.1.2 (July 06, 2017)
+
 - Fix typescript declaration file to include default types
 
 ## 1.1.1 (March 28, 2017)
+
 - Fix wrap of literal objects for lambda form of let expression
 
 ## 1.1.0 (March 22, 2017)
+
 - Accept lambdas at Let function
 
 ## 1.0.1 (March 21, 2017)
+
 - Fix wrap of Select's default parameter in order to allow other types rather
   than Object.
 
 ## 1.0.0 (March 13, 2017)
+
 - Official release
 
 ## 0.2.4 (March 3, 2017)
+
 - Using literal strings as Error class names to avoid problems with minified
   code
 
