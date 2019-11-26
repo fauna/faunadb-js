@@ -191,7 +191,6 @@ export module query {
   export function Contains(path: ExprArg, _in: ExprArg): Expr
   export function Select(path: ExprArg, from: ExprArg, _default?: ExprArg): Expr
   export function SelectAll(path: ExprArg, from: ExprArg): Expr
-  export function SelectAsIndex(path: ExprArg, from: ExprArg): Expr
   export function Abs(expr: ExprArg): Expr
   export function Add(...args: ExprArg[]): Expr
   export function BitAnd(...args: ExprArg[]): Expr
