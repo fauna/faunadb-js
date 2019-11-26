@@ -5,6 +5,9 @@
 - Add Any, All
 - Add TimeAdd, TimeSubtract, TimeDiff
 - Removed `es6-promise` dependency
+
+## 2.9.4
+
 - Removed `client` from `RequestResult` to prevent accidental logging of secret
 
 ## 2.9.3
