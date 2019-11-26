@@ -1981,25 +1981,11 @@ function Select(path, from, _default) {
  *   The object to select from
  * @return {Expr}
  *
- * @deprecated use SelectAsIndex instead
+ * @deprecated avoid using
  */
 function SelectAll(path, from) {
   arity.exact(2, arguments)
   return new Expr({ select_all: wrap(path), from: wrap(from) })
-}
-
-/**
- * See the [docs](https://docs.fauna.com/fauna/current/api/fql/functions/selectasindex).
- *
- * @param {module:query~ExprArg} path
- *   An array representing a path to pull from an object.
- * @param {module:query~ExprArg} from
- *   The object to select from
- * @return {Expr}
- */
-function SelectAsIndex(path, from) {
-  arity.exact(2, arguments)
-  return new Expr({ select_as_index: wrap(path), from: wrap(from) })
 }
 
 /**
@@ -3007,7 +2993,7 @@ module.exports = {
   Remove: Remove,
   CreateClass: deprecate(
     CreateClass,
-    'CreateClass() is deprecated, use CreateCOllection() instead'
+    'CreateClass() is deprecated, use CreateCollection() instead'
   ),
   CreateCollection: CreateCollection,
   CreateDatabase: CreateDatabase,
@@ -3083,11 +3069,7 @@ module.exports = {
   Equals: Equals,
   Contains: Contains,
   Select: Select,
-  SelectAll: deprecate(
-    SelectAll,
-    'SelectAll() is deprecated, use SelectAsIndex() instead'
-  ),
-  SelectAsIndex: SelectAsIndex,
+  SelectAll: deprecate(SelectAll, 'SelectAll() is deprecated. Avoid use.'),
   Abs: Abs,
   Add: Add,
   BitAnd: BitAnd,
