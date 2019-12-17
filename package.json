@@ -25,13 +25,14 @@
     "browserify": "browserify index.js --standalone faunadb -o dist/faunadb.js",
     "browserify-min": "browserify index.js --standalone faunadb | terser -c -m -o dist/faunadb-min.js",
     "prettify": "prettier --write \"{src,test}/**/*.{js,ts}\"",
-    "test": "jest --env=node ./test"
+    "test": "jest --env=node --verbose=false ./test"
   },
   "types": "index.d.ts",
   "dependencies": {
     "base64-js": "^1.2.0",
     "btoa-lite": "^1.0.0",
     "cross-fetch": "^3.0.4",
+    "dotenv": "^8.2.0",
     "fn-annotate": "^1.1.3",
     "object-assign": "^4.1.0",
     "url-parse": "^1.4.7",

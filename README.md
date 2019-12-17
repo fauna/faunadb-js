@@ -169,17 +169,20 @@ a `Promise` polyfill.
 
 ### Testing
 
+The driver tests need to connect to a FaunaDB so we recommend you setup one locally. The fast way is running a docker image like `docker run --rm --name faunadb -p 8443:8443 fauna/faunadb`.
+
+After have the faunadb working on local you have to setup a set of env variables before run the tests. You can set them manually or use a `.env` file for this.
+
+```bash
+FAUNA_DOMAIN=localhost
+FAUNA_SCHEME=http
+FAUNA_PORT=8443
+FAUNA_ROOT_KEY=secret
+```
+
 - `yarn test`: This will run tests against the current version of Node.js.
   [nvm](https://github.com/creationix/nvm) is useful for managing multiple
   versions of Node.js for testing.
-
-Tests will read a `testConfig.json` file located in
-the root directory of this project for Fauna client configuration. A minimal
-`testConfig.json` file would contain your FaunaDB key:
-
-```json
-{ "auth": "YOUR_FAUNA_KEY" }
-```
 
 Each test run will create a new database, and will attempt to clean it up when
 done. If the tests are cancelled, the test database will not get cleaned up.
