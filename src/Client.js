@@ -40,6 +40,8 @@ var parse = require('url-parse')
  *   Object that configures this FaunaDB client.
  * @param {?string} options.domain
  *   Base URL for the FaunaDB server.
+ * @param {?{ string: string }} options.headers
+ *   Base URL for the FaunaDB server.
  * @param {?('http'|'https')} options.scheme
  *   HTTP scheme to use.
  * @param {?number} options.port
@@ -61,6 +63,7 @@ function Client(options) {
     timeout: 60,
     observer: null,
     keepAlive: true,
+    headers: {},
   })
   var isHttps = opts.scheme === 'https'
 
@@ -73,6 +76,7 @@ function Client(options) {
   this._secret = opts.secret
   this._observer = opts.observer
   this._lastSeen = null
+  this._headers = opts.headers
 
   if (isNodeEnv && opts.keepAlive) {
     this._keepAliveEnabledAgent = new (isHttps
@@ -219,6 +223,7 @@ Client.prototype._performRequest = function(
       'X-FaunaDB-API-Version': APIVersion,
       'X-Fauna-Driver': 'Javascript',
       'X-Last-Seen-Txn': this._lastSeen,
+      ...this._headers,
     }),
     method: method,
     timeout: this._timeout,
