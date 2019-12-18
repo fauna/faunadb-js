@@ -1,3 +1,7 @@
+## 2.10.2
+
+- Add custom headers
+
 ## 2.10.0
 
 - Add ToDouble, ToInteger
