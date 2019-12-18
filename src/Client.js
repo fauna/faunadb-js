@@ -219,11 +219,11 @@ Client.prototype._performRequest = function(
     agent: this._keepAliveEnabledAgent,
     body: body,
     headers: util.removeNullAndUndefinedValues({
+      ...this._headers,
       Authorization: secret && secretHeader(secret),
       'X-FaunaDB-API-Version': APIVersion,
       'X-Fauna-Driver': 'Javascript',
       'X-Last-Seen-Txn': this._lastSeen,
-      ...this._headers,
     }),
     method: method,
     timeout: this._timeout,
