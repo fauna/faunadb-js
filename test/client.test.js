@@ -111,6 +111,18 @@ describe('Client', () => {
 
     return expect(resultWithoutOptions).toEqual(resultWithOptions)
   })
+
+  test('uses custom fetch', async function() {
+    const fetch = jest.fn(() =>
+      Promise.resolve({
+        headers: new Set(),
+        text: () => Promise.resolve('{ "success": "Ok" }'),
+      })
+    )
+    const client = util.getClient({ fetch })
+    await client.ping()
+    expect(fetch).toBeCalled()
+  })
 })
 
 function assertHeader(headers, name) {
