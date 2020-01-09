@@ -158,6 +158,18 @@ var helper = client.paginate(
 )
 ```
 
+#### Custom Fetch
+
+To use a custom `fetch()` you just have to specify it in the configuration and make it compatible with the [standard Web API Specification of the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API).
+
+```javascript
+const customFetch = require('./customFetch')
+const client = new faunadb.Client({
+  secret: 'YOUR_FAUNADB_SECRET',
+  fetch: customFetch,
+})
+```
+
 ## Client Development
 
 Run `yarn` to install dependencies.
