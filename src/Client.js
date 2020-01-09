@@ -251,17 +251,10 @@ function secretHeader(secret) {
 }
 
 function responseHeadersAsObject(response) {
-  var responseHeaders = response.headers
-  var headers = {}
+  let headers = {}
 
-  if (typeof responseHeaders.forEach === 'function') {
-    responseHeaders.forEach(function(value, name) {
-      headers[name] = value
-    })
-  } else {
-    responseHeaders.entries().forEach(function(pair) {
-      headers[pair[0]] = pair[1]
-    })
+  for (const [key, value] of response.headers.entries()) {
+    headers[key] = value
   }
 
   return headers
