@@ -230,7 +230,8 @@ describe('query', () => {
   test('if', () => {
     var p1 = assertQuery(query.If(true, 't', 'f'), 't')
     var p2 = assertQuery(query.If(false, 't', 'f'), 'f')
-    return Promise.all([p1, p2])
+    var p3 = assertQuery(query.If(true, null, null), null)
+    return Promise.all([p1, p2, p3])
   })
 
   test('do', () => {
