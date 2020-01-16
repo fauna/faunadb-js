@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-var util = require('util');
+var util = require('util')
 
 /**
  * FaunaDB error types. Request errors can originate from
@@ -19,23 +19,22 @@ var util = require('util');
  * @constructor
  */
 function FaunaError(name, message) {
-  Error.call(this);
+  Error.call(this)
 
   /**
    * Name of this exception.
    * @type {string}
    */
-  this.name = name;
+  this.name = name
 
   /**
    * Message for this exception.
    * @type {string}
    */
-  this.message = message;
+  this.message = message
 }
 
-util.inherits(FaunaError, Error);
-
+util.inherits(FaunaError, Error)
 
 /**
  * Exception thrown by this client library when an invalid
@@ -45,10 +44,10 @@ util.inherits(FaunaError, Error);
  * @constructor
  */
 function InvalidValue(message) {
-  FaunaError.call(this, 'InvalidValue', message);
+  FaunaError.call(this, 'InvalidValue', message)
 }
 
-util.inherits(InvalidValue, FaunaError);
+util.inherits(InvalidValue, FaunaError)
 
 /**
  * Exception thrown by this client library when an invalid
@@ -58,35 +57,43 @@ util.inherits(InvalidValue, FaunaError);
  * @constructor
  */
 function InvalidArity(min, max, actual) {
-  FaunaError.call(this, 'InvalidArity', 'Function requires ' + messageForArity(min, max) + ' arguments but ' + actual + ' were given.');
+  FaunaError.call(
+    this,
+    'InvalidArity',
+    'Function requires ' +
+      messageForArity(min, max) +
+      ' arguments but ' +
+      actual +
+      ' were given.'
+  )
 
   /**
    * Minimum number of arguments.
    * @type {number}
    */
-  this.min = min;
+  this.min = min
 
   /**
    * Maximum number of arguments.
    * @type {number}
    */
-  this.max = max;
+  this.max = max
 
   /**
    * Actual number of arguments called with.
    * @type {number}
    */
-  this.actual = actual;
+  this.actual = actual
 
   function messageForArity(min, max) {
-    if (max === null) return 'at least ' + min;
-    if (min === null) return 'up to ' + max;
-    if (min === max) return  min;
-    return 'from ' + min + ' to ' + max;
+    if (max === null) return 'at least ' + min
+    if (min === null) return 'up to ' + max
+    if (min === max) return min
+    return 'from ' + min + ' to ' + max
   }
 }
 
-util.inherits(InvalidArity, FaunaError);
+util.inherits(InvalidArity, FaunaError)
 
 /**
  * Base exception type for errors returned by the FaunaDB server.
@@ -97,10 +104,10 @@ util.inherits(InvalidArity, FaunaError);
  * @constructor
  */
 function FaunaHTTPError(name, requestResult) {
-  var response = requestResult.responseContent;
-  var errors = response.errors;
-  var message = errors.length === 0 ? '(empty "errors")' : errors[0].code;
-  FaunaError.call(this, name, message);
+  var response = requestResult.responseContent
+  var errors = response.errors
+  var message = errors.length === 0 ? '(empty "errors")' : errors[0].code
+  FaunaError.call(this, name, message)
 
   /**
    * A wrapped {@link RequestResult} object, containing the request and response
@@ -108,10 +115,10 @@ function FaunaHTTPError(name, requestResult) {
    *
    * @type {RequestResult}
    */
-  this.requestResult = requestResult;
+  this.requestResult = requestResult
 }
 
-util.inherits(FaunaHTTPError, FaunaError);
+util.inherits(FaunaHTTPError, FaunaError)
 
 /**
  * Convenience method to return the errors from the response object.
@@ -119,8 +126,8 @@ util.inherits(FaunaHTTPError, FaunaError);
  * @returns {Object}
  */
 FaunaHTTPError.prototype.errors = function() {
-  return this.requestResult.responseContent.errors;
-};
+  return this.requestResult.responseContent.errors
+}
 
 /**
  * Takes a {@link RequestResult} and throws an appropriate exception if
@@ -128,29 +135,29 @@ FaunaHTTPError.prototype.errors = function() {
  *
  * @param requestResult {RequestResult}
  */
-FaunaHTTPError.raiseForStatusCode = function (requestResult) {
-  var code = requestResult.statusCode;
+FaunaHTTPError.raiseForStatusCode = function(requestResult) {
+  var code = requestResult.statusCode
   if (code < 200 || code >= 300) {
     switch (code) {
       case 400:
-        throw new BadRequest(requestResult);
+        throw new BadRequest(requestResult)
       case 401:
-        throw new Unauthorized(requestResult);
+        throw new Unauthorized(requestResult)
       case 403:
-        throw new PermissionDenied(requestResult);
+        throw new PermissionDenied(requestResult)
       case 404:
-        throw new NotFound(requestResult);
+        throw new NotFound(requestResult)
       case 405:
-        throw new MethodNotAllowed(requestResult);
+        throw new MethodNotAllowed(requestResult)
       case 500:
-        throw new InternalError(requestResult);
+        throw new InternalError(requestResult)
       case 503:
-        throw new UnavailableError(requestResult);
+        throw new UnavailableError(requestResult)
       default:
-        throw new FaunaHTTPError('UnknownError', requestResult);
+        throw new FaunaHTTPError('UnknownError', requestResult)
     }
   }
-};
+}
 
 /**
  * A HTTP 400 error.
@@ -160,10 +167,10 @@ FaunaHTTPError.raiseForStatusCode = function (requestResult) {
  * @constructor
  */
 function BadRequest(requestResult) {
-  FaunaHTTPError.call(this, 'BadRequest', requestResult);
+  FaunaHTTPError.call(this, 'BadRequest', requestResult)
 }
 
-util.inherits(BadRequest, FaunaHTTPError);
+util.inherits(BadRequest, FaunaHTTPError)
 
 /**
  * A HTTP 401 error.
@@ -172,10 +179,10 @@ util.inherits(BadRequest, FaunaHTTPError);
  * @constructor
  */
 function Unauthorized(requestResult) {
-  FaunaHTTPError.call(this, 'Unauthorized', requestResult);
+  FaunaHTTPError.call(this, 'Unauthorized', requestResult)
 }
 
-util.inherits(Unauthorized, FaunaHTTPError);
+util.inherits(Unauthorized, FaunaHTTPError)
 
 /**
  * A HTTP 403 error.
@@ -184,10 +191,10 @@ util.inherits(Unauthorized, FaunaHTTPError);
  * @constructor
  */
 function PermissionDenied(requestResult) {
-  FaunaHTTPError.call(this, 'PermissionDenied', requestResult);
+  FaunaHTTPError.call(this, 'PermissionDenied', requestResult)
 }
 
-util.inherits(PermissionDenied, FaunaHTTPError);
+util.inherits(PermissionDenied, FaunaHTTPError)
 
 /**
  * A HTTP 404 error.
@@ -196,10 +203,10 @@ util.inherits(PermissionDenied, FaunaHTTPError);
  * @constructor
  */
 function NotFound(requestResult) {
-  FaunaHTTPError.call(this, 'NotFound', requestResult);
+  FaunaHTTPError.call(this, 'NotFound', requestResult)
 }
 
-util.inherits(NotFound, FaunaHTTPError);
+util.inherits(NotFound, FaunaHTTPError)
 
 /**
  * A HTTP 405 error.
@@ -208,10 +215,10 @@ util.inherits(NotFound, FaunaHTTPError);
  * @constructor
  */
 function MethodNotAllowed(requestResult) {
-  FaunaHTTPError.call(this, 'MethodNotAllowed', requestResult);
+  FaunaHTTPError.call(this, 'MethodNotAllowed', requestResult)
 }
 
-util.inherits(MethodNotAllowed, FaunaHTTPError);
+util.inherits(MethodNotAllowed, FaunaHTTPError)
 
 /**
  * A HTTP 500 error.
@@ -220,10 +227,10 @@ util.inherits(MethodNotAllowed, FaunaHTTPError);
  * @constructor
  */
 function InternalError(requestResult) {
-  FaunaHTTPError.call(this, 'InternalError', requestResult);
+  FaunaHTTPError.call(this, 'InternalError', requestResult)
 }
 
-util.inherits(InternalError, FaunaHTTPError);
+util.inherits(InternalError, FaunaHTTPError)
 
 /**
  * A HTTP 503 error.
@@ -232,10 +239,10 @@ util.inherits(InternalError, FaunaHTTPError);
  * @constructor
  */
 function UnavailableError(requestResult) {
-  FaunaHTTPError.call(this, 'UnavailableError', requestResult);
+  FaunaHTTPError.call(this, 'UnavailableError', requestResult)
 }
 
-util.inherits(UnavailableError, FaunaHTTPError);
+util.inherits(UnavailableError, FaunaHTTPError)
 
 module.exports = {
   FaunaHTTPError: FaunaHTTPError,
@@ -247,5 +254,5 @@ module.exports = {
   NotFound: NotFound,
   MethodNotAllowed: MethodNotAllowed,
   InternalError: InternalError,
-  UnavailableError: UnavailableError
-};
+  UnavailableError: UnavailableError,
+}

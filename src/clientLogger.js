@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-var json = require('./_json');
+var json = require('./_json')
 
 /**
  * Functions to assist with debug logging.
@@ -51,9 +51,9 @@ var json = require('./_json');
  * client.ping() // Logs the request and response.
  */
 function logger(loggerFunction) {
-  return function(requestResult) {
-    return loggerFunction(showRequestResult(requestResult));
-  };
+  return function(requestResult, client) {
+    return loggerFunction(showRequestResult(requestResult), client)
+  }
 }
 
 /**
@@ -70,50 +70,51 @@ function showRequestResult(requestResult) {
     responseHeaders = requestResult.responseHeaders,
     responseContent = requestResult.responseContent,
     statusCode = requestResult.statusCode,
-    timeTaken = requestResult.timeTaken;
+    timeTaken = requestResult.timeTaken
 
-  var out = '';
+  var out = ''
 
   function log(str) {
-    out = out + str;
+    out = out + str
   }
 
-  log('Fauna ' + method + ' /' + path + _queryString(query) + '\n');
+  log('Fauna ' + method + ' /' + path + _queryString(query) + '\n')
   if (requestContent != null) {
-    log('  Request JSON: ' + _showJSON(requestContent) + '\n');
+    log('  Request JSON: ' + _showJSON(requestContent) + '\n')
   }
-  log('  Response headers: ' + _showJSON(responseHeaders) + '\n');
-  log('  Response JSON: ' + _showJSON(responseContent) + '\n');
-  log('  Response (' + statusCode + '): Network latency ' + timeTaken + 'ms\n');
+  log('  Response headers: ' + _showJSON(responseHeaders) + '\n')
+  log('  Response JSON: ' + _showJSON(responseContent) + '\n')
+  log('  Response (' + statusCode + '): Network latency ' + timeTaken + 'ms\n')
 
-  return out;
+  return out
 }
 
-
 function _indent(str) {
-  var indentStr = '  ';
-  return str.split('\n').join('\n' + indentStr);
+  var indentStr = '  '
+  return str.split('\n').join('\n' + indentStr)
 }
 
 function _showJSON(object) {
-  return _indent(json.toJSON(object, true));
+  return _indent(json.toJSON(object, true))
 }
 
 function _queryString(query) {
   if (query == null) {
-    return '';
+    return ''
   }
 
-  var keys = Object.keys(query);
+  var keys = Object.keys(query)
   if (keys.length === 0) {
-    return '';
+    return ''
   }
 
-  var pairs = keys.map(function(key) { return key + '=' + query[key]; });
-  return '?' + pairs.join('&');
+  var pairs = keys.map(function(key) {
+    return key + '=' + query[key]
+  })
+  return '?' + pairs.join('&')
 }
 
 module.exports = {
   logger: logger,
-  showRequestResult: showRequestResult
-};
+  showRequestResult: showRequestResult,
+}

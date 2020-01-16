@@ -1,11 +1,9 @@
-'use strict';
+'use strict'
 
 /**
  * A structure containing the request and response context for a given FaunaDB request.
  * Provided to an observer function optionally defined in the {@link Client} constructor.
  *
- * @param {Client} client
- *   The FaunaDB client used to execute the request.
  * @param {'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'} method
  *   The HTTP method used in the request.
  * @param {string} path
@@ -30,66 +28,69 @@
  *   The time the response was received by the client.
  * @constructor
  */
-function RequestResult(client, method, path, query, requestRaw, requestContent, responseRaw, responseContent, statusCode, responseHeaders, startTime, endTime) {
-  /** @type {Client} */
-  this.client = client;
-
+function RequestResult(
+  method,
+  path,
+  query,
+  requestRaw,
+  requestContent,
+  responseRaw,
+  responseContent,
+  statusCode,
+  responseHeaders,
+  startTime,
+  endTime
+) {
   /** @type {'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'} */
-  this.method = method;
+  this.method = method
 
   /** @type {string} */
-  this.path = path;
+  this.path = path
 
   /**
    * URL query. Null unless `method == 'get'`.
    * *Not* related to {@link Client.query}.
    * @type {object}
    */
-  this.query = query;
+  this.query = query
 
   /** @type {string} */
-  this.requestRaw = requestRaw;
+  this.requestRaw = requestRaw
 
   /** @type {object} */
-  this.requestContent = requestContent;
+  this.requestContent = requestContent
 
   /** @type {string} */
-  this.responseRaw = responseRaw;
+  this.responseRaw = responseRaw
 
   /**
    * Parsed value returned by the server.
    * Includes "resource" wrapper dict, or may be an "errors" dict instead.
    * @type {object}
    */
-  this.responseContent = responseContent;
+  this.responseContent = responseContent
 
   /** @type {number} */
-  this.statusCode = statusCode;
+  this.statusCode = statusCode
 
   /** @type {object} */
-  this.responseHeaders = responseHeaders;
+  this.responseHeaders = responseHeaders
 
   /** @type {number} */
-  this.startTime = startTime;
+  this.startTime = startTime
 
   /** @type {number} */
-  this.endTime = endTime;
+  this.endTime = endTime
 }
-
-/**
- * Returns the auth object configured in the client.
- * @type {{user: string, pass: string}}
- */
-Object.defineProperty(RequestResult.prototype, 'auth', { get: function() {
-  return this.client._secret;
-} });
 
 /**
  * `this.endTime - this.startTime`: Time taken in milliseconds.
  * @type {number}
  */
-Object.defineProperty(RequestResult.prototype, 'timeTaken', { get: function() {
-  return this.endTime - this.startTime;
-} });
+Object.defineProperty(RequestResult.prototype, 'timeTaken', {
+  get: function() {
+    return this.endTime - this.startTime
+  },
+})
 
-module.exports = RequestResult;
+module.exports = RequestResult
