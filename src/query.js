@@ -2802,6 +2802,19 @@ function MoveDatabase(from, to) {
   return new Expr({ move_database: wrap(from), to: wrap(to) })
 }
 
+/**
+ * Returns a set of all documents in the given collection.
+ * A set must be paginated in order to retrieve its values.
+ *
+ * @param collection a reference to the collection. Type: Ref
+ * @return a new {@link Expr} instance
+ * @see #Paginate(Expr)
+ */
+function Documents(collection) {
+  arity.exact(1, arguments)
+  return new Expr({ documents: wrap(collection) })
+}
+
 // Helpers
 
 /**
@@ -3136,5 +3149,6 @@ module.exports = {
   Year: Year,
   ToDate: ToDate,
   MoveDatabase: MoveDatabase,
+  Documents: Documents,
   wrap: wrap,
 }
