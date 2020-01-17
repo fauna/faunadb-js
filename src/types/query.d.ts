@@ -254,4 +254,5 @@ export module query {
   export function ToMicros(expr: ExprArg): Expr
 
   export function MoveDatabase(from: ExprArg, to: ExprArg): Expr
+  export function Documents(collection: ExprArg): Expr
 }

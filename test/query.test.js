@@ -2344,6 +2344,14 @@ describe('query', () => {
     })
   })
 
+  test('documents', async () => {
+    const results = await client.query(
+      query.Paginate(query.Documents(query.Collection('widgets')))
+    )
+
+    expect(results.data).toHaveLength(20)
+  })
+
   // Check arity of all query functions
 
   test('arity', () => {
