@@ -3,7 +3,6 @@
 var APIVersion = '2.7'
 
 var btoa = require('btoa-lite')
-var fetch = require('cross-fetch')
 var errors = require('./errors')
 var query = require('./query')
 var values = require('./values')
@@ -52,6 +51,8 @@ var parse = require('url-parse')
  *   Callback that will be called after every completed request.
  * @param {?boolean} options.keepAlive
  *   Configures http/https keepAlive option (ignored in browser environments)
+ * @param {?fetch} options.fetch
+ *   a fetch compatible [API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) for making a request
  */
 function Client(options) {
   var isNodeEnv = typeof window === 'undefined'
@@ -64,6 +65,7 @@ function Client(options) {
     observer: null,
     keepAlive: true,
     headers: {},
+    fetch: undefined,
   })
   var isHttps = opts.scheme === 'https'
 
@@ -77,6 +79,7 @@ function Client(options) {
   this._observer = opts.observer
   this._lastSeen = null
   this._headers = opts.headers
+  this._fetch = opts.fetch || require('cross-fetch')
 
   if (isNodeEnv && opts.keepAlive) {
     this._keepAliveEnabledAgent = new (isHttps
@@ -215,7 +218,7 @@ Client.prototype._performRequest = function(
   options = defaults(options, {})
   const secret = options.secret || this._secret
 
-  return fetch(url.href, {
+  return this._fetch(url.href, {
     agent: this._keepAliveEnabledAgent,
     body: body,
     headers: util.removeNullAndUndefinedValues({
@@ -248,17 +251,10 @@ function secretHeader(secret) {
 }
 
 function responseHeadersAsObject(response) {
-  var responseHeaders = response.headers
-  var headers = {}
+  let headers = {}
 
-  if (typeof responseHeaders.forEach === 'function') {
-    responseHeaders.forEach(function(value, name) {
-      headers[name] = value
-    })
-  } else {
-    responseHeaders.entries().forEach(function(pair) {
-      headers[pair[0]] = pair[1]
-    })
+  for (const [key, value] of response.headers.entries()) {
+    headers[key] = value
   }
 
   return headers
