@@ -1,6 +1,10 @@
+## 2.11
+
+- Add Documents
+
 ## 2.10.3
 
-- Fix the types for `If` so that `null` is a valid result.
+- Fix the types for `If` so that `null` is a valid result
 
 ## 2.10.2
 
