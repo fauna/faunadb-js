@@ -1,3 +1,7 @@
+## 2.11.1
+
+- Fix npm package
+
 ## 2.11.0
 
 - Add Documents
