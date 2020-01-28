@@ -2820,26 +2820,26 @@ function Documents(collection) {
 /**
  * @ignore
  */
-function arity(min, max, args) {
+function arity(min, max, args, callerFunc) {
   if (
     (min !== null && args.length < min) ||
     (max !== null && args.length > max)
   ) {
-    throw new errors.InvalidArity(min, max, args.length)
+    throw new errors.InvalidArity(min, max, args.length, callerFunc)
   }
 }
 
-arity.exact = function(n, args) {
-  arity(n, n, args)
+arity.exact = function(n, args, callerFunc) {
+  arity(n, n, args, callerFunc)
 }
-arity.max = function(n, args) {
-  arity(null, n, args)
+arity.max = function(n, args, callerFunc) {
+  arity(null, n, args, callerFunc)
 }
-arity.min = function(n, args) {
-  arity(n, null, args)
+arity.min = function(n, args, callerFunc) {
+  arity(n, null, args, callerFunc)
 }
-arity.between = function(min, max, args) {
-  arity(min, max, args)
+arity.between = function(min, max, args, callerFunc) {
+  arity(min, max, args, callerFunc)
 }
 
 /** Adds optional parameters to the query.
