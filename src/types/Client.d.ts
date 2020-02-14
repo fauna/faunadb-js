@@ -3,13 +3,14 @@ import PageHelper from './PageHelper'
 import RequestResult from './RequestResult'
 
 export interface ClientConfig {
+  secret: string
   domain?: string
   scheme?: 'http' | 'https'
   port?: number
-  secret: string
   timeout?: number
   observer?: (res: RequestResult, client: Client) => void
   keepAlive?: boolean
+  headers?: { [key: string]: string | number }
 }
 
 export interface QueryOptions {

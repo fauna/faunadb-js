@@ -1076,16 +1076,12 @@ describe('query', () => {
         var documentRef = result.ref
         return client
           .query(query.Login(documentRef, { password: 'sekrit' }))
-          .then(function(result2) {
+          .then(async function(result2) {
             var secret = result2.secret
             var instanceClient = util.getClient({ secret: secret })
 
-            var self = new values.Ref(
-              'self',
-              new values.Ref('widgets', Native.COLLECTIONS)
-            )
             return instanceClient
-              .query(query.Select('ref', query.Get(self)))
+              .query(query.Select('ref', query.Get(documentRef)))
               .then(function(result3) {
                 expect(result3).toEqual(documentRef)
 

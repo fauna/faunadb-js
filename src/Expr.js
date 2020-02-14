@@ -57,7 +57,7 @@ var exprToString = function(expr, caller) {
   var type = typeof expr
 
   if (type === 'string') {
-    return '"' + expr + '"'
+    return JSON.stringify(expr)
   }
 
   if (type === 'symbol' || type === 'number' || type === 'boolean') {
