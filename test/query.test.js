@@ -2283,7 +2283,14 @@ describe('query', () => {
                 assertQueryWithClient(
                   parentCli,
                   query.Paginate(query.Keys(childDb)),
-                  { data: [new values.Ref('123', Native.KEYS)] }
+                  {
+                    data: [
+                      new values.Ref(
+                        '123',
+                        new values.Ref('keys', null, childDbRef)
+                      ),
+                    ],
+                  }
                 ),
                 assertQueryWithClient(
                   parentCli,

@@ -121,11 +121,11 @@ wrapToString(Ref, function() {
     roles: 'Role',
   }
 
-  var toString = function(ref, prevDb) {
-    if (ref.collection === undefined && ref.database === undefined)
-      return (
-        ref.id.charAt(0).toUpperCase() + ref.id.slice(1) + '(' + prevDb + ')'
-      )
+  var toString = function(ref) {
+    if (ref.collection === undefined) {
+      var db = ref.database !== undefined ? ref.database.toString() : ''
+      return ref.id.charAt(0).toUpperCase() + ref.id.slice(1) + '(' + db + ')'
+    }
 
     var constructor = constructors[ref.collection.id]
     if (constructor !== undefined) {
@@ -133,12 +133,10 @@ wrapToString(Ref, function() {
       return constructor + '("' + ref.id + '"' + db + ')'
     }
 
-    var db = ref.database !== undefined ? ref.database.toString() : ''
-
-    return 'Ref(' + toString(ref.collection, db) + ', "' + ref.id + '")'
+    return 'Ref(' + toString(ref.collection) + ', "' + ref.id + '")'
   }
 
-  return toString(this, '')
+  return toString(this)
 })
 
 /** @ignore */
