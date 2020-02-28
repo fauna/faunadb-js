@@ -159,6 +159,14 @@ describe('Values', () => {
     assertPrint(values.Native.KEYS, 'Keys()')
 
     var db = new Ref('db', values.Native.DATABASES)
+
+    assertPrint(new Ref('collections', null, db), 'Collections(Database("db"))')
+    assertPrint(new Ref('databases', null, db), 'Databases(Database("db"))')
+    assertPrint(new Ref('indexes', null, db), 'Indexes(Database("db"))')
+    assertPrint(new Ref('functions', null, db), 'Functions(Database("db"))')
+    assertPrint(new Ref('roles', null, db), 'Roles(Database("db"))')
+    assertPrint(new Ref('keys', null, db), 'Keys(Database("db"))')
+
     assertPrint(
       new Ref('col', values.Native.COLLECTIONS, db),
       'Collection("col", Database("db"))'
@@ -178,10 +186,6 @@ describe('Values', () => {
     assertPrint(
       new Ref('role', values.Native.ROLES, db),
       'Role("role", Database("db"))'
-    )
-    assertPrint(
-      new Ref('key', values.Native.KEYS, db),
-      'Ref(Keys(Database("db")), "key")'
     )
 
     assertPrint(
