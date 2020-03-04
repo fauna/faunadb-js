@@ -1,3 +1,12 @@
+## 2.12.0
+
+- Add `headers` config on `Client`
+- Improve arity error log information
+- Fix Expr.toString type definition
+- Fix FaunaHTTPError type definition
+- Fix Expr.toExpr when value is a string
+- Fix native schema rendering
+
 ## 2.11.1
 
 - Fix npm package
