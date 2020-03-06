@@ -11,6 +11,7 @@ export interface ClientConfig {
   observer?: (res: RequestResult, client: Client) => void
   keepAlive?: boolean
   headers?: { [key: string]: string | number }
+  fetch?: typeof fetch
 }
 
 export interface QueryOptions {
