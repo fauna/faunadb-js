@@ -1,3 +1,7 @@
+## 2.12.1
+
+- Add custom fetch option
+
 ## 2.12.0
 
 - Add `headers` config on `Client`
