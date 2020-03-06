@@ -1,4 +1,4 @@
-## 2.12.1
+## 2.13.0
 
 - Add custom fetch option
 
