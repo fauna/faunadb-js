@@ -1,3 +1,8 @@
+## 2.13.1
+
+- Fix arity messages
+- Improve RequestResult types
+
 ## 2.13.0
 
 - Add custom fetch option
