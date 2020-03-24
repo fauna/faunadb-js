@@ -112,3 +112,4 @@ dist
 
 testConfig.json
 doc/
+yarn.lock
