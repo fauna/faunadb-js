@@ -1,28 +1,67 @@
-import Expr from './Expr'
+import Expr, {
+  ExprVal,
+  Lambda,
+  Document,
+  Collection,
+  Page,
+  Index,
+  Function,
+} from './Expr'
 
-type ExprVal = Expr | string | number | boolean | { [key: string]: any }
-type ExprArg = ExprVal | Array<ExprVal>
-export type Lambda = (...vars: any[]) => Expr
+export type ExprArg<T = unknown> = ExprVal<T> | Array<ExprVal<T>>
 
 export module query {
-  export function Ref(ref: ExprArg, id?: ExprArg): Expr
+  export function Ref<T>(
+    ref: Expr.CollectionRef<T>,
+    id?: ExprVal<number | string>
+  ): Expr.DocumentRef<T>
+
+  // TODO
   export function Bytes(bytes: ExprArg | ArrayBuffer | Uint8Array): Expr
   export function Abort(msg: ExprArg): Expr
   export function At(timestamp: ExprArg, expr: ExprArg): Expr
-  export function Let(vars: ExprArg, in_expr: ExprArg): Expr
+
+  export function Let<T>(vars: ExprVal<object>, in_expr: Expr<T>): Expr<T>
+
+  // TODO
   export function Var(varName: ExprArg): Expr
-  export function If(
-    condition: ExprArg,
-    then: ExprArg | null,
-    _else: ExprArg | null
-  ): Expr
+
+  export function If<T>(
+    condition: ExprArg<boolean>,
+    then: ExprArg<T>,
+    _else: ExprArg<T>
+  ): Expr<T>
+
+  export function If<T, U>(
+    condition: ExprArg<boolean>,
+    then: ExprArg<T>,
+    _else: ExprArg<U>
+  ): Expr<T | U>
+
+  // TODO
   export function Do(...args: ExprArg[]): Expr
   export function Object(fields: ExprArg): Expr
-  export function Lambda(f: Lambda): Expr
-  export function Lambda(var_name: ExprArg, expr: ExprArg): Expr
-  export function Call(ref: ExprArg, ...args: ExprArg[]): Expr
+
+  export function Lambda<In extends any[], Out>(
+    f: (...args: In) => Out
+  ): Expr<Lambda<In, Out>>
+
+  export function Lambda<In extends any[], Out>(
+    var_name: ExprArg<string>,
+    expr: ExprArg<Out>
+  ): Expr<Lambda<In, Out>>
+
+  export function Call<T>(ref: Expr.FunctionRef<T>, ...args: any[]): Expr<T>
+
+  // TODO
   export function Query(lambda: ExprArg | Lambda): Expr
-  export function Map(collection: ExprArg, lambda_expr: ExprArg | Lambda): Expr
+
+  export function Map<T, Out>(
+    collection: Expr.Iterable<T>,
+    lambda_expr: ExprVal<Lambda<[T extends Expr ? T : Expr<T>], Out>>
+  ): Expr<Out[]>
+
+  // TODO
   export function Merge(
     object: ExprArg,
     values: ExprArg,
@@ -32,15 +71,22 @@ export module query {
     collection: ExprArg,
     lambda_expr: ExprArg | Lambda
   ): Expr
-  export function Filter(
-    collection: ExprArg,
-    lambda_expr: ExprArg | Lambda
-  ): Expr
+
+  export function Filter<T>(
+    collection: Expr.Iterable<T>,
+    lambda_expr: ExprVal<Lambda<[T], boolean>>
+  ): Expr<T>
+
+  // TODO
   export function Take(number: ExprArg, collection: ExprArg): Expr
   export function Drop(number: ExprArg, collection: ExprArg): Expr
   export function Prepend(elements: ExprArg, collection: ExprArg): Expr
   export function Append(elements: ExprArg, collection: ExprArg): Expr
-  export function IsEmpty(collection: ExprArg): Expr
+  export function Reverse(expr: ExprArg): Expr
+
+  export function IsEmpty(collection: Expr.Iterable<any>): Expr<boolean>
+
+  // TODO
   export function IsNonEmpty(collection: ExprArg): Expr
   export function IsNumber(expr: ExprArg): Expr
   export function IsDouble(expr: ExprArg): Expr
@@ -66,20 +112,58 @@ export module query {
   export function IsCredentials(expr: ExprArg): Expr
   export function IsRole(expr: ExprArg): Expr
 
-  export function Get(ref: ExprArg, ts?: ExprArg): Expr
+  export function Get<T>(
+    ref: Expr.Ref<T>,
+    ts?: ExprVal<number | Expr.Time>
+  ): Expr<T extends (infer U)[] ? U : T>
+
+  // TODO
   export function KeyFromSecret(secret: ExprArg): Expr
   export function Reduce(
     lambda: ExprArg,
     initial: ExprArg,
     collection: ExprArg
   ): Expr
-  export function Paginate(set: ExprArg, opts?: object): Expr
+
+  export function Paginate<T>(
+    set: Expr.SetRef<T>,
+    params?: ExprVal<{
+      ts?: number | Expr.Time
+      size?: number
+      before?: string
+      after?: string
+      events?: boolean
+      sources?: boolean
+    }>
+  ): Page<T>
+
+  // TODO
   export function Exists(ref: ExprArg, ts?: ExprArg): Expr
 
-  export function Create(collection_ref: ExprArg, params?: ExprArg): Expr
+  export function Create<T>(
+    collection_ref: Expr.CollectionRef<T>,
+    params: ExprVal<{
+      data: T
+      credentials?: object
+      delegates?: object
+      ttl?: Expr.Time
+    }>
+  ): Document<T>
+
+  // TODO
   export function Update(ref: ExprArg, params: ExprArg): Expr
   export function Replace(ref: ExprArg, params: ExprArg): Expr
-  export function Delete(ref: ExprArg): Expr
+
+  export function Delete(
+    ref: Expr.Ref<any>
+  ): Expr<{
+    database: string
+    role: string
+    data?: object
+    priority?: number
+  }>
+
+  // TODO
   export function Insert(
     ref: ExprArg,
     ts: ExprArg,
@@ -88,23 +172,66 @@ export module query {
   ): Expr
   export function Remove(ref: ExprArg, ts: ExprArg, action: ExprArg): Expr
   export function CreateClass(params: ExprArg): Expr
-  export function CreateCollection(params: ExprArg): Expr
+
+  export function CreateCollection<T>(
+    params: ExprVal<{
+      name: string
+      data?: object
+      permissions?: object
+      history_days?: number
+      ttl_days?: number
+    }>
+  ): Expr<Collection<T>>
+
+  // TODO
   export function CreateDatabase(params: ExprArg): Expr
-  export function CreateIndex(params: ExprArg): Expr
+
+  export function CreateIndex<T>(
+    params: ExprVal<{
+      name: string
+      source: Expr.CollectionRef<any> | any[]
+      terms?: any[]
+      values?: any[]
+      unique?: boolean
+      serialized?: boolean
+      permissions?: object
+      data?: object
+    }>
+  ): Expr<Index<T>>
+
+  // TODO
   export function CreateKey(params: ExprArg): Expr
-  export function CreateFunction(params: ExprArg): Expr
+
+  export function CreateFunction<T>(
+    params: ExprVal<{
+      name: string
+      body: object
+      data?: object
+      role?: any
+    }>
+  ): Expr<Function<T>>
+
+  // TODO
   export function CreateRole(params: ExprArg): Expr
   export function CreateAccessProvider(params: ExprArg): Expr
 
+  // TODO
   export function Singleton(ref: ExprArg): Expr
   export function Events(ref_set: ExprArg): Expr
-  export function Match(index: ExprArg, ...terms: ExprArg[]): Expr
+
+  export function Match<T>(
+    index: Expr.IndexRef<T>,
+    ...terms: any[]
+  ): Expr.SetRef<T>
+
+  // TODO
   export function Union(...sets: ExprArg[]): Expr
   export function Intersection(...sets: ExprArg[]): Expr
   export function Difference(...sets: ExprArg[]): Expr
   export function Distinct(set: ExprArg): Expr
   export function Join(source: ExprArg, target: ExprArg | Lambda): Expr
 
+  // TODO
   export function Range(set: ExprArg, from: ExprArg, to: ExprArg): Expr
   export function Login(ref: ExprArg, params: ExprArg): Expr
   export function Logout(delete_tokens: ExprArg): Expr
@@ -112,6 +239,7 @@ export module query {
   export function Identity(): Expr
   export function HasIdentity(): Expr
 
+  // TODO
   export function Concat(strings: ExprArg, separator?: ExprArg): Expr
   export function Casefold(string: ExprArg, normalizer?: ExprArg): Expr
   export function ContainsStr(value: ExprArg, search: ExprArg): Expr
@@ -154,7 +282,9 @@ export module query {
   export function UpperCase(expr: ExprArg): Expr
   export function Format(string: ExprArg, values: ExprArg): Expr
 
-  export function Time(string: ExprArg): Expr
+  export function Time(string: ExprVal<string>): Expr.Time
+
+  // TODO
   export function Epoch(number: ExprArg, unit: ExprArg): Expr
   export function TimeAdd(base: ExprArg, offset: ExprArg, unit: ExprArg): Expr
   export function TimeSubtract(
@@ -174,27 +304,60 @@ export module query {
   export function Year(expr: ExprArg): Expr
   export function Month(expr: ExprArg): Expr
 
+  // TODO
   export function NextId(): Expr
   export function NewId(): Expr
   export function Database(name: ExprArg, scope?: ExprArg): Expr
-  export function Index(name: ExprArg, scope?: ExprArg): Expr
-  export function Class(name: ExprArg, scope?: ExprArg): Expr
-  export function Collection(name: ExprArg, scope?: ExprArg): Expr
-  export function Function(name: ExprArg, scope?: ExprArg): Expr
+
+  // TODO: "scope" argument
+  export function Index<T>(
+    name: ExprVal<string>,
+    scope?: ExprArg
+  ): Expr.IndexRef<T>
+
+  // TODO: "scope" argument
+  export function Collection<T>(
+    name: ExprVal<string>,
+    scope?: ExprArg
+  ): Expr.CollectionRef<T>
+
+  // TODO: "scope" argument
+  export function Function<T>(
+    name: ExprVal<string>,
+    scope?: ExprArg
+  ): Expr.FunctionRef<T>
+
+  // TODO
   export function Role(name: ExprArg, scope?: ExprArg): Expr
+  export function AccessProvider(name: ExprArg): Expr
   export function AccessProviders(scope?: ExprArg): Expr
   export function Databases(scope?: ExprArg): Expr
-  export function Classes(scope?: ExprArg): Expr
-  export function Collections(scope?: ExprArg): Expr
+
+  // TODO: "scope" argument
+  export function Collections(scope?: ExprArg): Expr.SetRef<Collection<any>>
+
+  // TODO
   export function Indexes(scope?: ExprArg): Expr
   export function Functions(scope?: ExprArg): Expr
   export function Roles(scope?: ExprArg): Expr
   export function Keys(scope?: ExprArg): Expr
   export function Tokens(scope?: ExprArg): Expr
   export function Credentials(scope?: ExprArg): Expr
-  export function Equals(...args: ExprArg[]): Expr
-  export function Contains(path: ExprArg, _in: ExprArg): Expr
-  export function Select(path: ExprArg, from: ExprArg, _default?: ExprArg): Expr
+
+  export function Equals(...args: any[]): Expr<boolean>
+
+  // TODO
+  export function ContainsPath(path: ExprArg, _in: ExprArg): Expr
+  export function ContainsField(field: string, _in: ExprArg): Expr
+  export function ContainsValue(value: ExprArg, _in: ExprArg): Expr
+
+  export function Select<T>(
+    path: Expr.KeyPath,
+    from: Expr<object>,
+    _default?: ExprVal<T>
+  ): Expr<Exclude<T, Expr>>
+
+  // TODO
   export function SelectAll(path: ExprArg, from: ExprArg): Expr
   export function Abs(expr: ExprArg): Expr
   export function Add(...args: ExprArg[]): Expr
@@ -241,8 +404,10 @@ export module query {
   export function GTE(...args: ExprArg[]): Expr
   export function And(...args: ExprArg[]): Expr
   export function Or(...args: ExprArg[]): Expr
-  export function Not(bool: ExprArg): Expr
 
+  export function Not(bool: ExprVal<boolean>): Expr<boolean>
+
+  // TODO
   export function ToString(expr: ExprArg): Expr
   export function ToNumber(expr: ExprArg): Expr
   export function ToObject(expr: ExprArg): Expr
@@ -255,12 +420,10 @@ export module query {
   export function ToMillis(expr: ExprArg): Expr
   export function ToMicros(expr: ExprArg): Expr
 
+  // TODO
   export function MoveDatabase(from: ExprArg, to: ExprArg): Expr
-  export function Documents(collection: ExprArg): Expr
-  export function ContainsPath(path: ExprArg, _in: ExprArg): Expr
-  export function ContainsField(field: string, _in: ExprArg): Expr
-  export function ContainsValue(value: ExprArg, _in: ExprArg): Expr
-  export function Reverse(expr: ExprArg): Expr
 
-  export function AccessProvider(name: ExprArg): Expr
+  export function Documents<T>(
+    collection: Expr.CollectionRef<T>
+  ): Expr.SetRef<Document<T>>
 }
