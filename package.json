@@ -48,7 +48,7 @@
     "jest": "^24.9.0",
     "jsdoc": "^3.6.3",
     "lint-staged": ">=8",
-    "prettier": "1.18.2",
+    "prettier": "2.0.2",
     "terser": "^4.3.9",
     "typescript": "^3.0.1"
   },
