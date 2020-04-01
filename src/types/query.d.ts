@@ -86,17 +86,17 @@ export module query {
   // TODO
   export function Var(varName: ExprArg): Expr
 
-  export function If<T>(
-    condition: ExprArg<boolean>,
-    then: ExprArg<T>,
-    _else: ExprArg<T>
-  ): Expr<T>
-
   export function If<T, U>(
-    condition: ExprArg<boolean>,
-    then: ExprArg<T>,
-    _else: ExprArg<U>
+    condition: ExprVal<boolean>,
+    then: ExprVal<T>,
+    _else: ExprVal<U>
   ): Expr<T | U>
+
+  export function If<T>(
+    condition: ExprVal<boolean>,
+    then: ExprVal<T>,
+    _else: ExprVal<T>
+  ): Expr<T>
 
   // TODO
   export function Do(...args: ExprArg[]): Expr
