@@ -116,6 +116,11 @@ export module query {
   export function Query(lambda: ExprArg | Lambda): Expr
 
   export function Map<T, Out>(
+    collection: Expr.Page<T>,
+    lambda_expr: ExprVal<Lambda<[T], Out>>
+  ): Expr.Page<Out>
+
+  export function Map<T, Out>(
     collection: Exclude<Expr.Iterable<T>, Expr.ArrayRef>,
     lambda_expr: ExprVal<Lambda<[T], Out>>
   ): Expr<Out[]>
