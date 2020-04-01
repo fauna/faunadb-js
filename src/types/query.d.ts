@@ -109,10 +109,11 @@ export module query {
     values: ExprArg,
     resolver?: Expr | Lambda
   ): Expr
-  export function Foreach(
-    collection: ExprArg,
-    lambda_expr: ExprArg | Lambda
-  ): Expr
+
+  export function Foreach<T, U extends Expr.Iterable<T>>(
+    collection: U,
+    lambda_expr: ExprVal<Lambda<[T]>>
+  ): U
 
   export function Filter<T>(
     collection: Expr.Iterable<T>,
