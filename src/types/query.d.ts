@@ -234,7 +234,7 @@ export module query {
   export function Match<T>(
     index: Expr.IndexRef<T>,
     ...terms: any[]
-  ): Expr.SetRef<T>
+  ): Expr.SetRef<Document<T>>
 
   // TODO
   export function Union(...sets: ExprArg[]): Expr
