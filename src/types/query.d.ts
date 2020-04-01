@@ -376,7 +376,10 @@ export module query {
   // TODO
   export function SelectAll(path: ExprArg, from: ExprArg): Expr
   export function Abs(expr: ExprArg): Expr
-  export function Add(...args: ExprArg[]): Expr
+
+  export function Add(...args: ExprVal<number>[]): Expr<number>
+
+  // TODO
   export function BitAnd(...args: ExprArg[]): Expr
   export function BitNot(expr: ExprArg): Expr
   export function BitOr(...args: ExprArg[]): Expr
