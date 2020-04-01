@@ -89,13 +89,13 @@ export module query {
     condition: ExprVal<boolean>,
     then: ExprVal<T>,
     _else: ExprVal<U>
-  ): Expr<T | U>
+  ): ToExpr<T | U>
 
   export function If<T>(
     condition: ExprVal<boolean>,
     then: ExprVal<T>,
     _else: ExprVal<T>
-  ): Expr<T>
+  ): ToExpr<T>
 
   // TODO
   export function Do(...args: ExprArg[]): Expr
