@@ -348,9 +348,13 @@ export module query {
   // TODO: "scope" argument
   export function Collections(scope?: ExprArg): Expr.SetRef<Collection<any>>
 
+  // TODO: "scope" argument
+  export function Indexes(scope?: ExprArg): Expr.SetRef<Index<any>>
+
+  // TODO: "scope" argument
+  export function Functions(scope?: ExprArg): Expr.SetRef<Function<any>>
+
   // TODO
-  export function Indexes(scope?: ExprArg): Expr
-  export function Functions(scope?: ExprArg): Expr
   export function Roles(scope?: ExprArg): Expr
   export function Keys(scope?: ExprArg): Expr
   export function Tokens(scope?: ExprArg): Expr
