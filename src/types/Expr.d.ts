@@ -34,7 +34,9 @@ export type ExprVal<T = unknown> =
       ? { [P in keyof T]: ExprVal<T[P]> }
       : T)
 
-export type ToExpr<T> = T extends Expr ? T : Expr<T>
+export type ToExpr<T> = [T] extends [infer U]
+  ? (T extends Expr ? T : Expr<Exclude<U, Expr>>)
+  : never
 
 export type Lambda<In extends any[] = any[], Out = any> = (
   ...args: { [P in keyof In]: ToExpr<In[P]> }
