@@ -40,11 +40,11 @@ export type Lambda<In extends any[] = any[], Out = any> = (
   ...args: { [P in keyof In]: ToExpr<In[P]> }
 ) => Expr<Out>
 
-export interface Collection<T extends object> {
-  ref: Expr.CollectionRef<T>
+export interface Collection<T extends object, Meta extends object = any> {
+  ref: Expr.CollectionRef<T, Meta>
   ts: number
   name: string
-  data?: object
+  data: Meta
   permissions?: object
   history_days: number | null
   ttl_days?: number
@@ -62,11 +62,11 @@ export interface Page<T> {
   after?: string
 }
 
-export interface Index<T extends object> {
-  ref: Expr.IndexRef<T>
+export interface Index<T extends object, Meta extends object = any> {
+  ref: Expr.IndexRef<T, Meta>
   ts: number
   name: string
-  data?: object
+  data: Meta
   source: Expr.CollectionRef<any> | any[]
   partitions: number
   active: boolean
@@ -77,13 +77,13 @@ export interface Index<T extends object> {
   permissions?: object
 }
 
-export interface Function<Return> {
-  ref: Expr.FunctionRef<Return>
+export interface Function<Return, Meta extends object = any> {
+  ref: Expr.FunctionRef<Return, Meta>
   ts: number
   name: string
+  data: Meta
   body: object
   role?: any
-  data?: object
 }
 
 export namespace Expr {
@@ -100,11 +100,14 @@ export namespace Expr {
 
   export interface DocumentRef<T extends object> extends Ref<Document<T>> {}
 
-  export interface CollectionRef<T extends object> extends Ref<Collection<T>> {}
+  export interface CollectionRef<T extends object, Meta extends object = any>
+    extends Ref<Collection<T, Meta>> {}
 
-  export interface IndexRef<T extends object> extends Ref<Index<T>> {}
+  export interface IndexRef<T extends object, Meta extends object = any>
+    extends Ref<Index<T, Meta>> {}
 
-  export interface FunctionRef<T> extends Ref<Function<T>> {}
+  export interface FunctionRef<Return, Meta extends object = any>
+    extends Ref<Function<Return, Meta>> {}
 
   export interface Time extends Expr<values.FaunaTime> {}
 

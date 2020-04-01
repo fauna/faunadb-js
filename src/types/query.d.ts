@@ -17,15 +17,15 @@ export type CreateParams<T extends object> = ExprVal<{
   ttl?: Expr.Time
 }>
 
-export type CreateCollectionParams = {
+export type CreateCollectionParams<Meta extends object = any> = {
   name: string
-  data?: object
+  data?: Meta
   permissions?: object
   history_days?: number
   ttl_days?: number
 }
 
-export type CreateIndexParams = {
+export type CreateIndexParams<Meta extends object = any> = {
   name: string
   source: Expr.CollectionRef<any> | any[]
   terms?: any[]
@@ -33,7 +33,7 @@ export type CreateIndexParams = {
   unique?: boolean
   serialized?: boolean
   permissions?: object
-  data?: object
+  data?: Meta
 }
 
 export type PaginateParams = {
@@ -45,10 +45,10 @@ export type PaginateParams = {
   sources?: boolean
 }
 
-export type FunctionParams = {
+export type FunctionParams<Meta extends object = any> = {
   name: string
   body: object
-  data?: object
+  data?: Meta
   role?: any
 }
 
@@ -206,23 +206,23 @@ export module query {
   export function Remove(ref: ExprArg, ts: ExprArg, action: ExprArg): Expr
   export function CreateClass(params: ExprArg): Expr
 
-  export function CreateCollection<T extends object>(
-    params: ExprVal<CreateCollectionParams>
-  ): Expr<Collection<T>>
+  export function CreateCollection<T extends object, Meta extends object = any>(
+    params: ExprVal<CreateCollectionParams<Meta>>
+  ): Expr<Collection<T, Meta>>
 
   // TODO
   export function CreateDatabase(params: ExprArg): Expr
 
-  export function CreateIndex<T extends object>(
-    params: ExprVal<CreateIndexParams>
-  ): Expr<Index<T>>
+  export function CreateIndex<T extends object, Meta extends object = any>(
+    params: ExprVal<CreateIndexParams<Meta>>
+  ): Expr<Index<T, Meta>>
 
   // TODO
   export function CreateKey(params: ExprArg): Expr
 
-  export function CreateFunction<T>(
-    params: ExprVal<FunctionParams>
-  ): Expr<Function<T>>
+  export function CreateFunction<Return, Meta extends object = any>(
+    params: ExprVal<FunctionParams<Meta>>
+  ): Expr<Function<Return>>
 
   // TODO
   export function CreateRole(params: ExprArg): Expr
@@ -323,22 +323,22 @@ export module query {
   export function Database(name: ExprArg, scope?: ExprArg): Expr
 
   // TODO: "scope" argument
-  export function Index<T extends object>(
+  export function Index<T extends object, Meta extends object = any>(
     name: ExprVal<string>,
     scope?: ExprArg
-  ): Expr.IndexRef<T>
+  ): Expr.IndexRef<T, Meta>
 
   // TODO: "scope" argument
-  export function Collection<T extends object>(
+  export function Collection<T extends object, Meta extends object = any>(
     name: ExprVal<string>,
     scope?: ExprArg
-  ): Expr.CollectionRef<T>
+  ): Expr.CollectionRef<T, Meta>
 
   // TODO: "scope" argument
-  export function Function<T>(
+  export function Function<Return, Meta extends object = any>(
     name: ExprVal<string>,
     scope?: ExprArg
-  ): Expr.FunctionRef<T>
+  ): Expr.FunctionRef<Return, Meta>
 
   // TODO
   export function Role(name: ExprArg, scope?: ExprArg): Expr
