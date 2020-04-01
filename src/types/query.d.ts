@@ -171,7 +171,7 @@ export module query {
   export function Paginate<T>(
     set: Expr.SetRef<T>,
     params?: ExprVal<PaginateParams>
-  ): Page<T>
+  ): Page<Expr.Ref<T>>
 
   export function Exists(
     ref: Expr.Ref<any>,
