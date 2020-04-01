@@ -23,7 +23,7 @@ export type Materialize<T> = T extends Expr<infer U>
 
 /** Add support for `Expr` types to any type. */
 export type ExprVal<T = unknown> =
-  | Expr<Exclude<T, Expr>>
+  | ToExpr<T>
   | (T extends Expr | Lambda
       ? T
       : T extends ReadonlyArray<infer U>
