@@ -17,6 +17,23 @@ export type CreateParams<T extends object> = ExprVal<{
   ttl?: Expr.Time
 }>
 
+type Updatable<T extends object = any> =
+  | Expr.DocumentRef<T>
+  | Expr.CollectionRef<any, T>
+  | Expr.IndexRef<any, T>
+  | Expr.FunctionRef<any, T>
+
+export type UpdateParams<T extends Updatable> = unknown &
+  T extends Expr.DocumentRef<infer U>
+  ? {
+      data?: Partial<U>
+      credentials?: object
+      delegates?: object
+    }
+  : T extends Expr.Ref<infer U>
+  ? Omit<Partial<U>, 'ref' | 'ts'>
+  : never
+
 export type CreateCollectionParams<Meta extends object = any> = {
   name: string
   data?: Meta
@@ -183,8 +200,12 @@ export module query {
     params: ExprVal<CreateParams<T>>
   ): Document<T>
 
+  export function Update<T extends Updatable>(
+    ref: T,
+    params: ExprVal<UpdateParams<T>>
+  ): Expr<T extends Expr.Ref<infer U> ? U : never>
+
   // TODO
-  export function Update(ref: ExprArg, params: ExprArg): Expr
   export function Replace(ref: ExprArg, params: ExprArg): Expr
 
   export function Delete(
