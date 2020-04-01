@@ -77,8 +77,8 @@ export interface Index<T extends object> {
   permissions?: object
 }
 
-export interface Function<T extends object> {
-  ref: Expr.FunctionRef<T>
+export interface Function<Return> {
+  ref: Expr.FunctionRef<Return>
   ts: number
   name: string
   body: object
