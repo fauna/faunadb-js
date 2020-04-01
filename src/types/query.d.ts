@@ -128,10 +128,10 @@ export module query {
     resolver?: Expr | Lambda
   ): Expr
 
-  export function Foreach<T, U extends Expr.Iterable<T>>(
-    collection: U,
-    lambda_expr: ExprVal<Lambda<[T]>>
-  ): U
+  export function Foreach<T extends Expr.Iterable<any>>(
+    collection: T,
+    lambda_expr: T extends Expr.Iterable<infer U> ? ExprVal<Lambda<[U]>> : never
+  ): T
 
   export function Filter<T>(
     collection: Expr.Iterable<T>,
