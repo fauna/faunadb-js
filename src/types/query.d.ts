@@ -3,7 +3,6 @@ import Expr, {
   Lambda,
   Document,
   Collection,
-  Page,
   Index,
   Function,
   ToExpr,
@@ -189,7 +188,7 @@ export module query {
   export function Paginate<T extends object>(
     set: Expr.SetRef<T>,
     params?: ExprVal<PaginateParams>
-  ): Page<Expr.Ref<T>>
+  ): Expr.Page<Expr.Ref<T>>
 
   export function Exists(
     ref: Expr.Ref<any>,

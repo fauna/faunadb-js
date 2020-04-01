@@ -58,12 +58,6 @@ export interface Document<T extends object> {
   ts: number
 }
 
-export interface Page<T> {
-  data: T[]
-  before?: string
-  after?: string
-}
-
 export interface Index<T extends object, Meta extends object = any> {
   ref: Expr.IndexRef<T, Meta>
   ts: number
@@ -112,6 +106,13 @@ export namespace Expr {
     extends Ref<Function<Return, Meta>> {}
 
   export interface Time extends Expr<values.FaunaTime> {}
+
+  export interface Page<T>
+    extends Expr<{
+      data: T[]
+      before?: string
+      after?: string
+    }> {}
 
   /** Expression types that can be passed to `q.Map`, `q.Filter`, etc */
   export type Iterable<T> = ExprVal<T[]> | ArrayRef<T> | Page<T>
