@@ -90,7 +90,11 @@ export namespace Expr {
     private _refType: T
   }
 
-  export interface SetRef<T extends object = any> extends Ref<Ref<T>[]> {}
+  /** @internal For type inference only. Please use `Expr.Iterable` instead. */
+  export interface ArrayRef<T = any> extends Ref<T[]> {}
+
+  /** Lazily evaluated set of refs */
+  export interface SetRef<T extends object = any> extends ArrayRef<Ref<T>> {}
 
   export interface DocumentRef<T extends object> extends Ref<Document<T>> {}
 
@@ -102,7 +106,10 @@ export namespace Expr {
 
   export interface Time extends Expr<values.FaunaTime> {}
 
-  export type Iterable<T> = ExprVal<T[]> | SetRef<T> | Page<T>
+  /** Expression types that can be passed to `q.Map`, `q.Filter`, etc */
+  export type Iterable<T> = ExprVal<T[]> | ArrayRef<T> | Page<T>
+
+  /** Expression type for the `path` argument of `q.Select` */
   export type KeyPath = ExprVal<(number | string)[]>
 
   /** Expression type for the `lambda` argument of `q.Filter` */

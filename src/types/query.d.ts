@@ -100,7 +100,7 @@ export module query {
 
   export function Map<T, Out>(
     collection: Expr.Iterable<T>,
-    lambda_expr: ExprVal<Lambda<[T extends Expr ? T : Expr<T>], Out>>
+    lambda_expr: ExprVal<Lambda<[T], Out>>
   ): Expr<Out[]>
 
   // TODO
