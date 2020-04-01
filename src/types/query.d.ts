@@ -97,8 +97,29 @@ export module query {
     _else: ExprVal<T>
   ): ToExpr<T>
 
+  export function Do<T>(arg1: ExprVal<T>): ToExpr<T>
+  export function Do<T>(arg1: ExprVal, arg2: ExprVal<T>): ToExpr<T>
+  export function Do<T>(
+    arg1: ExprVal,
+    arg2: ExprVal,
+    arg3: ExprVal<T>
+  ): ToExpr<T>
+  export function Do<T>(
+    arg1: ExprVal,
+    arg2: ExprVal,
+    arg3: ExprVal,
+    arg4: ExprVal<T>
+  ): ToExpr<T>
+  export function Do<T>(
+    arg1: ExprVal,
+    arg2: ExprVal,
+    arg3: ExprVal,
+    arg4: ExprVal,
+    arg5: ExprVal<T>
+  ): ToExpr<T>
+  export function Do<T>(...args: ExprVal[]): ToExpr<T>
+
   // TODO
-  export function Do(...args: ExprArg[]): Expr
   export function Object(fields: ExprArg): Expr
 
   export function Lambda<In extends any[], Out>(
