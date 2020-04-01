@@ -104,4 +104,7 @@ export namespace Expr {
 
   export type Iterable<T> = ExprVal<T[]> | SetRef<T> | Page<T>
   export type KeyPath = ExprVal<(number | string)[]>
+
+  /** Expression type for the `lambda` argument of `q.Filter` */
+  export type Filter<T> = ExprVal<Lambda<[T], boolean>>
 }
