@@ -10,7 +10,7 @@ import Expr, {
 
 export type ExprArg<T = unknown> = ExprVal<T> | Array<ExprVal<T>>
 
-export type CreateParams<T> = ExprVal<{
+export type CreateParams<T extends object> = ExprVal<{
   data: T
   credentials?: object
   delegates?: object
@@ -53,7 +53,7 @@ export type FunctionParams = {
 }
 
 export module query {
-  export function Ref<T>(
+  export function Ref<T extends object>(
     ref: Expr.CollectionRef<T>,
     id?: ExprVal<number | string>
   ): Expr.DocumentRef<T>
@@ -155,7 +155,7 @@ export module query {
   export function IsCredentials(expr: ExprArg): Expr
   export function IsRole(expr: ExprArg): Expr
 
-  export function Get<T>(
+  export function Get<T extends object>(
     ref: Expr.Ref<T>,
     ts?: ExprVal<number | Expr.Time>
   ): Expr<T extends (infer U)[] ? U : T>
@@ -168,7 +168,7 @@ export module query {
     collection: ExprArg
   ): Expr
 
-  export function Paginate<T>(
+  export function Paginate<T extends object>(
     set: Expr.SetRef<T>,
     params?: ExprVal<PaginateParams>
   ): Page<Expr.Ref<T>>
@@ -178,7 +178,7 @@ export module query {
     ts?: ExprVal<number>
   ): Expr<boolean>
 
-  export function Create<T>(
+  export function Create<T extends object>(
     collection_ref: Expr.CollectionRef<T>,
     params: ExprVal<CreateParams<T>>
   ): Document<T>
@@ -206,14 +206,14 @@ export module query {
   export function Remove(ref: ExprArg, ts: ExprArg, action: ExprArg): Expr
   export function CreateClass(params: ExprArg): Expr
 
-  export function CreateCollection<T>(
+  export function CreateCollection<T extends object>(
     params: ExprVal<CreateCollectionParams>
   ): Expr<Collection<T>>
 
   // TODO
   export function CreateDatabase(params: ExprArg): Expr
 
-  export function CreateIndex<T>(
+  export function CreateIndex<T extends object>(
     params: ExprVal<CreateIndexParams>
   ): Expr<Index<T>>
 
@@ -232,7 +232,7 @@ export module query {
   export function Singleton(ref: ExprArg): Expr
   export function Events(ref_set: ExprArg): Expr
 
-  export function Match<T>(
+  export function Match<T extends object>(
     index: Expr.IndexRef<T>,
     ...terms: any[]
   ): Expr.SetRef<Document<T>>
@@ -323,13 +323,13 @@ export module query {
   export function Database(name: ExprArg, scope?: ExprArg): Expr
 
   // TODO: "scope" argument
-  export function Index<T>(
+  export function Index<T extends object>(
     name: ExprVal<string>,
     scope?: ExprArg
   ): Expr.IndexRef<T>
 
   // TODO: "scope" argument
-  export function Collection<T>(
+  export function Collection<T extends object>(
     name: ExprVal<string>,
     scope?: ExprArg
   ): Expr.CollectionRef<T>
@@ -443,7 +443,7 @@ export module query {
   // TODO
   export function MoveDatabase(from: ExprArg, to: ExprArg): Expr
 
-  export function Documents<T>(
+  export function Documents<T extends object>(
     collection: Expr.CollectionRef<T>
   ): Expr.SetRef<Document<T>>
 }
