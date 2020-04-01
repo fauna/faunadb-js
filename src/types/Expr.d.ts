@@ -85,7 +85,7 @@ export interface Function<T extends object> {
 }
 
 export namespace Expr {
-  export abstract class Ref<T> extends Expr<values.Ref> {
+  export abstract class Ref<T extends object = any> extends Expr<values.Ref> {
     // This prevents structural type equality with empty objects.
     private _refType: T
   }
