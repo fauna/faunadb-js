@@ -10,6 +10,48 @@ import Expr, {
 
 export type ExprArg<T = unknown> = ExprVal<T> | Array<ExprVal<T>>
 
+export type CreateParams<T> = ExprVal<{
+  data: T
+  credentials?: object
+  delegates?: object
+  ttl?: Expr.Time
+}>
+
+export type CreateCollectionParams = {
+  name: string
+  data?: object
+  permissions?: object
+  history_days?: number
+  ttl_days?: number
+}
+
+export type CreateIndexParams = {
+  name: string
+  source: Expr.CollectionRef<any> | any[]
+  terms?: any[]
+  values?: any[]
+  unique?: boolean
+  serialized?: boolean
+  permissions?: object
+  data?: object
+}
+
+export type PaginateParams = {
+  ts?: number | Expr.Time
+  size?: number
+  before?: string
+  after?: string
+  events?: boolean
+  sources?: boolean
+}
+
+export type FunctionParams = {
+  name: string
+  body: object
+  data?: object
+  role?: any
+}
+
 export module query {
   export function Ref<T>(
     ref: Expr.CollectionRef<T>,
@@ -127,14 +169,7 @@ export module query {
 
   export function Paginate<T>(
     set: Expr.SetRef<T>,
-    params?: ExprVal<{
-      ts?: number | Expr.Time
-      size?: number
-      before?: string
-      after?: string
-      events?: boolean
-      sources?: boolean
-    }>
+    params?: ExprVal<PaginateParams>
   ): Page<T>
 
   // TODO
@@ -142,12 +177,7 @@ export module query {
 
   export function Create<T>(
     collection_ref: Expr.CollectionRef<T>,
-    params: ExprVal<{
-      data: T
-      credentials?: object
-      delegates?: object
-      ttl?: Expr.Time
-    }>
+    params: ExprVal<CreateParams<T>>
   ): Document<T>
 
   // TODO
@@ -174,41 +204,21 @@ export module query {
   export function CreateClass(params: ExprArg): Expr
 
   export function CreateCollection<T>(
-    params: ExprVal<{
-      name: string
-      data?: object
-      permissions?: object
-      history_days?: number
-      ttl_days?: number
-    }>
+    params: ExprVal<CreateCollectionParams>
   ): Expr<Collection<T>>
 
   // TODO
   export function CreateDatabase(params: ExprArg): Expr
 
   export function CreateIndex<T>(
-    params: ExprVal<{
-      name: string
-      source: Expr.CollectionRef<any> | any[]
-      terms?: any[]
-      values?: any[]
-      unique?: boolean
-      serialized?: boolean
-      permissions?: object
-      data?: object
-    }>
+    params: ExprVal<CreateIndexParams>
   ): Expr<Index<T>>
 
   // TODO
   export function CreateKey(params: ExprArg): Expr
 
   export function CreateFunction<T>(
-    params: ExprVal<{
-      name: string
-      body: object
-      data?: object
-      role?: any
-    }>
+    params: ExprVal<FunctionParams>
   ): Expr<Function<T>>
 
   // TODO
