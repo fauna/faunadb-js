@@ -90,9 +90,9 @@ export namespace Expr {
     private _refType: T
   }
 
-  export interface DocumentRef<T extends object> extends Ref<Document<T>> {}
+  export interface SetRef<T extends object = any> extends Ref<Ref<T>[]> {}
 
-  export interface SetRef<T extends object> extends Ref<Document<T>[]> {}
+  export interface DocumentRef<T extends object> extends Ref<Document<T>> {}
 
   export interface CollectionRef<T extends object> extends Ref<Collection<T>> {}
 
