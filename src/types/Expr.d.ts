@@ -34,8 +34,10 @@ export type ExprVal<T = unknown> =
       ? { [P in keyof T]: ExprVal<T[P]> }
       : T)
 
+export type ToExpr<T> = T extends Expr ? T : Expr<T>
+
 export type Lambda<In extends any[] = any[], Out = any> = (
-  ...args: In
+  ...args: { [P in keyof In]: ToExpr<In[P]> }
 ) => Expr<Out>
 
 export interface Collection<T extends object> {
