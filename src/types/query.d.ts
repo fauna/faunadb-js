@@ -117,7 +117,7 @@ export module query {
   export function Filter<T>(
     collection: Expr.Iterable<T>,
     lambda_expr: ExprVal<Lambda<[T], boolean>>
-  ): Expr<T>
+  ): Expr<T[]>
 
   // TODO
   export function Take(number: ExprArg, collection: ExprArg): Expr
