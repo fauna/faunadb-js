@@ -6,6 +6,7 @@ import Expr, {
   Page,
   Index,
   Function,
+  ToExpr,
 } from './Expr'
 
 export type ExprArg<T = unknown> = ExprVal<T> | Array<ExprVal<T>>
@@ -393,7 +394,7 @@ export module query {
     path: Expr.KeyPath,
     from: Expr<object>,
     _default?: ExprVal<T>
-  ): Expr<Exclude<T, Expr>>
+  ): ToExpr<T>
 
   // TODO
   export function SelectAll(path: ExprArg, from: ExprArg): Expr
