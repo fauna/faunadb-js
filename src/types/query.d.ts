@@ -172,8 +172,10 @@ export module query {
     params?: ExprVal<PaginateParams>
   ): Page<T>
 
-  // TODO
-  export function Exists(ref: ExprArg, ts?: ExprArg): Expr
+  export function Exists(
+    ref: Expr.Ref<any>,
+    ts?: ExprVal<number>
+  ): Expr<boolean>
 
   export function Create<T>(
     collection_ref: Expr.CollectionRef<T>,
