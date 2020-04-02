@@ -59,7 +59,7 @@ export type ExprVal<T = unknown> =
 
 export type Lambda<In extends any[] = any[], Out = any> = (
   ...args: { [P in keyof In]: ToExpr<In[P]> }
-) => Expr<Out>
+) => ToExpr<Out>
 
 export interface Collection<T extends object, Meta extends object = any> {
   ref: Expr.CollectionRef<T, Meta>
