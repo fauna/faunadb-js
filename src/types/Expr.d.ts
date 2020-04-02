@@ -107,12 +107,11 @@ export namespace Expr {
 
   export interface Time extends Expr<values.FaunaTime> {}
 
-  export interface Page<T>
-    extends Expr<{
-      data: T[]
-      before?: string
-      after?: string
-    }> {}
+  /** The expression type for a page from a paginated set returned by `q.Paginate` */
+  export class Page<T = any> extends Expr<values.Page<T>> {
+    // This prevents structural type equality.
+    private _type: 'Page' & T
+  }
 
   /** Expression types that can be passed to `q.Map`, `q.Filter`, etc */
   export type Iterable<T> = ExprVal<T[]> | ArrayRef<T> | Page<T>
