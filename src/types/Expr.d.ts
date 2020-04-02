@@ -102,9 +102,9 @@ export interface Function<Return, Meta extends object = any> {
 }
 
 export namespace Expr {
-  export abstract class Ref<T extends object = any> extends Expr<values.Ref> {
-    // This prevents structural type equality with empty objects.
-    private _refType: T
+  export class Ref<T = any> extends Expr<values.Ref> {
+    // This prevents structural type equality.
+    private _type: 'Ref' & T
   }
 
   export class SetRef<T = any> extends Expr<values.SetRef> {
