@@ -13,12 +13,12 @@ export class Expr<T = any> {
 }
 
 /** Materialize an `Expr` type into its result type. */
-export type Materialize<T> = T extends Expr<infer U>
+export type Materialize<T> = T extends ExprVal<Lambda>
+  ? never
+  : T extends Expr<infer U>
   ? U
-  : T extends ReadonlyArray<infer U>
-  ? (U[] extends T
-      ? ReadonlyArray<Materialize<U>>
-      : { [P in keyof T]: Materialize<T[P]> })
+  : T extends object
+  ? { [P in keyof T]: Materialize<T[P]> }
   : T
 
 /** Add support for `Expr` types to any type. */
