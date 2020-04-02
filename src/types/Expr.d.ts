@@ -145,9 +145,10 @@ export namespace Expr {
     ? ToExpr<U>
     : unknown
 
+  /** The expression type for the `path` argument of `q.Select` */
   export type KeyPath = ExprVal<(number | string)[]>
 
-  /** Expression type for the `lambda` argument of `q.Filter` */
+  /** The expression type for the `lambda` argument of `q.Filter` */
   export type Filter<T> = ExprVal<Lambda<[T], boolean>>
 
   /** The expression type that can be mapped with `q.Map` */
