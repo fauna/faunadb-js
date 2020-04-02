@@ -21,6 +21,31 @@ export type Materialize<T> = T extends ExprVal<Lambda>
   ? { [P in keyof T]: Materialize<T[P]> }
   : T
 
+/**
+ * Evaluate the given type as an expression. Since nominal subtypes
+ * of `Expr` (like `Expr.Ref`) are handled by `ToExpr`, they are
+ * omitted. Use `Materialize` if you need them too.
+ */
+type Eval<T> = T extends Expr<infer U>
+  ? (Expr extends T ? U : never)
+  : T extends Lambda
+  ? T
+  : T extends object
+  ? { [P in keyof T]: Eval<T[P]> | NominalExpr<T[P]> }
+  : T
+
+/** Extract nominal subtypes of `Expr` */
+type NominalExpr<T> = T extends infer U
+  ? (Expr extends U ? never : Extract<U, Expr>)
+  : never
+
+/** Convert all non-`Expr` types into `Expr` types */
+export type ToExpr<T> =
+  // Preserve nominal subtypes of `Expr`
+  | NominalExpr<T>
+  // Merge plain `Expr` types with primitive types
+  | (Eval<T> extends infer U ? ([U] extends [never] ? never : Expr<U>) : never)
+
 /** Add support for `Expr` types to any type. */
 export type ExprVal<T = unknown> =
   | ToExpr<T>
@@ -33,10 +58,6 @@ export type ExprVal<T = unknown> =
       : T extends object
       ? { [P in keyof T]: ExprVal<T[P]> }
       : T)
-
-export type ToExpr<T> = [T] extends [infer U]
-  ? (T extends Expr ? T : Expr<Exclude<U, Expr>>)
-  : never
 
 export type Lambda<In extends any[] = any[], Out = any> = (
   ...args: { [P in keyof In]: ToExpr<In[P]> }
