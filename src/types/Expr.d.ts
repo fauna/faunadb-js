@@ -138,7 +138,13 @@ export namespace Expr {
   /** The expression type for an iterable collection of values */
   export type Iterable<T = any> = ExprVal<T[]> | SetRef<T> | Page<T>
 
-  /** Expression type for the `path` argument of `q.Select` */
+  /** The expression type for a single value from an iterable */
+  export type IterableVal<T extends Iterable> = T extends SetRef<infer U>
+    ? Ref<U>
+    : T extends Iterable<infer U>
+    ? ToExpr<U>
+    : unknown
+
   export type KeyPath = ExprVal<(number | string)[]>
 
   /** Expression type for the `lambda` argument of `q.Filter` */
