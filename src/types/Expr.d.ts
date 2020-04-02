@@ -88,11 +88,10 @@ export namespace Expr {
     private _refType: T
   }
 
-  /** @internal For type inference only. Please use `Expr.Iterable` instead. */
-  export interface ArrayRef<T = any> extends Ref<T[]> {}
-
-  /** Lazily evaluated set of refs */
-  export interface SetRef<T extends object = any> extends ArrayRef<Ref<T>> {}
+  export class SetRef<T = any> extends Expr<values.SetRef> {
+    // This prevents structural type equality.
+    private _type: 'SetRef' & T
+  }
 
   export interface DocumentRef<T extends object> extends Ref<Document<T>> {}
 
@@ -113,8 +112,8 @@ export namespace Expr {
     private _type: 'Page' & T
   }
 
-  /** Expression types that can be passed to `q.Map`, `q.Filter`, etc */
-  export type Iterable<T> = ExprVal<T[]> | ArrayRef<T> | Page<T>
+  /** The expression type for an iterable collection of values */
+  export type Iterable<T = any> = ExprVal<T[]> | SetRef<T> | Page<T>
 
   /** Expression type for the `path` argument of `q.Select` */
   export type KeyPath = ExprVal<(number | string)[]>
