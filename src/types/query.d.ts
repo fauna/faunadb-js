@@ -194,9 +194,9 @@ export module query {
   export function IsRole(expr: ExprArg): Expr
 
   export function Get<T extends object>(
-    ref: Expr.Ref<T>,
+    ref: Expr.Ref<T> | Expr.SetRef<T>,
     ts?: ExprVal<number | Expr.Time>
-  ): Expr<T extends (infer U)[] ? U : T>
+  ): Expr<T>
 
   // TODO
   export function KeyFromSecret(secret: ExprArg): Expr
