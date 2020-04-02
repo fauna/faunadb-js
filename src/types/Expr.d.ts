@@ -122,4 +122,12 @@ export namespace Expr {
 
   /** Expression type for the `lambda` argument of `q.Filter` */
   export type Filter<T> = ExprVal<Lambda<[T], boolean>>
+
+  /** The expression type that can be mapped with `q.Map` */
+  export type Mappable<T = any> = Exclude<Iterable<T>, SetRef>
+
+  /** The expression type returned by `q.Map` */
+  export type MapResult<T extends Expr.Mappable, Out> = T extends Expr.Page
+    ? Expr.Page<Out>
+    : Expr<Out[]>
 }
