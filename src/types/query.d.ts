@@ -153,10 +153,10 @@ export module query {
     lambda_expr: ExprVal<Lambda<[Expr.IterableVal<T>]>>
   ): T
 
-  export function Filter<T>(
-    collection: Expr.Iterable<T>,
-    lambda_expr: Expr.Filter<T>
-  ): Expr<T[]>
+  export function Filter<T extends Expr.Iterable>(
+    collection: T,
+    lambda_expr: Expr.Filter<Expr.IterableVal<T>>
+  ): T
 
   // TODO
   export function Take(number: ExprArg, collection: ExprArg): Expr
