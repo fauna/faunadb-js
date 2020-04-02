@@ -123,7 +123,11 @@ export namespace Expr {
   export interface FunctionRef<Return, Meta extends object = any>
     extends Ref<Function<Return, Meta>> {}
 
-  export interface Time extends Expr<values.FaunaTime> {}
+  /** The expression type for a timestamp (nanosecond precision) */
+  export class Time extends Expr<values.FaunaTime> {
+    // This prevents structural type equality.
+    private _type: 'Time'
+  }
 
   /** The expression type for a page from a paginated set returned by `q.Paginate` */
   export class Page<T = any> extends Expr<values.Page<T>> {
