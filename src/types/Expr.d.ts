@@ -49,12 +49,10 @@ export type ToExpr<T> =
 /** Add support for `Expr` types to any type. */
 export type ExprVal<T = unknown> =
   | ToExpr<T>
-  | (T extends Expr | Lambda
+  | (T extends Expr
+      ? never
+      : T extends Lambda
       ? T
-      : T extends ReadonlyArray<infer U>
-      ? (U[] extends T
-          ? ReadonlyArray<ExprVal<U>>
-          : { [P in keyof T]: ExprVal<T[P]> })
       : T extends object
       ? { [P in keyof T]: ExprVal<T[P]> }
       : T)
