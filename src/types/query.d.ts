@@ -219,7 +219,7 @@ export module query {
   export function Create<T extends object>(
     collection_ref: Expr.CollectionRef<T>,
     params: ExprVal<CreateParams<T>>
-  ): Document<T>
+  ): Expr<Document<T>>
 
   export function Update<T extends Updatable>(
     ref: T,
