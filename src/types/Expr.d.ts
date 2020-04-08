@@ -104,35 +104,55 @@ export interface Function<Return, Meta extends object = any> {
 export namespace Expr {
   export class Ref<T = any> extends Expr<values.Ref> {
     // This prevents structural type equality.
-    private _type: 'Ref' & T
+    protected _type: 'Ref' & T
   }
 
   export class SetRef<T = any> extends Expr<values.SetRef> {
     // This prevents structural type equality.
-    private _type: 'SetRef' & T
+    protected _type: 'SetRef' & T
   }
 
-  export interface DocumentRef<T extends object> extends Ref<Document<T>> {}
+  export class DocumentRef<T extends object> extends Ref<Document<T>> {
+    // This prevents structural type equality.
+    protected _data: T
+  }
 
-  export interface CollectionRef<T extends object, Meta extends object = any>
-    extends Ref<Collection<T, Meta>> {}
+  export class CollectionRef<
+    T extends object,
+    Meta extends object = any
+  > extends Ref<Collection<T, Meta>> {
+    // This prevents structural type equality.
+    protected _data: T
+    protected _meta: Meta
+  }
 
-  export interface IndexRef<T extends object, Meta extends object = any>
-    extends Ref<Index<T, Meta>> {}
+  export class IndexRef<
+    T extends object,
+    Meta extends object = any
+  > extends Ref<Index<T, Meta>> {
+    // This prevents structural type equality.
+    protected _data: T
+    protected _meta: Meta
+  }
 
-  export interface FunctionRef<Return, Meta extends object = any>
-    extends Ref<Function<Return, Meta>> {}
+  export class FunctionRef<Return, Meta extends object = any> extends Ref<
+    Function<Return, Meta>
+  > {
+    // This prevents structural type equality.
+    protected _return: Return
+    protected _meta: Meta
+  }
 
   /** The expression type for a timestamp (nanosecond precision) */
   export class Time extends Expr<values.FaunaTime> {
     // This prevents structural type equality.
-    private _type: 'Time'
+    protected _type: 'Time'
   }
 
   /** The expression type for a page from a paginated set returned by `q.Paginate` */
   export class Page<T = any> extends Expr<values.Page<T>> {
     // This prevents structural type equality.
-    private _type: 'Page' & T
+    protected _type: 'Page' & T
   }
 
   /** The expression type for an iterable collection of values */
