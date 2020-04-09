@@ -405,8 +405,12 @@ export module query {
 
   export function Equals(...args: any[]): Expr<boolean>
 
+  export function ContainsPath(
+    path: Expr.KeyPath,
+    _in: ExprVal<object>
+  ): Expr<boolean>
+
   // TODO
-  export function ContainsPath(path: ExprArg, _in: ExprArg): Expr
   export function ContainsField(field: string, _in: ExprArg): Expr
   export function ContainsValue(value: ExprArg, _in: ExprArg): Expr
 
