@@ -411,7 +411,7 @@ export module query {
   export function ContainsValue(value: ExprArg, _in: ExprArg): Expr
 
   export function Select<T = any>(
-    path: ExprVal<string | number> | Expr.KeyPath,
+    path: Expr.KeyPath,
     from: ExprVal<object>,
     _default?: ExprVal<T>
   ): ToExpr<T>

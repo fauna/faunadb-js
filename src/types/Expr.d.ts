@@ -166,7 +166,7 @@ export namespace Expr {
     : unknown
 
   /** The expression type for the `path` argument of `q.Select` */
-  export type KeyPath = ExprVal<(number | string)[]>
+  export type KeyPath = ExprVal<string | number | (number | string)[]>
 
   /** The expression type for the `lambda` argument of `q.Filter` */
   export type Filter<T> = ExprVal<Lambda<[T], boolean>>
