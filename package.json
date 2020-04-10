@@ -22,7 +22,7 @@
   "main": "index.js",
   "scripts": {
     "doc": "jsdoc -c ./jsdoc.json",
-    "browserify": "browserify index.js --standalone faunadb -o dist/faunadb.js",
+    "browserify": "browserify index.js --standalone faunadb -o dist/faunadb.js | browserify index.js -o dist/faunadb.es.js -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] ]",
     "browserify-min": "browserify index.js --standalone faunadb | terser -c -m --keep-fnames --keep-classnames -o dist/faunadb-min.js",
     "prettify": "prettier --write \"{src,test}/**/*.{js,ts}\"",
     "test": "jest --env=node --verbose=false ./test"
@@ -39,6 +39,10 @@
     "util-deprecate": "^1.0.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/preset-react": "^7.9.4",
+    "babelify": "^10.0.0",
     "browserify": "^16.2.2",
     "eslint": "^5.3.0",
     "eslint-config-prettier": "^6.5.0",
