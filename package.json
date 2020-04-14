@@ -25,6 +25,7 @@
     "require": "dist/faunadb.js"
   },
   "type": "module",
+  "module": "dist/faunadb.es.js",
   "scripts": {
     "doc": "jsdoc -c ./jsdoc.json",
     "browserify": "browserify index.js --standalone faunadb -o dist/faunadb.js | browserify index.js -o dist/faunadb.es.js -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] ]",
