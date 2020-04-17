@@ -20,11 +20,6 @@
     "dist/"
   ],
   "main": "index.js",
-  "exports": {
-    "import": "dist/faunadb.es.js",
-    "require": "dist/faunadb.js"
-  },
-  "type": "module",
   "module": "dist/faunadb.es.js",
   "scripts": {
     "doc": "jsdoc -c ./jsdoc.json",
