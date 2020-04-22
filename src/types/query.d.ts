@@ -416,6 +416,11 @@ export module query {
   export function ContainsField(field: string, _in: ExprArg): Expr
   export function ContainsValue(value: ExprArg, _in: ExprArg): Expr
 
+  export function Select<T>(
+    index: number,
+    from: Expr.Page<T>,
+    _default?: ExprVal<T>
+  ): ToExpr<T>
   export function Select<T = any>(
     path: Expr.KeyPath,
     from: ExprVal<object>,
