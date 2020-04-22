@@ -159,9 +159,7 @@ export namespace Expr {
   export type Iterable<T = any> = ExprVal<T[]> | SetRef<T> | Page<T>
 
   /** The expression type for a single value from an iterable */
-  export type IterableVal<T extends Iterable> = T extends SetRef<infer U>
-    ? Ref<U>
-    : T extends Iterable<infer U>
+  export type IterableVal<T extends Iterable> = T extends Iterable<infer U>
     ? ToExpr<U>
     : unknown
 

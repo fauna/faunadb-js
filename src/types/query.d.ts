@@ -194,7 +194,7 @@ export module query {
   export function IsRole(expr: ExprArg): Expr
 
   export function Get<T extends object>(
-    ref: Expr.Ref<T> | Expr.SetRef<T>,
+    ref: Expr.Ref<T> | Expr.SetRef<Expr.Ref<T>>,
     ts?: ExprVal<number | Expr.Time>
   ): Expr<T>
 
@@ -209,7 +209,7 @@ export module query {
   export function Paginate<T extends object>(
     set: Expr.SetRef<T>,
     params?: ExprVal<PaginateParams>
-  ): Expr.Page<Expr.Ref<T>>
+  ): Expr.Page<T>
 
   export function Exists(
     ref: Expr.Ref<any>,
@@ -277,7 +277,7 @@ export module query {
   export function Match<T extends object>(
     index: Expr.IndexRef<T>,
     ...terms: any[]
-  ): Expr.SetRef<Document<T>>
+  ): Expr.SetRef<Expr.DocumentRef<T>>
 
   // TODO
   export function Union(...sets: ExprArg[]): Expr
@@ -389,13 +389,15 @@ export module query {
   export function Databases(scope?: ExprArg): Expr
 
   // TODO: "scope" argument
-  export function Collections(scope?: ExprArg): Expr.SetRef<Collection<any>>
+  export function Collections(
+    scope?: ExprArg
+  ): Expr.SetRef<Expr.CollectionRef<any>>
 
   // TODO: "scope" argument
-  export function Indexes(scope?: ExprArg): Expr.SetRef<Index<any>>
+  export function Indexes(scope?: ExprArg): Expr.SetRef<Expr.IndexRef<any>>
 
   // TODO: "scope" argument
-  export function Functions(scope?: ExprArg): Expr.SetRef<Function<any>>
+  export function Functions(scope?: ExprArg): Expr.SetRef<Expr.FunctionRef<any>>
 
   // TODO
   export function Roles(scope?: ExprArg): Expr
@@ -491,5 +493,5 @@ export module query {
 
   export function Documents<T extends object>(
     collection: Expr.CollectionRef<T>
-  ): Expr.SetRef<Document<T>>
+  ): Expr.SetRef<Expr.DocumentRef<T>>
 }
