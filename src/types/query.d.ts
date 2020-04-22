@@ -1,23 +1,24 @@
 import Expr, {
-  ExprVal,
-  Lambda,
-  Document,
   Collection,
-  Index,
+  Document,
+  ExprVal,
   Function,
+  Index,
+  Lambda,
   ToExpr,
 } from './Expr'
+import { JsonObject } from './json'
 
 export type ExprArg<T = unknown> = ExprVal<T> | Array<ExprVal<T>>
 
-export type CreateParams<T extends object> = ExprVal<{
+export type CreateParams<T extends JsonObject> = ExprVal<{
   data: T
-  credentials?: object
-  delegates?: object
+  credentials?: JsonObject
+  delegates?: JsonObject
   ttl?: Expr.Time
 }>
 
-type Updatable<T extends object = any> =
+type Updatable<T extends JsonObject = any> =
   | Expr.DocumentRef<T>
   | Expr.CollectionRef<any, T>
   | Expr.IndexRef<any, T>
@@ -27,29 +28,29 @@ export type UpdateParams<T extends Updatable> = unknown &
   T extends Expr.DocumentRef<infer U>
   ? {
       data?: Partial<U>
-      credentials?: object
-      delegates?: object
+      credentials?: JsonObject
+      delegates?: JsonObject
     }
   : T extends Expr.Ref<infer U>
   ? Omit<Partial<U>, 'ref' | 'ts'>
   : never
 
-export type CreateCollectionParams<Meta extends object = any> = {
+export type CreateCollectionParams<Meta extends JsonObject = any> = {
   name: string
   data?: Meta
-  permissions?: object
+  permissions?: JsonObject
   history_days?: number
   ttl_days?: number
 }
 
-export type CreateIndexParams<Meta extends object = any> = {
+export type CreateIndexParams<Meta extends JsonObject = any> = {
   name: string
   source: Expr.CollectionRef<any> | any[]
   terms?: any[]
   values?: any[]
   unique?: boolean
   serialized?: boolean
-  permissions?: object
+  permissions?: JsonObject
   data?: Meta
 }
 
@@ -62,15 +63,15 @@ export type PaginateParams = {
   sources?: boolean
 }
 
-export type FunctionParams<Meta extends object = any> = {
+export type FunctionParams<Meta extends JsonObject = any> = {
   name: string
-  body: object
+  body: JsonObject
   data?: Meta
   role?: any
 }
 
 export module query {
-  export function Ref<T extends object>(
+  export function Ref<T extends JsonObject>(
     ref: Expr.CollectionRef<T>,
     id?: ExprVal<number | string>
   ): Expr.DocumentRef<T>
@@ -80,7 +81,7 @@ export module query {
   export function Abort(msg: ExprArg): Expr
   export function At(timestamp: ExprArg, expr: ExprArg): Expr
 
-  export function Let<T>(vars: ExprVal<object>, in_expr: Expr<T>): Expr<T>
+  export function Let<T>(vars: ExprVal<JsonObject>, in_expr: Expr<T>): Expr<T>
 
   // TODO
   export function Var(varName: ExprArg): Expr
@@ -193,7 +194,7 @@ export module query {
   export function IsCredentials(expr: ExprArg): Expr
   export function IsRole(expr: ExprArg): Expr
 
-  export function Get<T extends object>(
+  export function Get<T extends JsonObject>(
     ref: Expr.Ref<T> | Expr.SetRef<Expr.Ref<T>>,
     ts?: ExprVal<number | Expr.Time>
   ): Expr<T>
@@ -206,7 +207,7 @@ export module query {
     collection: ExprArg
   ): Expr
 
-  export function Paginate<T extends object>(
+  export function Paginate<T extends JsonObject>(
     set: Expr.SetRef<T>,
     params?: ExprVal<PaginateParams>
   ): Expr.Page<T>
@@ -216,7 +217,7 @@ export module query {
     ts?: ExprVal<number>
   ): Expr<boolean>
 
-  export function Create<T extends object>(
+  export function Create<T extends JsonObject>(
     collection_ref: Expr.CollectionRef<T>,
     params: ExprVal<CreateParams<T>>
   ): Expr<Document<T>>
@@ -234,7 +235,7 @@ export module query {
   ): Expr<{
     database: string
     role: string
-    data?: object
+    data?: JsonObject
     priority?: number
   }>
 
@@ -248,21 +249,23 @@ export module query {
   export function Remove(ref: ExprArg, ts: ExprArg, action: ExprArg): Expr
   export function CreateClass(params: ExprArg): Expr
 
-  export function CreateCollection<T extends object, Meta extends object = any>(
-    params: ExprVal<CreateCollectionParams<Meta>>
-  ): Expr<Collection<T, Meta>>
+  export function CreateCollection<
+    T extends JsonObject,
+    Meta extends JsonObject = any
+  >(params: ExprVal<CreateCollectionParams<Meta>>): Expr<Collection<T, Meta>>
 
   // TODO
   export function CreateDatabase(params: ExprArg): Expr
 
-  export function CreateIndex<T extends object, Meta extends object = any>(
-    params: ExprVal<CreateIndexParams<Meta>>
-  ): Expr<Index<T, Meta>>
+  export function CreateIndex<
+    T extends JsonObject,
+    Meta extends JsonObject = any
+  >(params: ExprVal<CreateIndexParams<Meta>>): Expr<Index<T, Meta>>
 
   // TODO
   export function CreateKey(params: ExprArg): Expr
 
-  export function CreateFunction<Return, Meta extends object = any>(
+  export function CreateFunction<Return, Meta extends JsonObject = any>(
     params: ExprVal<FunctionParams<Meta>>
   ): Expr<Function<Return>>
 
@@ -274,7 +277,7 @@ export module query {
   export function Singleton(ref: ExprArg): Expr
   export function Events(ref_set: ExprArg): Expr
 
-  export function Match<T extends object>(
+  export function Match<T extends JsonObject>(
     index: Expr.IndexRef<T>,
     ...terms: any[]
   ): Expr.SetRef<Expr.DocumentRef<T>>
@@ -365,19 +368,19 @@ export module query {
   export function Database(name: ExprArg, scope?: ExprArg): Expr
 
   // TODO: "scope" argument
-  export function Index<T extends object, Meta extends object = any>(
+  export function Index<T extends JsonObject, Meta extends JsonObject = any>(
     name: ExprVal<string>,
     scope?: ExprArg
   ): Expr.IndexRef<T, Meta>
 
   // TODO: "scope" argument
-  export function Collection<T extends object, Meta extends object = any>(
-    name: ExprVal<string>,
-    scope?: ExprArg
-  ): Expr.CollectionRef<T, Meta>
+  export function Collection<
+    T extends JsonObject,
+    Meta extends JsonObject = any
+  >(name: ExprVal<string>, scope?: ExprArg): Expr.CollectionRef<T, Meta>
 
   // TODO: "scope" argument
-  export function Function<Return, Meta extends object = any>(
+  export function Function<Return, Meta extends JsonObject = any>(
     name: ExprVal<string>,
     scope?: ExprArg
   ): Expr.FunctionRef<Return, Meta>
@@ -423,7 +426,7 @@ export module query {
   ): ToExpr<T>
   export function Select<T = any>(
     path: Expr.KeyPath,
-    from: ExprVal<object>,
+    from: ExprVal<JsonObject>,
     _default?: ExprVal<T>
   ): ToExpr<T>
 
@@ -496,7 +499,7 @@ export module query {
   // TODO
   export function MoveDatabase(from: ExprArg, to: ExprArg): Expr
 
-  export function Documents<T extends object>(
+  export function Documents<T extends JsonObject>(
     collection: Expr.CollectionRef<T>
   ): Expr.SetRef<Expr.DocumentRef<T>>
 }

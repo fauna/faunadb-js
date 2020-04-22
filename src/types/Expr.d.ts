@@ -1,9 +1,10 @@
+import { JsonObject } from './json'
 import { values } from './values'
 
 export default Expr
 
 export class Expr<T = any> {
-  constructor(obj: object)
+  constructor(obj: JsonObject)
 
   readonly _isFaunaExpr?: boolean
   static toString(expr: Expr): string
@@ -17,7 +18,7 @@ export type Materialize<T> = T extends ExprVal<Lambda>
   ? never
   : T extends Expr<infer U>
   ? U
-  : T extends object
+  : T extends JsonObject
   ? { [P in keyof T]: Materialize<T[P]> }
   : T
 
@@ -30,7 +31,7 @@ type Eval<T> = T extends Expr<infer U>
   ? (Expr extends T ? U : never)
   : T extends Lambda
   ? T
-  : T extends object
+  : T extends JsonObject
   ? { [P in keyof T]: Eval<T[P]> | NominalExpr<T[P]> }
   : T
 
@@ -53,7 +54,7 @@ export type ExprVal<T = unknown> =
       ? never
       : T extends Lambda
       ? T
-      : T extends object
+      : T extends JsonObject
       ? { [P in keyof T]: ExprVal<T[P]> }
       : T)
 
@@ -61,23 +62,26 @@ export type Lambda<In extends any[] = any[], Out = any> = (
   ...args: { [P in keyof In]: ToExpr<In[P]> }
 ) => ToExpr<Out>
 
-export interface Collection<T extends object, Meta extends object = any> {
+export interface Collection<
+  T extends JsonObject,
+  Meta extends JsonObject = any
+> {
   ref: Expr.CollectionRef<T, Meta>
   ts: number
   name: string
   data: Meta
-  permissions?: object
+  permissions?: JsonObject
   history_days: number | null
   ttl_days?: number
 }
 
-export interface Document<T extends object> {
+export interface Document<T extends JsonObject> {
   data: T
   ref: Expr.DocumentRef<T>
   ts: number
 }
 
-export interface Index<T extends object, Meta extends object = any> {
+export interface Index<T extends JsonObject, Meta extends JsonObject = any> {
   ref: Expr.IndexRef<T, Meta>
   ts: number
   name: string
@@ -89,15 +93,15 @@ export interface Index<T extends object, Meta extends object = any> {
   unique?: boolean
   terms?: any[]
   values?: any[]
-  permissions?: object
+  permissions?: JsonObject
 }
 
-export interface Function<Return, Meta extends object = any> {
+export interface Function<Return, Meta extends JsonObject = any> {
   ref: Expr.FunctionRef<Return, Meta>
   ts: number
   name: string
   data: Meta
-  body: object
+  body: JsonObject
   role?: any
 }
 
@@ -112,14 +116,14 @@ export namespace Expr {
     protected _type: 'SetRef' & T
   }
 
-  export class DocumentRef<T extends object> extends Ref<Document<T>> {
+  export class DocumentRef<T extends JsonObject> extends Ref<Document<T>> {
     // This prevents structural type equality.
     protected _data: T
   }
 
   export class CollectionRef<
-    T extends object,
-    Meta extends object = any
+    T extends JsonObject,
+    Meta extends JsonObject = any
   > extends Ref<Collection<T, Meta>> {
     // This prevents structural type equality.
     protected _data: T
@@ -127,15 +131,15 @@ export namespace Expr {
   }
 
   export class IndexRef<
-    T extends object,
-    Meta extends object = any
+    T extends JsonObject,
+    Meta extends JsonObject = any
   > extends Ref<Index<T, Meta>> {
     // This prevents structural type equality.
     protected _data: T
     protected _meta: Meta
   }
 
-  export class FunctionRef<Return, Meta extends object = any> extends Ref<
+  export class FunctionRef<Return, Meta extends JsonObject = any> extends Ref<
     Function<Return, Meta>
   > {
     // This prevents structural type equality.
