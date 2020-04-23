@@ -227,6 +227,11 @@ Client.prototype._performRequest = function(
   url.set('query', query)
   options = defaults(options, {})
   var secret = options.secret || this._secret
+  var queryTimeout = this._queryTimeout
+
+  if (options && options.queryTimeout) {
+    queryTimeout = options.queryTimeout
+  }
 
   return this._fetch(url.href, {
     agent: this._keepAliveEnabledAgent,
