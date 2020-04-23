@@ -226,7 +226,7 @@ Client.prototype._performRequest = function(
   url.set('pathname', path)
   url.set('query', query)
   options = defaults(options, {})
-  const secret = options.secret || this._secret
+  var secret = options.secret || this._secret
 
   return this._fetch(url.href, {
     agent: this._keepAliveEnabledAgent,
