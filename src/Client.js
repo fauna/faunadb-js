@@ -108,8 +108,7 @@ Client.prototype.query = function(expression, options) {
 /**
  * Sets the maximum amount of time for query execution on the server.
  * Non-null values are sent to the server as the 'X-Query-Timeout' header.
- *   Length of time expressed in milliseconds
- * @param {number} timeout
+ * @param {number} timeout Length of time expressed in milliseconds
  */
 Client.prototype.queryTimeout = function(timeout) {
   this._queryTimeout = timeout
