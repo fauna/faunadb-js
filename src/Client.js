@@ -242,7 +242,7 @@ Client.prototype._performRequest = function(
       'X-FaunaDB-API-Version': APIVersion,
       'X-Fauna-Driver': 'Javascript',
       'X-Last-Seen-Txn': this._lastSeen,
-      'X-Query-Timeout': this._queryTimeout,
+      'X-Query-Timeout': queryTimeout,
     }),
     method: method,
     timeout: this._timeout,
