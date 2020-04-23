@@ -123,6 +123,14 @@ describe('Client', () => {
     await client.ping()
     expect(fetch).toBeCalled()
   })
+
+  test('set queryTimeout on client instance', () => {
+    client.queryTimeout(1000)
+    expect(client._queryTimeout).toEqual(1000)
+
+    client.queryTimeout(2000)
+    expect(client._queryTimeout).toEqual(2000)
+  })
 })
 
 function assertHeader(headers, name) {
