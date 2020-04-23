@@ -80,6 +80,7 @@ function Client(options) {
   this._lastSeen = null
   this._headers = opts.headers
   this._fetch = opts.fetch || require('cross-fetch')
+  this._queryTimeout = null
 
   if (isNodeEnv && opts.keepAlive) {
     this._keepAliveEnabledAgent = new (isHttps
@@ -103,6 +104,15 @@ function Client(options) {
 
 Client.prototype.query = function(expression, options) {
   return this._execute('POST', '', query.wrap(expression), null, options)
+}
+/**
+ * Sets the maximum amount of time for query execution on the server.
+ * Non-null values are sent to the server as the 'X-Query-Timeout' header.
+ *   Length of time expressed in milliseconds
+ * @param {number} timeout
+ */
+Client.prototype.queryTimeout = function(timeout) {
+  this._queryTimeout = timeout
 }
 
 /**
