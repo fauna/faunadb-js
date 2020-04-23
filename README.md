@@ -153,7 +153,7 @@ const client = new faunadb.Client({
 })
 ```
 
-On the other hand, using the client's `queryTimeout` dictates how long FaunaDB will process the request on the server-side before timing out if it hasn't finished it's lookup and/or returned data. This can be done in two different ways:
+On the other hand, using the client's `queryTimeout` dictates how long FaunaDB will process the request on the server before timing out if it hasn't finished running the operation. This can be done in two different ways:
 
 ```javascript
 // 1. Setting the value on the client instance
