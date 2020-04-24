@@ -131,6 +131,30 @@ describe('Client', () => {
     client.queryTimeout(2000)
     expect(client._queryTimeout).toEqual(2000)
   })
+
+  test.only('properly sets query timeout header', async () => {
+    const fetch = jest.fn((expr, opts) => {
+      expect(opts.headers['X-Query-Timeout']).toEqual(2000)
+
+      return Promise.resolve({
+        headers: new Set(),
+        text: () =>
+          Promise.resolve(
+            JSON.stringify({
+              data: ['Collection("my_collection")'],
+            })
+          ),
+      })
+    })
+
+    const testClient = util.getClient({
+      fetch,
+    })
+
+    await testClient.query(query.Paginate(query.Collections()), {
+      queryTimeout: 2000,
+    })
+  })
 })
 
 function assertHeader(headers, name) {
