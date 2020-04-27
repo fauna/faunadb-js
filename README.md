@@ -153,16 +153,22 @@ const client = new faunadb.Client({
 })
 ```
 
-On the other hand, using the client's `queryTimeout` dictates how long FaunaDB will process the request on the server before timing out if it hasn't finished running the operation. This can be done in two different ways:
+On the other hand, using the client's `queryTimeout` dictates how long FaunaDB will process the request on the server before timing out if it hasn't finished running the operation. This can be done in three different ways:
 
 ```javascript
-// 1. Setting the value on the client instance
+// 1. Setting the value when instantiating a new client
+const client = new faunadb.Client({
+  queryTimeout: 2000,
+  secret: 'YOUR_FAUNADB_SECRET',
+})
+
+// 2. Setting the value on the client instance
 const client = new faunadb.Client({
   secret: 'YOUR_FAUNADB_SECRET',
 })
 client.queryTimeout(200)
 
-// 2. Specifying the value per-query
+// 3. Specifying the value per-query
 var data = client.query(q.Paginate(q.Collections()), {
   queryTimeout: 100,
 })
