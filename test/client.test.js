@@ -3,6 +3,7 @@
 var errors = require('../src/errors')
 var query = require('../src/query')
 var util = require('./util')
+var Client = require('../src/Client')
 
 var client
 
@@ -124,36 +125,61 @@ describe('Client', () => {
     expect(fetch).toBeCalled()
   })
 
-  test('set queryTimeout on client instance', () => {
-    client.queryTimeout(1000)
-    expect(client._queryTimeout).toEqual(1000)
+  test('instantiate client using default http timeout', async () => {
+    const mockedFetch = mockFetch()
+    const clientWithTimeout = new Client({
+      fetch: mockedFetch,
+    })
 
-    client.queryTimeout(2000)
-    expect(client._queryTimeout).toEqual(2000)
+    await clientWithTimeout.query(query.Databases())
+
+    expect(mockedFetch).toBeCalledTimes(1)
+    expect(mockedFetch.mock.calls[0][1].timeout).toEqual(60 * 1000)
   })
 
-  test('properly sets query timeout header', async () => {
-    const fetch = jest.fn((expr, opts) => {
-      expect(opts.headers['X-Query-Timeout']).toEqual(2000)
-
-      return Promise.resolve({
-        headers: new Set(),
-        text: () =>
-          Promise.resolve(
-            JSON.stringify({
-              data: ['Collection("my_collection")'],
-            })
-          ),
-      })
+  test('instantiate client using custom http timeout', async () => {
+    const customTimeout = 10
+    const mockedFetch = mockFetch()
+    const clientWithTimeout = new Client({
+      timeout: customTimeout,
+      fetch: mockedFetch,
     })
 
-    const testClient = util.getClient({
-      fetch,
+    await clientWithTimeout.query(query.Databases())
+
+    expect(mockedFetch).toBeCalledTimes(1)
+    expect(mockedFetch.mock.calls[0][1].timeout).toEqual(customTimeout * 1000)
+  })
+
+  test('set query timeout using client.queryTimeout()', async () => {
+    const customQueryTimeout = 1000
+    const mockedFetch = mockFetch()
+    const client = new Client({ fetch: mockedFetch })
+
+    client.queryTimeout(customQueryTimeout)
+    await client.query(query.Databases())
+
+    expect(mockedFetch).toBeCalledTimes(1)
+    expect(mockedFetch.mock.calls[0][1].headers['X-Query-Timeout']).toEqual(
+      customQueryTimeout
+    )
+  })
+
+  test('set query timeout using client.queryTimeout()', async () => {
+    const overrideQueryTimeout = 5000
+    const baseQueryTimeout = 1000
+    const mockedFetch = mockFetch()
+    const client = new Client({ fetch: mockedFetch })
+
+    client.queryTimeout(baseQueryTimeout)
+    await client.query(query.Databases(), {
+      queryTimeout: overrideQueryTimeout,
     })
 
-    await testClient.query(query.Paginate(query.Collections()), {
-      queryTimeout: 2000,
-    })
+    expect(mockedFetch).toBeCalledTimes(1)
+    expect(mockedFetch.mock.calls[0][1].headers['X-Query-Timeout']).toEqual(
+      overrideQueryTimeout
+    )
   })
 })
 
@@ -164,4 +190,11 @@ function assertHeader(headers, name) {
 
 function createDocument() {
   return client.query(query.Create(query.Collection('my_collection'), {}))
+}
+
+function mockFetch(content = {}) {
+  return jest.fn().mockResolvedValue({
+    headers: new Set(),
+    text: () => Promise.resolve(JSON.stringify(content)),
+  })
 }
