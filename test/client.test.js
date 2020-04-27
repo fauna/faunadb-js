@@ -132,7 +132,7 @@ describe('Client', () => {
     expect(client._queryTimeout).toEqual(2000)
   })
 
-  test.only('properly sets query timeout header', async () => {
+  test('properly sets query timeout header', async () => {
     const fetch = jest.fn((expr, opts) => {
       expect(opts.headers['X-Query-Timeout']).toEqual(2000)
 
