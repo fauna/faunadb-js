@@ -66,6 +66,7 @@ function Client(options) {
     keepAlive: true,
     headers: {},
     fetch: undefined,
+    queryTimeout: null,
   })
   var isHttps = opts.scheme === 'https'
 
@@ -80,7 +81,7 @@ function Client(options) {
   this._lastSeen = null
   this._headers = opts.headers
   this._fetch = opts.fetch || require('cross-fetch')
-  this._queryTimeout = null
+  this._queryTimeout = opts.queryTimeout
 
   if (isNodeEnv && opts.keepAlive) {
     this._keepAliveEnabledAgent = new (isHttps
