@@ -53,6 +53,8 @@ var parse = require('url-parse')
  *   Configures http/https keepAlive option (ignored in browser environments)
  * @param {?fetch} options.fetch
  *   a fetch compatible [API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) for making a request
+ * @param {?number} options.queryTimeout
+ *   Sets the maximum amount of time (in milliseconds) for query execution on the server,
  */
 function Client(options) {
   var isNodeEnv = typeof window === 'undefined'
