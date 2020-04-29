@@ -108,14 +108,6 @@ function Client(options) {
 Client.prototype.query = function(expression, options) {
   return this._execute('POST', '', query.wrap(expression), null, options)
 }
-/**
- * Sets the maximum amount of time for query execution on the server.
- * Non-null values are sent to the server as the 'X-Query-Timeout' header.
- * @param {number} timeout Length of time expressed in milliseconds
- */
-Client.prototype.queryTimeout = function(timeout) {
-  this._queryTimeout = timeout
-}
 
 /**
  * Returns a {@link PageHelper} for the given Query expression.
