@@ -182,11 +182,9 @@ describe('Client', () => {
 
   test('set query timeout using client.query()', async () => {
     const overrideQueryTimeout = 5000
-    const baseQueryTimeout = 1000
     const mockedFetch = mockFetch()
     const client = new Client({ fetch: mockedFetch })
 
-    client.queryTimeout(baseQueryTimeout)
     await client.query(query.Databases(), {
       queryTimeout: overrideQueryTimeout,
     })
