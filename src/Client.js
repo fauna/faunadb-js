@@ -53,6 +53,8 @@ var parse = require('url-parse')
  *   Configures http/https keepAlive option (ignored in browser environments)
  * @param {?fetch} options.fetch
  *   a fetch compatible [API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) for making a request
+ * @param {?number} options.queryTimeout
+ *   Sets the maximum amount of time (in milliseconds) for query execution on the server,
  */
 function Client(options) {
   var isNodeEnv = typeof window === 'undefined'
@@ -66,6 +68,7 @@ function Client(options) {
     keepAlive: true,
     headers: {},
     fetch: undefined,
+    queryTimeout: null,
   })
   var isHttps = opts.scheme === 'https'
 
@@ -80,6 +83,7 @@ function Client(options) {
   this._lastSeen = null
   this._headers = opts.headers
   this._fetch = opts.fetch || require('cross-fetch')
+  this._queryTimeout = opts.queryTimeout
 
   if (isNodeEnv && opts.keepAlive) {
     this._keepAliveEnabledAgent = new (isHttps
@@ -216,7 +220,12 @@ Client.prototype._performRequest = function(
   url.set('pathname', path)
   url.set('query', query)
   options = defaults(options, {})
-  const secret = options.secret || this._secret
+  var secret = options.secret || this._secret
+  var queryTimeout = this._queryTimeout
+
+  if (options && options.queryTimeout) {
+    queryTimeout = options.queryTimeout
+  }
 
   return this._fetch(url.href, {
     agent: this._keepAliveEnabledAgent,
@@ -227,6 +236,7 @@ Client.prototype._performRequest = function(
       'X-FaunaDB-API-Version': APIVersion,
       'X-Fauna-Driver': 'Javascript',
       'X-Last-Seen-Txn': this._lastSeen,
+      'X-Query-Timeout': queryTimeout,
     }),
     method: method,
     timeout: this._timeout,

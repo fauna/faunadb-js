@@ -137,9 +137,42 @@ helper
 [See the JSDocs](https://fauna.github.com/faunadb-js/PageHelper.html) for
 more information on the pagination helper.
 
+#### Timeouts
+
+The client can be configured to handle timeouts in two different ways:
+
+1. Add a `timeout` field to the `options` block when instantiating the client
+2. By setting a `queryTimeout` on the client (or passing the value to the client's `.query()` method directly)
+
+The first option (i.e. `timeout`) represents a HTTP timeout on the client side. Defined in milliseconds, the client will wait the specified period before timing out if it has yet to receive a response.
+
+```javascript
+const client = new faunadb.Client({
+  secret: 'YOUR_FAUNADB_SECRET',
+  timeout: 100,
+})
+```
+
+On the other hand, using the client's `queryTimeout` dictates how long FaunaDB will process the request on the server before timing out if it hasn't finished running the operation. This can be done in two different ways:
+
+```javascript
+// 1. Setting the value when instantiating a new client
+const client = new faunadb.Client({
+  queryTimeout: 2000,
+  secret: 'YOUR_FAUNADB_SECRET',
+})
+
+// 2. Specifying the value per-query
+var data = client.query(q.Paginate(q.Collections()), {
+  queryTimeout: 100,
+})
+```
+
+**Note:** When passing a `queryTimeout` value to `client.query()` as part of the `options` object, it will take precendence over any value set on the client when instantiating it.
+
 #### Per-query options
 
-Some options (currently only `secret`) can be overriden on a per-query basis:
+Some options (currently only `secret` and `queryTimout`) can be overriden on a per-query basis:
 
 ```javascript
 var createP = client.query(
@@ -156,6 +189,12 @@ var helper = client.paginate(
     secret: 'YOUR_FAUNADB_SECRET',
   }
 )
+```
+
+```javascript
+var data = client.query(q.Paginate(q.Collections()), {
+  queryTimeout: 100,
+})
 ```
 
 #### Custom Fetch
