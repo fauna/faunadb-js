@@ -180,20 +180,6 @@ describe('Client', () => {
     )
   })
 
-  test('set query timeout using client.queryTimeout()', async () => {
-    const customQueryTimeout = 1000
-    const mockedFetch = mockFetch()
-    const client = new Client({ fetch: mockedFetch })
-
-    client.queryTimeout(customQueryTimeout)
-    await client.query(query.Databases())
-
-    expect(mockedFetch).toBeCalledTimes(1)
-    expect(mockedFetch.mock.calls[0][1].headers['X-Query-Timeout']).toEqual(
-      customQueryTimeout
-    )
-  })
-
   test('set query timeout using client.query()', async () => {
     const overrideQueryTimeout = 5000
     const baseQueryTimeout = 1000
