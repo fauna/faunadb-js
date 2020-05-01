@@ -2,7 +2,6 @@ import Expr from './Expr'
 
 export module values {
   export class Value extends Expr {
-    toJSON(): object
     inspect(): string
 
     readonly _isFaunaValue?: boolean
@@ -30,12 +29,15 @@ export module values {
 
   export class SetRef extends Value {
     constructor(value: string)
+
+    set: Expr
   }
 
   export class FaunaTime extends Value {
     constructor(value: string)
     constructor(value: Date)
 
+    isoTime: string
     date: Date
   }
 
@@ -43,6 +45,7 @@ export module values {
     constructor(value: string)
     constructor(value: Date)
 
+    isoDate: string
     date: Date
   }
 
@@ -50,10 +53,14 @@ export module values {
     constructor(value: string)
     constructor(value: ArrayBuffer)
     constructor(value: Uint8Array)
+
+    bytes: string
   }
 
   export class Query extends Value {
     constructor(value: object)
+
+    query: Expr
   }
 
   export type Document<T = object> = {
