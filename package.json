@@ -20,6 +20,7 @@
     "dist/"
   ],
   "main": "index.js",
+  "module": "dist/faunadb.es.js",
   "exports": {
     "browser": "dist/faunadb.es.js"
   },
