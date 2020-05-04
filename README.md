@@ -44,6 +44,19 @@ Via CDN:
 <script src="//cdn.jsdelivr.net/npm/faunadb@latest/dist/faunadb.js"></script>
 ```
 
+With ESModule:
+
+```html
+<script
+  type="module"
+  src="//cdn.jsdelivr.net/npm/faunadb@latest/dist/faunadb.es.js"
+></script>
+<script
+  nomodule
+  src="//cdn.jsdelivr.net/npm/faunadb@latest/dist/faunadb.js"
+></script>
+```
+
 The minified version of the driver can also be used via CDN:
 
 ```html
