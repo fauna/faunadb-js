@@ -1,3 +1,8 @@
+## 2.14.0
+
+- Add client-specified query timeout
+- Configure build script to output ES Module
+
 ## 2.13.1
 
 - Fix arity messages
