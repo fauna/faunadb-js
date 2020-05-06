@@ -57,6 +57,8 @@ function Ref(id, collection, database) {
   if (database) this.value['database'] = database
 }
 
+Ref.prototype._isFaunaRef = true
+
 util.inherits(Ref, Value)
 
 /**
@@ -151,7 +153,7 @@ Ref.prototype.valueOf = function() {
  */
 Ref.prototype.equals = function(other) {
   return (
-    other instanceof Ref &&
+    (other instanceof Ref || Boolean(other._isFaunaRef)) &&
     this.id === other.id &&
     ((this.collection === undefined && other.collection === undefined) ||
       this.collection.equals(other.collection)) &&

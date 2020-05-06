@@ -87,9 +87,9 @@ function randomString(prefix) {
 }
 
 function unwrapExpr(obj) {
-  if (obj instanceof Value) {
+  if (obj instanceof Value || Boolean(obj._isFaunaValue)) {
     return obj
-  } else if (obj instanceof Expr) {
+  } else if (obj instanceof Expr || Boolean(obj._isFaunaExpr)) {
     return unwrapExprValues(obj.raw)
   } else {
     return obj

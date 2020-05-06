@@ -11,6 +11,8 @@ function Expr(obj) {
   this.raw = obj
 }
 
+Expr.prototype._isFaunaExpr = true
+
 Expr.prototype.toJSON = function() {
   return this.raw
 }
@@ -48,7 +50,7 @@ var specialCases = {
 }
 
 var exprToString = function(expr, caller) {
-  if (expr instanceof Expr) {
+  if (expr instanceof Expr || Boolean(path._isFaunaExpr)) {
     if ('value' in expr) return expr.toString()
 
     expr = expr.raw
