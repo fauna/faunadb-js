@@ -33,6 +33,8 @@ var stringify = (util && util.inspect) || JSON.stringify
  */
 function Value() {}
 
+Value.prototype._isFaunaValue = true
+
 util.inherits(Value, Expr)
 
 /**

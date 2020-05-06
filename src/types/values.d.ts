@@ -5,7 +5,7 @@ export module values {
     toJSON(): object
     inspect(): string
     
-    _isFaunaValue(): boolean
+    _isFaunaValue: boolean
   }
 
   export class Ref extends Value {
@@ -16,7 +16,7 @@ export module values {
     class?: Ref
     database?: Ref
 
-    _isFaunaRef(): boolean
+    _isFaunaRef: boolean
   }
 
   export class Native {
