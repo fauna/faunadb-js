@@ -223,7 +223,10 @@ var objectFunction = function(fields) {
       var value = arguments[0]
       if (typeof value === 'function') {
         return _lambdaFunc(value)
-      } else if (value instanceof Expr || Boolean(value._isFaunaExpr)) {
+      } else if (
+        value instanceof Expr ||
+        (typeof value === 'object' && Boolean(value._isFaunaExpr))
+      ) {
         return value
       } else {
         throw new errors.InvalidValue(
@@ -2903,7 +2906,10 @@ function wrap(obj) {
   arity.exact(1, arguments, wrap.name)
   if (obj === null) {
     return null
-  } else if (obj instanceof Expr || Boolean(obj._isFaunaExpr)) {
+  } else if (
+    obj instanceof Expr ||
+    (typeof obj === 'object' && Boolean(obj._isFaunaExpr))
+  ) {
     return obj
   } else if (typeof obj === 'symbol') {
     return obj.toString().replace(/Symbol\((.*)\)/, function(str, symbol) {
@@ -2920,6 +2926,9 @@ function wrap(obj) {
   } else if (obj instanceof Uint8Array || obj instanceof ArrayBuffer) {
     return new values.Bytes(obj)
   } else if (typeof obj === 'object') {
+    if (obj.constructor.name === 'Expr') {
+      console.log(obj.constructor.name, Object.keys(obj), obj)
+    }
     return new Expr({ object: wrapValues(obj) })
   } else {
     return obj

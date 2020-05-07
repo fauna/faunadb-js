@@ -162,7 +162,10 @@ Client.prototype.syncLastTxnTime = function(time) {
 Client.prototype._execute = function(method, path, data, query, options) {
   query = defaults(query, null)
 
-  if (path instanceof values.Ref || Boolean(path._isFaunaRef)) {
+  if (
+    path instanceof values.Ref ||
+    (typeof path === 'object' && Boolean(path._isFaunaRef))
+  ) {
     path = path.value
   }
 

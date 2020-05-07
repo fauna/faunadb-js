@@ -50,7 +50,10 @@ var specialCases = {
 }
 
 var exprToString = function(expr, caller) {
-  if (expr instanceof Expr || Boolean(expr._isFaunaExpr)) {
+  if (
+    expr instanceof Expr ||
+    (typeof expr === 'object' && Boolean(expr._isFaunaExpr))
+  ) {
     if ('value' in expr) return expr.toString()
 
     expr = expr.raw
