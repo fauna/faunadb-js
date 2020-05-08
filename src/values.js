@@ -156,7 +156,9 @@ Ref.prototype.valueOf = function() {
 Ref.prototype.equals = function(other) {
   return (
     (other instanceof Ref ||
-      (typeof other === 'object' && Boolean(other._isFaunaRef))) &&
+      (typeof other === 'object' &&
+        other !== null &&
+        Boolean(other._isFaunaRef))) &&
     this.id === other.id &&
     ((this.collection === undefined && other.collection === undefined) ||
       this.collection.equals(other.collection)) &&

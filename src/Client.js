@@ -164,7 +164,7 @@ Client.prototype._execute = function(method, path, data, query, options) {
 
   if (
     path instanceof values.Ref ||
-    (typeof path === 'object' && Boolean(path._isFaunaRef))
+    (typeof path === 'object' && path !== null && Boolean(path._isFaunaRef))
   ) {
     path = path.value
   }
