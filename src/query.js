@@ -2928,9 +2928,6 @@ function wrap(obj) {
   } else if (obj instanceof Uint8Array || obj instanceof ArrayBuffer) {
     return new values.Bytes(obj)
   } else if (typeof obj === 'object') {
-    if (obj.constructor.name === 'Expr') {
-      console.log(obj.constructor.name, Object.keys(obj), obj)
-    }
     return new Expr({ object: wrapValues(obj) })
   } else {
     return obj
