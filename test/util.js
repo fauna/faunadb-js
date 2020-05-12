@@ -89,12 +89,12 @@ function randomString(prefix) {
 function unwrapExpr(obj) {
   if (
     obj instanceof Value ||
-    (typeof obj === 'object' && obj !== null && Boolean(path._isFaunaValue))
+    util.checkInstanceHasProperty(obj, '_isFaunaValue')
   ) {
     return obj
   } else if (
     obj instanceof Expr ||
-    (typeof obj === 'object' && obj !== null && Boolean(path._isFaunaExpr))
+    util.checkInstanceHasProperty(obj, '_isFaunaExpr')
   ) {
     return unwrapExprValues(obj.raw)
   } else {

@@ -56,8 +56,17 @@ function removeUndefinedValues(object) {
   return res
 }
 
+/**
+ * Returns a boolean stating if the given object has a prop
+ * @private
+ * */
+function checkInstanceHasProperty(obj, prop) {
+  return typeof obj === 'object' && obj !== null && Boolean(obj[prop])
+}
+
 module.exports = {
   applyDefaults: applyDefaults,
   removeNullAndUndefinedValues: removeNullAndUndefinedValues,
   removeUndefinedValues: removeUndefinedValues,
+  checkInstanceHasProperty: checkInstanceHasProperty,
 }

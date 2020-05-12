@@ -6,6 +6,7 @@ var Expr = require('./Expr')
 var errors = require('./errors')
 var values = require('./values')
 var objectAssign = require('object-assign')
+var util = require('./_util')
 
 /**
  * This module contains functions used to construct FaunaDB Queries.
@@ -2910,7 +2911,7 @@ function wrap(obj) {
     return null
   } else if (
     obj instanceof Expr ||
-    (typeof obj === 'object' && Boolean(obj._isFaunaExpr))
+    util.checkInstanceHasProperty(obj, '_isFaunaExpr')
   ) {
     return obj
   } else if (typeof obj === 'symbol') {
