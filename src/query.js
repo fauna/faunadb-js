@@ -226,9 +226,7 @@ var objectFunction = function(fields) {
         return _lambdaFunc(value)
       } else if (
         value instanceof Expr ||
-        (typeof value === 'object' &&
-          value !== null &&
-          Boolean(value._isFaunaExpr))
+        util.checkInstanceHasProperty(value, '_isFaunaExpr')
       ) {
         return value
       } else {

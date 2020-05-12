@@ -57,7 +57,7 @@ function removeUndefinedValues(object) {
 }
 
 /**
- * Returns a boolean stating if the given object has a prop
+ * Returns a boolean stating if the given object has a given property
  * @private
  * */
 function checkInstanceHasProperty(obj, prop) {

@@ -1,5 +1,7 @@
 'use strict'
 
+var util = require('./_util')
+
 /**
  * A representation of a FaunaDB Query Expression. Generally, you shouldn't need
  * to use this class directly; use the Query helpers defined in {@link module:query}.
@@ -52,7 +54,7 @@ var specialCases = {
 var exprToString = function(expr, caller) {
   if (
     expr instanceof Expr ||
-    (typeof expr === 'object' && expr !== null && Boolean(expr._isFaunaExpr))
+    util.checkInstanceHasProperty(expr, '_isFaunaExpr')
   ) {
     if ('value' in expr) return expr.toString()
 
