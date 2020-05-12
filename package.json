@@ -19,13 +19,11 @@
     "src/",
     "dist/"
   ],
-  "main": "index.js",
-  "exports": {
-    "browser": "dist/faunadb.es.js"
-  },
+  "main": "./dist/faunadb.js",
+  "module": "./dist/faunadb.esm.js",
   "scripts": {
     "doc": "jsdoc -c ./jsdoc.json",
-    "browserify": "browserify index.js --standalone faunadb -o dist/faunadb.js | browserify index.js -o dist/faunadb.es.js -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] ]",
+    "browserify": "browserify index.js --standalone faunadb -o dist/faunadb.js | browserify index.js -o dist/faunadb.esm.js -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] ]",
     "browserify-min": "browserify index.js --standalone faunadb | terser -c -m --keep-fnames --keep-classnames -o dist/faunadb-min.js",
     "prettify": "prettier --write \"{src,test}/**/*.{js,ts}\"",
     "test": "jest --env=node --verbose=false ./test"
