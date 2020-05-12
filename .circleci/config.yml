@@ -128,7 +128,8 @@ jobs:
           node_version: 11
 
   aws-lamdba:
-    executor: lambda
+    executor:
+      name: lambda
       version: nightly
     steps:
       - build_and_test:
