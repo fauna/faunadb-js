@@ -1,3 +1,8 @@
+## 2.14.1
+
+- Fix type mismatch for FaunaHTTPError constructor
+- Rollback ESM support breaking changes
+
 ## 2.14.0
 
 - Add client-specified query timeout
