@@ -13,7 +13,7 @@ export module errors {
   export class FaunaHTTPError extends FaunaError {
     static raiseForStatusCode(requestResult: RequestResult): void
 
-    constructor(requestResult: RequestResult)
+    constructor(name: string, requestResult: RequestResult)
 
     requestResult: RequestResult
     errors(): object
