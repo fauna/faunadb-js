@@ -18,7 +18,7 @@ var util = require('util')
  * @extends Error
  * @constructor
  */
-function FaunaError(name, message) {
+function FaunaError(name, message, description) {
   Error.call(this)
 
   /**
@@ -32,6 +32,12 @@ function FaunaError(name, message) {
    * @type {string}
    */
   this.message = message
+
+  /**
+   * Description for this exception.
+   * @type {string}
+   */
+  this.description = description
 }
 
 util.inherits(FaunaError, Error)
@@ -110,7 +116,9 @@ function FaunaHTTPError(name, requestResult) {
   var response = requestResult.responseContent
   var errors = response.errors
   var message = errors.length === 0 ? '(empty "errors")' : errors[0].code
-  FaunaError.call(this, name, message)
+  var description =
+    errors.length === 0 ? '(empty "errors")' : errors[0].description
+  FaunaError.call(this, name, message, description)
 
   /**
    * A wrapped {@link RequestResult} object, containing the request and response
