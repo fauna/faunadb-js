@@ -53,7 +53,36 @@ The minified version of the driver can also be used via CDN:
 ### Use
 
 The [tutorials](https://docs.fauna.com/fauna/current/howto/) in the
-FaunaDB documentation contain driver-specific examples.
+FaunaDB documentation contain other driver-specific examples.
+
+#### Connecting from the browser
+
+To get up and running quickly, below is a full example for connecting from the browser. Replace <your_key_here> with a database secret. You can get that by visiting your [FaunaDB Dashboard](https://dashboard.fauna.com/), creating a new database, clicking on "Security" in the sidebar on the left, and then clicking "New Key". To learn more about keys, see [FaunaDB Key System](https://docs.fauna.com/fauna/current/security/keys.html).
+
+```javascript
+<html>
+  <head>
+  </head>
+<body>
+  <h1>Test</h1>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/faunadb@latest/dist/faunadb.js"></script>
+<script type="text/javascript">
+  var faunadb = window.faunadb
+  var q = faunadb.query
+  var client = new faunadb.Client({
+    secret: 'your_key_here',
+    domain: 'db.fauna.com',
+    scheme: 'https',
+  })
+  client.query(
+    q.ToDate('2018-06-06')
+  )
+  .then(function (res) { console.log('Result:', res) })
+  a.catch(function (err) { console.log('Error:', err) })
+</script>
+</html>
+```
 
 #### Requiring the Driver
 
