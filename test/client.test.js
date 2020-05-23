@@ -4,6 +4,7 @@ var errors = require('../src/errors')
 var query = require('../src/query')
 var util = require('./util')
 var Client = require('../src/Client')
+var json = require('../src/_json')
 
 var client
 
@@ -193,6 +194,40 @@ describe('Client', () => {
     expect(mockedFetch.mock.calls[0][1].headers['X-Query-Timeout']).toEqual(
       overrideQueryTimeout
     )
+  })
+
+  test('Unauthorized error has the proper fields', async () => {
+    const client = new Client({ secret: 'bad-key' })
+
+    const request = client.query(query.Divide(1, 2))
+    const response = await request.then(res => res).catch(err => err)
+    const rawRes = response.requestResult.responseRaw
+    const jsonRes = json.parseJSON(rawRes)
+    const { errors } = jsonRes
+
+    expect(response.name).toBeDefined()
+    expect(response.message).toBeDefined()
+    expect(response.description).toBeDefined()
+
+    expect(response.name).toEqual('Unauthorized')
+    expect(response.message).toEqual(errors[0].code)
+    expect(response.description).toEqual(errors[0].description)
+  })
+
+  test('BadRequest error has the proper fields', async () => {
+    const request = client.query(query.Divide(null, 2))
+    const response = await request.then(res => res).catch(err => err)
+    const rawRes = response.requestResult.responseRaw
+    const jsonRes = json.parseJSON(rawRes)
+    const { errors } = jsonRes
+
+    expect(response.name).toBeDefined()
+    expect(response.message).toBeDefined()
+    expect(response.description).toBeDefined()
+
+    expect(response.name).toEqual('BadRequest')
+    expect(response.message).toEqual(errors[0].code)
+    expect(response.description).toEqual(errors[0].description)
   })
 })
 
