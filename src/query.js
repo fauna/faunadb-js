@@ -6,6 +6,7 @@ var Expr = require('./Expr')
 var errors = require('./errors')
 var values = require('./values')
 var objectAssign = require('object-assign')
+var util = require('./_util')
 
 /**
  * This module contains functions used to construct FaunaDB Queries.
@@ -223,7 +224,10 @@ var objectFunction = function(fields) {
       var value = arguments[0]
       if (typeof value === 'function') {
         return _lambdaFunc(value)
-      } else if (value instanceof Expr) {
+      } else if (
+        value instanceof Expr ||
+        util.checkInstanceHasProperty(value, '_isFaunaExpr')
+      ) {
         return value
       } else {
         throw new errors.InvalidValue(
@@ -2903,7 +2907,10 @@ function wrap(obj) {
   arity.exact(1, arguments, wrap.name)
   if (obj === null) {
     return null
-  } else if (obj instanceof Expr) {
+  } else if (
+    obj instanceof Expr ||
+    util.checkInstanceHasProperty(obj, '_isFaunaExpr')
+  ) {
     return obj
   } else if (typeof obj === 'symbol') {
     return obj.toString().replace(/Symbol\((.*)\)/, function(str, symbol) {

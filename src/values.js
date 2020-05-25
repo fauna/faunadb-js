@@ -33,6 +33,8 @@ var stringify = (util && util.inspect) || JSON.stringify
  */
 function Value() {}
 
+Value.prototype._isFaunaValue = true
+
 util.inherits(Value, Expr)
 
 /**
@@ -56,6 +58,8 @@ function Ref(id, collection, database) {
   if (collection) this.value['collection'] = collection
   if (database) this.value['database'] = database
 }
+
+Ref.prototype._isFaunaRef = true
 
 util.inherits(Ref, Value)
 
@@ -151,7 +155,8 @@ Ref.prototype.valueOf = function() {
  */
 Ref.prototype.equals = function(other) {
   return (
-    other instanceof Ref &&
+    (other instanceof Ref ||
+      util.checkInstanceHasProperty(other, '_isFaunaRef')) &&
     this.id === other.id &&
     ((this.collection === undefined && other.collection === undefined) ||
       this.collection.equals(other.collection)) &&
