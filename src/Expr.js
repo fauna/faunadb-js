@@ -40,11 +40,26 @@ var varArgsFunctions = [
   'Or',
 ]
 var specialCases = {
-  is_nonempty: 'is_non_empty',
-  lt: 'LT',
-  lte: 'LTE',
+  containsstr: 'ContainsStr',
+  containsstrregex: 'ContainsStrRegex',
+  endswith: 'EndsWith',
+  findstr: 'FindStr',
+  findstrregex: 'FindStrRegex',
   gt: 'GT',
   gte: 'GTE',
+  is_nonempty: 'is_non_empty',
+  lowercase: 'LowerCase',
+  lt: 'LT',
+  lte: 'LTE',
+  ltrim: 'LTrim',
+  rtrim: 'RTrim',
+  regexescape: 'RegexEscape',
+  replacestr: 'ReplaceStr',
+  replacestrregex: 'ReplaceStrRegex',
+  startswith: 'StartsWith',
+  substring: 'SubString',
+  titlecase: 'TitleCase',
+  uppercase: 'UpperCase',
 }
 
 var exprToString = function(expr, caller) {
