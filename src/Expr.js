@@ -39,6 +39,14 @@ var varArgsFunctions = [
   'And',
   'Or',
 ]
+
+// FQL function names come across the wire as all lowercase letters
+// (like the key of this object). Not all are properly snake-cased
+// on the Core side, which causes improper capitalizations.
+//
+// JS Driver patch: https://faunadb.atlassian.net/browse/FE-540
+// Core update: https://faunadb.atlassian.net/browse/ENG-2110
+
 var specialCases = {
   containsstr: 'ContainsStr',
   containsstrregex: 'ContainsStrRegex',
@@ -128,6 +136,8 @@ var exprToString = function(expr, caller) {
   var keys = Object.keys(expr)
   var fn = keys[0]
 
+  // For FQL functions with special formatting concerns, we
+  // use the specialCases object above to define their casing.
   if (fn in specialCases) fn = specialCases[fn]
 
   fn = fn
