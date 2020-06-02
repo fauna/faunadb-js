@@ -1,3 +1,9 @@
+## 2.14.2
+
+- Fix a bug with instanceof conditions
+- Fix incorrect casing for FQL function names
+- Fix Paginate/Match rendering
+
 ## 2.14.1
 
 - Fix type mismatch for FaunaHTTPError constructor
