@@ -97,7 +97,7 @@ function Client(options) {
  * Executes a query via the FaunaDB Query API.
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi),
  * and the query functions in this documentation.
- * @param expression {Expr}
+ * @param expression {ExprArg}
  *   The query to execute. Created from query functions such as {@link add}.
  * @param {?Object} options
  *   Object that configures the current query, overriding FaunaDB client options.
