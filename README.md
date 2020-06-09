@@ -173,7 +173,7 @@ The client can be configured to handle timeouts in two different ways:
 1. Add a `timeout` field to the `options` block when instantiating the client
 2. By setting a `queryTimeout` on the client (or passing the value to the client's `.query()` method directly)
 
-The first option (i.e. `timeout`) represents a HTTP timeout on the client side. Defined in milliseconds, the client will wait the specified period before timing out if it has yet to receive a response.
+The first option (i.e. `timeout`) represents a HTTP timeout on the client side. Defined in seconds, the client will wait the specified period before timing out if it has yet to receive a response.
 
 ```javascript
 const client = new faunadb.Client({
