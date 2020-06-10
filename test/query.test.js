@@ -1491,7 +1491,7 @@ describe('query', () => {
     return Promise.all([p1, p2, p3])
   })
 
-  test('contains_field', () => {
+  test('contains_path', () => {
     var obj = { a: { b: 1 } }
     var p1 = assertQuery(query.ContainsPath(['a', 'b'], obj), true)
     var p2 = assertQuery(query.ContainsPath('a', obj), true)
