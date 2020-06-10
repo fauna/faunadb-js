@@ -1951,7 +1951,7 @@ function Equals() {
  *   An object to search against.
  * @return {Expr}
  *
- * @deprecated use ContainsField instead
+ * @deprecated use ContainsPath instead
  */
 function Contains(path, _in) {
   arity.exact(2, arguments, Contains.name)
@@ -1967,9 +1967,9 @@ function Contains(path, _in) {
  *   An object to search against.
  * @return {Expr}
  */
-function ContainsField(path, _in) {
-  arity.exact(2, arguments, ContainsField.name)
-  return new Expr({ contains_field: wrap(path), in: wrap(_in) })
+function ContainsPath(path, _in) {
+  arity.exact(2, arguments, ContainsPath.name)
+  return new Expr({ contains_path: wrap(path), in: wrap(_in) })
 }
 
 /**
@@ -3105,9 +3105,9 @@ module.exports = {
   Equals: Equals,
   Contains: deprecate(
     Contains,
-    'Contains() is deprecated, use ContainsField() instead'
+    'Contains() is deprecated, use ContainsPath() instead'
   ),
-  ContainsField: ContainsField,
+  ContainsPath: ContainsPath,
   Select: Select,
   SelectAll: deprecate(SelectAll, 'SelectAll() is deprecated. Avoid use.'),
   Abs: Abs,

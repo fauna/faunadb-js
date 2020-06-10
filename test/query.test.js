@@ -396,7 +396,7 @@ describe('query', () => {
     // Works on page too
     var page = query.Paginate(nSet(1))
     var refsWithM = query.Filter(page, function(a) {
-      return query.ContainsField(['data', 'm'], query.Get(a))
+      return query.ContainsPath(['data', 'm'], query.Get(a))
     })
     var p2 = assertQuery(refsWithM, { data: [refN1M1] })
 
@@ -1493,9 +1493,9 @@ describe('query', () => {
 
   test('contains_field', () => {
     var obj = { a: { b: 1 } }
-    var p1 = assertQuery(query.ContainsField(['a', 'b'], obj), true)
-    var p2 = assertQuery(query.ContainsField('a', obj), true)
-    var p3 = assertQuery(query.ContainsField(['a', 'c'], obj), false)
+    var p1 = assertQuery(query.ContainsPath(['a', 'b'], obj), true)
+    var p2 = assertQuery(query.ContainsPath('a', obj), true)
+    var p3 = assertQuery(query.ContainsPath(['a', 'c'], obj), false)
     return Promise.all([p1, p2, p3])
   })
 
