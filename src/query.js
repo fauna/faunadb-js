@@ -1959,6 +1959,35 @@ function Contains(path, _in) {
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
+ * @param {module:query~ExprArg} field
+ *   A value representing a field we want to confirm exists.
+ * @param {module:query~ExprArg} obj
+ *   An object to search against.
+ * @return {Expr}
+ */
+function ContainsField(field, obj) {
+  arity.exact(2, arguments, ContainsField.name)
+
+  if (typeof arguments[0] === 'object') {
+    throw new errors.InvalidValue(
+      'ContainsField does not accept objects or arrays'
+    )
+  }
+
+  if (typeof arguments[0] === 'number') {
+    throw new errors.InvalidValue('ContainsField does not accept numbers')
+  }
+
+  console.log(
+    'ContainsField',
+    new Expr({ contains_field: wrap(field), in: wrap(obj) })
+  )
+  return new Expr({ contains_field: wrap(field), in: wrap(obj) })
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
+ *
  * @param {module:query~ExprArg} path
  *   An array representing a path to pull from an object.
  * @param {module:query~ExprArg} from
@@ -3088,6 +3117,7 @@ module.exports = {
   Credentials: Credentials,
   Equals: Equals,
   Contains: Contains,
+  ContainsField: ContainsField,
   Select: Select,
   SelectAll: deprecate(SelectAll, 'SelectAll() is deprecated. Avoid use.'),
   Abs: Abs,
