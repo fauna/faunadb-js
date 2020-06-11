@@ -1978,10 +1978,6 @@ function ContainsField(field, obj) {
     throw new errors.InvalidValue('ContainsField does not accept numbers')
   }
 
-  console.log(
-    'ContainsField',
-    new Expr({ contains_field: wrap(field), in: wrap(obj) })
-  )
   return new Expr({ contains_field: wrap(field), in: wrap(obj) })
 }
 
