@@ -1491,6 +1491,27 @@ describe('query', () => {
     return Promise.all([p1, p2, p3])
   })
 
+  test('contains_field', () => {
+    var obj = { band: 'phish', members: { trey: 'guitar', mike: 'bass' } }
+
+    // Handles strings
+    var p1 = assertQuery(query.ContainsField('band', obj), true)
+
+    // Rejects arrays
+    var p2 = assertQuery(query.ContainsField(['band'], obj), false)
+
+    // Rejects objects
+    var p3 = assertQuery(
+      query.ContainsField({ members: { trey: 'guitar', mike: 'bass' } }, obj),
+      false
+    )
+
+    // Rejects numbers
+    var p4 = assertQuery(query.ContainsField(10, obj), false)
+
+    return Promise.all([p1, p2, p3, p4])
+  })
+
   test('select', () => {
     var obj = { a: { b: 1 } }
     var p1 = assertQuery(query.Select('a', obj), { b: 1 })
