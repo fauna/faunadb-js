@@ -1497,25 +1497,28 @@ describe('query', () => {
     // Handles strings
     var queryOne = assertQuery(query.ContainsField('band', obj), true)
 
+    // Does not find nested fields
+    var queryTwo = assertQuery(query.ContainsField('trey', obj), false)
+
     // Rejects arrays
-    var queryTwo = assertBadQuery(
+    var queryThree = assertBadQuery(
       query.ContainsField(['band'], obj),
       errors.BadRequest
     )
 
     // Rejects objects
-    var queryThree = assertBadQuery(
+    var queryFour = assertBadQuery(
       query.ContainsField({ members: { trey: 'guitar', mike: 'bass' } }, obj),
       errors.BadRequest
     )
 
     // Rejects numbers
-    var queryFour = assertBadQuery(
+    var queryFive = assertBadQuery(
       query.ContainsField(10, obj),
       errors.BadRequest
     )
 
-    return Promise.all([queryOne, queryTwo, queryThree, queryFour])
+    return Promise.all([queryOne, queryTwo, queryThree, queryFour, queryFive])
   })
 
   test('select', () => {
