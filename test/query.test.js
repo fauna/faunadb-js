@@ -1491,6 +1491,19 @@ describe('query', () => {
     return Promise.all([p1, p2, p3])
   })
 
+  test.only('contains_value arrays', () => {
+    var arr = [1, [2, 3]]
+    var nestedArrValues = [[1], [2], [3]]
+    var objectsInArray = [{ id: 1 }, { id: 2 }]
+
+    var p1 = assertQuery(query.ContainsValue(1, arr), true)
+    var p2 = assertQuery(query.ContainsValue([2, 3], arr), true)
+    var p3 = assertQuery(query.ContainsValue([2], nestedArrValues), true)
+    var p4 = assertQuery(query.ContainsValue({ id: 2 }, objectsInArray), true)
+    var p5 = assertQuery(query.ContainsValue({ id: 3 }, objectsInArray), false)
+    return Promise.all([p1, p2, p3, p4, p5])
+  })
+
   test('select', () => {
     var obj = { a: { b: 1 } }
     var p1 = assertQuery(query.Select('a', obj), { b: 1 })
