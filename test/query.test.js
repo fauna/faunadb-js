@@ -1491,7 +1491,7 @@ describe('query', () => {
     return Promise.all([p1, p2, p3])
   })
 
-  test.only('contains_field', () => {
+  test('contains_field', () => {
     var obj = { band: 'phish', members: { trey: 'guitar', mike: 'bass' } }
 
     // Handles strings
