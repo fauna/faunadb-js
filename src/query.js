@@ -1967,17 +1967,6 @@ function Contains(path, _in) {
  */
 function ContainsField(field, obj) {
   arity.exact(2, arguments, ContainsField.name)
-
-  if (typeof arguments[0] === 'object') {
-    throw new errors.InvalidValue(
-      'ContainsField does not accept objects or arrays'
-    )
-  }
-
-  if (typeof arguments[0] === 'number') {
-    throw new errors.InvalidValue('ContainsField does not accept numbers')
-  }
-
   return new Expr({ contains_field: wrap(field), in: wrap(obj) })
 }
 
