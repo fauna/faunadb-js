@@ -1959,6 +1959,20 @@ function Contains(path, _in) {
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
+ * @param {module:query~ExprArg} value
+ *   Represent the value we want to search for.
+ * @param {module:query~ExprArg} in
+ *   An object we will search for the value passed in.
+ * @return {Expr}
+ */
+function ContainsValue(value, _in) {
+  arity.exact(2, arguments, ContainsValue.name)
+  return new Expr({ contains_value: wrap(value), in: wrap(_in) })
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
+ *
  * @param {module:query~ExprArg} path
  *   An array representing a path to pull from an object.
  * @param {module:query~ExprArg} from
@@ -3088,6 +3102,7 @@ module.exports = {
   Credentials: Credentials,
   Equals: Equals,
   Contains: Contains,
+  ContainsValue: ContainsValue,
   Select: Select,
   SelectAll: deprecate(SelectAll, 'SelectAll() is deprecated. Avoid use.'),
   Abs: Abs,
