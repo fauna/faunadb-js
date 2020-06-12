@@ -255,4 +255,5 @@ export module query {
 
   export function MoveDatabase(from: ExprArg, to: ExprArg): Expr
   export function Documents(collection: ExprArg): Expr
+  export function ContainsValue(value: ExprArg, _in: ExprArg): Expr
 }
