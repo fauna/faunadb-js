@@ -1491,7 +1491,7 @@ describe('query', () => {
     return Promise.all([p1, p2, p3])
   })
 
-  test.only('contains_value arrays', () => {
+  test('contains_value arrays', () => {
     var arr = [1, [2, 3]]
     var nestedArrValues = [[1], [2], [3]]
     var objectsInArray = [{ id: 1 }, { id: 2 }]
@@ -1502,6 +1502,53 @@ describe('query', () => {
     var p4 = assertQuery(query.ContainsValue({ id: 2 }, objectsInArray), true)
     var p5 = assertQuery(query.ContainsValue({ id: 3 }, objectsInArray), false)
     return Promise.all([p1, p2, p3, p4, p5])
+  })
+
+  test.only('contains_value object', () => {
+    var obj = {
+      guitar: 'trey',
+      bass: 'mike',
+      piano: 'paige',
+      drums: 'fish',
+      members: 4,
+      instruments: ['guitar', 'bass', 'piano', 'drums'],
+    }
+
+    var nestedObj = {
+      burger: {
+        ingredients: {
+          protein: 'beef',
+        },
+      },
+      burrito: {
+        ingredients: {
+          protein: 'chicken',
+        },
+      },
+    }
+
+    var p1 = assertQuery(query.ContainsValue('trey', obj), true)
+    var p2 = assertQuery(query.ContainsValue('kuroda', obj), false)
+
+    var p3 = assertQuery(query.ContainsValue(4, obj), true)
+    var p4 = assertQuery(query.ContainsValue(40, obj), false)
+
+    var p5 = assertQuery(
+      query.ContainsValue(['guitar', 'bass', 'piano', 'drums'], obj),
+      true
+    )
+    var p6 = assertQuery(
+      query.ContainsValue(
+        {
+          ingredients: {
+            protein: 'beef',
+          },
+        },
+        nestedObj
+      ),
+      true
+    )
+    return Promise.all([p1, p2, p3, p4, p5, p6])
   })
 
   test('select', () => {
