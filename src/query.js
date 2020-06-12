@@ -1959,7 +1959,7 @@ function Contains(path, _in) {
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
- * @param {String} field
+ * @param {string} field
  *   A value representing a field we want to confirm exists.
  * @param {module:query~ExprArg} obj
  *   An object to search against.
