@@ -2357,6 +2357,14 @@ describe('query', () => {
     expect(results.data).toHaveLength(20)
   })
 
+  test.only('reverse', async () => {
+    const numArray = [1, 2, 3]
+
+    var p1 = assertQuery(query.Reverse(numArray), numArray.reverse())
+
+    return Promise.all([p1])
+  })
+
   // Check arity of all query functions
 
   test('arity', () => {
