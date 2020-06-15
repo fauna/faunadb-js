@@ -2819,6 +2819,17 @@ function Documents(collection) {
   return new Expr({ documents: wrap(collection) })
 }
 
+/**
+ *
+ * @param {module:query~ExprArg} expr
+ *  An expression (i.e. Set, Page, or Array) to reverse
+ * @return {Expr}
+ */
+function Reverse(expr) {
+  arity.exact(1, arguments, Reverse.name)
+  return new Expr({ reverse: wrap(expr) })
+}
+
 // Helpers
 
 /**
@@ -3157,5 +3168,6 @@ module.exports = {
   ToDate: ToDate,
   MoveDatabase: MoveDatabase,
   Documents: Documents,
+  Reverse: Reverse,
   wrap: wrap,
 }
