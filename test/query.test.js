@@ -2360,14 +2360,15 @@ describe('query', () => {
   test.only('reverse', async () => {
     const numArray = [1, 2, 3]
     const databases = await client.query(query.Paginate(query.Indexes()))
-
-    var arr = assertQuery(query.Reverse(numArray), numArray.reverse())
-    var page = assertQuery(
-      query.Reverse(databases.data),
-      databases.data.reverse()
+    const reverseDBs = await client.query(
+      query.Reverse(query.Paginate(query.Indexes()))
     )
 
-    return Promise.all([arr, page])
+    console.log('databases', databases)
+    console.log('reverseDBs', reverseDBs)
+
+    assertQuery(query.Reverse(numArray), numArray.reverse())
+    expect(databases.data).toEqual(reverseDBs.data.reverse())
   })
 
   // Check arity of all query functions
