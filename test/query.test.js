@@ -1936,19 +1936,17 @@ describe('query', () => {
   test('and', () => {
     var p1 = assertQuery(query.And(true, true, false), false)
     var p2 = assertQuery(query.And(true, true, true), true)
-    // var p3 = assertQuery(query.And(true), true)
-    // var p4 = assertQuery(query.And(false), false)
-    // return Promise.all([p1, p2, p3, p4])
-    return Promise.all([p1, p2])
+    var p3 = assertQuery(query.And(true), true)
+    var p4 = assertQuery(query.And(false), false)
+    return Promise.all([p1, p2, p3, p4])
   })
 
   test('or', () => {
     var p1 = assertQuery(query.Or(false, false, true), true)
     var p2 = assertQuery(query.Or(false, false, false), false)
-    // var p3 = assertQuery(query.Or(true), true)
-    // var p4 = assertQuery(query.Or(false), false)
-    // return Promise.all([p1, p2, p3, p4])
-    return Promise.all([p1, p2])
+    var p3 = assertQuery(query.Or(true), true)
+    var p4 = assertQuery(query.Or(false), false)
+    return Promise.all([p1, p2, p3, p4])
   })
 
   test('not', () => {
