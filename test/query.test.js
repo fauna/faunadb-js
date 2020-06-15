@@ -2363,12 +2363,18 @@ describe('query', () => {
     const reverseDBs = await client.query(
       query.Reverse(query.Paginate(query.Indexes()))
     )
-
-    console.log('databases', databases)
-    console.log('reverseDBs', reverseDBs)
+    const documentsSet = await client.query(
+      query.Paginate(query.Documents(query.Collection('widgets')))
+    )
+    const reverseDocumentsSet = await client.query(
+      query.Reverse(
+        query.Paginate(query.Documents(query.Collection('widgets')))
+      )
+    )
 
     assertQuery(query.Reverse(numArray), numArray.reverse())
     expect(databases.data).toEqual(reverseDBs.data.reverse())
+    expect(documentsSet.data).toEqual(reverseDocumentsSet.data.reverse())
   })
 
   // Check arity of all query functions
