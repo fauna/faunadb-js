@@ -1504,7 +1504,7 @@ describe('query', () => {
     return Promise.all([p1, p2, p3, p4, p5])
   })
 
-  test.only('contains_value object', () => {
+  test('contains_value object', () => {
     var obj = {
       guitar: 'trey',
       bass: 'mike',
