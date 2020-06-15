@@ -242,32 +242,6 @@ describe('Values', () => {
     )
   })
 
-  test('pretty print Match', () => {
-    assertPrint(
-      new Query(q.Lambda('_', q.Match(q.Index('idx')))),
-      'Query(Lambda("_", Match(Index("idx"))))'
-    )
-
-    assertPrint(
-      new Query(q.Lambda('_', q.Match(q.Index('idx'), 'str', 10))),
-      'Query(Lambda("_", Match(Index("idx"), "str", 10)))'
-    )
-  })
-
-  test('pretty print Paginate', () => {
-    var m = q.Match(q.Index('idx'))
-
-    assertPrint(
-      new Query(q.Lambda('_', q.Paginate(m))),
-      'Query(Lambda("_", Paginate(Match(Index("idx")))))'
-    )
-
-    assertPrint(
-      new Query(q.Lambda('_', q.Paginate(m, { size: 10, after: [20] }))),
-      'Query(Lambda("_", Paginate(Match(Index("idx")), {size: 10, after: [20]})))'
-    )
-  })
-
   test('pretty print Query', () => {
     assertPrint(
       new Query(q.Lambda('x', q.Var('x'))),
