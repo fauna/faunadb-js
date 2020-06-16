@@ -1961,6 +1961,20 @@ function Contains(path, _in) {
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
+ * @param {string} field
+ *   A field name we want to confirm exists.
+ * @param {module:query~ExprArg} obj
+ *   An object to search against.
+ * @return {Expr}
+ */
+function ContainsField(field, obj) {
+  arity.exact(2, arguments, ContainsField.name)
+  return new Expr({ contains_field: wrap(field), in: wrap(obj) })
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
+ *
  * @param {module:query~ExprArg} path
  *   An array representing a path to check for the existence of.
  * @param {module:query~ExprArg} in
@@ -3108,6 +3122,7 @@ module.exports = {
     'Contains() is deprecated, use ContainsPath() instead'
   ),
   ContainsPath: ContainsPath,
+  ContainsField: ContainsField,
   Select: Select,
   SelectAll: deprecate(SelectAll, 'SelectAll() is deprecated. Avoid use.'),
   Abs: Abs,
