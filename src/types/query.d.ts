@@ -256,5 +256,6 @@ export module query {
   export function MoveDatabase(from: ExprArg, to: ExprArg): Expr
   export function Documents(collection: ExprArg): Expr
   export function ContainsPath(path: ExprArg, _in: ExprArg): Expr
+  export function ContainsField(field: string, _in: ExprArg): Expr
   export function Reverse(expr: ExprArg): Expr
 }

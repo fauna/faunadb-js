@@ -1491,6 +1491,36 @@ describe('query', () => {
     return Promise.all([p1, p2, p3])
   })
 
+  test('contains_field', () => {
+    var obj = { band: 'phish', members: { trey: 'guitar', mike: 'bass' } }
+
+    // Handles strings
+    var queryOne = assertQuery(query.ContainsField('band', obj), true)
+
+    // Does not find nested fields
+    var queryTwo = assertQuery(query.ContainsField('trey', obj), false)
+
+    // Rejects arrays
+    var queryThree = assertBadQuery(
+      query.ContainsField(['band'], obj),
+      errors.BadRequest
+    )
+
+    // Rejects objects
+    var queryFour = assertBadQuery(
+      query.ContainsField({ members: { trey: 'guitar', mike: 'bass' } }, obj),
+      errors.BadRequest
+    )
+
+    // Rejects numbers
+    var queryFive = assertBadQuery(
+      query.ContainsField(10, obj),
+      errors.BadRequest
+    )
+
+    return Promise.all([queryOne, queryTwo, queryThree, queryFour, queryFive])
+  })
+
   test('contains_path', () => {
     var obj = { a: { b: 1 } }
     var p1 = assertQuery(query.ContainsPath(['a', 'b'], obj), true)
