@@ -1551,6 +1551,23 @@ describe('query', () => {
     return Promise.all([p1, p2, p3, p4, p5, p6])
   })
 
+  test.only('contains_value refs', async () => {
+    const docData = {
+      data: {
+        group: 'Run the Jewels',
+        members: ['El-P', 'Killer Mike'],
+      },
+    }
+    const newCollection = await client.query(
+      query.CreateCollection({ name: 'drums' })
+    )
+    const newDoc = await client.query(query.Create(newCollection.ref, docData))
+
+    assertQuery(query.ContainsValue(docData.data, newDoc), true)
+    assertQuery(query.ContainsValue(newCollection.ref, newDoc.ref), true)
+    assertQuery(query.ContainsValue(newCollection.ts, newDoc), false)
+  })
+
   test('select', () => {
     var obj = { a: { b: 1 } }
     var p1 = assertQuery(query.Select('a', obj), { b: 1 })
