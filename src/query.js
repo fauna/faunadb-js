@@ -1950,6 +1950,8 @@ function Equals() {
  * @param {module:query~ExprArg} in
  *   An object to search against.
  * @return {Expr}
+ *
+ * @deprecated use ContainsPath instead
  */
 function Contains(path, _in) {
   arity.exact(2, arguments, Contains.name)
@@ -1968,6 +1970,20 @@ function Contains(path, _in) {
 function ContainsField(field, obj) {
   arity.exact(2, arguments, ContainsField.name)
   return new Expr({ contains_field: wrap(field), in: wrap(obj) })
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
+ *
+ * @param {module:query~ExprArg} path
+ *   An array representing a path to check for the existence of.
+ * @param {module:query~ExprArg} in
+ *   An object to search against.
+ * @return {Expr}
+ */
+function ContainsPath(path, _in) {
+  arity.exact(2, arguments, ContainsPath.name)
+  return new Expr({ contains_path: wrap(path), in: wrap(_in) })
 }
 
 /**
@@ -3101,7 +3117,11 @@ module.exports = {
   Tokens: Tokens,
   Credentials: Credentials,
   Equals: Equals,
-  Contains: Contains,
+  Contains: deprecate(
+    Contains,
+    'Contains() is deprecated, use ContainsPath() instead'
+  ),
+  ContainsPath: ContainsPath,
   ContainsField: ContainsField,
   Select: Select,
   SelectAll: deprecate(SelectAll, 'SelectAll() is deprecated. Avoid use.'),
