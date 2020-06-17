@@ -1520,7 +1520,7 @@ describe('query', () => {
 
     return Promise.all([queryOne, queryTwo, queryThree, queryFour, queryFive])
   })
-  
+
   test('contains_path', () => {
     var obj = { a: { b: 1 } }
     var p1 = assertQuery(query.ContainsPath(['a', 'b'], obj), true)
@@ -2391,6 +2391,76 @@ describe('query', () => {
     )
 
     expect(results.data).toHaveLength(20)
+  })
+
+  test.only('reverse', async () => {
+    // Array
+    const numArray = [1, 2, 3]
+
+    // Single page
+    const databases = await client.query(query.Paginate(query.Indexes()))
+    const reverseDBs = await client.query(
+      query.Reverse(query.Paginate(query.Indexes()))
+    )
+
+    // Multi Page
+    const anderson = await client.query(
+      query.Create(query.Collection('widgets'), {
+        data: {
+          name: 'anderson paak',
+          n: 100,
+        },
+      })
+    )
+
+    const chance = await client.query(
+      query.Create(query.Collection('widgets'), {
+        data: {
+          name: 'chance the rapper',
+          n: 100,
+        },
+      })
+    )
+
+    const kendrick = await client.query(
+      query.Create(query.Collection('widgets'), {
+        data: {
+          name: 'kendrick lamar',
+          n: 100,
+        },
+      })
+    )
+
+    const multiPage = await client.query(
+      query.Paginate(query.Match(query.Index('widgets_by_n'), 100), {
+        size: 2,
+        after: [anderson.ref],
+      })
+    )
+
+    const reverseMultiPage = await client.query(
+      query.Reverse(
+        query.Paginate(query.Match(query.Index('widgets_by_n'), 100), {
+          size: 2,
+          after: [anderson.ref],
+        })
+      )
+    )
+
+    // Set
+    const documentsSet = await client.query(
+      query.Paginate(query.Documents(query.Collection('widgets')))
+    )
+    const reverseDocumentsSet = await client.query(
+      query.Paginate(
+        query.Reverse(query.Documents(query.Collection('widgets')))
+      )
+    )
+
+    assertQuery(query.Reverse(numArray), numArray.reverse())
+    expect(databases.data).toEqual(reverseDBs.data.reverse())
+    expect(documentsSet.data).toEqual(reverseDocumentsSet.data.reverse())
+    expect(multiPage.data).toEqual(reverseMultiPage.data.reverse())
   })
 
   // Check arity of all query functions
