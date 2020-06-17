@@ -397,7 +397,7 @@ describe('query', () => {
     // Works on page too
     var page = query.Paginate(nSet(1))
     var refsWithM = query.Filter(page, function(a) {
-      return query.Contains(['data', 'm'], query.Get(a))
+      return query.ContainsPath(['data', 'm'], query.Get(a))
     })
     var p2 = assertQuery(refsWithM, { data: [refN1M1] })
 
@@ -1581,6 +1581,44 @@ describe('query', () => {
     assertBadQuery(query.ContainsValue(1, 123), errors.BadRequest)
   })
 
+  test('contains_field', () => {
+    var obj = { band: 'phish', members: { trey: 'guitar', mike: 'bass' } }
+
+    // Handles strings
+    var queryOne = assertQuery(query.ContainsField('band', obj), true)
+
+    // Does not find nested fields
+    var queryTwo = assertQuery(query.ContainsField('trey', obj), false)
+
+    // Rejects arrays
+    var queryThree = assertBadQuery(
+      query.ContainsField(['band'], obj),
+      errors.BadRequest
+    )
+
+    // Rejects objects
+    var queryFour = assertBadQuery(
+      query.ContainsField({ members: { trey: 'guitar', mike: 'bass' } }, obj),
+      errors.BadRequest
+    )
+
+    // Rejects numbers
+    var queryFive = assertBadQuery(
+      query.ContainsField(10, obj),
+      errors.BadRequest
+    )
+
+    return Promise.all([queryOne, queryTwo, queryThree, queryFour, queryFive])
+  })
+
+  test('contains_path', () => {
+    var obj = { a: { b: 1 } }
+    var p1 = assertQuery(query.ContainsPath(['a', 'b'], obj), true)
+    var p2 = assertQuery(query.ContainsPath('a', obj), true)
+    var p3 = assertQuery(query.ContainsPath(['a', 'c'], obj), false)
+    return Promise.all([p1, p2, p3])
+  })
+
   test('select', () => {
     var obj = { a: { b: 1 } }
     var p1 = assertQuery(query.Select('a', obj), { b: 1 })
@@ -2443,6 +2481,76 @@ describe('query', () => {
     )
 
     expect(results.data).toHaveLength(20)
+  })
+
+  test.only('reverse', async () => {
+    // Array
+    const numArray = [1, 2, 3]
+
+    // Single page
+    const databases = await client.query(query.Paginate(query.Indexes()))
+    const reverseDBs = await client.query(
+      query.Reverse(query.Paginate(query.Indexes()))
+    )
+
+    // Multi Page
+    const anderson = await client.query(
+      query.Create(query.Collection('widgets'), {
+        data: {
+          name: 'anderson paak',
+          n: 100,
+        },
+      })
+    )
+
+    const chance = await client.query(
+      query.Create(query.Collection('widgets'), {
+        data: {
+          name: 'chance the rapper',
+          n: 100,
+        },
+      })
+    )
+
+    const kendrick = await client.query(
+      query.Create(query.Collection('widgets'), {
+        data: {
+          name: 'kendrick lamar',
+          n: 100,
+        },
+      })
+    )
+
+    const multiPage = await client.query(
+      query.Paginate(query.Match(query.Index('widgets_by_n'), 100), {
+        size: 2,
+        after: [anderson.ref],
+      })
+    )
+
+    const reverseMultiPage = await client.query(
+      query.Reverse(
+        query.Paginate(query.Match(query.Index('widgets_by_n'), 100), {
+          size: 2,
+          after: [anderson.ref],
+        })
+      )
+    )
+
+    // Set
+    const documentsSet = await client.query(
+      query.Paginate(query.Documents(query.Collection('widgets')))
+    )
+    const reverseDocumentsSet = await client.query(
+      query.Paginate(
+        query.Reverse(query.Documents(query.Collection('widgets')))
+      )
+    )
+
+    assertQuery(query.Reverse(numArray), numArray.reverse())
+    expect(databases.data).toEqual(reverseDBs.data.reverse())
+    expect(documentsSet.data).toEqual(reverseDocumentsSet.data.reverse())
+    expect(multiPage.data).toEqual(reverseMultiPage.data.reverse())
   })
 
   // Check arity of all query functions
