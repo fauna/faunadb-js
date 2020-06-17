@@ -5,7 +5,6 @@ var values = require('../src/values')
 var query = require('../src/query')
 var util = require('./util')
 var Client = require('../src/Client')
-const { BadRequest } = require('../src/errors')
 
 var Ref = query.Ref
 
