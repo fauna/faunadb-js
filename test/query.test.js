@@ -1551,7 +1551,7 @@ describe('query', () => {
     return Promise.all([p1, p2, p3, p4, p5, p6])
   })
 
-  test.only('contains_value refs', async () => {
+  test('contains_value refs', async () => {
     const docData = {
       data: {
         group: 'Run the Jewels',
@@ -1566,6 +1566,12 @@ describe('query', () => {
     assertQuery(query.ContainsValue(docData.data, newDoc), true)
     assertQuery(query.ContainsValue(newCollection.ref, newDoc.ref), true)
     assertQuery(query.ContainsValue(newCollection.ts, newDoc), false)
+  })
+
+  test.only('contains_value page', async () => {
+    const page = await client.query(query.Paginate(query.Indexes()))
+    const indexRef = await client.query(query.Index('widgets_by_m'))
+    assertQuery(query.ContainsValue(indexRef, page.data), true)
   })
 
   test('select', () => {
