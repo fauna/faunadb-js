@@ -5,6 +5,7 @@ var values = require('../src/values')
 var query = require('../src/query')
 var util = require('./util')
 var Client = require('../src/Client')
+const { BadRequest } = require('../src/errors')
 
 var Ref = query.Ref
 
@@ -1568,10 +1569,16 @@ describe('query', () => {
     assertQuery(query.ContainsValue(newCollection.ts, newDoc), false)
   })
 
-  test.only('contains_value page', async () => {
+  test('contains_value page', async () => {
     const page = await client.query(query.Paginate(query.Indexes()))
     const indexRef = await client.query(query.Index('widgets_by_m'))
     assertQuery(query.ContainsValue(indexRef, page.data), true)
+  })
+
+  test.only('contains_value scalar types', async () => {
+    assertBadQuery(query.ContainsValue('a', 'abc'), errors.BadRequest)
+    assertBadQuery(query.ContainsValue(true, true), errors.BadRequest)
+    assertBadQuery(query.ContainsValue(1, 123), errors.BadRequest)
   })
 
   test('select', () => {
