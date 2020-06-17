@@ -2393,7 +2393,7 @@ describe('query', () => {
     expect(results.data).toHaveLength(20)
   })
 
-  test('reverse', async () => {
+  test.only('reverse', async () => {
     // Array
     const numArray = [1, 2, 3]
 
@@ -2408,7 +2408,6 @@ describe('query', () => {
       query.Create(query.Collection('widgets'), {
         data: {
           name: 'anderson paak',
-          age: 34,
           n: 100,
         },
       })
@@ -2418,7 +2417,6 @@ describe('query', () => {
       query.Create(query.Collection('widgets'), {
         data: {
           name: 'chance the rapper',
-          age: 27,
           n: 100,
         },
       })
@@ -2428,7 +2426,6 @@ describe('query', () => {
       query.Create(query.Collection('widgets'), {
         data: {
           name: 'kendrick lamar',
-          age: 32,
           n: 100,
         },
       })
@@ -2455,8 +2452,8 @@ describe('query', () => {
       query.Paginate(query.Documents(query.Collection('widgets')))
     )
     const reverseDocumentsSet = await client.query(
-      query.Reverse(
-        query.Paginate(query.Documents(query.Collection('widgets')))
+      query.Paginate(
+        query.Reverse(query.Documents(query.Collection('widgets')))
       )
     )
 
