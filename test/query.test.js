@@ -1574,7 +1574,7 @@ describe('query', () => {
     assertQuery(query.ContainsValue(indexRef, page.data), true)
   })
 
-  test.only('contains_value scalar types', async () => {
+  test('contains_value scalar types', async () => {
     assertBadQuery(query.ContainsValue('a', 'abc'), errors.BadRequest)
     assertBadQuery(query.ContainsValue(true, true), errors.BadRequest)
     assertBadQuery(query.ContainsValue(1, 123), errors.BadRequest)
@@ -2482,7 +2482,7 @@ describe('query', () => {
     expect(results.data).toHaveLength(20)
   })
 
-  test.only('reverse', async () => {
+  test('reverse', async () => {
     // Array
     const numArray = [1, 2, 3]
 
