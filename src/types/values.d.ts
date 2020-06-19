@@ -55,6 +55,16 @@ export module values {
     constructor(value: object)
   }
 
+  export class AccessProvider {
+    constructor(
+      name: string,
+      issuer: string,
+      jwks_url: string,
+      allowed_roles?: Array<Ref>,
+      allowed_collections?: Array<Ref>
+    )
+  }
+
   export type Document<T = object> = {
     ref: Ref
     ts: number
