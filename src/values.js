@@ -123,11 +123,15 @@ wrapToString(Ref, function() {
     indexes: 'Index',
     functions: 'Function',
     roles: 'Role',
+    access_providers: 'AccessProvider',
   }
 
   var toString = function(ref) {
     if (ref.collection === undefined) {
       var db = ref.database !== undefined ? ref.database.toString() : ''
+
+      if (ref.id === 'access_providers') return 'AccessProviders(' + db + ')'
+
       return ref.id.charAt(0).toUpperCase() + ref.id.slice(1) + '(' + db + ')'
     }
 
@@ -172,6 +176,7 @@ var Native = {
   FUNCTIONS: new Ref('functions'),
   ROLES: new Ref('roles'),
   KEYS: new Ref('keys'),
+  ACCESS_PROVIDERS: new Ref('access_providers'),
 }
 
 Native.fromName = function(name) {
@@ -188,6 +193,8 @@ Native.fromName = function(name) {
       return Native.ROLES
     case 'keys':
       return Native.KEYS
+    case 'access_providers':
+      return Native.ACCESS_PROVIDERS
   }
   return new Ref(name)
 }

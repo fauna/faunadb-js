@@ -25,6 +25,7 @@ export module values {
     static readonly DATABASES: Ref
     static readonly KEYS: Ref
     static readonly FUNCTIONS: Ref
+    static readonly ACCESS_PROVIDERS: Ref
   }
 
   export class SetRef extends Value {
