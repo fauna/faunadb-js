@@ -12,7 +12,8 @@ var FaunaDate = values.FaunaDate,
   Ref = values.Ref,
   SetRef = values.SetRef,
   Bytes = values.Bytes,
-  Query = values.Query
+  Query = values.Query,
+  AccessProvider = values.AccessProvider
 
 describe('Values', () => {
   var ref = new Ref('123', new Ref('frogs', values.Native.COLLECTIONS)),
@@ -136,6 +137,19 @@ describe('Values', () => {
     var test_query_json = '{"@query":{"lambda":"x","expr":{"var":"x"}}}'
     expect(json.toJSON(test_query)).toEqual(test_query_json)
     expect(json.parseJSON(test_query_json)).toEqual(test_query)
+  })
+
+  test.only('AccessProvider', () => {
+    const providerName = 'my-provider'
+    const issuer = 'admin'
+    const jwksUrl = 'https://www.fauna.com'
+    const provider = new AccessProvider(providerName, issuer, jwksUrl)
+
+    expect(provider.name).toEqual(providerName)
+    expect(provider.issuer).toEqual(issuer)
+    expect(provider.jwks_url).toEqual(jwksUrl)
+    expect(provider.allowed_roles).toEqual([])
+    expect(provider.allowed_collections).toEqual([])
   })
 
   var assertPrint = function(value, expected) {
