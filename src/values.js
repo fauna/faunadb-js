@@ -123,6 +123,7 @@ wrapToString(Ref, function() {
     indexes: 'Index',
     functions: 'Function',
     roles: 'Role',
+    accessProviders: 'AccessProvider',
   }
 
   var toString = function(ref) {
@@ -172,7 +173,7 @@ var Native = {
   FUNCTIONS: new Ref('functions'),
   ROLES: new Ref('roles'),
   KEYS: new Ref('keys'),
-  ACCESS_PROVIDERS: new Ref('access_providers'),
+  ACCESS_PROVIDERS: new Ref('accessProviders'),
 }
 
 Native.fromName = function(name) {
@@ -189,7 +190,7 @@ Native.fromName = function(name) {
       return Native.ROLES
     case 'keys':
       return Native.KEYS
-    case 'access_providers':
+    case 'accessProviders':
       return Native.ACCESS_PROVIDERS
   }
   return new Ref(name)
