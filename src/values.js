@@ -172,6 +172,7 @@ var Native = {
   FUNCTIONS: new Ref('functions'),
   ROLES: new Ref('roles'),
   KEYS: new Ref('keys'),
+  ACCESS_PROVIDERS: new Ref('access_providers'),
 }
 
 Native.fromName = function(name) {
@@ -188,6 +189,8 @@ Native.fromName = function(name) {
       return Native.ROLES
     case 'keys':
       return Native.KEYS
+    case 'access_providers':
+      return Native.ACCESS_PROVIDERS
   }
   return new Ref(name)
 }
@@ -364,52 +367,6 @@ function wrapToString(type, fn) {
   }
 }
 
-/**
- * @param {string} name A valid schema name
- * @param {string} issuer A unique string
- * @param {string} jwks_url A valid HTTPS URL
- * @param {Array<Ref>} [allowed_roles=[]] A list of Role refs
- * @param {Array<Ref>} [allowed_collections=[]] A list of user-defined Collection refs
- *
- * @extends module:values~Value
- * @constructor
- */
-function AccessProvider(
-  name,
-  issuer,
-  jwks_url,
-  allowed_roles,
-  allowed_collections
-) {
-  if (!name || !issuer || !jwks_url) {
-    throw new errors.InvalidValue(
-      'AccessProvider requires a name, issuer and jwks_url'
-    )
-  }
-
-  this.value = {
-    name: name,
-    issuer: issuer,
-    jwks_url: jwks_url,
-    allowed_roles: [],
-    allowed_collections: [],
-  }
-
-  if (allowed_roles) {
-    this.value.allowed_roles = allowed_roles
-  }
-
-  if (allowed_collections) {
-    this.value.allowed_collections = allowed_collections
-  }
-}
-
-util.inherits(AccessProvider, Value)
-
-AccessProvider.prototype.toJSON = function() {
-  return { '@ref': this.value }
-}
-
 module.exports = {
   Value: Value,
   Ref: Ref,
@@ -419,5 +376,4 @@ module.exports = {
   FaunaDate: FaunaDate,
   Bytes: Bytes,
   Query: Query,
-  AccessProvider: AccessProvider,
 }
