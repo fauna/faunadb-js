@@ -407,7 +407,7 @@ function AccessProvider(
 util.inherits(AccessProvider, Value)
 
 AccessProvider.prototype.toJSON = function() {
-  return { '@access_provider': this.value }
+  return { '@ref': this.value }
 }
 
 module.exports = {

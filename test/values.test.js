@@ -145,7 +145,7 @@ describe('Values', () => {
     const jwksUrl = 'https://www.fauna.com'
     const provider = new AccessProvider(providerName, issuer, jwksUrl)
     const provider_json =
-      '{"@access_provider":{"name":"my-provider","issuer":"admin","jwks_url":"https://www.fauna.com","allowed_roles":[],"allowed_collections":[]}}'
+      '{"@ref":{"name":"my-provider","issuer":"admin","jwks_url":"https://www.fauna.com","allowed_roles":[],"allowed_collections":[]}}'
 
     // Properly instantiates a new AccessProvider
     expect(provider.value.name).toEqual(providerName)
