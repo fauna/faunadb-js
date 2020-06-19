@@ -848,6 +848,18 @@ describe('query', () => {
     })
   })
 
+  test.only('create access provider', async () => {
+    const provider = await adminClient.query(
+      query.CreateAccessProvider({
+        name: 'my_provider',
+        issuer: 'user-123',
+        jwks_url: 'https://db.fauna.com',
+      })
+    )
+
+    console.log(provider)
+  })
+
   // Sets
 
   test('events', () => {
