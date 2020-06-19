@@ -21,17 +21,6 @@ function json_parse(_, val) {
     return val
   } else if ('@ref' in val) {
     var ref = val['@ref']
-    var isAccessProvider = ref.name && ref.issuer && ref.jwks_url
-
-    if (isAccessProvider) {
-      return new values.AccessProvider(
-        ref.name,
-        ref.issuer,
-        ref.jwks_url,
-        ref.allowed_roles,
-        ref.allowed_collections
-      )
-    }
 
     if (!('collection' in ref) && !('database' in ref)) {
       return values.Native.fromName(ref['id'])
