@@ -364,6 +364,16 @@ function wrapToString(type, fn) {
   }
 }
 
+/**
+ * @param {string} name
+ * @param {string} issuer
+ * @param {string} jwks_url
+ * @param {Array<Ref>} [allowed_roles] allowed_roles
+ * @param {Array<Ref>} [allowed_collections] allowed_collections
+ *
+ * @extends module:values~Value
+ * @constructor
+ */
 function AccessProvider(
   name,
   issuer,
@@ -389,6 +399,8 @@ function AccessProvider(
     this.allowed_collections = allowed_collections
   }
 }
+
+util.inherits(AccessProvider, Value)
 
 module.exports = {
   Value: Value,
