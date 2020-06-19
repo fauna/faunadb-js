@@ -368,8 +368,8 @@ function wrapToString(type, fn) {
  * @param {string} name A valid schema name
  * @param {string} issuer A unique string
  * @param {string} jwks_url A valid HTTPS URL
- * @param {Array<Ref>} [allowed_roles] A list of Role refs
- * @param {Array<Ref>} [allowed_collections] A list of user-defined Collection refs
+ * @param {Array<Ref>} [allowed_roles=[]] A list of Role refs
+ * @param {Array<Ref>} [allowed_collections=[]] A list of user-defined Collection refs
  *
  * @extends module:values~Value
  * @constructor
@@ -384,6 +384,8 @@ function AccessProvider(
   this.name = name
   this.issuer = issuer
   this.jwks_url = jwks_url
+  this.allowed_roles = []
+  this.allowed_collections = []
 
   if (!name || !issuer || !jwks_url) {
     throw new errors.InvalidValue(
