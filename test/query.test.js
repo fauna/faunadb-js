@@ -2393,7 +2393,7 @@ describe('query', () => {
     expect(results.data).toHaveLength(20)
   })
 
-  test.only('reverse', async () => {
+  test('reverse', async () => {
     // Array
     const numArray = [1, 2, 3]
 
