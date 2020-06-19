@@ -94,6 +94,7 @@ export module query {
   export function CreateKey(params: ExprArg): Expr
   export function CreateFunction(params: ExprArg): Expr
   export function CreateRole(params: ExprArg): Expr
+  export function CreateAccessProvider(params: ExprArg): Expr
 
   export function Singleton(ref: ExprArg): Expr
   export function Events(ref_set: ExprArg): Expr
