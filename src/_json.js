@@ -42,6 +42,15 @@ function json_parse(_, val) {
     return new values.Bytes(val['@bytes'])
   } else if ('@query' in val) {
     return new values.Query(val['@query'])
+  } else if ('@access_provider' in val) {
+    var ref = val['@access_provider']
+    return new values.AccessProvider(
+      ref.name,
+      ref.issuer,
+      ref.jwks_url,
+      ref.allowed_roles,
+      ref.allowed_collections
+    )
   } else {
     return val
   }

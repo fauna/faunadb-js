@@ -381,28 +381,34 @@ function AccessProvider(
   allowed_roles,
   allowed_collections
 ) {
-  this.name = name
-  this.issuer = issuer
-  this.jwks_url = jwks_url
-  this.allowed_roles = []
-  this.allowed_collections = []
-
   if (!name || !issuer || !jwks_url) {
     throw new errors.InvalidValue(
       'AccessProvider requires a name, issuer and jwks_url'
     )
   }
 
+  this.value = {
+    name: name,
+    issuer: issuer,
+    jwks_url: jwks_url,
+    allowed_roles: [],
+    allowed_collections: [],
+  }
+
   if (allowed_roles) {
-    this.allowed_roles = allowed_roles
+    this.value.allowed_roles = allowed_roles
   }
 
   if (allowed_collections) {
-    this.allowed_collections = allowed_collections
+    this.value.allowed_collections = allowed_collections
   }
 }
 
 util.inherits(AccessProvider, Value)
+
+AccessProvider.prototype.toJSON = function() {
+  return { '@access_provider': this.value }
+}
 
 module.exports = {
   Value: Value,

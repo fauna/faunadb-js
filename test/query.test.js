@@ -2463,6 +2463,11 @@ describe('query', () => {
     expect(multiPage.data).toEqual(reverseMultiPage.data.reverse())
   })
 
+  test('access_provider', async () => {
+    // TODO: Add tests for AccessProvider here once we add
+    // CreateAccessProvider functionality for API v3
+  })
+
   // Check arity of all query functions
 
   test('arity', () => {

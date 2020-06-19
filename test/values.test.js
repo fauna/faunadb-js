@@ -139,17 +139,24 @@ describe('Values', () => {
     expect(json.parseJSON(test_query_json)).toEqual(test_query)
   })
 
-  test.only('AccessProvider', () => {
+  test('AccessProvider', () => {
     const providerName = 'my-provider'
     const issuer = 'admin'
     const jwksUrl = 'https://www.fauna.com'
     const provider = new AccessProvider(providerName, issuer, jwksUrl)
+    const provider_json =
+      '{"@access_provider":{"name":"my-provider","issuer":"admin","jwks_url":"https://www.fauna.com","allowed_roles":[],"allowed_collections":[]}}'
 
-    expect(provider.name).toEqual(providerName)
-    expect(provider.issuer).toEqual(issuer)
-    expect(provider.jwks_url).toEqual(jwksUrl)
-    expect(provider.allowed_roles).toEqual([])
-    expect(provider.allowed_collections).toEqual([])
+    // Properly instantiates a new AccessProvider
+    expect(provider.value.name).toEqual(providerName)
+    expect(provider.value.issuer).toEqual(issuer)
+    expect(provider.value.jwks_url).toEqual(jwksUrl)
+    expect(provider.value.allowed_roles).toEqual([])
+    expect(provider.value.allowed_collections).toEqual([])
+
+    // Properly parses JSON
+    expect(json.toJSON(provider)).toEqual(provider_json)
+    expect(json.parseJSON(provider_json)).toEqual(provider)
   })
 
   var assertPrint = function(value, expected) {
