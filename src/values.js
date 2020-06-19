@@ -364,6 +364,32 @@ function wrapToString(type, fn) {
   }
 }
 
+function AccessProvider(
+  name,
+  issuer,
+  jwks_url,
+  allowed_roles,
+  allowed_collections
+) {
+  this.name = name
+  this.issuer = issuer
+  this.jwks_url = jwks_url
+
+  if (!name || !issuer || !jwks_url) {
+    throw new errors.InvalidValue(
+      'AccessProvider requires a name, issuer and jwks_url'
+    )
+  }
+
+  if (allowed_roles) {
+    this.allowed_roles = allowed_roles
+  }
+
+  if (allowed_collections) {
+    this.allowed_collections = allowed_collections
+  }
+}
+
 module.exports = {
   Value: Value,
   Ref: Ref,
@@ -373,4 +399,5 @@ module.exports = {
   FaunaDate: FaunaDate,
   Bytes: Bytes,
   Query: Query,
+  AccessProvider: AccessProvider,
 }
