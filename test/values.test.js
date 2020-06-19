@@ -143,7 +143,7 @@ describe('Values', () => {
     expect(expected).toEqual(value.toString())
   }
 
-  test.only('pretty print', () => {
+  test('pretty print', () => {
     assertPrint(new Ref('col', values.Native.COLLECTIONS), 'Collection("col")')
     assertPrint(new Ref('db', values.Native.DATABASES), 'Database("db")')
     assertPrint(new Ref('idx', values.Native.INDEXES), 'Index("idx")')
