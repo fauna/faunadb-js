@@ -55,7 +55,7 @@ export module values {
     constructor(value: object)
   }
 
-  export class AccessProvider {
+  export class AccessProvider extends Value {
     constructor(
       name: string,
       issuer: string,
@@ -63,6 +63,12 @@ export module values {
       allowed_roles?: Array<Ref>,
       allowed_collections?: Array<Ref>
     )
+
+    name: string
+    issuer: string
+    jwks_url: string
+    allowed_roles?: Array<Ref>
+    allowed_collections?: Array<Ref>
   }
 
   export type Document<T = object> = {
