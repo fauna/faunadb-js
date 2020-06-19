@@ -12,8 +12,7 @@ var FaunaDate = values.FaunaDate,
   Ref = values.Ref,
   SetRef = values.SetRef,
   Bytes = values.Bytes,
-  Query = values.Query,
-  AccessProvider = values.AccessProvider
+  Query = values.Query
 
 describe('Values', () => {
   var ref = new Ref('123', new Ref('frogs', values.Native.COLLECTIONS)),
