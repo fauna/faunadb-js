@@ -1820,6 +1820,7 @@ function Role(name, scope) {
  */
 function AccessProviders(scope) {
   arity.max(1, arguments, AccessProviders.name)
+  scope = defaults(scope, null)
   return new Expr({ access_providers: wrap(scope) })
 }
 
