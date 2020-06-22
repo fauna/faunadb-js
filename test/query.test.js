@@ -2574,7 +2574,7 @@ describe('query', () => {
       })
     )
 
-    const chance = await client.query(
+    await client.query(
       query.Create(query.Collection('widgets'), {
         data: {
           name: 'chance the rapper',
@@ -2583,7 +2583,7 @@ describe('query', () => {
       })
     )
 
-    const kendrick = await client.query(
+    await client.query(
       query.Create(query.Collection('widgets'), {
         data: {
           name: 'kendrick lamar',
