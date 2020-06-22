@@ -2625,8 +2625,34 @@ describe('query', () => {
   })
 
   test('access_provider', async () => {
-    // TODO: Add tests for AccessProvider here once we add
-    // CreateAccessProvider functionality for API v3
+    // Create a new AcessProvider
+    const providerName = util.randomString('provider_')
+    await adminClient.query(
+      query.CreateAccessProvider({
+        name: providerName,
+        issuer: util.randomString('issuer_'),
+        jwks_uri: `https://${util.randomString()}.com`,
+      })
+    )
+
+    // Successfully retrieve provider with Get(AccessProvider())
+    try {
+      const provider = await adminClient.query(
+        query.Get(query.AccessProvider(providerName))
+      )
+      expect(provider).toBeTruthy()
+      expect(provider.name).toEqual(providerName)
+    } catch (error) {
+      console.log(error)
+    }
+
+    // Fail to retrieve non-existent provider
+    const badProviderName = util.randomString('bad_provider_')
+    try {
+      await adminClient.query(query.Get(query.AccessProvider(badProviderName)))
+    } catch (error) {
+      expect(error).toBeInstanceOf(errors.BadRequest)
+    }
   })
 
   // Check arity of all query functions
