@@ -182,6 +182,7 @@ export module query {
   export function Collection(name: ExprArg, scope?: ExprArg): Expr
   export function Function(name: ExprArg, scope?: ExprArg): Expr
   export function Role(name: ExprArg, scope?: ExprArg): Expr
+  export function AccessProviders(scope?: ExprArg): Expr
   export function Databases(scope?: ExprArg): Expr
   export function Classes(scope?: ExprArg): Expr
   export function Collections(scope?: ExprArg): Expr
