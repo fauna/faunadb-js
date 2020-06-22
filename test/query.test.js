@@ -867,6 +867,19 @@ describe('query', () => {
     expect(provider.issuer).toEqual(issuerName)
     expect(provider.jwks_uri).toEqual(fullUri)
 
+    // Failure due to non-unique issuer
+    try {
+      await adminClient.query(
+        query.CreateAccessProvider({
+          name: 'duplicate_provider',
+          issuer: issuerName,
+          jwks_uri: 'https://db.fauna.com',
+        })
+      )
+    } catch (error) {
+      expect(error).toBeInstanceOf(errors.BadRequest)
+    }
+
     // Failure due to missing name
     try {
       await adminClient.query(
