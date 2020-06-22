@@ -848,6 +848,78 @@ describe('query', () => {
     })
   })
 
+  test('create access provider', async () => {
+    const providerName = util.randomString('provider_')
+    const issuerName = util.randomString('issuer_')
+    const jwksUri = util.randomString()
+    const fullUri = `https://${jwksUri}.com`
+
+    // Successful instantiation with required fields
+    const provider = await adminClient.query(
+      query.CreateAccessProvider({
+        name: providerName,
+        issuer: issuerName,
+        jwks_uri: fullUri,
+      })
+    )
+
+    expect(provider.name).toEqual(providerName)
+    expect(provider.issuer).toEqual(issuerName)
+    expect(provider.jwks_uri).toEqual(fullUri)
+
+    // Failure due to non-unique issuer
+    try {
+      await adminClient.query(
+        query.CreateAccessProvider({
+          name: 'duplicate_provider',
+          issuer: issuerName,
+          jwks_uri: 'https://db.fauna.com',
+        })
+      )
+    } catch (error) {
+      expect(error).toBeInstanceOf(errors.BadRequest)
+    }
+
+    // Failure due to missing name
+    try {
+      await adminClient.query(
+        query.CreateAccessProvider({
+          name: null,
+          issuer: issuerName,
+          jwks_uri: fullUri,
+        })
+      )
+    } catch (error) {
+      expect(error).toBeInstanceOf(errors.BadRequest)
+    }
+
+    // Failure due to missing issuer
+    try {
+      await adminClient.query(
+        query.CreateAccessProvider({
+          name: providerName,
+          issuer: null,
+          jwks_uri: fullUri,
+        })
+      )
+    } catch (error) {
+      expect(error).toBeInstanceOf(errors.BadRequest)
+    }
+
+    // Failure due to invalid URI
+    try {
+      await adminClient.query(
+        query.CreateAccessProvider({
+          name: providerName,
+          issuer: issuerName,
+          jwks_uri: jwksUri,
+        })
+      )
+    } catch (error) {
+      expect(error).toBeInstanceOf(errors.BadRequest)
+    }
+  })
+
   // Sets
 
   test('events', () => {
