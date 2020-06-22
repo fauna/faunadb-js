@@ -2655,6 +2655,46 @@ describe('query', () => {
     }
   })
 
+  test.only('access_providers', async () => {
+    const providerOne = await adminClient.query(
+      query.CreateAccessProvider({
+        name: util.randomString('provider_'),
+        issuer: util.randomString('issuer_'),
+        jwks_uri: `https://${util.randomString()}.com`,
+      })
+    )
+    console.log('providerOne', providerOne)
+
+    const providerTwo = await adminClient.query(
+      query.CreateAccessProvider({
+        name: util.randomString('provider_'),
+        issuer: util.randomString('issuer_'),
+        jwks_uri: `https://${util.randomString()}.com`,
+      })
+    )
+    console.log('providerTwo', providerTwo)
+
+    // Test use with Get()
+    try {
+      const providers = await adminClient.query(
+        query.Get(query.AccessProviders())
+      )
+      console.log(providers)
+    } catch (error) {
+      console.log(error)
+    }
+
+    // Test use with Paginate()
+    try {
+      const providers = await adminClient.query(
+        query.Paginate(query.AccessProviders())
+      )
+      console.log(providers)
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
   // Check arity of all query functions
 
   test('arity', () => {
