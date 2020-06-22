@@ -260,4 +260,6 @@ export module query {
   export function ContainsField(field: string, _in: ExprArg): Expr
   export function ContainsValue(value: ExprArg, _in: ExprArg): Expr
   export function Reverse(expr: ExprArg): Expr
+
+  export function AccessProvider(name: ExprArg): Expr
 }
