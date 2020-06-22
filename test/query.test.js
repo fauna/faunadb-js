@@ -2655,31 +2655,34 @@ describe('query', () => {
     }
   })
 
-  test.only('access_providers', async () => {
-    const providerOne = await adminClient.query(
+  test('access_providers', async () => {
+    await adminClient.query(
       query.CreateAccessProvider({
         name: util.randomString('provider_'),
         issuer: util.randomString('issuer_'),
         jwks_uri: `https://${util.randomString()}.com`,
       })
     )
-    console.log('providerOne', providerOne)
 
-    const providerTwo = await adminClient.query(
+    await adminClient.query(
       query.CreateAccessProvider({
         name: util.randomString('provider_'),
         issuer: util.randomString('issuer_'),
         jwks_uri: `https://${util.randomString()}.com`,
       })
     )
-    console.log('providerTwo', providerTwo)
 
     // Test use with Get()
     try {
-      const providers = await adminClient.query(
+      const provider = await adminClient.query(
         query.Get(query.AccessProviders())
       )
-      console.log(providers)
+
+      expect(provider).toBeDefined()
+      expect(provider).toBeInstanceOf(Object)
+      expect(provider.name).toBeDefined()
+      expect(provider.issuer).toBeDefined()
+      expect(provider.jwks_uri).toBeDefined()
     } catch (error) {
       console.log(error)
     }
@@ -2689,7 +2692,11 @@ describe('query', () => {
       const providers = await adminClient.query(
         query.Paginate(query.AccessProviders())
       )
-      console.log(providers)
+
+      expect(providers).toBeDefined()
+      expect(providers).toBeInstanceOf(Object)
+      expect(providers.data).toBeInstanceOf(Array)
+      expect(providers.data.length).toBeGreaterThanOrEqual(1)
     } catch (error) {
       console.log(error)
     }
