@@ -1031,7 +1031,7 @@ function CreateRole(params) {
  *   An object of parameters used to create a new access provider.
  *     - name: A valid schema name
  *     - issuer: A unique string
- *     - jwks_url: A valid HTTPS URL
+ *     - jwks_uri: A valid HTTPS URI
  *     - allowed_roles: An optional list of Role refs
  *     - allowed_collections: An optional list of user-defined Collection refs
  * @return {Expr}
