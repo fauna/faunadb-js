@@ -63,11 +63,11 @@ util.inherits(InvalidValue, FaunaError)
  * @constructor
  */
 function InvalidArity(min, max, actual, callerFunc) {
-  const arityInfo = `${callerFunc} function requires ${messageForArity(
+  var arityInfo = `${callerFunc} function requires ${messageForArity(
     min,
     max
   )} argument(s) but ${actual} were given`
-  const documentationLink = logDocumentationLink(callerFunc)
+  var documentationLink = logDocumentationLink(callerFunc)
 
   FaunaError.call(this, 'InvalidArity', `${arityInfo}\n${documentationLink}`)
 
@@ -97,7 +97,7 @@ function InvalidArity(min, max, actual, callerFunc) {
   }
 
   function logDocumentationLink(functionName) {
-    const docsURL = 'https://docs.fauna.com/fauna/current/api/fql/functions/'
+    var docsURL = 'https://docs.fauna.com/fauna/current/api/fql/functions/'
     return `For more info, see the docs: ${docsURL}${functionName.toLowerCase()}`
   }
 }
