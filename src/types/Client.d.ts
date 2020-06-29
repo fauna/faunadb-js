@@ -1,4 +1,5 @@
 import Expr from './Expr'
+import { ExprArg } from './query'
 import PageHelper from './PageHelper'
 import RequestResult from './RequestResult'
 
@@ -20,7 +21,7 @@ export interface QueryOptions {
 
 export default class Client {
   constructor(opts?: ClientConfig)
-  query<T = object>(expr: Expr, options?: QueryOptions): Promise<T>
+  query<T = object>(expr: ExprArg, options?: QueryOptions): Promise<T>
   paginate(expr: Expr, params?: object, options?: QueryOptions): PageHelper
   ping(scope?: string, timeout?: number): Promise<string>
 }
