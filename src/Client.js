@@ -264,9 +264,11 @@ function secretHeader(secret) {
 }
 
 function responseHeadersAsObject(response) {
-  let headers = {}
+  var headers = {}
 
-  for (const [key, value] of response.headers.entries()) {
+  for (var header of response.headers.entries()) {
+    var key = header[0]
+    var value = header[1]
     headers[key] = value
   }
 
