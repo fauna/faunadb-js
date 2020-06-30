@@ -852,7 +852,7 @@ describe('query', () => {
     const providerName = util.randomString('provider_')
     const issuerName = util.randomString('issuer_')
     const jwksUri = util.randomString()
-    const fullUri = `https://${jwksUri}.com`
+    const fullUri = `https://${jwksUri}.auth0.com`
 
     // Successful instantiation with required fields
     const provider = await adminClient.query(
@@ -2631,7 +2631,7 @@ describe('query', () => {
       query.CreateAccessProvider({
         name: providerName,
         issuer: util.randomString('issuer_'),
-        jwks_uri: `https://${util.randomString()}.com`,
+        jwks_uri: `https://${util.randomString()}.auth0.com`,
       })
     )
 
@@ -2660,7 +2660,7 @@ describe('query', () => {
       query.CreateAccessProvider({
         name: util.randomString('provider_'),
         issuer: util.randomString('issuer_'),
-        jwks_uri: `https://${util.randomString()}.com`,
+        jwks_uri: `https://${util.randomString()}.auth0.com`,
       })
     )
 
@@ -2668,7 +2668,7 @@ describe('query', () => {
       query.CreateAccessProvider({
         name: util.randomString('provider_'),
         issuer: util.randomString('issuer_'),
-        jwks_uri: `https://${util.randomString()}.com`,
+        jwks_uri: `https://${util.randomString()}.auth0.com`,
       })
     )
 
