@@ -270,6 +270,11 @@ describe('Values', () => {
       new Query(q.Lambda('_', q.Match(q.Index('idx'), 'str', 10))),
       'Query(Lambda("_", Match(Index("idx"), "str", 10)))'
     )
+
+    assertPrint(
+      new Query(q.Lambda('_', q.Match(q.Index('idx'), ['str', 10]))),
+      'Query(Lambda("_", Match(Index("idx"), "str", 10)))'
+    )
   })
 
   test('pretty print Paginate', () => {
