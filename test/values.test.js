@@ -262,6 +262,11 @@ describe('Values', () => {
     )
 
     assertPrint(
+      new Query(q.Lambda('_', q.Match(q.Index('idx'), 'str'))),
+      'Query(Lambda("_", Match(Index("idx"), "str")))'
+    )
+
+    assertPrint(
       new Query(q.Lambda('_', q.Match(q.Index('idx'), 'str', 10))),
       'Query(Lambda("_", Match(Index("idx"), "str", 10)))'
     )

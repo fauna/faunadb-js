@@ -137,7 +137,11 @@ var exprToString = function(expr, caller) {
     if (Array.isArray(terms) && terms.length == 0)
       return 'Match(' + matchStr + ')'
 
-    return 'Match(' + matchStr + ', ' + printArray(terms, exprToString) + ')'
+    if (Array.isArray(terms)) {
+      return 'Match(' + matchStr + ', ' + printArray(terms, exprToString) + ')'
+    }
+
+    return 'Match(' + matchStr + ', ' + exprToString(terms) + ')'
   }
 
   if ('paginate' in expr) {
