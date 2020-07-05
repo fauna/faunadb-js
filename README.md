@@ -199,6 +199,19 @@ var data = client.query(q.Paginate(q.Collections()), {
 
 **Note:** When passing a `queryTimeout` value to `client.query()` as part of the `options` object, it will take precendence over any value set on the client when instantiating it.
 
+#### Retries
+
+The client can be configured to handle temporary database availability, networking related problems, contention and timeouts by resending the query after provided wait time. Wait times are provided in a form of an array in milliseconds in client config.
+
+```javascript
+const client = new faunadb.Client({
+  secret: 'YOUR_FAUNADB_SECRET',
+  retries: [0, 500, 100, 2000],
+})
+```
+
+In this example the client will retry queries up to 4 times - first retry will be executed instantly, second after 500 milliseconds wait, third after 1 second wait and fourth after 2 seconds wait. Without this configuration option the client will not retry operations.
+
 #### Per-query options
 
 Some options (currently only `secret` and `queryTimout`) can be overriden on a per-query basis:

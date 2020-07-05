@@ -110,6 +110,9 @@ dist
 !.vscode/extensions.json
 *.code-workspace
 
+# Cloud9
+.c9
+
 testConfig.json
 doc/
 yarn.lock
