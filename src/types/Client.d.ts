@@ -13,6 +13,7 @@ export interface ClientConfig {
   keepAlive?: boolean
   headers?: { [key: string]: string | number }
   fetch?: typeof fetch
+  retries?: number[]
 }
 
 export interface QueryOptions {

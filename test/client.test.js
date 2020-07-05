@@ -125,8 +125,94 @@ describe('Client', () => {
     await client.ping()
     expect(fetch).toBeCalled()
   })
+  
+  test('retry success, no wait', async() => {
+    const mockedFetchOnRetry = mockFetchOnRetry(2)
+    const clientWithRetry = new Client({
+      fetch: mockedFetchOnRetry,
+      retries: [0]
+    })
 
-  test('instantiate client using default http timeout', async () => {
+    const result = await clientWithRetry.query(query.Databases())
+
+    expect(mockedFetchOnRetry).toBeCalledTimes(2)
+    expect(result).toEqual({success: true})
+  })
+
+  test('retry success, wait', async() => {
+    const mockedFetchOnRetry = mockFetchOnRetry(2)
+    const clientWithRetry = new Client({
+      fetch: mockedFetchOnRetry,
+      retries: [100]
+    })
+
+    const start = new Date().getTime();
+    const result = await clientWithRetry.query(query.Databases())
+
+    expect(new Date().getTime()).toBeGreaterThanOrEqual(start + 100);
+    expect(mockedFetchOnRetry).toBeCalledTimes(2)
+    expect(result.success).toEqual(true)
+  })
+
+  test('retry success, wait on second retry', async() => {
+    const mockedFetchOnRetry = mockFetchOnRetry(3)
+    const clientWithRetry = new Client({
+      fetch: mockedFetchOnRetry,
+      retries: [0, 100]
+    })
+
+    const start = new Date().getTime();
+    const result = await clientWithRetry.query(query.Databases())
+
+    expect(new Date().getTime()).toBeGreaterThanOrEqual(start + 100);
+    expect(mockedFetchOnRetry).toBeCalledTimes(3)
+    expect(result.success).toEqual(true)
+  })
+
+  test('retry failure, no wait', async() => {
+    const mockedFetchOnRetry = mockFetchOnRetry(3)
+    const clientWithRetry = new Client({
+      fetch: mockedFetchOnRetry,
+      retries: [0]
+    })
+    
+    const error = await clientWithRetry.query(query.Databases()).catch(error => error);
+    
+    expect(error.code).toEqual(503);
+    expect(mockedFetchOnRetry).toBeCalledTimes(2)
+  })
+
+  test('retry failure, wait', async() => {
+    const mockedFetchOnRetry = mockFetchOnRetry(3)
+    const clientWithRetry = new Client({
+      fetch: mockedFetchOnRetry,
+      retries: [100]
+    })
+
+    const start = new Date().getTime();
+    const error = await clientWithRetry.query(query.Databases()).catch(error => error);
+
+    expect(new Date().getTime()).toBeGreaterThanOrEqual(start + 100);
+    expect(error.code).toEqual(503);
+    expect(mockedFetchOnRetry).toBeCalledTimes(2)
+  })
+
+  test('retry failure, wait on second try', async() => {
+    const mockedFetchOnRetry = mockFetchOnRetry(4)
+    const clientWithRetry = new Client({
+      fetch: mockedFetchOnRetry,
+      retries: [0, 100]
+    })
+
+    const start = new Date().getTime();
+    const error = await clientWithRetry.query(query.Databases()).catch(error => error);
+
+    expect(new Date().getTime()).toBeGreaterThanOrEqual(start + 100);
+    expect(error.code).toEqual(503);
+    expect(mockedFetchOnRetry).toBeCalledTimes(3)
+  })
+
+  test('instantiate client using default http timeout', async() => {
     const mockedFetch = mockFetch()
     const clientWithTimeout = new Client({
       fetch: mockedFetch,
@@ -138,7 +224,7 @@ describe('Client', () => {
     expect(mockedFetch.mock.calls[0][1].timeout).toEqual(60 * 1000)
   })
 
-  test('instantiate client using custom http timeout', async () => {
+  test('instantiate client using custom http timeout', async() => {
     const customTimeout = 10
     const mockedFetch = mockFetch()
     const clientWithTimeout = new Client({
@@ -152,7 +238,7 @@ describe('Client', () => {
     expect(mockedFetch.mock.calls[0][1].timeout).toEqual(customTimeout * 1000)
   })
 
-  test('instantiate client using default queryTimeout', async () => {
+  test('instantiate client using default queryTimeout', async() => {
     const mockedFetch = mockFetch()
     const clientWithDefaultTimeout = new Client({
       fetch: mockedFetch,
@@ -166,7 +252,7 @@ describe('Client', () => {
     ).not.toBeDefined()
   })
 
-  test('instantiate client using custom queryTimeout', async () => {
+  test('instantiate client using custom queryTimeout', async() => {
     const mockedFetch = mockFetch()
     const clientWithCustomTimeout = new Client({
       fetch: mockedFetch,
@@ -181,7 +267,7 @@ describe('Client', () => {
     )
   })
 
-  test('set query timeout using client.query()', async () => {
+  test('set query timeout using client.query()', async() => {
     const overrideQueryTimeout = 5000
     const mockedFetch = mockFetch()
     const client = new Client({ fetch: mockedFetch })
@@ -196,7 +282,7 @@ describe('Client', () => {
     )
   })
 
-  test('Unauthorized error has the proper fields', async () => {
+  test('Unauthorized error has the proper fields', async() => {
     const client = new Client({ secret: 'bad-key' })
 
     const request = client.query(query.Divide(1, 2))
@@ -214,7 +300,7 @@ describe('Client', () => {
     expect(response.description).toEqual(errors[0].description)
   })
 
-  test('BadRequest error has the proper fields', async () => {
+  test('BadRequest error has the proper fields', async() => {
     const request = client.query(query.Divide(null, 2))
     const response = await request.then(res => res).catch(err => err)
     const rawRes = response.requestResult.responseRaw
@@ -245,4 +331,18 @@ function mockFetch(content = {}) {
     headers: new Set(),
     text: () => Promise.resolve(JSON.stringify(content)),
   })
+}
+
+function mockFetchOnRetry(successOnTry = 2, content = {resource: {success: true}}) {
+  let thisTry = 0;
+  return jest.fn().mockResolvedValue({
+    headers: new Set(),
+    text: () => {
+      thisTry++;
+      if (thisTry >= successOnTry)
+        return Promise.resolve(JSON.stringify(content));
+      else
+        return Promise.reject({ code: 503 });
+    },
+  });
 }

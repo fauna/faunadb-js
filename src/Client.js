@@ -1,6 +1,19 @@
 'use strict'
 
 var APIVersion = '3'
+var RETRY_ON_ERROR_CODES = [
+  408, // Request timeout - Fauna might be temporarily slow
+  409, // Contention - another query might have updated the same property on the same document
+  503, // Service unavailable - Fauna might be temporarily down
+  'ECONNRESET', // Connection reset - happens on AWS Lambda after Lambda node is up for a while
+  'EPIPE', // Broken pipe - network temporarily dosconnected while uploading/downloading data
+  'EHOSTUNREACH', // Temporary problem with connectivity
+  'EAI_AGAIN', // Temporary DNS lookup timeout error
+  'ENOTFOUND', // Domain couldn't be reached temporarily
+  'ETIMEDOUT', // Could be similar to 408 but at load balancer level
+  'EADDRNOTAVAIL', // Temporary socket connection error
+  'EMFILE', // Too many open connections - NodeJS might be closing some old ones, which can result with success on retry
+];
 
 var btoa = require('btoa-lite')
 var errors = require('./errors')
@@ -69,6 +82,7 @@ function Client(options) {
     headers: {},
     fetch: undefined,
     queryTimeout: null,
+    retries: [],
   })
   var isHttps = opts.scheme === 'https'
 
@@ -84,11 +98,12 @@ function Client(options) {
   this._headers = opts.headers
   this._fetch = opts.fetch || require('cross-fetch')
   this._queryTimeout = opts.queryTimeout
+  this._retries = opts.retries
 
   if (isNodeEnv && opts.keepAlive) {
-    this._keepAliveEnabledAgent = new (isHttps
-      ? require('https')
-      : require('http')
+    this._keepAliveEnabledAgent = new(isHttps ?
+      require('https') :
+      require('http')
     ).Agent({ keepAlive: true })
   }
 }
@@ -106,7 +121,7 @@ function Client(options) {
  */
 
 Client.prototype.query = function(expression, options) {
-  return this._execute('POST', '', query.wrap(expression), null, options)
+  return this._executeWithRetries('POST', '', query.wrap(expression), null, options)
 }
 
 /**
@@ -133,7 +148,7 @@ Client.prototype.paginate = function(expression, params, options) {
  * @return {external:Promise<string>} Ping response.
  */
 Client.prototype.ping = function(scope, timeout) {
-  return this._execute('GET', 'ping', null, { scope: scope, timeout: timeout })
+  return this._executeWithRetries('GET', 'ping', null, { scope: scope, timeout: timeout })
 }
 
 /**
@@ -159,6 +174,27 @@ Client.prototype.syncLastTxnTime = function(time) {
   }
 }
 
+Client.prototype._executeWithRetries = function(method, path, data, query, options, remainingRetries) {
+  var _this = this;
+  if (!remainingRetries)
+    remainingRetries = (this._retries && this._retries.slice(0)) || []
+  return this._execute(method, path, data, query, options)
+    .catch(function(error) {
+      if (shouldRetryOnError(error) && remainingRetries.length) {
+        var wait = remainingRetries.shift()
+        return new Promise(function(resolve, reject) {
+          setTimeout(function() {
+            _this._executeWithRetries(method, path, data, query, options, remainingRetries)
+              .then(function(result) { resolve(result) })
+              .catch(function(error) { reject(error) })
+          }, wait)
+        })
+      }
+
+      return Promise.reject(error)
+    });
+}
+
 Client.prototype._execute = function(method, path, data, query, options) {
   query = defaults(query, null)
 
@@ -175,8 +211,7 @@ Client.prototype._execute = function(method, path, data, query, options) {
 
   var startTime = Date.now()
   var self = this
-  var body =
-    ['GET', 'HEAD'].indexOf(method) >= 0 ? undefined : JSON.stringify(data)
+  var body = ['GET', 'HEAD'].indexOf(method) >= 0 ? undefined : JSON.stringify(data)
 
   return this._performRequest(method, path, body, query, options).then(function(
     response
@@ -203,6 +238,7 @@ Client.prototype._execute = function(method, path, data, query, options) {
       self.syncLastTxnTime(parseInt(response.headers.get(txnTimeHeaderKey), 10))
     }
 
+    // TODO: Should observer be aware of retries?
     if (self._observer != null) {
       self._observer(requestResult, self)
     }
@@ -254,7 +290,8 @@ Client.prototype._performRequest = function(
 function defaults(obj, def) {
   if (obj === undefined) {
     return def
-  } else {
+  }
+  else {
     return obj
   }
 }
@@ -274,5 +311,21 @@ function responseHeadersAsObject(response) {
 
   return headers
 }
+
+function shouldRetryOnError(error) {
+  if (error instanceof SyntaxError)
+    return false
+
+  var code = ''
+
+  if (error.requestResult)
+    code = error.requestResult.statusCode
+  else if (error.code)
+    code = error.code
+  else if (error.type === 'request-timeout')
+    return true
+
+  return RETRY_ON_ERROR_CODES.includes(code)
+};
 
 module.exports = Client

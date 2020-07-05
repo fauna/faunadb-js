@@ -66,5 +66,8 @@
       "eslint --fix",
       "git add"
     ]
+  },
+  "jest": {
+    "modulePathIgnorePatterns": ["<rootDir>/.c9/"]
   }
 }
