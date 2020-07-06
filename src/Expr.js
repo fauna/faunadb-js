@@ -138,7 +138,9 @@ var exprToString = function(expr, caller) {
       return 'Match(' + matchStr + ')'
 
     if (Array.isArray(terms)) {
-      return 'Match(' + matchStr + ', ' + printArray(terms, exprToString) + ')'
+      return (
+        'Match(' + matchStr + ', [' + printArray(terms, exprToString) + '])'
+      )
     }
 
     return 'Match(' + matchStr + ', ' + exprToString(terms) + ')'
