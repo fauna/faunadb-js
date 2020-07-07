@@ -347,7 +347,14 @@ Bytes.prototype.toJSON = function() {
  * @constructor
  */
 function Query(value) {
-  this.value = value
+  if (value.api_version === '3') {
+    this.value = {
+      lambda: value.lambda,
+      expr: value.expr,
+    }
+  } else {
+    this.value = value
+  }
 }
 
 util.inherits(Query, Value)
