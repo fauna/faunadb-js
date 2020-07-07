@@ -5,6 +5,7 @@ var values = require('../src/values')
 var query = require('../src/query')
 var util = require('./util')
 var Client = require('../src/Client')
+var _json = require('../src/_json')
 
 var Ref = query.Ref
 
@@ -2697,6 +2698,23 @@ describe('query', () => {
       expect(providers).toBeInstanceOf(Object)
       expect(providers.data).toBeInstanceOf(Array)
       expect(providers.data.length).toBeGreaterThanOrEqual(1)
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+  test('query returns version header', async () => {
+    const clientWithObserver = util.getClient({
+      observer: res => {
+        expect(res.responseRaw).toContain('api_version')
+        expect(res.responseRaw).toContain('3')
+      },
+    })
+
+    try {
+      await clientWithObserver.query(
+        query.Query(query.Lambda('X', query.Var('X')))
+      )
     } catch (error) {
       console.log(error)
     }
