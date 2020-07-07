@@ -75,12 +75,12 @@ var specialCases = {
 }
 
 var exprToString = function(expr, caller) {
-  if (
-    expr instanceof Expr ||
-    util.checkInstanceHasProperty(expr, '_isFaunaExpr')
-  ) {
-    if ('value' in expr) return expr.toString()
+  var isExpr = function(e) {
+    return e instanceof Expr || util.checkInstanceHasProperty(e, '_isFaunaExpr')
+  }
 
+  if (isExpr(expr)) {
+    if ('value' in expr) return expr.toString()
     expr = expr.raw
   }
 
@@ -126,6 +126,35 @@ var exprToString = function(expr, caller) {
     var array = printArray(expr, exprToString)
 
     return varArgsFunctions.indexOf(caller) != -1 ? array : '[' + array + ']'
+  }
+
+  if ('match' in expr) {
+    var matchStr = exprToString(expr['match'])
+    var terms = expr['terms'] || []
+
+    if (isExpr(terms)) terms = terms.raw
+
+    if (Array.isArray(terms) && terms.length == 0)
+      return 'Match(' + matchStr + ')'
+
+    if (Array.isArray(terms)) {
+      return (
+        'Match(' + matchStr + ', [' + printArray(terms, exprToString) + '])'
+      )
+    }
+
+    return 'Match(' + matchStr + ', ' + exprToString(terms) + ')'
+  }
+
+  if ('paginate' in expr) {
+    var setStr = exprToString(expr['paginate'])
+
+    var expr2 = Object.assign({}, expr)
+    delete expr2['paginate']
+
+    if (Object.keys(expr2).length == 0) return 'Paginate(' + setStr + ')'
+
+    return 'Paginate(' + setStr + ', ' + printObject(expr2) + ')'
   }
 
   if ('let' in expr && 'in' in expr) {
