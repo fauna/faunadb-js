@@ -2703,28 +2703,29 @@ describe('query', () => {
     }
   })
 
-  test('deserialize version lambdas correctly', async () => {
+  test('parse query/lambda version properly', () => {
     try {
       const rawQuery = {
         '@query': { api_version: '3', lambda: 'X', expr: { var: 'X' } },
       }
-      const query = new values.Query(rawQuery['@query'])
+      const newQuery = new values.Query(rawQuery['@query'])
+      const json = newQuery.toJSON()
 
-      expect(query.toString()).toBe(`Query(Lambda("X", Var("X")))`)
+      expect(json['@query'].api_version).toBe('3')
     } catch (error) {
       console.log(error)
     }
   })
 
-  test('serialize version lambdas correctly', async () => {
+  test('legacy queries/lambdas have default api_version', async () => {
     try {
       const res = await client.query(
-        query.Query(query.Lambda('X', query.Var('X')))
+        new values.Query({ lambda: 'X', expr: { var: 'X' } })
       )
 
       expect(res).toBeInstanceOf(values.Query)
       expect(res.toJSON()).toEqual({
-        '@query': { api_version: '3', lambda: 'X', expr: { var: 'X' } },
+        '@query': { api_version: '2.12', lambda: 'X', expr: { var: 'X' } },
       })
     } catch (error) {
       console.log(error)
