@@ -338,7 +338,7 @@ describe('query', () => {
 
     return client.query(query.Query(lambda)).then(function(body) {
       return client.query(body).then(function(bodyEchoed) {
-        expect(body.value).toEqual(bodyEchoed.value)
+        expect(body).toEqual(bodyEchoed)
       })
     })
   })
