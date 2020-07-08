@@ -343,7 +343,6 @@ Bytes.prototype.toJSON = function() {
 /** FaunaDB query. See the [docs](https://app.fauna.com/documentation/reference/queryapi#special-type).
  *
  * @param {any} value
- * @param {any} api_version
  * @extends module:values~Value
  * @constructor
  */
