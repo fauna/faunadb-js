@@ -449,5 +449,21 @@ describe('Values', () => {
       new Query(q.Lambda('_', Symbol('foo'))),
       'Query(Lambda("_", "foo"))'
     )
+
+    // versioned queries/lambdas
+    assertPrint(
+      new Query({ lambda: 'X', expr: { var: 'X' } }),
+      `Query(Lambda("X", Var("X")))`
+    )
+
+    assertPrint(
+      new Query({ api_version: '2.12', lambda: 'X', expr: { var: 'X' } }),
+      `Query(Lambda("X", Var("X")))`
+    )
+
+    assertPrint(
+      new Query({ api_version: '3', lambda: 'X', expr: { var: 'X' } }),
+      `Query(Lambda("X", Var("X")))`
+    )
   })
 })
