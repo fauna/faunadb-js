@@ -223,6 +223,7 @@ describe('query', () => {
         new values.Query({
           lambda: '_',
           expr: { let: { x: 1, y: 2 }, in: [{ var: 'x' }, { var: 'y' }] },
+          api_version: '3',
         })
       ),
     ])
@@ -338,7 +339,7 @@ describe('query', () => {
 
     return client.query(query.Query(lambda)).then(function(body) {
       return client.query(body).then(function(bodyEchoed) {
-        expect(body).toEqual(bodyEchoed)
+        expect(body.value).toEqual(bodyEchoed.value)
       })
     })
   })
@@ -2703,31 +2704,27 @@ describe('query', () => {
     }
   })
 
-  test.only('deserialize version lambdas correctly', async () => {
+  test('deserialize version lambdas correctly', async () => {
     try {
       const rawQuery = {
         '@query': { api_version: '3', lambda: 'X', expr: { var: 'X' } },
       }
       const query = new values.Query(rawQuery['@query'])
+
+      expect(query.apiVersion).toBe('3')
       expect(query.toString()).toBe(`Query(Lambda("X", Var("X")))`)
     } catch (error) {
       console.log(error)
     }
   })
 
-  test.only('serialize version lambdas correctly', async () => {
-    const clientWithObserver = util.getClient({
-      observer: res => {
-        expect(res.responseRaw).toContain('api_version')
-        expect(res.responseRaw).toContain('3')
-      },
-    })
-
+  test('serialize version lambdas correctly', async () => {
     try {
-      const res = await clientWithObserver.query(
+      const res = await client.query(
         query.Query(query.Lambda('X', query.Var('X')))
       )
 
+      expect(res.apiVersion).toEqual('3')
       expect(res).toBeInstanceOf(values.Query)
       expect(res.toJSON()).toEqual({
         '@query': { lambda: 'X', expr: { var: 'X' } },

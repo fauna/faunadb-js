@@ -343,15 +343,18 @@ Bytes.prototype.toJSON = function() {
 /** FaunaDB query. See the [docs](https://app.fauna.com/documentation/reference/queryapi#special-type).
  *
  * @param {any} value
+ * @param {any} api_version
  * @extends module:values~Value
  * @constructor
  */
 function Query(value) {
+  this.api_version = 'unstable'
+
   if (value.api_version) {
     this.api_version = value.api_version
-    delete value['api_version']
   }
 
+  delete value.api_version
   this.value = value
 }
 
@@ -365,6 +368,12 @@ wrapToString(Query, function() {
 Query.prototype.toJSON = function() {
   return { '@query': this.value }
 }
+
+Object.defineProperty(Query.prototype, 'apiVersion', {
+  get() {
+    return this.api_version
+  },
+})
 
 /** @ignore */
 function wrapToString(type, fn) {
