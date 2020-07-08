@@ -2703,7 +2703,7 @@ describe('query', () => {
     }
   })
 
-  test.only('query returns versioned lambda field', async () => {
+  test('query returns versioned lambda field', async () => {
     const clientWithObserver = util.getClient({
       observer: res => {
         expect(res.responseRaw).toContain('api_version')
@@ -2720,7 +2720,14 @@ describe('query', () => {
     }
   })
 
-  // test.only('deserialize version lambdas correctly', async () => {})
+  test('deserialize version lambdas correctly', async () => {
+    const rawQuery = {
+      '@query': { api_version: '3', lambda: 'X', expr: { var: 'X' } },
+    }
+    const query = new values.Query(rawQuery['@query'])
+
+    expect(query.toString()).toBe(`Query(Lambda("X", Var("X")))`)
+  })
 
   // test.only('serialize version lambdas correctly', async () => {})
 

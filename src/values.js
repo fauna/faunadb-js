@@ -347,8 +347,10 @@ Bytes.prototype.toJSON = function() {
  * @constructor
  */
 function Query(value) {
-  this.api_version = value.api_version || null
-  delete value['api_version']
+  if (value.api_version) {
+    this.api_version = value.api_version
+    delete value['api_version']
+  }
 
   this.value = value
 }
