@@ -2710,7 +2710,6 @@ describe('query', () => {
       }
       const query = new values.Query(rawQuery['@query'])
 
-      expect(query.apiVersion()).toBe('3')
       expect(query.toString()).toBe(`Query(Lambda("X", Var("X")))`)
     } catch (error) {
       console.log(error)
@@ -2723,10 +2722,9 @@ describe('query', () => {
         query.Query(query.Lambda('X', query.Var('X')))
       )
 
-      expect(res.apiVersion()).toEqual('3')
       expect(res).toBeInstanceOf(values.Query)
       expect(res.toJSON()).toEqual({
-        '@query': { lambda: 'X', expr: { var: 'X' } },
+        '@query': { api_version: '3', lambda: 'X', expr: { var: 'X' } },
       })
     } catch (error) {
       console.log(error)

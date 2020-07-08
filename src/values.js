@@ -348,13 +348,6 @@ Bytes.prototype.toJSON = function() {
  * @constructor
  */
 function Query(value) {
-  this.api_version = 'unstable'
-
-  if (value.api_version) {
-    this.api_version = value.api_version
-  }
-
-  delete value.api_version
   this.value = value
 }
 
@@ -367,10 +360,6 @@ wrapToString(Query, function() {
 /** @ignore */
 Query.prototype.toJSON = function() {
   return { '@query': this.value }
-}
-
-Query.prototype.apiVersion = function() {
-  return this.api_version
 }
 
 /** @ignore */
