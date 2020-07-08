@@ -2703,7 +2703,7 @@ describe('query', () => {
     }
   })
 
-  test('query returns version header', async () => {
+  test.only('query returns versioned lambda field', async () => {
     const clientWithObserver = util.getClient({
       observer: res => {
         expect(res.responseRaw).toContain('api_version')
@@ -2719,6 +2719,10 @@ describe('query', () => {
       console.log(error)
     }
   })
+
+  // test.only('deserialize version lambdas correctly', async () => {})
+
+  // test.only('serialize version lambdas correctly', async () => {})
 
   // Check arity of all query functions
 
