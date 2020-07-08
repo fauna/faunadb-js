@@ -369,11 +369,9 @@ Query.prototype.toJSON = function() {
   return { '@query': this.value }
 }
 
-Object.defineProperty(Query.prototype, 'apiVersion', {
-  get() {
-    return this.api_version
-  },
-})
+Query.prototype.apiVersion = function() {
+  return this.api_version
+}
 
 /** @ignore */
 function wrapToString(type, fn) {
