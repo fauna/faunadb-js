@@ -2703,33 +2703,15 @@ describe('query', () => {
     }
   })
 
-  test('parse query/lambda version properly', () => {
-    try {
-      const rawQuery = {
-        '@query': { api_version: '3', lambda: 'X', expr: { var: 'X' } },
-      }
-      const newQuery = new values.Query(rawQuery['@query'])
-      const json = newQuery.toJSON()
-
-      expect(json['@query'].api_version).toBe('3')
-    } catch (error) {
-      console.log(error)
-    }
-  })
-
   test('legacy queries/lambdas have default api_version', async () => {
-    try {
-      const res = await client.query(
-        new values.Query({ lambda: 'X', expr: { var: 'X' } })
-      )
+    const res = await client.query(
+      new values.Query({ lambda: 'X', expr: { var: 'X' } })
+    )
 
-      expect(res).toBeInstanceOf(values.Query)
-      expect(res.toJSON()).toEqual({
-        '@query': { api_version: '2.12', lambda: 'X', expr: { var: 'X' } },
-      })
-    } catch (error) {
-      console.log(error)
-    }
+    expect(res).toBeInstanceOf(values.Query)
+    expect(res.toJSON()).toEqual({
+      '@query': { api_version: '2.12', lambda: 'X', expr: { var: 'X' } },
+    })
   })
 
   // Check arity of all query functions

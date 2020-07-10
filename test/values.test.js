@@ -138,6 +138,18 @@ describe('Values', () => {
     expect(json.parseJSON(test_query_json)).toEqual(test_query)
   })
 
+  test('versioned query', () => {
+    var test_query = new Query({
+      api_version: '3',
+      lambda: 'x',
+      expr: { var: 'x' },
+    })
+    var test_query_json =
+      '{"@query":{"api_version":"3","lambda":"x","expr":{"var":"x"}}}'
+    expect(json.toJSON(test_query)).toEqual(test_query_json)
+    expect(json.parseJSON(test_query_json)).toEqual(test_query)
+  })
+
   var assertPrint = function(value, expected) {
     expect(expected).toEqual(util.inspect(value, { depth: null }))
     expect(expected).toEqual(value.toString())
@@ -451,11 +463,6 @@ describe('Values', () => {
     )
 
     // versioned queries/lambdas
-    assertPrint(
-      new Query({ lambda: 'X', expr: { var: 'X' } }),
-      `Query(Lambda("X", Var("X")))`
-    )
-
     assertPrint(
       new Query({ api_version: '2.12', lambda: 'X', expr: { var: 'X' } }),
       `Query(Lambda("X", Var("X")))`
