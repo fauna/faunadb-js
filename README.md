@@ -282,6 +282,33 @@ Alpine-based NodeJS image can be provided via `RUNTIME_IMAGE`).
 
 - `yarn doc` will generate JSDoc documentation for the project.
 
+### Previewing upcoming functionality
+
+If you want to test upcoming features that have yet to be released, you can do the following:
+
+1. Clone this repo to your local system
+
+```bash
+git clone https://github.com/fauna/faunadb-js.git
+```
+
+2. Navigate to the cloned repo and open the `package.json`
+
+```bash
+cd faunadb-js
+code package.json
+```
+
+3. Change the `version` to be semantic. For example, `3.0.0-beta`.
+
+4. Run `npm pack`. This creates a tarball at the root of your project directory which represents the image sent to the NPM registry when publishing.
+
+5. In another project, you can now install the beta from the local image you just created by running:
+
+```bash
+npm install /path/to/tarball
+```
+
 ## License
 
 Copyright 2019 [Fauna, Inc.](https://fauna.com/)
