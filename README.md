@@ -282,6 +282,55 @@ Alpine-based NodeJS image can be provided via `RUNTIME_IMAGE`).
 
 - `yarn doc` will generate JSDoc documentation for the project.
 
+### Previewing upcoming functionality
+
+If you want to preview unreleased features in your project, you can do so by installing this driver using one of the following methods.
+
+#### 1. Using a git URL
+
+Normally, you would install the latest release of this package using `npm install --save faunadb` or `yarn add faunadb`. To access our latest features, you will need to define this dependency [by using a git URL](https://docs.npmjs.com/files/package.json#dependencies).
+
+1. Open your `package.json` file
+
+2. If you have already installed this driver, you should see the following in your list of dependencies. If not, add it.
+
+```
+"faunadb": "^2.14.1"
+```
+
+3. Instead of using a version from the npm registry, we'll want to point our `package.json` to the `master` branch of our GitHub repo. To do that, change the `^2.4.1` to `fauna/faunadb-js#master`.
+
+```
+"faunadb": "fauna/faunadb-js#master"
+```
+
+4. Update your `node_modules` by running `npm install` or `yarn`
+
+#### 2. Using `npm pack`
+
+1. Clone this repo to your local system
+
+```bash
+git clone https://github.com/fauna/faunadb-js.git
+```
+
+2. Navigate to the cloned repo and open the `package.json`
+
+```bash
+cd faunadb-js
+code package.json
+```
+
+3. Change the `version` to be semantic. For example, `3.0.0-beta`.
+
+4. Run `npm pack`. This creates a tarball at the root of your project directory which represents the image sent to the NPM registry when publishing.
+
+5. In another project, you can now install the beta from the local image you just created by running:
+
+```bash
+npm install /path/to/tarball
+```
+
 ## License
 
 Copyright 2019 [Fauna, Inc.](https://fauna.com/)
