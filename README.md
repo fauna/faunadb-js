@@ -284,7 +284,29 @@ Alpine-based NodeJS image can be provided via `RUNTIME_IMAGE`).
 
 ### Previewing upcoming functionality
 
-If you want to test upcoming features that have yet to be released, you can do the following:
+If you want to preview unreleased features in your project, you can do so by installing this driver using one of the following methods.
+
+#### 1. Using a git URL
+
+Normally, you would install the latest release of this package using `npm install --save faunadb` or `yarn add faunadb`. To access our latest features, you will need to define this dependency [by using a git URL](https://docs.npmjs.com/files/package.json#dependencies).
+
+1. Open your `package.json` file
+
+2. If you have already installed this driver, you should see the following in your list of dependencies. If not, add it.
+
+```
+"faunadb": "^2.14.1"
+```
+
+3. Instead of using a version from the npm registry, we'll want to point our `package.json` to the `master` branch of our GitHub repo. To do that, change the `^2.4.1` to `fauna/faunadb-js#master`.
+
+```
+"faunadb": "fauna/faunadb-js#master"
+```
+
+4. Update your `node_modules` by running `npm install` or `yarn`
+
+#### 2. Using `npm pack`
 
 1. Clone this repo to your local system
 
