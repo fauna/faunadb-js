@@ -140,15 +140,13 @@ var exprToString = function(expr, caller) {
 
   if ('object' in expr) return printObject(expr['object'])
 
-  var keys = Object.keys(expr)
-  var fn = keys[0]
-
   // Versioned queries/lambdas will have an api_version field.
   // We want to prevent it from being parsed and displayed as:
   // Query(ApiVersion("3", "X", Var("X")))
-  if (fn === 'api_version') {
-    fn = keys[1]
-  }
+  var keys = Object.keys(expr).filter(
+    expression => expression !== 'api_version'
+  )
+  var fn = keys[0]
 
   // For FQL functions with special formatting concerns, we
   // use the specialCases object above to define their casing.
@@ -161,16 +159,10 @@ var exprToString = function(expr, caller) {
     })
     .join('')
 
-  var args = keys
-    .filter(key => {
-      // We don't want to include api_version values in
-      // our args and subsequent FQL string creation.
-      return key !== 'api_version'
-    })
-    .map(function(k) {
-      var v = expr[k]
-      return exprToString(v, fn)
-    })
+  var args = keys.map(function(k) {
+    var v = expr[k]
+    return exprToString(v, fn)
+  })
 
   var shouldReverseArgs = ['filter', 'map', 'foreach'].some(function(fn) {
     return fn in expr
