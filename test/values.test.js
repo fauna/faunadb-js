@@ -472,10 +472,5 @@ describe('Values', () => {
       new Query({ api_version: '3', lambda: 'X', expr: { var: 'X' } }),
       `Query(Lambda("X", Var("X")))`
     )
-
-    assertPrint(
-      new Query({ lambda: 'X', expr: { var: 'X' }, api_version: '3' }),
-      `Query(Lambda("X", Var("X")))`
-    )
   })
 })
