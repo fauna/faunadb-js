@@ -150,26 +150,6 @@ describe('Values', () => {
     expect(json.parseJSON(test_query_json)).toEqual(test_query)
   })
 
-  test.only('parse versioned query despite protocol arg order', () => {
-    var test_query = new Query({
-      lambda: 'x',
-      expr: { var: 'x' },
-      api_version: '3',
-    })
-
-    var x = '{"@query":{"api_version":"3","lambda":"x","expr":{"var":"x"}}}'
-    expect(json.parseJSON(x)).toEqual(test_query)
-    expect(json.parseJSON(x).toString()).toEqual(test_query.toString())
-
-    var y = '{"@query":{"lambda":"x","api_version":"3","expr":{"var":"x"}}}'
-    expect(json.parseJSON(y)).toEqual(test_query)
-    expect(json.parseJSON(y).toString()).toEqual(test_query.toString())
-
-    // var z = '{"@query":{"expr":{"var":"x"},"lambda":"x","api_version":"3"}}'
-    // expect(json.parseJSON(z)).toEqual(test_query)
-    // expect(json.parseJSON(z).toString()).toEqual(test_query.toString())
-  })
-
   var assertPrint = function(value, expected) {
     expect(expected).toEqual(util.inspect(value, { depth: null }))
     expect(expected).toEqual(value.toString())
