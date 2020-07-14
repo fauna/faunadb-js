@@ -222,6 +222,7 @@ describe('query', () => {
         new values.Query({
           lambda: '_',
           expr: { let: { x: 1, y: 2 }, in: [{ var: 'x' }, { var: 'y' }] },
+          api_version: '3',
         })
       ),
     ])
@@ -2700,6 +2701,17 @@ describe('query', () => {
     } catch (error) {
       console.log(error)
     }
+  })
+
+  test('legacy queries/lambdas have default api_version', async () => {
+    const res = await client.query(
+      new values.Query({ lambda: 'X', expr: { var: 'X' } })
+    )
+
+    expect(res).toBeInstanceOf(values.Query)
+    expect(res.toJSON()).toEqual({
+      '@query': { api_version: '2.12', lambda: 'X', expr: { var: 'X' } },
+    })
   })
 
   // Check arity of all query functions
