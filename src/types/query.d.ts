@@ -212,7 +212,7 @@ export module query {
     collection: ExprArg
   ): Expr
 
-  export function Paginate<T extends JsonObject>(
+  export function Paginate<T>(
     set: SetRef<T>,
     params?: ExprVal<PaginateParams>
   ): Expr.Page<T>
