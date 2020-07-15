@@ -9,7 +9,7 @@ export module values {
     readonly _isFaunaValue?: boolean
   }
 
-  export class Ref<T extends JsonObject = any> extends Value<Ref<T>> {
+  export class Ref<T extends object = any> extends Value<Ref<T>> {
     constructor(id: string, col?: CollectionRef<T>, db?: Ref)
 
     id: string
@@ -71,10 +71,7 @@ export interface Page<T> {
 }
 
 /** The materialized data of a collection. */
-export interface Collection<
-  T extends JsonObject = any,
-  Meta extends JsonObject = any
-> extends JsonObject {
+export interface Collection<T extends object = any, Meta extends object = any> {
   ref: CollectionRef<T, Meta>
   ts: number
   name: string
@@ -85,17 +82,14 @@ export interface Collection<
 }
 
 /** The materialized data of a document. */
-export interface Document<T extends JsonObject = any> extends JsonObject {
+export interface Document<T extends object = any> {
   data: T
   ref: DocumentRef<T>
   ts: number
 }
 
 /** The materialized data of an index. */
-export interface Index<
-  T extends JsonObject = any,
-  Meta extends JsonObject = any
-> extends JsonObject {
+export interface Index<T extends object = any, Meta extends object = any> {
   ref: IndexRef<T, Meta>
   ts: number
   name: string
@@ -111,8 +105,7 @@ export interface Index<
 }
 
 /** The materialized data of a function. */
-export interface Function<Return = any, Meta extends JsonObject = any>
-  extends JsonObject {
+export interface Function<Return = any, Meta extends object = any> {
   ref: FunctionRef<Return, Meta>
   ts: number
   name: string
@@ -123,30 +116,28 @@ export interface Function<Return = any, Meta extends JsonObject = any>
 
 declare const Ref: typeof values.Ref
 
-export type Ref<T extends JsonObject = any> = values.Ref<T>
+export type Ref<T extends object = any> = values.Ref<T>
 export type SetRef<T = any> = values.SetRef<T>
 
 /** The ref to a collection. */
 export abstract class CollectionRef<
-  T extends JsonObject = any,
-  Meta extends JsonObject = any
+  T extends object = any,
+  Meta extends object = any
 > extends Ref<Collection<T, Meta>> {
   /** This enforces type nominality. */
   protected _ref: { type: 'Collection'; data: Collection<T, Meta> }
 }
 
 /** The ref to a document. */
-export abstract class DocumentRef<T extends JsonObject> extends Ref<
-  Document<T>
-> {
+export abstract class DocumentRef<T extends object> extends Ref<Document<T>> {
   /** This enforces type nominality. */
   protected _ref: { type: 'Document'; data: Document<T> }
 }
 
 /** The ref to an index. */
 export abstract class IndexRef<
-  T extends JsonObject = any,
-  Meta extends JsonObject = any
+  T extends object = any,
+  Meta extends object = any
 > extends Ref<Index<T, Meta>> {
   /** This enforces type nominality. */
   protected _ref: { type: 'Index'; data: Index<T, Meta> }
@@ -155,7 +146,7 @@ export abstract class IndexRef<
 /** The ref to a function. */
 export abstract class FunctionRef<
   Return = any,
-  Meta extends JsonObject = any
+  Meta extends object = any
 > extends Ref<Function<Return, Meta>> {
   /** This enforces type nominality. */
   protected _ref: { type: 'Function'; data: Function<Return, Meta> }

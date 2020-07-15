@@ -10,7 +10,7 @@ export type Json =
   | values.Value
 
 export interface JsonObject {
-  [property: string]: Json
+  readonly [property: string]: Json | undefined
 }
 
 export interface JsonArray extends ReadonlyArray<Json> {}
