@@ -169,6 +169,16 @@ var exprToString = function(expr, caller) {
 
   if ('object' in expr) return printObject(expr['object'])
 
+  if ('lambda' in expr) {
+    return (
+      'Lambda(' +
+      exprToString(expr['lambda']) +
+      ', ' +
+      exprToString(expr['expr']) +
+      ')'
+    )
+  }
+
   // Versioned queries/lambdas will have an api_version field.
   // We want to prevent it from being parsed and displayed as:
   // Query(ApiVersion("3", "X", Var("X")))
