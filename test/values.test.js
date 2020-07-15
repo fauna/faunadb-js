@@ -166,31 +166,25 @@ describe('Values', () => {
     // simpleQuery assertions
     var x = '{"@query":{"api_version":"3","lambda":"x","expr":{"var":"x"}}}'
     expect(json.parseJSON(x)).toEqual(simpleQuery)
-    expect(json.parseJSON(x).toString()).toEqual(simpleQuery.toString())
 
     var y = '{"@query":{"lambda":"x","api_version":"3","expr":{"var":"x"}}}'
     expect(json.parseJSON(y)).toEqual(simpleQuery)
-    expect(json.parseJSON(y).toString()).toEqual(simpleQuery.toString())
 
     var z = '{"@query":{"expr":{"var":"x"},"lambda":"x","api_version":"3"}}'
     expect(json.parseJSON(z)).toEqual(simpleQuery)
-    expect(json.parseJSON(z).toString()).toEqual(simpleQuery.toString())
 
     // complexQuery assertions
     var a =
       '{"@query":{"lambda":"_","expr":{"match":{"index":"idx"},"terms":["str",10]},"api_version":"3"}}'
     expect(json.parseJSON(a)).toEqual(complexQuery)
-    expect(json.parseJSON(a).toString()).toEqual(complexQuery.toString())
 
     var b =
       '{"@query":{"expr":{"match":{"index":"idx"},"terms":["str",10]},"api_version":"3","lambda":"_"}}'
     expect(json.parseJSON(b)).toEqual(complexQuery)
-    expect(json.parseJSON(b).toString()).toEqual(complexQuery.toString())
 
     var c =
       '{"@query":{"api_version":"3","expr":{"match":{"index":"idx"},"terms":["str",10]},"lambda":"_"}}'
     expect(json.parseJSON(c)).toEqual(complexQuery)
-    expect(json.parseJSON(c).toString()).toEqual(complexQuery.toString())
   })
 
   var assertPrint = function(value, expected) {
