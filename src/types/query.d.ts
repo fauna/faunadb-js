@@ -50,7 +50,7 @@ export type CreateCollectionParams<Meta extends JsonObject = any> = {
 
 export type CreateIndexParams<Meta extends JsonObject = any> = {
   name: string
-  source: CollectionRef<any> | any[]
+  source: CollectionRef | any[]
   terms?: any[]
   values?: any[]
   unique?: boolean
@@ -217,7 +217,7 @@ export module query {
     params?: ExprVal<PaginateParams>
   ): Expr.Page<T>
 
-  export function Exists(ref: Ref<any>, ts?: ExprVal<number>): Expr<boolean>
+  export function Exists(ref: Ref, ts?: ExprVal<number>): Expr<boolean>
 
   export function Create<T extends JsonObject>(
     collection_ref: CollectionRef<T>,
@@ -233,7 +233,7 @@ export module query {
   export function Replace(ref: ExprArg, params: ExprArg): Expr
 
   export function Delete(
-    ref: Ref<any>
+    ref: Ref
   ): Expr<{
     database: string
     role: string
@@ -394,13 +394,13 @@ export module query {
   export function Databases(scope?: ExprArg): Expr
 
   // TODO: "scope" argument
-  export function Collections(scope?: ExprArg): SetRef<CollectionRef<any>>
+  export function Collections(scope?: ExprArg): SetRef<CollectionRef>
 
   // TODO: "scope" argument
-  export function Indexes(scope?: ExprArg): SetRef<IndexRef<any>>
+  export function Indexes(scope?: ExprArg): SetRef<IndexRef>
 
   // TODO: "scope" argument
-  export function Functions(scope?: ExprArg): SetRef<FunctionRef<any>>
+  export function Functions(scope?: ExprArg): SetRef<FunctionRef>
 
   // TODO
   export function Roles(scope?: ExprArg): Expr

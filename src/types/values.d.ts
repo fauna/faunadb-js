@@ -72,7 +72,7 @@ export interface Page<T> {
 
 /** The materialized data of a collection. */
 export interface Collection<
-  T extends JsonObject,
+  T extends JsonObject = any,
   Meta extends JsonObject = any
 > extends JsonObject {
   ref: CollectionRef<T, Meta>
@@ -85,20 +85,22 @@ export interface Collection<
 }
 
 /** The materialized data of a document. */
-export interface Document<T extends JsonObject> extends JsonObject {
+export interface Document<T extends JsonObject = any> extends JsonObject {
   data: T
   ref: DocumentRef<T>
   ts: number
 }
 
 /** The materialized data of an index. */
-export interface Index<T extends JsonObject, Meta extends JsonObject = any>
-  extends JsonObject {
+export interface Index<
+  T extends JsonObject = any,
+  Meta extends JsonObject = any
+> extends JsonObject {
   ref: IndexRef<T, Meta>
   ts: number
   name: string
   data: Meta
-  source: CollectionRef<any> | any[]
+  source: CollectionRef | any[]
   partitions: number
   active: boolean
   serialized?: boolean
@@ -109,7 +111,7 @@ export interface Index<T extends JsonObject, Meta extends JsonObject = any>
 }
 
 /** The materialized data of a function. */
-export interface Function<Return, Meta extends JsonObject = any>
+export interface Function<Return = any, Meta extends JsonObject = any>
   extends JsonObject {
   ref: FunctionRef<Return, Meta>
   ts: number
@@ -126,7 +128,7 @@ export type SetRef<T = any> = values.SetRef<T>
 
 /** The ref to a collection. */
 export abstract class CollectionRef<
-  T extends JsonObject,
+  T extends JsonObject = any,
   Meta extends JsonObject = any
 > extends Ref<Collection<T, Meta>> {
   /** This enforces type nominality. */
@@ -143,7 +145,7 @@ export abstract class DocumentRef<T extends JsonObject> extends Ref<
 
 /** The ref to an index. */
 export abstract class IndexRef<
-  T extends JsonObject,
+  T extends JsonObject = any,
   Meta extends JsonObject = any
 > extends Ref<Index<T, Meta>> {
   /** This enforces type nominality. */
@@ -152,7 +154,7 @@ export abstract class IndexRef<
 
 /** The ref to a function. */
 export abstract class FunctionRef<
-  Return,
+  Return = any,
   Meta extends JsonObject = any
 > extends Ref<Function<Return, Meta>> {
   /** This enforces type nominality. */
