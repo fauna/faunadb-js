@@ -544,17 +544,32 @@ describe('Values', () => {
     // versioned queries/lambdas
     assertPrint(
       new Query({ api_version: '2.12', lambda: 'X', expr: { var: 'X' } }),
-      `Query(Lambda("X", Var("X")))`
+      'Query(Lambda("X", Var("X")))'
     )
 
     assertPrint(
       new Query({ api_version: '3', lambda: 'X', expr: { var: 'X' } }),
-      `Query(Lambda("X", Var("X")))`
+      'Query(Lambda("X", Var("X")))'
     )
 
     assertPrint(
       new Query({ lambda: 'X', expr: { var: 'X' }, api_version: '3' }),
-      `Query(Lambda("X", Var("X")))`
+      'Query(Lambda("X", Var("X")))'
+    )
+
+    // test argument order does not matter for lambdas
+    assertPrint(
+      new Query({
+        api_version: '3',
+        expr: {
+          match: {
+            index: 'idx',
+          },
+          terms: ['str', 10],
+        },
+        lambda: '_',
+      }),
+      'Query(Lambda("_", Match(Index("idx"), ["str", 10])))'
     )
   })
 })
