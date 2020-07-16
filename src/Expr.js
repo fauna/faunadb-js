@@ -74,11 +74,50 @@ var specialCases = {
   uppercase: 'UpperCase',
 }
 
-var exprToString = function(expr, caller) {
-  var isExpr = function(e) {
-    return e instanceof Expr || util.checkInstanceHasProperty(e, '_isFaunaExpr')
-  }
+/**
+ *
+ * @param {Expr} expression A FQL expression
+ * @returns {Boolean} Returns true for valid expressions
+ */
+function isExpr(expression) {
+  return (
+    expression instanceof Expr ||
+    util.checkInstanceHasProperty(expression, '_isFaunaExpr')
+  )
+}
 
+/**
+ *
+ * @param {Object} obj An object to print
+ * @returns {String} String representation of object
+ */
+function printObject(obj) {
+  return (
+    '{' +
+    Object.keys(obj)
+      .map(function(k) {
+        return k + ': ' + exprToString(obj[k])
+      })
+      .join(', ') +
+    '}'
+  )
+}
+
+/**
+ *
+ * @param {Array} arr An array to print
+ * @param {Function} toStr Function used for stringification
+ * @returns {String} String representation of array
+ */
+function printArray(arr, toStr) {
+  return arr
+    .map(function(item) {
+      return toStr(item)
+    })
+    .join(', ')
+}
+
+var exprToString = function(expr, caller) {
   if (isExpr(expr)) {
     if ('value' in expr) return expr.toString()
     expr = expr.raw
@@ -100,26 +139,6 @@ var exprToString = function(expr, caller) {
 
   if (expr === null) {
     return 'null'
-  }
-
-  var printObject = function(obj) {
-    return (
-      '{' +
-      Object.keys(obj)
-        .map(function(k) {
-          return k + ': ' + exprToString(obj[k])
-        })
-        .join(', ') +
-      '}'
-    )
-  }
-
-  var printArray = function(array, toStr) {
-    return array
-      .map(function(item) {
-        return toStr(item)
-      })
-      .join(', ')
   }
 
   if (Array.isArray(expr)) {
