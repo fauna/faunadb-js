@@ -117,6 +117,24 @@ function printArray(arr, toStr) {
     .join(', ')
 }
 
+/**
+ *
+ * @param {String} fn A snake-case FQL function name
+ * @returns {String} The correpsonding camel-cased FQL function name
+ */
+function parseFunctionName(fn) {
+  // For FQL functions with special formatting concerns, we
+  // use the specialCases object above to define their casing.
+  if (fn in specialCases) fn = specialCases[fn]
+
+  return fn
+    .split('_')
+    .map(function(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1)
+    })
+    .join('')
+}
+
 var exprToString = function(expr, caller) {
   if (isExpr(expr)) {
     if ('value' in expr) return expr.toString()
@@ -204,18 +222,10 @@ var exprToString = function(expr, caller) {
   var keys = Object.keys(expr).filter(
     expression => expression !== 'api_version'
   )
+
+  // TODO: Remove reliance on key order
   var fn = keys[0]
-
-  // For FQL functions with special formatting concerns, we
-  // use the specialCases object above to define their casing.
-  if (fn in specialCases) fn = specialCases[fn]
-
-  fn = fn
-    .split('_')
-    .map(function(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1)
-    })
-    .join('')
+  fn = parseFunctionName(fn)
 
   var args = keys.map(function(k) {
     var v = expr[k]
