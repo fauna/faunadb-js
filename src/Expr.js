@@ -157,23 +157,25 @@ var exprToString = function(expr, caller) {
     return 'null'
   }
 
+  // Return stringified value if expression is not an Object
   switch (typeof expr) {
     case 'string':
       return JSON.stringify(expr)
-    case 'undefined':
-      return 'undefined'
     case 'symbol':
     case 'number':
     case 'boolean':
       return expr.toString()
+    case 'undefined':
+      return 'undefined'
   }
 
+  // Handle expression Arrays
   if (Array.isArray(expr)) {
     var array = printArray(expr, exprToString)
-
     return varArgsFunctions.indexOf(caller) != -1 ? array : '[' + array + ']'
   }
 
+  // Parse expression Objects
   if ('match' in expr) {
     var matchStr = exprToString(expr['match'])
     var terms = expr['terms'] || []
@@ -226,8 +228,7 @@ var exprToString = function(expr, caller) {
   }
 
   // Versioned queries/lambdas will have an api_version field.
-  // We want to prevent it from being parsed and displayed as:
-  // Query(ApiVersion("3", "X", Var("X")))
+  // We want to prevent it from being parsed and displayed.
   var keys = Object.keys(expr).filter(
     expression => expression !== 'api_version'
   )
