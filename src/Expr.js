@@ -135,6 +135,17 @@ function parseFunctionName(fn) {
     .join('')
 }
 
+/**
+ *
+ * @param {*} expr A FQL expression
+ * @returns {Boolean} Indicates if arguments should be reversed
+ */
+function shouldReverseArgs(expr) {
+  return ['filter', 'map', 'foreach'].some(function(fn) {
+    return fn in expr
+  })
+}
+
 var exprToString = function(expr, caller) {
   if (isExpr(expr)) {
     if ('value' in expr) return expr.toString()
@@ -232,11 +243,7 @@ var exprToString = function(expr, caller) {
     return exprToString(v, fn)
   })
 
-  var shouldReverseArgs = ['filter', 'map', 'foreach'].some(function(fn) {
-    return fn in expr
-  })
-
-  if (shouldReverseArgs) {
+  if (shouldReverseArgs(expr)) {
     args.reverse()
   }
 
