@@ -20,7 +20,7 @@ export type Materialize<T> = T extends ExprVal<Lambda>
   ? T
   : T extends Expr<infer U>
   ? { [P in keyof U]: Materialize<U> }[keyof U]
-  : T extends JsonObject
+  : T extends object
   ? { [P in keyof T]: Materialize<T[P]> }
   : T
 
@@ -33,7 +33,7 @@ type Eval<T> = T extends Expr<infer U>
   ? (Expr extends T ? U : never)
   : T extends Lambda
   ? T
-  : T extends JsonObject
+  : T extends object
   ? { [P in keyof T]: Eval<T[P]> | NominalExpr<T[P]> }
   : T
 
@@ -56,7 +56,7 @@ export type ExprVal<T = unknown> =
       ? never
       : T extends Lambda
       ? T
-      : T extends JsonObject
+      : T extends object
       ? { [P in keyof T]: ExprVal<T[P]> }
       : T)
 
