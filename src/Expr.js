@@ -157,7 +157,7 @@ var exprToString = function(expr, caller) {
     return 'null'
   }
 
-  // Return stringified value if expression is not an Object
+  // Return stringified value if expression is not an Object or Array
   switch (typeof expr) {
     case 'string':
       return JSON.stringify(expr)
@@ -233,7 +233,6 @@ var exprToString = function(expr, caller) {
     expression => expression !== 'api_version'
   )
 
-  // TODO: Remove reliance on key order
   var fn = keys[0]
   fn = parseFunctionName(fn)
 
