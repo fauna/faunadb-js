@@ -152,22 +152,20 @@ var exprToString = function(expr, caller) {
     expr = expr.raw
   }
 
-  var type = typeof expr
-
-  if (type === 'string') {
-    return JSON.stringify(expr)
-  }
-
-  if (type === 'symbol' || type === 'number' || type === 'boolean') {
-    return expr.toString()
-  }
-
-  if (type === 'undefined') {
-    return 'undefined'
-  }
-
+  // Return early to avoid extra work if null
   if (expr === null) {
     return 'null'
+  }
+
+  switch (typeof expr) {
+    case 'string':
+      return JSON.stringify(expr)
+    case 'undefined':
+      return 'undefined'
+    case 'symbol':
+    case 'number':
+    case 'boolean':
+      return expr.toString()
   }
 
   if (Array.isArray(expr)) {
