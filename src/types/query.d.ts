@@ -15,12 +15,12 @@ import {
 
 export type ExprArg<T = unknown> = ExprVal<T> | Array<ExprVal<T>>
 
-export type CreateParams<T extends object> = ExprVal<{
+export type CreateParams<T extends object> = {
   data: T
   credentials?: JsonObject
   delegates?: JsonObject
   ttl?: Expr.Time
-}>
+}
 
 type Updatable<T extends object = any> =
   | DocumentRef<T>
