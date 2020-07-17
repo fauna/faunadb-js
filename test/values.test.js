@@ -195,12 +195,18 @@ describe('Values', () => {
 
     var filterB =
       '{"@query":{"collection":[1,2,3],"filter":{"lambda":"i","expr":{"equals":[0,{"modulo":[{"var":"i"},2]}]}}}}'
-
     expect(json.parseJSON(filterA)).toEqual(json.parseJSON(filterB))
+
     // foreach
     // if/then/else
     // map
     // select
+    var selectA =
+      '{"select":["favorites","foods",1],"from":{"object":{"favorites":{"object":{"foods":["crunchings","munchings","lunchings"]}}}}}'
+
+    var selectB =
+      '{"from":{"object":{"favorites":{"object":{"foods":["crunchings","munchings","lunchings"]}}}},"select":["favorites","foods",1]}'
+    expect(json.parseJSON(selectA)).toEqual(json.parseJSON(selectB))
   })
 
   var assertPrint = function(value, expected) {
@@ -594,6 +600,22 @@ describe('Values', () => {
         },
       }),
       'Query(Filter([1, 2, 3], Lambda("i", Equals(0, Modulo(Var("i"), 2)))))'
+    )
+
+    assertPrint(
+      {
+        from: {
+          object: {
+            favorites: {
+              object: {
+                foods: ['crunchings', 'munchings', 'lunchings'],
+              },
+            },
+          },
+        },
+        select: ['favorites', 'foods', 1],
+      },
+      'Select(["favorites", "foods", 1], {favorites: {foods: ["crunchings", "munchings", "lunchings"]}})'
     )
   })
 })
