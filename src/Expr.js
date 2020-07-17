@@ -122,7 +122,7 @@ function printArray(arr, toStr) {
  * @param {String} fn A snake-case FQL function name
  * @returns {String} The correpsonding camel-cased FQL function name
  */
-function parseFunctionName(fn) {
+function convertToCamelCase(fn) {
   // For FQL functions with special formatting concerns, we
   // use the specialCases object above to define their casing.
   if (fn in specialCases) fn = specialCases[fn]
@@ -133,6 +133,26 @@ function parseFunctionName(fn) {
       return str.charAt(0).toUpperCase() + str.slice(1)
     })
     .join('')
+}
+
+/**
+ *
+ * @param {String[]} keys An array of keys from an FQL query object
+ * @returns {String} The function name we wish to invoke
+ */
+function getFunctionFromKeys(keys) {
+  console.log('keys', keys)
+  if (keys.includes('call')) return 'call'
+
+  if (keys.includes('filter')) return 'filter'
+
+  if (keys.includes('foreach')) return 'foreach'
+
+  if (keys.includes('if')) return 'if'
+
+  if (keys.includes('map')) return 'map'
+
+  if (keys.includes('select')) return 'select'
 }
 
 /**
@@ -234,7 +254,13 @@ var exprToString = function(expr, caller) {
   )
 
   var fn = keys[0]
-  fn = parseFunctionName(fn)
+
+  // Handle functions with an arity greater than 1
+  if (keys.length > 1) {
+    fn = getFunctionFromKeys(fn)
+  }
+
+  fn = convertToCamelCase(fn)
 
   var args = keys.map(function(k) {
     var v = expr[k]
