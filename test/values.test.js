@@ -150,7 +150,7 @@ describe('Values', () => {
     expect(json.parseJSON(test_query_json)).toEqual(test_query)
   })
 
-  test('parse version query agnostic of object order', () => {
+  test('parse versioned lambda agnostic of object order', () => {
     var simpleQuery = new Query({
       lambda: 'x',
       expr: { var: 'x' },
@@ -185,6 +185,22 @@ describe('Values', () => {
     var c =
       '{"@query":{"api_version":"3","expr":{"match":{"index":"idx"},"terms":["str",10]},"lambda":"_"}}'
     expect(json.parseJSON(c)).toEqual(complexQuery)
+  })
+
+  test.only('parse functions regardless of order', () => {
+    // call
+    // filter
+    var filterA =
+      '{"@query":{"filter":{"lambda":"i","expr":{"equals":[0,{"modulo":[{"var":"i"},2]}]}},"collection":[1,2,3]}}'
+
+    var filterB =
+      '{"@query":{"collection":[1,2,3],"filter":{"lambda":"i","expr":{"equals":[0,{"modulo":[{"var":"i"},2]}]}}}}'
+
+    expect(json.parseJSON(filterA)).toEqual(json.parseJSON(filterB))
+    // foreach
+    // if/then/else
+    // map
+    // select
   })
 
   var assertPrint = function(value, expected) {
