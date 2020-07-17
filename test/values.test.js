@@ -187,7 +187,7 @@ describe('Values', () => {
     expect(json.parseJSON(c)).toEqual(complexQuery)
   })
 
-  test.only('parse functions regardless of order', () => {
+  test('parse functions regardless of order', () => {
     // call
     // filter
     var filterA =
@@ -549,7 +549,7 @@ describe('Values', () => {
     )
   })
 
-  test.only('pretty print Expr with primitive types', () => {
+  test('pretty print Expr with primitive types', () => {
     assertPrint(
       new Query(q.Lambda('_', { x: true, y: false, z: 'str', w: 10 })),
       'Query(Lambda("_", {x: true, y: false, z: "str", w: 10}))'

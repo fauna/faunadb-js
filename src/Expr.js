@@ -245,11 +245,8 @@ var exprToString = function(expr, caller) {
       'Filter(' +
       exprToString(expr['collection']) +
       ', ' +
-      'Lambda(' +
-      exprToString(expr['filter']['lambda']) +
-      ', ' +
-      exprToString(expr['filter']['expr']) +
-      '))'
+      exprToString(expr['filter']) +
+      ')'
     )
   }
 
