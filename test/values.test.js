@@ -200,6 +200,13 @@ describe('Values', () => {
     // foreach
     // if/then/else
     // map
+    // var mapA =
+    //   '{"map":{"lambda":"x","expr":{"add":[{"var":"x"},1]}},"collection":[1,2,3]}'
+
+    // var mapB =
+    //   '{"collection":[1,2,3],"map":{"lambda": "x","expr":{"add":[{"var":"x"},1]}}}'
+    // expect(json.parseJSON(mapA)).toEqual(json.parseJSON(mapB))
+
     // select
     var selectA =
       '{"select":["favorites","foods",1],"from":{"object":{"favorites":{"object":{"foods":["crunchings","munchings","lunchings"]}}}}}'
@@ -326,7 +333,7 @@ describe('Values', () => {
     )
   })
 
-  test.only('pretty print Match', () => {
+  test('pretty print Match', () => {
     assertPrint(
       new Query(q.Lambda('_', q.Match(q.Index('idx')))),
       'Query(Lambda("_", Match(Index("idx"))))'
@@ -536,7 +543,7 @@ describe('Values', () => {
     )
   })
 
-  test('pretty print Expr with primitive types', () => {
+  test.only('pretty print Expr with primitive types', () => {
     assertPrint(
       new Query(q.Lambda('_', { x: true, y: false, z: 'str', w: 10 })),
       'Query(Lambda("_", {x: true, y: false, z: "str", w: 10}))'
@@ -590,11 +597,11 @@ describe('Values', () => {
 
     assertPrint(
       new Query({
-        collections: [1, 2, 3],
+        collection: [1, 2, 3],
         api_version: '3',
         filter: {
           expr: {
-            equals: [0, { modulo: [{ var: i }, 2] }],
+            equals: [0, { modulo: [{ var: 'i' }, 2] }],
           },
           lambda: 'i',
         },
@@ -603,7 +610,7 @@ describe('Values', () => {
     )
 
     assertPrint(
-      {
+      new Query({
         from: {
           object: {
             favorites: {
@@ -614,8 +621,8 @@ describe('Values', () => {
           },
         },
         select: ['favorites', 'foods', 1],
-      },
-      'Select(["favorites", "foods", 1], {favorites: {foods: ["crunchings", "munchings", "lunchings"]}})'
+      }),
+      'Query(Select(["favorites", "foods", 1], {favorites: {foods: ["crunchings", "munchings", "lunchings"]}}))'
     )
   })
 })

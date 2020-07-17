@@ -141,6 +141,7 @@ function convertToCamelCase(fn) {
  * @returns {String} The function name we wish to invoke
  */
 function getFunctionFromKeys(keys) {
+  console.log(keys)
   if (keys.includes('collection')) return 'collections'
 
   if (keys.includes('call')) return 'call'
@@ -257,6 +258,16 @@ var exprToString = function(expr, caller) {
       exprToString(expr['lambda']) +
       ', ' +
       exprToString(expr['expr']) +
+      ')'
+    )
+  }
+
+  if ('select' in expr) {
+    return (
+      'Select(' +
+      exprToString(expr['select']) +
+      ', ' +
+      exprToString(expr['from']) +
       ')'
     )
   }
