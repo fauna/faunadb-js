@@ -141,7 +141,7 @@ function convertToCamelCase(fn) {
  * @returns {String} The function name we wish to invoke
  */
 function getFunctionFromKeys(keys) {
-  if (keys.includes('collection')) return 'collections'
+  if (keys.includes('collection')) return 'collection'
 
   if (keys.includes('call')) return 'call'
 
@@ -154,6 +154,8 @@ function getFunctionFromKeys(keys) {
   if (keys.includes('map')) return 'map'
 
   if (keys.includes('select')) return 'select'
+
+  if (keys.includes('update')) return 'update'
 }
 
 /**
@@ -267,6 +269,16 @@ var exprToString = function(expr, caller) {
       exprToString(expr['select']) +
       ', ' +
       exprToString(expr['from']) +
+      ')'
+    )
+  }
+
+  if ('foreach' in expr) {
+    return (
+      'Foreach(' +
+      exprToString(expr['collection']) +
+      ', ' +
+      exprToString(expr['foreach']) +
       ')'
     )
   }

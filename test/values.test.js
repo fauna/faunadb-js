@@ -198,6 +198,12 @@ describe('Values', () => {
     expect(json.parseJSON(filterA)).toEqual(json.parseJSON(filterB))
 
     // foreach
+    var forEachA =
+      '{"foreach":{"lambda":"doc","expr":{"update":{"var":"doc"},"params":{"object":{"data":{"object":{"createdBy":"Ryan"}}}}}},"collection":{"paginate":{"documents":{"collection":"orders"}}}}'
+    var forEachB =
+      '{"collection":{"paginate":{"documents":{"collection":"orders"}}},"foreach":{"lambda":"doc","expr":{"update":{"var":"doc"},"params":{"object":{"data":{"object":{"createdBy":"Ryan"}}}}}}}'
+    expect(json.parseJSON(forEachA)).toEqual(json.parseJSON(forEachB))
+
     // if/then/else
     // map
     var mapA =
@@ -631,6 +637,20 @@ describe('Values', () => {
         collection: [1, 2, 3],
       }),
       'Query(Map([1, 2, 3], Lambda("x", Add(Var("x"), 1))))'
+    )
+
+    assertPrint(
+      new Query({
+        collection: { paginate: { documents: { collection: 'orders' } } },
+        foreach: {
+          lambda: 'doc',
+          expr: {
+            update: { var: 'doc' },
+            params: { object: { data: { object: { createdBy: 'Ryan' } } } },
+          },
+        },
+      }),
+      `Query(Foreach(Paginate(Documents(Collection("orders"))), Lambda("doc", Update(Var("doc"), {data: {createdBy: "Ryan"}}))))`
     )
   })
 })
