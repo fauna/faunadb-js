@@ -200,12 +200,12 @@ describe('Values', () => {
     // foreach
     // if/then/else
     // map
-    // var mapA =
-    //   '{"map":{"lambda":"x","expr":{"add":[{"var":"x"},1]}},"collection":[1,2,3]}'
+    var mapA =
+      '{"map":{"lambda":"x","expr":{"add":[{"var":"x"},1]}},"collection":[1,2,3]}'
 
-    // var mapB =
-    //   '{"collection":[1,2,3],"map":{"lambda": "x","expr":{"add":[{"var":"x"},1]}}}'
-    // expect(json.parseJSON(mapA)).toEqual(json.parseJSON(mapB))
+    var mapB =
+      '{"collection":[1,2,3],"map":{"lambda": "x","expr":{"add":[{"var":"x"},1]}}}'
+    expect(json.parseJSON(mapA)).toEqual(json.parseJSON(mapB))
 
     // select
     var selectA =
@@ -623,6 +623,14 @@ describe('Values', () => {
         select: ['favorites', 'foods', 1],
       }),
       'Query(Select(["favorites", "foods", 1], {favorites: {foods: ["crunchings", "munchings", "lunchings"]}}))'
+    )
+
+    assertPrint(
+      new Query({
+        map: { lambda: 'x', expr: { add: [{ var: 'x' }, 1] } },
+        collection: [1, 2, 3],
+      }),
+      'Query(Map([1, 2, 3], Lambda("x", Add(Var("x"), 1))))'
     )
   })
 })
