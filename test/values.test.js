@@ -320,7 +320,7 @@ describe('Values', () => {
     )
   })
 
-  test('pretty print Match', () => {
+  test.only('pretty print Match', () => {
     assertPrint(
       new Query(q.Lambda('_', q.Match(q.Index('idx')))),
       'Query(Lambda("_", Match(Index("idx"))))'
@@ -567,7 +567,7 @@ describe('Values', () => {
       'Query(Lambda("X", Var("X")))'
     )
 
-    // test argument order does not matter for lambdas
+    // test argument order does not matter
     assertPrint(
       new Query({
         api_version: '3',
@@ -580,6 +580,20 @@ describe('Values', () => {
         lambda: '_',
       }),
       'Query(Lambda("_", Match(Index("idx"), ["str", 10])))'
+    )
+
+    assertPrint(
+      new Query({
+        collections: [1, 2, 3],
+        api_version: '3',
+        filter: {
+          expr: {
+            equals: [0, { modulo: [{ var: i }, 2] }],
+          },
+          lambda: 'i',
+        },
+      }),
+      'Query(Filter([1, 2, 3], Lambda("i", Equals(0, Modulo(Var("i"), 2)))))'
     )
   })
 })
