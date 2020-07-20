@@ -593,8 +593,9 @@ describe('Values', () => {
       new Query({ lambda: 'X', expr: { var: 'X' }, api_version: '3' }),
       'Query(Lambda("X", Var("X")))'
     )
+  })
 
-    // test argument order does not matter
+  test('pretty print despite argument order', () => {
     assertPrint(
       new Query({
         api_version: '3',
