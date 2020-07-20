@@ -149,8 +149,6 @@ function getFunctionFromKeys(keys) {
 
   if (keys.includes('foreach')) return 'foreach'
 
-  if (keys.includes('if')) return 'if'
-
   if (keys.includes('map')) return 'map'
 
   if (keys.includes('select')) return 'select'
@@ -276,6 +274,18 @@ var exprToString = function(expr, caller) {
       exprToString(expr['collection']) +
       ', ' +
       exprToString(expr['foreach']) +
+      ')'
+    )
+  }
+
+  if ('if' in expr) {
+    return (
+      'If(' +
+      exprToString(expr['if']) +
+      ', ' +
+      exprToString(expr['then']) +
+      ', ' +
+      exprToString(expr['else']) +
       ')'
     )
   }

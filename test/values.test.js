@@ -204,7 +204,11 @@ describe('Values', () => {
       '{"collection":{"paginate":{"documents":{"collection":"orders"}}},"foreach":{"lambda":"doc","expr":{"update":{"var":"doc"},"params":{"object":{"data":{"object":{"createdBy":"Ryan"}}}}}}}'
     expect(json.parseJSON(forEachA)).toEqual(json.parseJSON(forEachB))
 
-    // if/then/else
+    // if
+    var ifA = '{"if":true,"then":"was true","else":"was false"}'
+    var ifB = '{"then":"was true","else":"was false","if":true}'
+    expect(json.parseJSON(ifA)).toEqual(json.parseJSON(ifB))
+
     // map
     var mapA =
       '{"map":{"lambda":"x","expr":{"add":[{"var":"x"},1]}},"collection":[1,2,3]}'
@@ -651,6 +655,15 @@ describe('Values', () => {
         },
       }),
       `Query(Foreach(Paginate(Documents(Collection("orders"))), Lambda("doc", Update(Var("doc"), {data: {createdBy: "Ryan"}}))))`
+    )
+
+    assertPrint(
+      new Query({
+        else: 'was false',
+        then: 'was true',
+        if: true,
+      }),
+      `Query(If(true, "was true", "was false"))`
     )
   })
 })
