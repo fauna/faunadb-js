@@ -552,7 +552,7 @@ describe('Values', () => {
     )
   })
 
-  test.only('pretty print despite argument order', () => {
+  test('pretty print despite argument order', () => {
     // Match
     assertPrint(
       new Query({
@@ -582,7 +582,7 @@ describe('Values', () => {
       'Query(Lambda("_", Match(Index("idx"), 10)))'
     )
 
-    // Filter
+    // Filter an array
     assertPrint(
       new Query({
         collection: [1, 2, 3],
@@ -597,21 +597,20 @@ describe('Values', () => {
       'Query(Filter([1, 2, 3], Lambda("i", Equals(0, Modulo(Var("i"), 2)))))'
     )
 
-    // TODO: Add test for Page
+    // Filter a page
     assertPrint(
       new Query({
         filter: {
           lambda: 'i',
           expr: {
-            equals: [0, { modulo: [{ var: 'i' }, 2] }],
+            containsstr: { select: 'name', from: { get: { var: 'i' } } },
+            search: '-',
           },
         },
-        collection: [1, 2, 3],
-        api_version: '3',
+        collection: { paginate: { databases: null } },
       }),
-      'Query(Filter([1, 2, 3], Lambda("i", Equals(0, Modulo(Var("i"), 2)))))'
+      'Query(Filter(Paginate(Databases()), Lambda("i", ContainsStr(Select("name", Get(Var("i"))), "-"))))'
     )
-    // TODO: Add test for Set
 
     // Select
     assertPrint(

@@ -228,6 +228,26 @@ var exprToString = function(expr, caller) {
 
   if ('object' in expr) return printObject(expr['object'])
 
+  if ('select' in expr) {
+    return (
+      'Select(' +
+      exprToString(expr['select']) +
+      ', ' +
+      exprToString(expr['from']) +
+      ')'
+    )
+  }
+
+  if ('containsstr' in expr) {
+    return (
+      'ContainsStr(' +
+      exprToString(expr['containsstr']) +
+      ', ' +
+      exprToString(expr['search']) +
+      ')'
+    )
+  }
+
   if ('filter' in expr) {
     return (
       'Filter(' +
@@ -244,16 +264,6 @@ var exprToString = function(expr, caller) {
       exprToString(expr['lambda']) +
       ', ' +
       exprToString(expr['expr']) +
-      ')'
-    )
-  }
-
-  if ('select' in expr) {
-    return (
-      'Select(' +
-      exprToString(expr['select']) +
-      ', ' +
-      exprToString(expr['from']) +
       ')'
     )
   }
@@ -281,7 +291,7 @@ var exprToString = function(expr, caller) {
   }
 
   if ('call' in expr) {
-    var argumentsExpr = null
+    var argumentsExpr = ''
 
     if (isExpr(expr['arguments'])) {
       argumentsExpr = exprToString(expr['arguments'])
@@ -295,14 +305,7 @@ var exprToString = function(expr, caller) {
       }
     }
 
-    var callExpr = ''
-    if (isExpr(expr['call'])) {
-      callExpr = exprToString(expr['call'])
-    } else {
-      callExpr = exprToString(expr['call'])
-    }
-
-    return 'Call(' + callExpr + ', ' + argumentsExpr + ')'
+    return 'Call(' + exprToString(expr['call']) + ', ' + argumentsExpr + ')'
   }
 
   // Versioned queries/lambdas will have an api_version field.
@@ -329,6 +332,11 @@ var exprToString = function(expr, caller) {
     var v = expr[k]
     return exprToString(v, fn)
   })
+
+  // Return string without args to avoid showing null args
+  if (args.length === 1 && args[0] === 'null') {
+    return fn + '()'
+  }
 
   if (shouldReverseArgs(expr)) {
     args.reverse()
