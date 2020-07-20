@@ -143,14 +143,6 @@ function convertToCamelCase(fn) {
 function getFunctionFromKeys(keys) {
   if (keys.includes('map')) return 'map'
 
-  if (keys.includes('collection')) return 'collection'
-
-  if (keys.includes('filter')) return 'filter'
-
-  if (keys.includes('foreach')) return 'foreach'
-
-  if (keys.includes('select')) return 'select'
-
   if (keys.includes('update')) return 'update'
 }
 

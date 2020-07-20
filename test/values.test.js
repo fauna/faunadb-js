@@ -595,7 +595,8 @@ describe('Values', () => {
     )
   })
 
-  test('pretty print despite argument order', () => {
+  test.only('pretty print despite argument order', () => {
+    // Match
     assertPrint(
       new Query({
         api_version: '3',
@@ -612,6 +613,21 @@ describe('Values', () => {
 
     assertPrint(
       new Query({
+        expr: {
+          terms: 10,
+          match: {
+            index: 'idx',
+          },
+        },
+        api_version: '3',
+        lambda: '_',
+      }),
+      'Query(Lambda("_", Match(Index("idx"), 10)))'
+    )
+
+    // Filter
+    assertPrint(
+      new Query({
         collection: [1, 2, 3],
         api_version: '3',
         filter: {
@@ -624,6 +640,23 @@ describe('Values', () => {
       'Query(Filter([1, 2, 3], Lambda("i", Equals(0, Modulo(Var("i"), 2)))))'
     )
 
+    // TODO: Add test for Page
+    assertPrint(
+      new Query({
+        filter: {
+          lambda: 'i',
+          expr: {
+            equals: [0, { modulo: [{ var: 'i' }, 2] }],
+          },
+        },
+        collection: [1, 2, 3],
+        api_version: '3',
+      }),
+      'Query(Filter([1, 2, 3], Lambda("i", Equals(0, Modulo(Var("i"), 2)))))'
+    )
+    // TODO: Add test for Set
+
+    // Select
     assertPrint(
       new Query({
         from: {
@@ -640,6 +673,7 @@ describe('Values', () => {
       'Query(Select(["favorites", "foods", 1], {favorites: {foods: ["crunchings", "munchings", "lunchings"]}}))'
     )
 
+    // Map
     assertPrint(
       new Query({
         map: { lambda: 'x', expr: { add: [{ var: 'x' }, 1] } },
@@ -648,6 +682,7 @@ describe('Values', () => {
       'Query(Map([1, 2, 3], Lambda("x", Add(Var("x"), 1))))'
     )
 
+    // Foreach
     assertPrint(
       new Query({
         collection: { paginate: { documents: { collection: 'orders' } } },
@@ -662,6 +697,7 @@ describe('Values', () => {
       `Query(Foreach(Paginate(Documents(Collection("orders"))), Lambda("doc", Update(Var("doc"), {data: {createdBy: "Ryan"}}))))`
     )
 
+    // If
     assertPrint(
       new Query({
         else: 'was false',
@@ -671,6 +707,7 @@ describe('Values', () => {
       `Query(If(true, "was true", "was false"))`
     )
 
+    // Call
     assertPrint(
       new Query({
         arguments: 2,
