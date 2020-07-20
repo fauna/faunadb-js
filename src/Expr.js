@@ -141,13 +141,13 @@ function convertToCamelCase(fn) {
  * @returns {String} The function name we wish to invoke
  */
 function getFunctionFromKeys(keys) {
+  if (keys.includes('map')) return 'map'
+
   if (keys.includes('collection')) return 'collection'
 
   if (keys.includes('filter')) return 'filter'
 
   if (keys.includes('foreach')) return 'foreach'
-
-  if (keys.includes('map')) return 'map'
 
   if (keys.includes('select')) return 'select'
 
@@ -289,23 +289,28 @@ var exprToString = function(expr, caller) {
   }
 
   if ('call' in expr) {
-    if (Array.isArray(expr.arguments.raw)) {
-      return (
-        'Call(' +
-        exprToString(expr['call']) +
-        ', ' +
-        printArray(expr['arguments']['raw'], exprToString) +
-        ')'
-      )
+    var argumentsExpr = null
+
+    if (isExpr(expr['arguments'])) {
+      argumentsExpr = exprToString(expr['arguments'])
+    } else {
+      if (Array.isArray(expr['arguments'])) {
+        argumentsExpr = '[' + printArray(expr['arguments'], exprToString) + ']'
+      } else if (typeof expr['arguments'] === 'object') {
+        argumentsExpr = printObject(expr['arguments'])
+      } else {
+        argumentsExpr = exprToString(expr['arguments'])
+      }
     }
 
-    return (
-      'Call(' +
-      exprToString(expr['call']) +
-      ', ' +
-      exprToString(expr['arguments']) +
-      ')'
-    )
+    var callExpr = ''
+    if (isExpr(expr['call'])) {
+      callExpr = exprToString(expr['call'])
+    } else {
+      callExpr = exprToString(expr['call'])
+    }
+
+    return 'Call(' + callExpr + ', ' + argumentsExpr + ')'
   }
 
   // Versioned queries/lambdas will have an api_version field.
@@ -318,7 +323,12 @@ var exprToString = function(expr, caller) {
 
   // Handle functions with an arity greater than 1
   if (keys.length > 1) {
-    fn = getFunctionFromKeys(fn)
+    fn = getFunctionFromKeys(keys)
+  }
+
+  // If undefined, we may have an arguments object
+  if (fn === undefined) {
+    return keys
   }
 
   fn = convertToCamelCase(fn)

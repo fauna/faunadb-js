@@ -448,8 +448,8 @@ describe('Values', () => {
       'Query(Lambda("x", Do(Var("x"), Var("x"))))'
     )
     assertPrint(
-      new Query(q.Lambda('ref', q.Call(q.Var('ref'), 1, 2, 3))),
-      'Query(Lambda("ref", Call(Var("ref"), 1, 2, 3)))'
+      new Query(q.Lambda('ref', q.Call(q.Var('ref'), [1, 2, 3]))),
+      'Query(Lambda("ref", Call(Var("ref"), [1, 2, 3])))'
     )
     assertPrint(
       new Query(q.Lambda(['x', 'y'], q.Union(q.Var('x'), q.Var('y')))),
@@ -688,6 +688,20 @@ describe('Values', () => {
         },
       }),
       `Query(Call(Function("double"), [1, 2, 3]))`
+    )
+
+    assertPrint(
+      new Query({
+        arguments: {
+          one: 1,
+          two: 2,
+          three: 3,
+        },
+        call: {
+          function: 'double',
+        },
+      }),
+      `Query(Call(Function("double"), {one: 1, two: 2, three: 3}))`
     )
   })
 })
