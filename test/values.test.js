@@ -629,13 +629,25 @@ describe('Values', () => {
       'Query(Select(["favorites", "foods", 1], {favorites: {foods: ["crunchings", "munchings", "lunchings"]}}))'
     )
 
-    // Map
+    // Map an Array
     assertPrint(
       new Query({
         map: { lambda: 'x', expr: { add: [{ var: 'x' }, 1] } },
         collection: [1, 2, 3],
       }),
       'Query(Map([1, 2, 3], Lambda("x", Add(Var("x"), 1))))'
+    )
+
+    // Map a Page
+    new assertPrint(
+      new Query({
+        map: {
+          expr: { get: { var: 'x' } },
+          lambda: 'x',
+        },
+        collection: { paginate: { databases: null } },
+      }),
+      'Query(Map(Paginate(Databases()), Lambda("x", Get(Var("x")))))'
     )
 
     // Foreach

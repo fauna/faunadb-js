@@ -291,21 +291,13 @@ var exprToString = function(expr, caller) {
   }
 
   if ('call' in expr) {
-    var argumentsExpr = ''
-
-    if (isExpr(expr['arguments'])) {
-      argumentsExpr = exprToString(expr['arguments'])
-    } else {
-      if (Array.isArray(expr['arguments'])) {
-        argumentsExpr = '[' + printArray(expr['arguments'], exprToString) + ']'
-      } else if (typeof expr['arguments'] === 'object') {
-        argumentsExpr = printObject(expr['arguments'])
-      } else {
-        argumentsExpr = exprToString(expr['arguments'])
-      }
-    }
-
-    return 'Call(' + exprToString(expr['call']) + ', ' + argumentsExpr + ')'
+    return (
+      'Call(' +
+      exprToString(expr['call']) +
+      ', ' +
+      exprToString(expr['arguments']) +
+      ')'
+    )
   }
 
   // Versioned queries/lambdas will have an api_version field.
