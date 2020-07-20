@@ -189,6 +189,10 @@ describe('Values', () => {
 
   test('parse functions regardless of order', () => {
     // call
+    var callA = '{"call":{"function":"double"},"arguments":2}'
+    var callB = '{"arguments":2,"call":{"function":"double"}}'
+    expect(json.parseJSON(callA)).toEqual(json.parseJSON(callB))
+
     // filter
     var filterA =
       '{"@query":{"filter":{"lambda":"i","expr":{"equals":[0,{"modulo":[{"var":"i"},2]}]}},"collection":[1,2,3]}}'
@@ -664,6 +668,26 @@ describe('Values', () => {
         if: true,
       }),
       `Query(If(true, "was true", "was false"))`
+    )
+
+    assertPrint(
+      new Query({
+        arguments: 2,
+        call: {
+          function: 'double',
+        },
+      }),
+      `Query(Call(Function("double"), 2))`
+    )
+
+    assertPrint(
+      new Query({
+        arguments: [1, 2, 3],
+        call: {
+          function: 'double',
+        },
+      }),
+      `Query(Call(Function("double"), [1, 2, 3]))`
     )
   })
 })

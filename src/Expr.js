@@ -143,8 +143,6 @@ function convertToCamelCase(fn) {
 function getFunctionFromKeys(keys) {
   if (keys.includes('collection')) return 'collection'
 
-  if (keys.includes('call')) return 'call'
-
   if (keys.includes('filter')) return 'filter'
 
   if (keys.includes('foreach')) return 'foreach'
@@ -286,6 +284,26 @@ var exprToString = function(expr, caller) {
       exprToString(expr['then']) +
       ', ' +
       exprToString(expr['else']) +
+      ')'
+    )
+  }
+
+  if ('call' in expr) {
+    if (Array.isArray(expr.arguments.raw)) {
+      return (
+        'Call(' +
+        exprToString(expr['call']) +
+        ', ' +
+        printArray(expr['arguments']['raw'], exprToString) +
+        ')'
+      )
+    }
+
+    return (
+      'Call(' +
+      exprToString(expr['call']) +
+      ', ' +
+      exprToString(expr['arguments']) +
       ')'
     )
   }
