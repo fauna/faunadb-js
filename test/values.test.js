@@ -187,49 +187,6 @@ describe('Values', () => {
     expect(json.parseJSON(c)).toEqual(complexQuery)
   })
 
-  test('parse functions regardless of order', () => {
-    // call
-    var callA = '{"call":{"function":"double"},"arguments":2}'
-    var callB = '{"arguments":2,"call":{"function":"double"}}'
-    expect(json.parseJSON(callA)).toEqual(json.parseJSON(callB))
-
-    // filter
-    var filterA =
-      '{"@query":{"filter":{"lambda":"i","expr":{"equals":[0,{"modulo":[{"var":"i"},2]}]}},"collection":[1,2,3]}}'
-
-    var filterB =
-      '{"@query":{"collection":[1,2,3],"filter":{"lambda":"i","expr":{"equals":[0,{"modulo":[{"var":"i"},2]}]}}}}'
-    expect(json.parseJSON(filterA)).toEqual(json.parseJSON(filterB))
-
-    // foreach
-    var forEachA =
-      '{"foreach":{"lambda":"doc","expr":{"update":{"var":"doc"},"params":{"object":{"data":{"object":{"createdBy":"Ryan"}}}}}},"collection":{"paginate":{"documents":{"collection":"orders"}}}}'
-    var forEachB =
-      '{"collection":{"paginate":{"documents":{"collection":"orders"}}},"foreach":{"lambda":"doc","expr":{"update":{"var":"doc"},"params":{"object":{"data":{"object":{"createdBy":"Ryan"}}}}}}}'
-    expect(json.parseJSON(forEachA)).toEqual(json.parseJSON(forEachB))
-
-    // if
-    var ifA = '{"if":true,"then":"was true","else":"was false"}'
-    var ifB = '{"then":"was true","else":"was false","if":true}'
-    expect(json.parseJSON(ifA)).toEqual(json.parseJSON(ifB))
-
-    // map
-    var mapA =
-      '{"map":{"lambda":"x","expr":{"add":[{"var":"x"},1]}},"collection":[1,2,3]}'
-
-    var mapB =
-      '{"collection":[1,2,3],"map":{"lambda": "x","expr":{"add":[{"var":"x"},1]}}}'
-    expect(json.parseJSON(mapA)).toEqual(json.parseJSON(mapB))
-
-    // select
-    var selectA =
-      '{"select":["favorites","foods",1],"from":{"object":{"favorites":{"object":{"foods":["crunchings","munchings","lunchings"]}}}}}'
-
-    var selectB =
-      '{"from":{"object":{"favorites":{"object":{"foods":["crunchings","munchings","lunchings"]}}}},"select":["favorites","foods",1]}'
-    expect(json.parseJSON(selectA)).toEqual(json.parseJSON(selectB))
-  })
-
   var assertPrint = function(value, expected) {
     expect(expected).toEqual(util.inspect(value, { depth: null }))
     expect(expected).toEqual(value.toString())
