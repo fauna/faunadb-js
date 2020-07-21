@@ -137,17 +137,6 @@ function convertToCamelCase(fn) {
 
 /**
  *
- * @param {String[]} keys An array of keys from an FQL query object
- * @returns {String} The function name we wish to invoke
- */
-function getFunctionFromKeys(keys) {
-  if (keys.includes('map')) return 'map'
-
-  if (keys.includes('update')) return 'update'
-}
-
-/**
- *
  * @param {*} expr A FQL expression
  * @returns {Boolean} Indicates if arguments should be reversed
  */
@@ -158,6 +147,7 @@ function shouldReverseArgs(expr) {
 }
 
 var exprToString = function(expr, caller) {
+  // If expr is a Expr, we want to parse expr.raw instead
   if (isExpr(expr)) {
     if ('value' in expr) return expr.toString()
     expr = expr.raw
@@ -300,25 +290,18 @@ var exprToString = function(expr, caller) {
     )
   }
 
-  var keys = Object.keys(expr)
-  var fn = keys[0]
-
-  // Handle functions with an arity greater than 1
-  if (keys.length > 1) {
-    fn = getFunctionFromKeys(keys)
+  if ('databases' in expr) {
+    return 'Databases()'
   }
 
+  var keys = Object.keys(expr)
+  var fn = keys[0]
   fn = convertToCamelCase(fn)
 
   var args = keys.map(function(k) {
     var v = expr[k]
     return exprToString(v, fn)
   })
-
-  // Return string without args to avoid showing null args
-  if (args.length === 1 && args[0] === 'null') {
-    return fn + '()'
-  }
 
   if (shouldReverseArgs(expr)) {
     args.reverse()
