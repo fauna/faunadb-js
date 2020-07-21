@@ -29,8 +29,12 @@ jobs:
         run: npm run browserify
       - name: Run browserify-min
         run: npm run browserify-min
+      - name: Parse version from tag refs
+        shell: bash
+        run: echo "::set-output name=branch::${GITHUB_REF#refs/tags/}"
+        id: version
       - name: Publish to npm
-        run: npm publish --tag ${{GITHUB_REF#refs/tags/}} --dry-run
+        run: npm publish --tag ${{steps.version.outputs.branch}} --dry-run
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_PUBLISH_TOKEN}}
   # publish:
