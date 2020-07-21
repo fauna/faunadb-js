@@ -699,9 +699,11 @@ describe('Values', () => {
     assertPrint(
       new Query({
         arguments: {
-          one: 1,
-          two: 2,
-          three: 3,
+          object: {
+            one: 1,
+            two: 2,
+            three: 3,
+          },
         },
         call: {
           function: 'double',
