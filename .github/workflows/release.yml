@@ -37,10 +37,6 @@ jobs:
         run: npm publish --tag ${{steps.version.outputs.branch}} --dry-run
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_PUBLISH_TOKEN}}
-  # publish:
-  #   name: Publish to npm registry
-  #   needs: build
-  #   runs-on: ubuntu-latest
   # publish_docs:
   #   name: Publish documentation
   #   needs: [build, publish]
