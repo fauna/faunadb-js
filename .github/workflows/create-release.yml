@@ -1,1 +1,9 @@
 name: Create Release
+on: repository_dispatch
+
+jobs:
+  say_hello:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Hello World!"
