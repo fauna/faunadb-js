@@ -13,7 +13,6 @@ defaults:
 jobs:
   build:
     name: Build dist files
-    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
