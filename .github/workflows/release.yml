@@ -7,17 +7,19 @@ on:
 
 jobs:
   setup:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Setup Node environment
-      uses: actions/setup-node@v1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Node environment
+        uses: actions/setup-node@v1
   build:
     needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@v1
         with:
-          node-version: '10.18.0'
+          node-version: "10.18.0"
       - name: Create dist/ folder
         run: mkdir dist
       - name: Run browserify
