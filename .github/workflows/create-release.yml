@@ -1,7 +1,9 @@
 name: Create Release
 
-on: repository_dispatch:
-  types: [create-release]
+on:
+  push:
+    branches:
+      - fe-613/move-release-pipeline-to-actions
 
 jobs:
   say_hello:
