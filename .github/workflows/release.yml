@@ -21,6 +21,8 @@ jobs:
     needs: setup
     runs-on: ubuntu-latest
     steps:
+      - name: Install dependencies
+        run: npm install
       - name: Create dist/ folder
         run: mkdir dist
       - name: Run browserify
