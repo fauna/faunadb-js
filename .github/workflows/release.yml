@@ -1,0 +1,32 @@
+name: Bundle, release and publish docs
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  setup:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Setup Node environment
+      uses: actions/setup-node@v1
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.18.0'
+      - name: Create dist/ folder
+        run: mkdir dist
+      - name: Run browserify
+        run: npm run browserify
+      - name: Run browserify-min
+        run: npm run browserify-min
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+  publish_docs:
+    needs: [build, publish]
+    runs-on: ubuntu-latest
