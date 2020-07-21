@@ -1,5 +1,7 @@
 name: Create Release
-on: repository_dispatch
+
+on: repository_dispatch:
+  types: [create-release]
 
 jobs:
   say_hello:
