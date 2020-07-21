@@ -2,8 +2,6 @@ name: Create Release
 
 on:
   push:
-    branches:
-      - fe-613/move-release-pipeline-to-actions
     tags:
       - v*
 
