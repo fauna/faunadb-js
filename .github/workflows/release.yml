@@ -3,7 +3,7 @@ name: Bundle and release with docs
 on:
   push:
     tags:
-      - v*
+      - *
 
 defaults:
   run:
