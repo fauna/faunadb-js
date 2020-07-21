@@ -4,10 +4,21 @@ on:
   push:
     branches:
       - fe-613/move-release-pipeline-to-actions
+    tags:
+      - v*
 
 jobs:
-  say_hello:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo "Hello World!"
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: true
