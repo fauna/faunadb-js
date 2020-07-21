@@ -308,11 +308,6 @@ var exprToString = function(expr, caller) {
     fn = getFunctionFromKeys(keys)
   }
 
-  // If undefined, we may have an arguments object
-  if (fn === undefined) {
-    return keys
-  }
-
   fn = convertToCamelCase(fn)
 
   var args = keys.map(function(k) {
