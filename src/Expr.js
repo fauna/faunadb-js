@@ -291,25 +291,20 @@ var exprToString = function(expr, caller) {
   }
 
   if ('call' in expr) {
-    var argumentExpr = exprToString(expr['arguments'])
-
-    // Print when arguments are an object
-    if (
-      typeof expr['arguments'] === 'object' &&
-      !Array.isArray(expr['arguments']) &&
-      !expr['arguments']['raw']
-    ) {
-      argumentExpr = printObject(expr['arguments'])
-    }
-
-    return 'Call(' + exprToString(expr['call']) + ', ' + argumentExpr + ')'
+    return (
+      'Call(' +
+      exprToString(expr['call']) +
+      ', ' +
+      exprToString(expr['arguments']) +
+      ')'
+    )
   }
 
   // Versioned queries/lambdas will have an api_version field.
   // We want to prevent it from being parsed and displayed.
-  var keys = Object.keys(expr).filter(
-    expression => expression !== 'api_version'
-  )
+  // var keys = Object.keys(expr).filter(
+  //   expression => expression !== 'api_version'
+  // )
 
   var fn = keys[0]
 
