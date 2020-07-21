@@ -29,6 +29,10 @@ jobs:
         run: npm run browserify
       - name: Run browserify-min
         run: npm run browserify-min
+      - name: Publish to npm
+        run: npm publish --dry-run --tag ${{github.ref}}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_PUBLISH_TOKEN}}
   # publish:
   #   name: Publish to npm registry
   #   needs: build
