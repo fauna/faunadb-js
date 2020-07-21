@@ -5,6 +5,11 @@ on:
     tags:
       - v*
 
+defaults:
+  run:
+    shell: bash
+    working-directory: ./
+
 jobs:
   setup:
     name: Setup environment
@@ -22,8 +27,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install dependencies
-        run: npm install
-      - name: Create dist/ folder
+        run: npm ci
+      - name: Create dist folder
         run: mkdir dist
       - name: Run browserify
         run: npm run browserify
