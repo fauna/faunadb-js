@@ -300,12 +300,7 @@ var exprToString = function(expr, caller) {
     )
   }
 
-  // Versioned queries/lambdas will have an api_version field.
-  // We want to prevent it from being parsed and displayed.
-  // var keys = Object.keys(expr).filter(
-  //   expression => expression !== 'api_version'
-  // )
-
+  var keys = Object.keys(expr)
   var fn = keys[0]
 
   // Handle functions with an arity greater than 1
