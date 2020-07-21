@@ -11,8 +11,9 @@ defaults:
     working-directory: ./
 
 jobs:
-  setup:
-    name: Setup environment
+  build:
+    name: Build dist files
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,11 +22,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: "10.18.0"
-  build:
-    name: Build dist files
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
       - name: Install dependencies
         run: npm ci
       - name: Create dist folder
