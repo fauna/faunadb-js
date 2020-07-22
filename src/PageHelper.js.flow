@@ -1,0 +1,16 @@
+// @flow strict
+
+declare export default class PageHelper {
+  constructor(
+    client: Client,
+    set: Expr,
+    params?: {| [key: string]: any |},
+    options?: QueryOptions,
+  ): this;
+  map(lambda: Lambda): PageHelper;
+  filter(lambda: Lambda): PageHelper;
+  each(lambda: (page: {| [key: string]: any |}) => void): Promise<void>;
+  eachReverse(lambda: (page: {| [key: string]: any |}) => void): Promise<void>;
+  previousPage(): Promise<{| [key: string]: any |}>;
+  nextPage(): Promise<{| [key: string]: any |}>;
+}

@@ -1,0 +1,29 @@
+// @flow strict
+
+declare export default class RequestResult {
+  constructor(
+    method: string,
+    path: string,
+    query: {| [key: string]: any |},
+    requestRaw: string,
+    requestContent: {| [key: string]: any |},
+    responseRaw: string,
+    responseContent: {| [key: string]: any |},
+    statusCode: number,
+    responseHeaders: {| [key: string]: any |},
+    startTime: Date,
+    endTime: Date,
+  ): this;
+  +method: string;
+  +path: string;
+  +query: {| [key: string]: any |};
+  +requestRaw: string;
+  +requestContent: {| [key: string]: any |};
+  +responseRaw: string;
+  +responseContent: {| [key: string]: any |};
+  +statusCode: number;
+  +responseHeaders: {| [key: string]: any |};
+  +startTime: Date;
+  +endTime: Date;
+  +timeTaken: number;
+}
