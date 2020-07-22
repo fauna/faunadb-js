@@ -21,7 +21,7 @@ jobs:
         id: version_to_publish
       - name: Check current published version
         shell: bash
-        run: echo "::set-output name=version::${{npm view faunadb version}}"
+        run: echo ::set-output name=version::npm view faunadb version
         id: current_version
       - run: echo ${{steps.current_version.outputs.version}}
       - name: Checkout code
