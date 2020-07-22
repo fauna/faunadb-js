@@ -1,6 +1,6 @@
 {
   "name": "faunadb",
-  "version": "2.14.2",
+  "version": "0.0.0-development",
   "description": "FaunaDB Javascript driver for Node.JS and Browsers",
   "homepage": "https://fauna.com",
   "repository": "fauna/faunadb-js",
@@ -25,7 +25,8 @@
     "browserify": "browserify index.js --standalone faunadb -o dist/faunadb.js",
     "browserify-min": "browserify index.js --standalone faunadb | terser -c -m --keep-fnames --keep-classnames -o dist/faunadb-min.js",
     "prettify": "prettier --write \"{src,test}/**/*.{js,ts}\"",
-    "test": "jest --env=node --verbose=false ./test"
+    "test": "jest --env=node --verbose=false ./test",
+    "semantic-release": "semantic-release"
   },
   "types": "index.d.ts",
   "dependencies": {
@@ -50,7 +51,8 @@
     "lint-staged": ">=8",
     "prettier": "1.18.2",
     "terser": "^4.3.9",
-    "typescript": "^3.0.1"
+    "typescript": "^3.0.1",
+    "semantic-release": "^17.1.1"
   },
   "husky": {
     "hooks": {
