@@ -1,0 +1,78 @@
+// @flow strict
+
+import Expr from './Expr'
+
+declare export var values: typeof npm$namespace$values;
+
+declare var npm$namespace$values: {|
+  Value: typeof values$Value,
+  Ref: typeof values$Ref,
+  Native: typeof values$Native,
+  SetRef: typeof values$SetRef,
+  FaunaTime: typeof values$FaunaTime,
+  FaunaDate: typeof values$FaunaDate,
+  Bytes: typeof values$Bytes,
+  Query: typeof values$Query,
+|};
+declare export class values$Value mixins Expr {
+  toJSON(): {| [key: string]: any |};
+  inspect(): string;
+  +_isFaunaValue?: boolean;
+}
+
+declare export class values$Ref mixins values$Value {
+  constructor(id: string, col?: values$Ref, db?: values$Ref): this;
+  id: string;
+  collection?: values$Ref;
+  class?: values$Ref;
+  database?: values$Ref;
+  +_isFaunaRef?: boolean;
+}
+
+declare export class values$Native {
+  static +COLLECTIONS: values$Ref;
+  static +INDEXES: values$Ref;
+  static +DATABASES: values$Ref;
+  static +KEYS: values$Ref;
+  static +FUNCTIONS: values$Ref;
+}
+
+declare export class values$SetRef mixins values$Value {
+  constructor(value: string): this;
+}
+
+declare export class values$FaunaTime mixins values$Value {
+  constructor(value: string): this;
+  constructor(value: Date): this;
+  date: Date;
+}
+
+declare export class values$FaunaDate mixins values$Value {
+  constructor(value: string): this;
+  constructor(value: Date): this;
+  date: Date;
+}
+
+declare export class values$Bytes mixins values$Value {
+  constructor(value: string): this;
+  constructor(value: ArrayBuffer): this;
+  constructor(value: Uint8Array): this;
+}
+
+declare export class values$Query mixins values$Value {
+  constructor(value: {| [key: string]: any |}): this;
+}
+
+export type values$Document<T = {| [key: string]: any |}> = {
+  ref: values$Ref,
+  ts: number,
+  data: T,
+  ...
+};
+
+export type values$Page<T> = {
+  data: T[],
+  after?: Expr,
+  before?: Expr,
+  ...
+};

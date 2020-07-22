@@ -1,0 +1,46 @@
+// @flow strict
+
+import RequestResult from './RequestResult'
+
+declare var errors: typeof npm$namespace$errors;
+
+declare var npm$namespace$errors: {|
+  FaunaError: typeof errors$FaunaError,
+  InvalidValue: typeof errors$InvalidValue,
+  FaunaHTTPError: typeof errors$FaunaHTTPError,
+  BadRequest: typeof errors$BadRequest,
+  Unauthorized: typeof errors$Unauthorized,
+  PermissionDenied: typeof errors$PermissionDenied,
+  NotFound: typeof errors$NotFound,
+  MethodNotAllowed: typeof errors$MethodNotAllowed,
+  InternalError: typeof errors$InternalError,
+  UnavailableError: typeof errors$UnavailableError,
+|};
+declare export class errors$FaunaError mixins Error {
+  constructor(message: string): this;
+  name: string;
+  message: string;
+}
+
+declare export class errors$InvalidValue mixins errors$FaunaError {}
+
+declare export class errors$FaunaHTTPError mixins errors$FaunaError {
+  static raiseForStatusCode(requestResult: RequestResult): void;
+  constructor(name: string, requestResult: RequestResult): this;
+  requestResult: RequestResult;
+  errors(): {| [key: string]: any |};
+}
+
+declare export class errors$BadRequest mixins errors$FaunaHTTPError {}
+
+declare export class errors$Unauthorized mixins errors$FaunaHTTPError {}
+
+declare export class errors$PermissionDenied mixins errors$FaunaHTTPError {}
+
+declare export class errors$NotFound mixins errors$FaunaHTTPError {}
+
+declare export class errors$MethodNotAllowed mixins errors$FaunaHTTPError {}
+
+declare export class errors$InternalError mixins errors$FaunaHTTPError {}
+
+declare export class errors$UnavailableError mixins errors$FaunaHTTPError {}

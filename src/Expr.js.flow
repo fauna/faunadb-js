@@ -1,0 +1,7 @@
+// @flow strict
+
+declare export default class Expr {
+  constructor(obj: {| [key: string]: any |}): this;
+  +_isFaunaExpr?: boolean;
+  static toString(expr: Expr): string;
+}
