@@ -586,7 +586,6 @@ describe('Values', () => {
     assertPrint(
       new Query({
         collection: [1, 2, 3],
-        api_version: '3',
         filter: {
           expr: {
             equals: [0, { modulo: [{ var: 'i' }, 2] }],
