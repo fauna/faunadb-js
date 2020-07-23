@@ -1,5 +1,7 @@
 // @flow strict
 
+import RequestResult from './RequestResult'
+
 declare var errors: typeof npm$namespace$errors;
 
 declare var npm$namespace$errors: {|

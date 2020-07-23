@@ -1,5 +1,9 @@
 // @flow strict
 
+import Expr from './Expr'
+import type { Lambda } from './query'
+import { QueryOptions } from './Client';
+
 declare export default class PageHelper {
   constructor(
     client: Client,

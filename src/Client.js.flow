@@ -1,5 +1,9 @@
 // @flow strict
 
+import Expr from './Expr'
+import RequestResult from './RequestResult'
+import PageHelper from './PageHelper'
+
 export interface ClientConfig {
   secret: string;
   domain?: string;
