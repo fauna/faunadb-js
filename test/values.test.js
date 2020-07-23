@@ -759,7 +759,7 @@ describe('Values', () => {
       new Query({
         documents: null,
       }),
-      'Query(Documents())'
+      'Query(Documents(null))'
     )
   })
 })
