@@ -314,6 +314,16 @@ var exprToString = function(expr, caller) {
     return 'Documents(' + exprToString(expr['documents']) + ')'
   }
 
+  if ('map' in expr) {
+    return (
+      'Map(' +
+      exprToString(expr['collection']) +
+      ', ' +
+      exprToString(expr['map']) +
+      ')'
+    )
+  }
+
   var keys = Object.keys(expr)
   var fn = keys[0]
   fn = convertToCamelCase(fn)
