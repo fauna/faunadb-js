@@ -196,18 +196,13 @@ var exprToString = function(expr, caller) {
   }
 
   if ('paginate' in expr) {
-    // console.log('expr', expr)
-    // console.log('expr["paginate"]', expr['paginate'])
-
     var exprKeys = Object.keys(expr)
     if (exprKeys.length === 1) {
-      // console.log('exprKeys', exprKeys)
       return 'Paginate(' + exprToString(expr['paginate']) + ')'
     }
 
     var expr2 = Object.assign({}, expr)
     delete expr2['paginate']
-    // console.log('expr2', expr2)
 
     return (
       'Paginate(' +
@@ -303,22 +298,19 @@ var exprToString = function(expr, caller) {
   }
 
   if ('databases' in expr) {
-    if (!expr['database']) return 'Databases()'
+    if (!expr['databases']) return 'Databases()'
 
     return 'Databases(' + exprToString(expr['databases']) + ')'
   }
 
   if ('collections' in expr) {
-    if (!expr['database']) return 'Collections()'
+    if (!expr['collections']) return 'Collections()'
 
     return 'Collections(' + exprToString(expr['collections']) + ')'
   }
 
   if ('documents' in expr) {
-    console.log('in documents block')
-    console.log(expr)
-    if (!expr['collection']) return 'Documents()'
-
+    if (!expr['documents']) return 'Documents()'
     return 'Documents(' + exprToString(expr['documents']) + ')'
   }
 

@@ -713,53 +713,53 @@ describe('Values', () => {
 
     // Databases
     assertPrint(
-      new Expr({
+      new Query({
         databases: {
           database: 'lettuce',
         },
       }),
-      'Databases(Database("lettuce"))'
+      'Query(Databases(Database("lettuce")))'
     )
 
     assertPrint(
-      new Expr({
+      new Query({
         databases: null,
       }),
-      'Databases()'
+      'Query(Databases())'
     )
 
     // Collections
     assertPrint(
-      new Expr({
+      new Query({
         collections: {
           database: 'lettuce',
         },
       }),
-      'Collections(Database("lettuce"))'
+      'Query(Collections(Database("lettuce")))'
     )
 
     assertPrint(
-      new Expr({
+      new Query({
         collections: null,
       }),
-      'Collections()'
+      'Query(Collections())'
     )
 
     // Documents
     assertPrint(
-      new Expr({
+      new Query({
         documents: {
           collection: 'lettuce',
         },
       }),
-      'Documents(Collection("lettuce"))'
+      'Query(Documents(Collection("lettuce")))'
     )
 
     assertPrint(
-      new Expr({
+      new Query({
         documents: null,
       }),
-      'Documents()'
+      'Query(Documents())'
     )
   })
 })
