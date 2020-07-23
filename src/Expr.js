@@ -135,17 +135,6 @@ function convertToCamelCase(fn) {
     .join('')
 }
 
-/**
- *
- * @param {*} expr A FQL expression
- * @returns {Boolean} Indicates if arguments should be reversed
- */
-function shouldReverseArgs(expr) {
-  return ['filter', 'map', 'foreach'].some(function(fn) {
-    return fn in expr
-  })
-}
-
 var exprToString = function(expr, caller) {
   // If expr is a Expr, we want to parse expr.raw instead
   if (isExpr(expr)) {
@@ -331,10 +320,6 @@ var exprToString = function(expr, caller) {
     var v = expr[k]
     return exprToString(v, fn)
   })
-
-  if (shouldReverseArgs(expr)) {
-    args.reverse()
-  }
 
   args = args.join(', ')
 
