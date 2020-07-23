@@ -710,5 +710,56 @@ describe('Values', () => {
       }),
       `Query(Call(Function("double"), {one: 1, two: 2, three: 3}))`
     )
+
+    // Databases
+    assertPrint(
+      new Expr({
+        databases: {
+          database: 'lettuce',
+        },
+      }),
+      'Databases(Database("lettuce"))'
+    )
+
+    assertPrint(
+      new Expr({
+        databases: null,
+      }),
+      'Databases()'
+    )
+
+    // Collections
+    assertPrint(
+      new Expr({
+        collections: {
+          database: 'lettuce',
+        },
+      }),
+      'Collections(Database("lettuce"))'
+    )
+
+    assertPrint(
+      new Expr({
+        collections: null,
+      }),
+      'Collections()'
+    )
+
+    // Documents
+    assertPrint(
+      new Expr({
+        documents: {
+          collection: 'lettuce',
+        },
+      }),
+      'Documents(Collection("lettuce"))'
+    )
+
+    assertPrint(
+      new Expr({
+        documents: null,
+      }),
+      'Documents()'
+    )
   })
 })
