@@ -310,7 +310,6 @@ var exprToString = function(expr, caller) {
   }
 
   if ('documents' in expr) {
-    if (!expr['documents']) return 'Documents()'
     return 'Documents(' + exprToString(expr['documents']) + ')'
   }
 
