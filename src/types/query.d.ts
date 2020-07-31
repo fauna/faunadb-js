@@ -137,7 +137,7 @@ export module query {
     expr: ExprArg<Out>
   ): Expr<Lambda<In, Out>>
 
-  export function Call<T>(ref: FunctionRef<T>, ...args: any[]): Expr<T>
+  export function Call<T>(ref: string | FunctionRef<T>, ...args: any[]): Expr<T>
 
   // TODO
   export function Query(lambda: ExprArg | Lambda): Expr
