@@ -47,7 +47,7 @@ export type ToExpr<T> =
   // Preserve nominal subtypes of `Expr`
   | NominalExpr<T>
   // Merge plain `Expr` types with primitive types
-  | (Eval<T> extends infer U ? ([U] extends [never] ? never : Expr<U>) : never)
+  | (Eval<T> extends infer U ? ([U] extends [void] ? never : Expr<U>) : never)
 
 /** Add support for `Expr` types to any type. */
 export type ExprVal<T = unknown> =
