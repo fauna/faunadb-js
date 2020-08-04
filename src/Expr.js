@@ -52,7 +52,6 @@ var varArgsFunctions = [
 // Core update: https://faunadb.atlassian.net/browse/ENG-2110
 
 var specialCases = {
-  containsstr: 'ContainsStr',
   containsstrregex: 'ContainsStrRegex',
   endswith: 'EndsWith',
   findstr: 'FindStr',
