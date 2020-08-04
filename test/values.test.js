@@ -765,10 +765,26 @@ describe('Values', () => {
     // API v3 Contains* functions
     assertPrint(
       new Query({
-        contains_path: ['a', 'b'],
         in: { object: { a: { object: { b: 1 } } } },
+        contains_path: ['a', 'b'],
       }),
       'Query(ContainsPath(["a", "b"], {a: {b: 1}}))'
+    )
+
+    assertPrint(
+      new Query({
+        in: { object: { a: { object: { b: 1 } } } },
+        contains_field: ['a', 'b'],
+      }),
+      'Query(ContainsField(["a", "b"], {a: {b: 1}}))'
+    )
+
+    assertPrint(
+      new Query({
+        in: { object: { a: { object: { b: 1 } } } },
+        contains_value: ['a', 'b'],
+      }),
+      'Query(ContainsValue(["a", "b"], {a: {b: 1}}))'
     )
   })
 })

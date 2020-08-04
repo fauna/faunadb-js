@@ -233,6 +233,26 @@ var exprToString = function(expr, caller) {
     )
   }
 
+  if ('contains_field' in expr) {
+    return (
+      'ContainsField(' +
+      exprToString(expr['contains_field']) +
+      ', ' +
+      exprToString(expr['in']) +
+      ')'
+    )
+  }
+
+  if ('contains_value' in expr) {
+    return (
+      'ContainsValue(' +
+      exprToString(expr['contains_value']) +
+      ', ' +
+      exprToString(expr['in']) +
+      ')'
+    )
+  }
+
   if ('containsstr' in expr) {
     return (
       'ContainsStr(' +
