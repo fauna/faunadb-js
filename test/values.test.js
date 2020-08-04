@@ -761,5 +761,14 @@ describe('Values', () => {
       }),
       'Query(Documents(null))'
     )
+
+    // API v3 Contains* functions
+    assertPrint(
+      new Query({
+        contains_path: ['a', 'b'],
+        in: { object: { a: { object: { b: 1 } } } },
+      }),
+      'Query(ContainsPath(["a", "b"], {a: {b: 1}}))'
+    )
   })
 })

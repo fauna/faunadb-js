@@ -223,6 +223,16 @@ var exprToString = function(expr, caller) {
     )
   }
 
+  if ('contains_path' in expr) {
+    return (
+      'ContainsPath(' +
+      exprToString(expr['contains_path']) +
+      ', ' +
+      exprToString(expr['in']) +
+      ')'
+    )
+  }
+
   if ('containsstr' in expr) {
     return (
       'ContainsStr(' +
