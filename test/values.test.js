@@ -798,5 +798,16 @@ describe('Values', () => {
       }),
       'Query(Let({three: Add(Var("two"), 1), two: Add(Var("one"), 1), one: Add(0, 1)}, Var("three")))'
     )
+
+    assertPrint(
+      new Query({
+        lambda: 'x',
+        expr: {
+          let: [{ y: { var: 'x' } }],
+          in: { add: [1, { var: 'y' }] },
+        },
+      }),
+      'Query(Lambda("x", Let([{y: Var("x")}], Add(1, Var("y")))))'
+    )
   })
 })

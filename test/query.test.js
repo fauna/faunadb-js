@@ -236,6 +236,7 @@ describe('query', () => {
         ),
         3
       ),
+      assertQuery(query.Let([{ y: 2 }], query.Add(1, query.Var('y'))), 3),
     ])
   })
 
