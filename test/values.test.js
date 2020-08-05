@@ -786,5 +786,17 @@ describe('Values', () => {
       }),
       'Query(ContainsValue(["a", "b"], {a: {b: 1}}))'
     )
+
+    assertPrint(
+      new Query({
+        let: {
+          three: { add: [{ var: 'two' }, 1] },
+          two: { add: [{ var: 'one' }, 1] },
+          one: { add: [0, 1] },
+        },
+        in: { var: 'three' },
+      }),
+      'Query(Let({three: Add(Var("two"), 1), two: Add(Var("one"), 1), one: Add(0, 1)}, Var("three")))'
+    )
   })
 })
