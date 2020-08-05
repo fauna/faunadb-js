@@ -1796,18 +1796,6 @@ function Role(name, scope) {
 }
 
 /**
- *
- * @param {module:query~ExprArg} scope
- *   The Ref of the database set's scope.
- * @return {Expr}
- */
-function AccessProviders(scope) {
-  arity.max(1, arguments, AccessProviders.name)
-  scope = defaults(scope, null)
-  return new Expr({ access_providers: wrap(scope) })
-}
-
-/**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
  *
  * Constructs a `classes` function that, when evaluated, returns a Ref value.
@@ -3139,7 +3127,6 @@ module.exports = {
   Collection: Collection,
   Function: FunctionFn,
   Role: Role,
-  AccessProviders: AccessProviders,
   Classes: deprecate(
     Classes,
     'Classes() is deprecated, use Collections() instead'
