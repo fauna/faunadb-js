@@ -1024,6 +1024,23 @@ function CreateRole(params) {
   return new Expr({ create_role: wrap(params) })
 }
 
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
+ *
+ * @param {module:query~ExprArg} params
+ *   An object of parameters used to create a new access provider.
+ *     - name: A valid schema name
+ *     - issuer: A unique string
+ *     - jwks_uri: A valid HTTPS URI
+ *     - allowed_roles: An optional list of Role refs
+ *     - allowed_collections: An optional list of user-defined Collection refs
+ * @return {Expr}
+ */
+function CreateAccessProvider(params) {
+  arity.exact(1, arguments, CreateAccessProvider.name)
+  return new Expr({ create_access_provider: wrap(params) })
+}
+
 // Sets
 
 /**
@@ -1793,6 +1810,18 @@ function Role(name, scope) {
   arity.between(1, 2, arguments, Role.name)
   scope = defaults(scope, null)
   return new Expr(params({ role: wrap(name) }, { scope: wrap(scope) }))
+}
+
+/**
+ *
+ * @param {module:query~ExprArg} scope
+ *   The Ref of the database set's scope.
+ * @return {Expr}
+ */
+function AccessProviders(scope) {
+  arity.max(1, arguments, AccessProviders.name)
+  scope = defaults(scope, null)
+  return new Expr({ access_providers: wrap(scope) })
 }
 
 /**
@@ -2872,6 +2901,17 @@ function Reverse(expr) {
   return new Expr({ reverse: wrap(expr) })
 }
 
+/**
+ *
+ * @param {module:query~ExprArg} name
+ * A string representing an AccessProvider's name
+ * @return {Expr}
+ */
+function AccessProvider(name) {
+  arity.exact(1, arguments, AccessProvider.name)
+  return new Expr({ access_provider: wrap(name) })
+}
+
 // Helpers
 
 /**
@@ -3074,6 +3114,7 @@ module.exports = {
   CreateKey: CreateKey,
   CreateFunction: CreateFunction,
   CreateRole: CreateRole,
+  CreateAccessProvider: CreateAccessProvider,
   Singleton: Singleton,
   Events: Events,
   Match: Match,
@@ -3127,6 +3168,7 @@ module.exports = {
   Collection: Collection,
   Function: FunctionFn,
   Role: Role,
+  AccessProviders: AccessProviders,
   Classes: deprecate(
     Classes,
     'Classes() is deprecated, use Collections() instead'
@@ -3217,5 +3259,6 @@ module.exports = {
   MoveDatabase: MoveDatabase,
   Documents: Documents,
   Reverse: Reverse,
+  AccessProvider: AccessProvider,
   wrap: wrap,
 }
