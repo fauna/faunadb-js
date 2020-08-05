@@ -1024,23 +1024,6 @@ function CreateRole(params) {
   return new Expr({ create_role: wrap(params) })
 }
 
-/**
- * See the [docs](https://app.fauna.com/documentation/reference/queryapi#write-functions).
- *
- * @param {module:query~ExprArg} params
- *   An object of parameters used to create a new access provider.
- *     - name: A valid schema name
- *     - issuer: A unique string
- *     - jwks_uri: A valid HTTPS URI
- *     - allowed_roles: An optional list of Role refs
- *     - allowed_collections: An optional list of user-defined Collection refs
- * @return {Expr}
- */
-function CreateAccessProvider(params) {
-  arity.exact(1, arguments, CreateAccessProvider.name)
-  return new Expr({ create_access_provider: wrap(params) })
-}
-
 // Sets
 
 /**
@@ -3114,7 +3097,6 @@ module.exports = {
   CreateKey: CreateKey,
   CreateFunction: CreateFunction,
   CreateRole: CreateRole,
-  CreateAccessProvider: CreateAccessProvider,
   Singleton: Singleton,
   Events: Events,
   Match: Match,
