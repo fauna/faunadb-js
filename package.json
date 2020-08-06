@@ -72,7 +72,7 @@
   "release": {
     "dryRun": true,
     "branches": [
-      "fe-613/move-release-pipeline-to-actions"
+      "master"
     ]
   }
 }
