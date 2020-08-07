@@ -225,6 +225,18 @@ describe('query', () => {
           api_version: '3',
         })
       ),
+      assertQuery(
+        query.Let(
+          {
+            one: query.Add(0, 1),
+            two: query.Add(query.Var('one'), 1),
+            three: query.Add(query.Var('two'), 1),
+          },
+          query.Var('three')
+        ),
+        3
+      ),
+      assertQuery(query.Let([{ y: 2 }], query.Add(1, query.Var('y'))), 3),
     ])
   })
 
