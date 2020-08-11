@@ -34,3 +34,4 @@ jobs:
         with:
           branch: master
           github_token: ${{secrets.GH_TOKEN}}
+          tags: true
