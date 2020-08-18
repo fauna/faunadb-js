@@ -1,3 +1,9 @@
+## 3.0.0
+
+- Contains function has been renamed to ContainsPath
+- ContainsField, ContainsValue and Reverse functions added
+- Add support for versioned `@query` values
+
 ## 2.14.2
 
 - Fix a bug with instanceof conditions
