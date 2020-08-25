@@ -233,6 +233,36 @@ var exprToString = function(expr, caller) {
     )
   }
 
+  if ('call' in expr) {
+    return (
+      'Call(' +
+      exprToString(expr['call']) +
+      ', ' +
+      exprToString(expr['arguments']) +
+      ')'
+    )
+  }
+
+  if ('map' in expr) {
+    return (
+      'Map(' +
+      exprToString(expr['collection']) +
+      ', ' +
+      exprToString(expr['map']) +
+      ')'
+    )
+  }
+
+  if ('foreach' in expr) {
+    return (
+      'Foreach(' +
+      exprToString(expr['collection']) +
+      ', ' +
+      exprToString(expr['foreach']) +
+      ')'
+    )
+  }
+
   var keys = Object.keys(expr)
   var fn = keys[0]
   fn = convertToCamelCase(fn)
