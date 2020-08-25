@@ -213,6 +213,26 @@ var exprToString = function(expr, caller) {
 
   if ('object' in expr) return printObject(expr['object'])
 
+  if ('lambda' in expr) {
+    return (
+      'Lambda(' +
+      exprToString(expr['lambda']) +
+      ', ' +
+      exprToString(expr['expr']) +
+      ')'
+    )
+  }
+
+  if ('filter' in expr) {
+    return (
+      'Filter(' +
+      exprToString(expr['collection']) +
+      ', ' +
+      exprToString(expr['filter']) +
+      ')'
+    )
+  }
+
   var keys = Object.keys(expr)
   var fn = keys[0]
   fn = convertToCamelCase(fn)
