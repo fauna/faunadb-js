@@ -810,4 +810,109 @@ describe('Values', () => {
       'Query(Lambda("x", Let([{y: Var("x")}], Add(1, Var("y")))))'
     )
   })
+
+  test('test non-snake cased functions', () => {
+    assertPrint(
+      new Query({
+        regex_escape: '.Fa*[un]a{1,}',
+      }),
+      'Query(RegexEscape(".Fa*[un]a{1,}"))'
+    )
+
+    assertPrint(
+      new Query({
+        starts_with: 'Fauna',
+        search: 'F',
+      }),
+      'Query(StartsWith("Fauna", "F"))'
+    )
+
+    assertPrint(
+      new Query({
+        ends_with: 'Fauna',
+        search: 'a',
+      }),
+      'Query(EndsWith("Fauna", "a"))'
+    )
+
+    assertPrint(
+      new Query({
+        contains_str: 'Fauna',
+        search: 'una',
+      }),
+      'Query(ContainsStr("Fauna", "una"))'
+    )
+
+    assertPrint(
+      new Query({
+        contains_str_regex: 'Fauna',
+        pattern: '(Fa|na)',
+      }),
+      'Query(ContainsStrRegex("Fauna", "(Fa|na)"))'
+    )
+
+    assertPrint(
+      new Query({
+        find_str: 'fire and fireman',
+        find: 'fire',
+      }),
+      'Query(FindStr("fire and fireman", "fire"))'
+    )
+
+    assertPrint(
+      new Query({ find_str_regex: 'fire and Fireman', pattern: '[Ff]ire' }),
+      'Query(FindStrRegex("fire and Fireman", "[Ff]ire"))'
+    )
+
+    assertPrint(
+      new Query({ lower_case: 'Fire And FireMan' }),
+      'Query(LowerCase("Fire And FireMan"))'
+    )
+
+    assertPrint(new Query({ l_trim: ' Fire' }), 'Query(LTrim(" Fire"))')
+
+    assertPrint(
+      new Query({
+        replace_str: 'One Fish Two Fish',
+        find: 'Two',
+        replace: 'Blue',
+      }),
+      'Query(ReplaceStr("One Fish Two Fish", "Two", "Blue"))'
+    )
+
+    assertPrint(
+      new Query({
+        replace_str_regex: 'One Fisk Two FisT',
+        pattern: 'Fis.',
+        replace: 'Fish',
+        first: true,
+      }),
+      'Query(ReplaceStrRegex("One Fisk Two FisT", "Fis.", "Fish", true))'
+    )
+
+    assertPrint(new Query({ r_trim: 'Fire  ' }), 'Query(RTrim("Fire  "))')
+
+    assertPrint(
+      new Query({ sub_string: 'ABCDEFGHIJK', start: 2, length: 3 }),
+      'Query(SubString("ABCDEFGHIJK", 2, 3))'
+    )
+
+    assertPrint(
+      new Query({ title_case: 'FIRE And FireMan' }),
+      'Query(TitleCase("FIRE And FireMan"))'
+    )
+
+    assertPrint(
+      new Query({ upper_case: 'Fire And FireMan' }),
+      'Query(UpperCase("Fire And FireMan"))'
+    )
+
+    assertPrint(new Query({ bit_and: [0, 0] }), 'Query(BitAnd(0, 0))')
+
+    assertPrint(new Query({ bit_not: 7 }), 'Query(BitNot(7))')
+
+    assertPrint(new Query({ bit_or: [0, 0] }), 'Query(BitOr(0, 0))')
+
+    assertPrint(new Query({ bit_xor: [0, 0] }), 'Query(BitXor(0, 0))')
+  })
 })
