@@ -199,6 +199,10 @@ describe('Values', () => {
     assertPrint(new Ref('fn', values.Native.FUNCTIONS), 'Function("fn")')
     assertPrint(new Ref('role', values.Native.ROLES), 'Role("role")')
     assertPrint(new Ref('key', values.Native.KEYS), 'Ref(Keys(), "key")')
+    assertPrint(
+      new Ref('access_provider', values.Native.ACCESS_PROVIDERS),
+      'AccessProvider("access_provider")'
+    )
 
     assertPrint(values.Native.COLLECTIONS, 'Collections()')
     assertPrint(values.Native.DATABASES, 'Databases()')
@@ -206,6 +210,7 @@ describe('Values', () => {
     assertPrint(values.Native.FUNCTIONS, 'Functions()')
     assertPrint(values.Native.ROLES, 'Roles()')
     assertPrint(values.Native.KEYS, 'Keys()')
+    assertPrint(values.Native.ACCESS_PROVIDERS, 'AccessProviders()')
 
     var db = new Ref('db', values.Native.DATABASES)
 
@@ -215,6 +220,10 @@ describe('Values', () => {
     assertPrint(new Ref('functions', null, db), 'Functions(Database("db"))')
     assertPrint(new Ref('roles', null, db), 'Roles(Database("db"))')
     assertPrint(new Ref('keys', null, db), 'Keys(Database("db"))')
+    assertPrint(
+      new Ref('access_providers', null, db),
+      'AccessProviders(Database("db"))'
+    )
 
     assertPrint(
       new Ref('col', values.Native.COLLECTIONS, db),
@@ -235,6 +244,10 @@ describe('Values', () => {
     assertPrint(
       new Ref('role', values.Native.ROLES, db),
       'Role("role", Database("db"))'
+    )
+    assertPrint(
+      new Ref('access_provider', values.Native.ACCESS_PROVIDERS, db),
+      'AccessProvider("access_provider", Database("db"))'
     )
 
     assertPrint(
