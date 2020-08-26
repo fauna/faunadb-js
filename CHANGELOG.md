@@ -1,3 +1,10 @@
+## 3.0.0
+
+- Added an alias of the Contains function called ContainsPath, and deprecated the Contains function.
+- Added the new functions ContainsField and ContainsValue functions to make it easier to explore the structure of objects and documents.
+- Added the new Reverse function to reverse the order of items in an Array, Page, or Set.
+- Add support for versioned `@query` values.
+
 ## 2.14.2
 
 - Fix a bug with instanceof conditions

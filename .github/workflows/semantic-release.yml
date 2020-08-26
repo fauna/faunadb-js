@@ -1,0 +1,37 @@
+name: Semantic release
+
+on:
+  repository_dispatch:
+    types: [semantic-release]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Setup Node environment
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.18.0'
+      - name: Install dependencies
+        run: npm ci
+      - name: Create dist/ folder
+        run: mkdir dist/
+      - name: Commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local use.name "GitHub Action"
+      - name: Run browserify
+        run: npm run browserify
+      - name: Release new verion
+        env:
+          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+          GH_TOKEN: ${{secrets.GH_TOKEN}}
+        run: npx semantic-release
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: master
+          github_token: ${{secrets.GH_TOKEN}}
+          tags: true

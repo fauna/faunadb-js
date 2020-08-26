@@ -52,7 +52,6 @@ var varArgsFunctions = [
 // Core update: https://faunadb.atlassian.net/browse/ENG-2110
 
 var specialCases = {
-  containsstr: 'ContainsStr',
   containsstrregex: 'ContainsStrRegex',
   endswith: 'EndsWith',
   findstr: 'FindStr',
@@ -74,60 +73,98 @@ var specialCases = {
   uppercase: 'UpperCase',
 }
 
-var exprToString = function(expr, caller) {
-  var isExpr = function(e) {
-    return e instanceof Expr || util.checkInstanceHasProperty(e, '_isFaunaExpr')
-  }
+/**
+ *
+ * @param {Expr} expression A FQL expression
+ * @returns {Boolean} Returns true for valid expressions
+ */
+function isExpr(expression) {
+  return (
+    expression instanceof Expr ||
+    util.checkInstanceHasProperty(expression, '_isFaunaExpr')
+  )
+}
 
+/**
+ *
+ * @param {Object} obj An object to print
+ * @returns {String} String representation of object
+ */
+function printObject(obj) {
+  return (
+    '{' +
+    Object.keys(obj)
+      .map(function(k) {
+        return k + ': ' + exprToString(obj[k])
+      })
+      .join(', ') +
+    '}'
+  )
+}
+
+/**
+ *
+ * @param {Array} arr An array to print
+ * @param {Function} toStr Function used for stringification
+ * @returns {String} String representation of array
+ */
+function printArray(arr, toStr) {
+  return arr
+    .map(function(item) {
+      return toStr(item)
+    })
+    .join(', ')
+}
+
+/**
+ *
+ * @param {String} fn A snake-case FQL function name
+ * @returns {String} The correpsonding camel-cased FQL function name
+ */
+function convertToCamelCase(fn) {
+  // For FQL functions with special formatting concerns, we
+  // use the specialCases object above to define their casing.
+  if (fn in specialCases) fn = specialCases[fn]
+
+  return fn
+    .split('_')
+    .map(function(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1)
+    })
+    .join('')
+}
+
+var exprToString = function(expr, caller) {
+  // If expr is a Expr, we want to parse expr.raw instead
   if (isExpr(expr)) {
     if ('value' in expr) return expr.toString()
     expr = expr.raw
   }
 
-  var type = typeof expr
-
-  if (type === 'string') {
-    return JSON.stringify(expr)
-  }
-
-  if (type === 'symbol' || type === 'number' || type === 'boolean') {
-    return expr.toString()
-  }
-
-  if (type === 'undefined') {
-    return 'undefined'
-  }
-
+  // Return early to avoid extra work if null
   if (expr === null) {
     return 'null'
   }
 
-  var printObject = function(obj) {
-    return (
-      '{' +
-      Object.keys(obj)
-        .map(function(k) {
-          return k + ': ' + exprToString(obj[k])
-        })
-        .join(', ') +
-      '}'
-    )
+  // Return stringified value if expression is not an Object or Array
+  switch (typeof expr) {
+    case 'string':
+      return JSON.stringify(expr)
+    case 'symbol':
+    case 'number':
+    case 'boolean':
+      return expr.toString()
+    case 'undefined':
+      return 'undefined'
   }
 
-  var printArray = function(array, toStr) {
-    return array
-      .map(function(item) {
-        return toStr(item)
-      })
-      .join(', ')
-  }
-
+  // Handle expression Arrays
   if (Array.isArray(expr)) {
     var array = printArray(expr, exprToString)
-
     return varArgsFunctions.indexOf(caller) != -1 ? array : '[' + array + ']'
   }
 
+  // Parse expression Objects
   if ('match' in expr) {
     var matchStr = exprToString(expr['match'])
     var terms = expr['terms'] || []
@@ -147,14 +184,21 @@ var exprToString = function(expr, caller) {
   }
 
   if ('paginate' in expr) {
-    var setStr = exprToString(expr['paginate'])
+    var exprKeys = Object.keys(expr)
+    if (exprKeys.length === 1) {
+      return 'Paginate(' + exprToString(expr['paginate']) + ')'
+    }
 
     var expr2 = Object.assign({}, expr)
     delete expr2['paginate']
 
-    if (Object.keys(expr2).length == 0) return 'Paginate(' + setStr + ')'
-
-    return 'Paginate(' + setStr + ', ' + printObject(expr2) + ')'
+    return (
+      'Paginate(' +
+      exprToString(expr['paginate']) +
+      ', ' +
+      printObject(expr2) +
+      ')'
+    )
   }
 
   if ('let' in expr && 'in' in expr) {
@@ -169,37 +213,142 @@ var exprToString = function(expr, caller) {
 
   if ('object' in expr) return printObject(expr['object'])
 
-  // Versioned queries/lambdas will have an api_version field.
-  // We want to prevent it from being parsed and displayed as:
-  // Query(ApiVersion("3", "X", Var("X")))
-  var keys = Object.keys(expr).filter(
-    expression => expression !== 'api_version'
-  )
+  if ('select' in expr) {
+    return (
+      'Select(' +
+      exprToString(expr['select']) +
+      ', ' +
+      exprToString(expr['from']) +
+      ')'
+    )
+  }
+
+  if ('contains_path' in expr) {
+    return (
+      'ContainsPath(' +
+      exprToString(expr['contains_path']) +
+      ', ' +
+      exprToString(expr['in']) +
+      ')'
+    )
+  }
+
+  if ('contains_field' in expr) {
+    return (
+      'ContainsField(' +
+      exprToString(expr['contains_field']) +
+      ', ' +
+      exprToString(expr['in']) +
+      ')'
+    )
+  }
+
+  if ('contains_value' in expr) {
+    return (
+      'ContainsValue(' +
+      exprToString(expr['contains_value']) +
+      ', ' +
+      exprToString(expr['in']) +
+      ')'
+    )
+  }
+
+  if ('containsstr' in expr) {
+    return (
+      'ContainsStr(' +
+      exprToString(expr['containsstr']) +
+      ', ' +
+      exprToString(expr['search']) +
+      ')'
+    )
+  }
+
+  if ('filter' in expr) {
+    return (
+      'Filter(' +
+      exprToString(expr['collection']) +
+      ', ' +
+      exprToString(expr['filter']) +
+      ')'
+    )
+  }
+
+  if ('lambda' in expr) {
+    return (
+      'Lambda(' +
+      exprToString(expr['lambda']) +
+      ', ' +
+      exprToString(expr['expr']) +
+      ')'
+    )
+  }
+
+  if ('foreach' in expr) {
+    return (
+      'Foreach(' +
+      exprToString(expr['collection']) +
+      ', ' +
+      exprToString(expr['foreach']) +
+      ')'
+    )
+  }
+
+  if ('if' in expr) {
+    return (
+      'If(' +
+      exprToString(expr['if']) +
+      ', ' +
+      exprToString(expr['then']) +
+      ', ' +
+      exprToString(expr['else']) +
+      ')'
+    )
+  }
+
+  if ('call' in expr) {
+    return (
+      'Call(' +
+      exprToString(expr['call']) +
+      ', ' +
+      exprToString(expr['arguments']) +
+      ')'
+    )
+  }
+
+  if ('databases' in expr) {
+    if (!expr['databases']) return 'Databases()'
+
+    return 'Databases(' + exprToString(expr['databases']) + ')'
+  }
+
+  if ('collections' in expr) {
+    if (!expr['collections']) return 'Collections()'
+
+    return 'Collections(' + exprToString(expr['collections']) + ')'
+  }
+
+  if ('documents' in expr) {
+    return 'Documents(' + exprToString(expr['documents']) + ')'
+  }
+
+  if ('map' in expr) {
+    return (
+      'Map(' +
+      exprToString(expr['collection']) +
+      ', ' +
+      exprToString(expr['map']) +
+      ')'
+    )
+  }
+
+  var keys = Object.keys(expr)
   var fn = keys[0]
-
-  // For FQL functions with special formatting concerns, we
-  // use the specialCases object above to define their casing.
-  if (fn in specialCases) fn = specialCases[fn]
-
-  fn = fn
-    .split('_')
-    .map(function(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1)
-    })
-    .join('')
+  fn = convertToCamelCase(fn)
 
   var args = keys.map(function(k) {
     var v = expr[k]
     return exprToString(v, fn)
   })
-
-  var shouldReverseArgs = ['filter', 'map', 'foreach'].some(function(fn) {
-    return fn in expr
-  })
-
-  if (shouldReverseArgs) {
-    args.reverse()
-  }
 
   args = args.join(', ')
 
