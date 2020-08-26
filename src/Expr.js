@@ -52,25 +52,11 @@ var varArgsFunctions = [
 // Core update: https://faunadb.atlassian.net/browse/ENG-2110
 
 var specialCases = {
-  containsstrregex: 'ContainsStrRegex',
-  endswith: 'EndsWith',
-  findstr: 'FindStr',
-  findstrregex: 'FindStrRegex',
   gt: 'GT',
   gte: 'GTE',
   is_nonempty: 'is_non_empty',
-  lowercase: 'LowerCase',
   lt: 'LT',
   lte: 'LTE',
-  ltrim: 'LTrim',
-  rtrim: 'RTrim',
-  regexescape: 'RegexEscape',
-  replacestr: 'ReplaceStr',
-  replacestrregex: 'ReplaceStrRegex',
-  startswith: 'StartsWith',
-  substring: 'SubString',
-  titlecase: 'TitleCase',
-  uppercase: 'UpperCase',
 }
 
 /**
