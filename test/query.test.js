@@ -419,10 +419,9 @@ describe('query', () => {
   test('take', () => {
     var p1 = assertQuery(query.Take(1, [1, 2]), [1])
     var p2 = assertQuery(query.Take(3, [1, 2]), [1, 2])
-    // var p3 = assertQuery(query.Take(-1, [1, 2]), [])
+    var p3 = assertQuery(query.Take(-1, [1, 2]), [2])
 
-    // return Promise.all([p1, p2, p3])
-    return Promise.all([p1, p2])
+    return Promise.all([p1, p2, p3])
   })
 
   test('drop', () => {
