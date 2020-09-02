@@ -2715,6 +2715,9 @@ describe('query', () => {
     }
   })
 
+  // TODO Add test once Core work has been done
+  test.skip('has_current_identity', () => {})
+
   test('legacy queries/lambdas have default api_version', async () => {
     const res = await client.query(
       new values.Query({ lambda: 'X', expr: { var: 'X' } })
