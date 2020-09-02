@@ -111,6 +111,7 @@ export module query {
   export function Identify(ref: ExprArg, password: ExprArg): Expr
   export function Identity(): Expr
   export function HasIdentity(): Expr
+  export function CurrentToken(): Expr
 
   export function Concat(strings: ExprArg, separator?: ExprArg): Expr
   export function Casefold(string: ExprArg, normalizer?: ExprArg): Expr

@@ -1239,6 +1239,16 @@ function HasIdentity() {
   return new Expr({ has_identity: null })
 }
 
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#authentication).
+ *
+ * @return {Expr}
+ */
+function CurrentToken() {
+  arity.exact(0, arguments, CurrentToken.name)
+  return new Expr({ current_token: null })
+}
+
 // String functions
 
 /**
@@ -3130,6 +3140,7 @@ module.exports = {
   Identify: Identify,
   Identity: Identity,
   HasIdentity: HasIdentity,
+  CurrentToken: CurrentToken,
   Concat: Concat,
   Casefold: Casefold,
   ContainsStr: ContainsStr,
