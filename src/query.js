@@ -1234,9 +1234,29 @@ function Identity() {
  *
  * @return {Expr}
  */
+function CurrentIdentity() {
+  arity.exact(0, arguments, CurrentIdentity.name)
+  return new Expr({ current_identity: null })
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#authentication).
+ *
+ * @return {Expr}
+ */
 function HasIdentity() {
   arity.exact(0, arguments, HasIdentity.name)
   return new Expr({ has_identity: null })
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#authentication).
+ *
+ * @return {Expr}
+ */  
+function HasCurrentIdentity() {
+  arity.exact(0, arguments, HasCurrentIdentity.name)
+  return new Expr({ has_current_identity: null })
 }
 
 /**
@@ -3138,8 +3158,16 @@ module.exports = {
   Login: Login,
   Logout: Logout,
   Identify: Identify,
-  Identity: Identity,
-  HasIdentity: HasIdentity,
+  Identity: deprecate(
+    Identity,
+    'Identity() is deprecated, use CurrentIdentity() instead'
+  ),
+  CurrentIdentity: CurrentIdentity,
+  HasIdentity: deprecate(
+    HasIdentity,
+    'HasIdentity() is deprecated, use HasCurrentIdentity() instead'
+  ),
+  HasCurrentIdentity: HasCurrentIdentity,
   CurrentToken: CurrentToken,
   Concat: Concat,
   Casefold: Casefold,
