@@ -110,6 +110,7 @@ export module query {
   export function Logout(delete_tokens: ExprArg): Expr
   export function Identify(ref: ExprArg, password: ExprArg): Expr
   export function Identity(): Expr
+  export function CurrentIdentity(): Expr
   export function HasIdentity(): Expr
   export function HasCurrentIdentity(): Expr
 
