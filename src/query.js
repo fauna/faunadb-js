@@ -1268,6 +1268,16 @@ function CurrentToken() {
   arity.exact(0, arguments, CurrentToken.name)
   return new Expr({ current_token: null })
 }
+  
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#authentication).
+ *
+ * @return {Expr}
+ */
+function HasCurrentToken() {
+  arity.exact(0, arguments, HasCurrentToken.name)
+  return new Expr({ has_current_token: null })
+}
 
 // String functions
 
@@ -3169,6 +3179,7 @@ module.exports = {
   ),
   HasCurrentIdentity: HasCurrentIdentity,
   CurrentToken: CurrentToken,
+  HasCurrentToken: HasCurrentToken,
   Concat: Concat,
   Casefold: Casefold,
   ContainsStr: ContainsStr,

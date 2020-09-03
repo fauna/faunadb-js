@@ -2723,6 +2723,9 @@ describe('query', () => {
   
   // TODO Finish test after Core work is done
   test.skip('current_token', () => {})
+  
+  // TODO Define test once Core work is done
+  test.skip('has_current_token', () => {})
 
   test('legacy queries/lambdas have default api_version', async () => {
     const res = await client.query(

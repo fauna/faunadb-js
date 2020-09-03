@@ -114,6 +114,7 @@ export module query {
   export function HasIdentity(): Expr
   export function HasCurrentIdentity(): Expr
   export function CurrentToken(): Expr
+  export function HasCurrentToken(): Expr
 
   export function Concat(strings: ExprArg, separator?: ExprArg): Expr
   export function Casefold(string: ExprArg, normalizer?: ExprArg): Expr
