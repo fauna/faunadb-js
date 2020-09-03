@@ -2715,11 +2715,14 @@ describe('query', () => {
     }
   })
 
-  // TODO Add test once Core work has been done
-  test.skip('has_current_identity', () => {})
-
   // TODO Create tests once work is done in Core
   test.skip('current_identity', () => {})
+  
+  // TODO Add test once Core work has been done
+  test.skip('has_current_identity', () => {})
+  
+  // TODO Finish test after Core work is done
+  test.skip('current_token', () => {})
 
   test('legacy queries/lambdas have default api_version', async () => {
     const res = await client.query(
