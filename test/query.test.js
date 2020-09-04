@@ -861,25 +861,63 @@ describe('query', () => {
     })
   })
 
-  // TODO Update this test to include `membership` Roles
-  test.skip('create_access_provider', async () => {
+  test.only('create_access_provider', async () => {
     const providerName = util.randomString('provider_')
     const issuerName = util.randomString('issuer_')
     const jwksUri = util.randomString()
     const fullUri = `https://${jwksUri}.auth0.com`
+    const roleOneName = util.randomString('role_one_')
+    const roleTwoName = util.randomString('role_two_')
 
-    // Successful instantiation with required fields
-    const provider = await adminClient.query(
-      query.CreateAccessProvider({
-        name: providerName,
-        issuer: issuerName,
-        jwks_uri: fullUri,
+    // Create roles
+    const myNewRole = await adminClient.query(
+      query.CreateRole({
+        name: roleOneName,
+        privileges: [
+          {
+            resource: query.Databases(),
+            actions: { read: true },
+          },
+        ],
       })
     )
 
-    expect(provider.name).toEqual(providerName)
-    expect(provider.issuer).toEqual(issuerName)
-    expect(provider.jwks_uri).toEqual(fullUri)
+    const anotherNewRole = await adminClient.query(
+      query.CreateRole({
+        name: roleTwoName,
+        privileges: [
+          {
+            resource: query.Databases(),
+            actions: { read: true },
+          },
+        ],
+      })
+    )
+
+    // Successful instantiation with required fields
+    try {
+      const provider = await adminClient.query(
+        query.CreateAccessProvider({
+          name: providerName,
+          issuer: issuerName,
+          jwks_uri: fullUri,
+          membership: [
+            myNewRole,
+            {
+              role: query.Role(`${roleTwoName}`),
+              predicate: query.Query(query.Lambda(x => true)),
+            },
+          ],
+        })
+      )
+
+      expect(provider.name).toEqual(providerName)
+      expect(provider.issuer).toEqual(issuerName)
+      expect(provider.jwks_uri).toEqual(fullUri)
+      expect(provider.membership).toBeInstanceOf(Array)
+    } catch (error) {
+      expect(error).toBeInstanceOf(errors.BadRequest)
+    }
 
     // Failure due to non-unique issuer
     try {
@@ -2718,13 +2756,13 @@ describe('query', () => {
 
   // TODO Create tests once work is done in Core
   test.skip('current_identity', () => {})
-  
+
   // TODO Add test once Core work has been done
   test.skip('has_current_identity', () => {})
-  
+
   // TODO Finish test after Core work is done
   test.skip('current_token', () => {})
-  
+
   // TODO Define test once Core work is done
   test.skip('has_current_token', () => {})
 

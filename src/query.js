@@ -1032,8 +1032,7 @@ function CreateRole(params) {
  *     - name: A valid schema name
  *     - issuer: A unique string
  *     - jwks_uri: A valid HTTPS URI
- *     - allowed_roles: An optional list of Role refs
- *     - allowed_collections: An optional list of user-defined Collection refs
+ *     - membership: An array of roles
  * @return {Expr}
  */
 function CreateAccessProvider(params) {
@@ -1253,7 +1252,8 @@ function HasIdentity() {
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#authentication).
  *
  * @return {Expr}
- */  
+ */
+
 function HasCurrentIdentity() {
   arity.exact(0, arguments, HasCurrentIdentity.name)
   return new Expr({ has_current_identity: null })
@@ -1268,7 +1268,7 @@ function CurrentToken() {
   arity.exact(0, arguments, CurrentToken.name)
   return new Expr({ current_token: null })
 }
-  
+
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#authentication).
  *
