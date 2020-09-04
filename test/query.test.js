@@ -870,7 +870,7 @@ describe('query', () => {
     const roleTwoName = util.randomString('role_two_')
 
     // Create roles
-    const myNewRole = await adminClient.query(
+    await adminClient.query(
       query.CreateRole({
         name: roleOneName,
         privileges: [
@@ -882,7 +882,7 @@ describe('query', () => {
       })
     )
 
-    const anotherNewRole = await adminClient.query(
+    await adminClient.query(
       query.CreateRole({
         name: roleTwoName,
         privileges: [
@@ -902,7 +902,7 @@ describe('query', () => {
           issuer: issuerName,
           jwks_uri: fullUri,
           membership: [
-            myNewRole,
+            query.Role(`${roleOneName}`),
             {
               role: query.Role(`${roleTwoName}`),
               predicate: query.Query(query.Lambda(x => true)),
