@@ -1569,14 +1569,6 @@ describe('query', () => {
     return Promise.all([p1, p2, p3, p4])
   })
 
-  test('contains', () => {
-    var obj = { a: { b: 1 } }
-    var p1 = assertQuery(query.Contains(['a', 'b'], obj), true)
-    var p2 = assertQuery(query.Contains('a', obj), true)
-    var p3 = assertQuery(query.Contains(['a', 'c'], obj), false)
-    return Promise.all([p1, p2, p3])
-  })
-
   test('contains_value arrays', () => {
     var arr = [1, [2, 3]]
     var nestedArrValues = [[1], [2], [3]]
@@ -2718,13 +2710,13 @@ describe('query', () => {
 
   // TODO Create tests once work is done in Core
   test.skip('current_identity', () => {})
-  
+
   // TODO Add test once Core work has been done
   test.skip('has_current_identity', () => {})
-  
+
   // TODO Finish test after Core work is done
   test.skip('current_token', () => {})
-  
+
   // TODO Define test once Core work is done
   test.skip('has_current_token', () => {})
 
