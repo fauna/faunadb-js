@@ -861,7 +861,7 @@ describe('query', () => {
     })
   })
 
-  test.only('create_access_provider', async () => {
+  test('create_access_provider', async () => {
     const providerName = util.randomString('provider_')
     const issuerName = util.randomString('issuer_')
     const jwksUri = util.randomString()
