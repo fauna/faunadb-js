@@ -222,7 +222,7 @@ describe('query', () => {
         new values.Query({
           lambda: '_',
           expr: { let: { x: 1, y: 2 }, in: [{ var: 'x' }, { var: 'y' }] },
-          api_version: '3',
+          api_version: '4',
         })
       ),
       assertQuery(
