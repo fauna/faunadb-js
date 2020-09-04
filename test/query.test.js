@@ -902,7 +902,7 @@ describe('query', () => {
           issuer: issuerName,
           jwks_uri: fullUri,
           membership: [
-            query.Role(`${roleOneName}`),
+            query.Role(roleOneName),
             {
               role: query.Role(`${roleTwoName}`),
               predicate: query.Query(query.Lambda(x => true)),
