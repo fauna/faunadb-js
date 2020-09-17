@@ -2708,17 +2708,43 @@ describe('query', () => {
     }
   })
 
-  // TODO Create tests once work is done in Core
-  test.skip('current_identity', () => {})
+  // API v4 AccessProvider functions
 
-  // TODO Add test once Core work has been done
-  test.skip('has_current_identity', () => {})
+  test.skip('current_identity returns sub field from JWT', async () => {})
 
-  // TODO Finish test after Core work is done
-  test.skip('current_token', () => {})
+  test.only('current_identity fails when no identity present', async () => {
+    try {
+      await adminClient.query(query.CurrentIdentity())
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.BadRequest)
+    }
+  })
 
-  // TODO Define test once Core work is done
-  test.skip('has_current_token', () => {})
+  test.skip('has_current_identity returns true when identity present', async () => {})
+
+  test.only('has_current_identity returns false without identity present', async () => {
+    const currentIdentity = await adminClient.query(query.HasCurrentIdentity())
+    expect(currentIdentity).toBeFalsy()
+  })
+
+  test.skip('current_token returns Ref or object', () => {})
+
+  test.only('current_token fails when unauthenticated', async () => {
+    try {
+      await adminClient.query(query.CurrentToken())
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.BadRequest)
+    }
+  })
+
+  test.skip('has_current_token returns true when token present', () => {})
+
+  test.only('has_current_token returns false when no token present', async () => {
+    const hasCurrentToken = await adminClient.query(query.HasCurrentIdentity())
+    expect(hasCurrentToken).toBeFalsy()
+  })
+
+  // Test versioned queries/lambdas
 
   test('legacy queries/lambdas have default api_version', async () => {
     const res = await client.query(
