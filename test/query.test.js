@@ -2773,7 +2773,7 @@ describe('query', () => {
 
   test('current_token fails when unauthenticated', async () => {
     try {
-      await adminClient.query(query.CurrentToken())
+      const currentToken = await client.query(query.CurrentToken())
     } catch (err) {
       expect(err).toBeInstanceOf(errors.BadRequest)
     }
