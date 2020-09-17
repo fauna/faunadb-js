@@ -2779,36 +2779,7 @@ describe('query', () => {
   })
 
   test('has_current_token returns true when token present', async () => {
-    const roleOneName = util.randomString('role_one_')
-    const issuerName = util.randomString('issuer_')
-    const providerName = util.randomString('provider_')
-    const jwksUri = util.randomString()
-    const fullUri = `https://${jwksUri}.auth0.com`
-
-    // Create Role
-    await adminClient.query(
-      query.CreateRole({
-        name: roleOneName,
-        privileges: [
-          {
-            resource: query.Databases(),
-            actions: { read: true },
-          },
-        ],
-      })
-    )
-
-    // Create AccessProvider
-    await adminClient.query(
-      query.CreateAccessProvider({
-        name: providerName,
-        issuer: issuerName,
-        jwks_uri: fullUri,
-        membership: [query.Role(roleOneName)],
-      })
-    )
-
-    const hasCurrentToken = adminClient.query(query.HasCurrentToken())
+    const hasCurrentToken = await adminClient.query(query.HasCurrentToken())
     expect(hasCurrentToken).toBeTruthy()
   })
 
