@@ -28,6 +28,8 @@ var collectionRef,
   thimbleCollectionRef
 
 describe('query', () => {
+  let adminKey = null
+
   beforeAll(async () => {
     // Hideous way to ensure that the client is initialized.
     client = util.client()
@@ -38,7 +40,7 @@ describe('query', () => {
     const serverKey = await rootClient.query(
       query.CreateKey({ database: dbRef, role: 'server' })
     )
-    const adminKey = await rootClient.query(
+    adminKey = await rootClient.query(
       query.CreateKey({ database: dbRef, role: 'admin' })
     )
 
@@ -2763,39 +2765,9 @@ describe('query', () => {
     expect(currentIdentity).toBeFalsy()
   })
 
-  test('current_token returns object with AccessProvider', async () => {
-    const roleOneName = util.randomString('role_one_')
-    const issuerName = util.randomString('issuer_')
-    const providerName = util.randomString('provider_')
-    const jwksUri = util.randomString()
-    const fullUri = `https://${jwksUri}.auth0.com`
-
-    // Create Role
-    await adminClient.query(
-      query.CreateRole({
-        name: roleOneName,
-        privileges: [
-          {
-            resource: query.Databases(),
-            actions: { read: true },
-          },
-        ],
-      })
-    )
-
-    // Create AccessProvider
-    await adminClient.query(
-      query.CreateAccessProvider({
-        name: providerName,
-        issuer: issuerName,
-        jwks_uri: fullUri,
-        membership: [query.Role(roleOneName)],
-      })
-    )
-
-    // Retrieve Ref
+  test('current_token returns proper token', async () => {
     const currentToken = await adminClient.query(query.CurrentToken())
-    expect(currentToken).toBeInstanceOf(Object)
+    expect(currentToken).toEqual(adminKey.ref)
   })
 
   test('current_token fails when unauthenticated', async () => {
