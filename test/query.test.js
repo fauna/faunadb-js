@@ -222,7 +222,7 @@ describe('query', () => {
         new values.Query({
           lambda: '_',
           expr: { let: { x: 1, y: 2 }, in: [{ var: 'x' }, { var: 'y' }] },
-          api_version: '3',
+          api_version: '4',
         })
       ),
       assertQuery(
@@ -2710,7 +2710,7 @@ describe('query', () => {
 
   // API v4 AccessProvider functions
 
-  test.only('current_identity returns object when authed', async () => {
+  test('current_identity returns object when authed', async () => {
     // Create a new Collection
     const newCollection = await client.query(
       query.Create(collectionRef, { credentials: { password: 'sekrit' } })
@@ -2731,7 +2731,7 @@ describe('query', () => {
     expect(currentIdentity).toBeInstanceOf(Object)
   })
 
-  test.only('current_identity fails when no identity present', async () => {
+  test('current_identity fails when no identity present', async () => {
     try {
       await adminClient.query(query.CurrentIdentity())
     } catch (err) {
@@ -2739,14 +2739,31 @@ describe('query', () => {
     }
   })
 
-  test.only('has_current_identity returns true when identity present', async () => {})
+  test('has_current_identity returns true when identity present', async () => {
+    // Create a new Collection
+    const newCollection = await client.query(
+      query.Create(collectionRef, { credentials: { password: 'sekrit' } })
+    )
 
-  test.only('has_current_identity returns false without identity present', async () => {
+    // Login with permissions for newly created Collection
+    const newLogin = await client.query(
+      query.Login(newCollection['ref'], { password: 'sekrit' })
+    )
+
+    // Get the newly scoped client
+    const newClient = await util.getClient({ secret: newLogin['secret'] })
+
+    // Retrieve the current identity
+    const currentIdentity = await newClient.query(query.CurrentIdentity())
+    expect(currentIdentity).toBeTruthy()
+  })
+
+  test('has_current_identity returns false without identity present', async () => {
     const currentIdentity = await adminClient.query(query.HasCurrentIdentity())
     expect(currentIdentity).toBeFalsy()
   })
 
-  test.only('current_token returns object with AccessProvider', async () => {
+  test('current_token returns object with AccessProvider', async () => {
     const roleOneName = util.randomString('role_one_')
     const issuerName = util.randomString('issuer_')
     const providerName = util.randomString('provider_')
@@ -2781,7 +2798,7 @@ describe('query', () => {
     expect(currentToken).toBeInstanceOf(Object)
   })
 
-  test.only('current_token fails when unauthenticated', async () => {
+  test('current_token fails when unauthenticated', async () => {
     try {
       await adminClient.query(query.CurrentToken())
     } catch (err) {
@@ -2789,7 +2806,7 @@ describe('query', () => {
     }
   })
 
-  test.only('has_current_token returns true when token present', async () => {
+  test('has_current_token returns true when token present', async () => {
     const roleOneName = util.randomString('role_one_')
     const issuerName = util.randomString('issuer_')
     const providerName = util.randomString('provider_')
@@ -2823,7 +2840,7 @@ describe('query', () => {
     expect(hasCurrentToken).toBeTruthy()
   })
 
-  test.only('has_current_token returns false when no token present', async () => {
+  test('has_current_token returns false when no token present', async () => {
     const hasCurrentToken = await adminClient.query(query.HasCurrentIdentity())
     expect(hasCurrentToken).toBeFalsy()
   })
