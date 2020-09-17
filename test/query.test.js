@@ -2710,7 +2710,7 @@ describe('query', () => {
 
   // API v4 AccessProvider functions
 
-  test.skip('current_identity returns sub field from JWT', async () => {})
+  test.only('current_identity returns sub field from JWT', async () => {})
 
   test.only('current_identity fails when no identity present', async () => {
     try {
@@ -2720,14 +2720,47 @@ describe('query', () => {
     }
   })
 
-  test.skip('has_current_identity returns true when identity present', async () => {})
+  test.only('has_current_identity returns true when identity present', async () => {})
 
   test.only('has_current_identity returns false without identity present', async () => {
     const currentIdentity = await adminClient.query(query.HasCurrentIdentity())
     expect(currentIdentity).toBeFalsy()
   })
 
-  test.skip('current_token returns Ref or object', () => {})
+  test.only('current_token returns object with AccessProvider', async () => {
+    const roleOneName = util.randomString('role_one_')
+    const issuerName = util.randomString('issuer_')
+    const providerName = util.randomString('provider_')
+    const jwksUri = util.randomString()
+    const fullUri = `https://${jwksUri}.auth0.com`
+
+    // Create Role
+    await adminClient.query(
+      query.CreateRole({
+        name: roleOneName,
+        privileges: [
+          {
+            resource: query.Databases(),
+            actions: { read: true },
+          },
+        ],
+      })
+    )
+
+    // Create AccessProvider
+    await adminClient.query(
+      query.CreateAccessProvider({
+        name: providerName,
+        issuer: issuerName,
+        jwks_uri: fullUri,
+        membership: [query.Role(roleOneName)],
+      })
+    )
+
+    // Retrieve Ref
+    const currentToken = await adminClient.query(query.CurrentToken())
+    expect(currentToken).toBeInstanceOf(Object)
+  })
 
   test.only('current_token fails when unauthenticated', async () => {
     try {
@@ -2737,7 +2770,7 @@ describe('query', () => {
     }
   })
 
-  test.skip('has_current_token returns true when token present', () => {})
+  test.only('has_current_token returns true when token present', () => {})
 
   test.only('has_current_token returns false when no token present', async () => {
     const hasCurrentToken = await adminClient.query(query.HasCurrentIdentity())
