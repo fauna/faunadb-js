@@ -2711,6 +2711,7 @@ describe('query', () => {
   })
 
   // API v4 AccessProvider functions
+  // TODO: Add tests for JWTs using Auth0/Okta
 
   test('current_identity returns object when authed', async () => {
     // Create a new Collection
