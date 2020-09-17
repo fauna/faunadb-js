@@ -861,7 +861,7 @@ describe('query', () => {
     })
   })
 
-  test('create_access_provider', async () => {
+  test('create_access_provider successful creation', async () => {
     const providerName = util.randomString('provider_')
     const issuerName = util.randomString('issuer_')
     const jwksUri = util.randomString()
@@ -894,81 +894,170 @@ describe('query', () => {
       })
     )
 
-    // Successful instantiation with required fields
-    try {
-      const provider = await adminClient.query(
-        query.CreateAccessProvider({
-          name: providerName,
-          issuer: issuerName,
-          jwks_uri: fullUri,
-          membership: [
-            query.Role(roleOneName),
-            {
-              role: query.Role(`${roleTwoName}`),
-              predicate: query.Query(query.Lambda(x => true)),
-            },
-          ],
-        })
-      )
+    const provider = await adminClient.query(
+      query.CreateAccessProvider({
+        name: providerName,
+        issuer: issuerName,
+        jwks_uri: fullUri,
+        membership: [
+          query.Role(roleOneName),
+          {
+            role: query.Role(`${roleTwoName}`),
+            predicate: query.Query(query.Lambda(x => true)),
+          },
+        ],
+      })
+    )
 
-      expect(provider.name).toEqual(providerName)
-      expect(provider.issuer).toEqual(issuerName)
-      expect(provider.jwks_uri).toEqual(fullUri)
-      expect(provider.membership).toBeInstanceOf(Array)
-    } catch (error) {
-      expect(error).toBeInstanceOf(errors.BadRequest)
-    }
+    expect(provider.name).toEqual(providerName)
+    expect(provider.issuer).toEqual(issuerName)
+    expect(provider.jwks_uri).toEqual(fullUri)
+    expect(provider.membership).toBeInstanceOf(Array)
+  })
 
-    // Failure due to non-unique issuer
+  test('create_access_provider fails with non-unique issuer', async () => {
+    const issuerName = util.randomString('issuer_')
+    const roleOneName = util.randomString('role_one_')
+    const providerName = util.randomString('provider_')
+    const jwksUri = util.randomString()
+    const fullUri = `https://${jwksUri}.auth0.com`
+
+    // Create Role
+    await adminClient.query(
+      query.CreateRole({
+        name: roleOneName,
+        privileges: [
+          {
+            resource: query.Databases(),
+            actions: { read: true },
+          },
+        ],
+      })
+    )
+
+    // Create initial provider
+    const provider = await adminClient.query(
+      query.CreateAccessProvider({
+        name: providerName,
+        issuer: issuerName,
+        jwks_uri: fullUri,
+        membership: [query.Role(roleOneName)],
+      })
+    )
+
+    // Create provider with duplicate issuer value
     try {
       await adminClient.query(
         query.CreateAccessProvider({
           name: 'duplicate_provider',
           issuer: issuerName,
           jwks_uri: 'https://db.fauna.com',
+          membership: [query.Role(roleOneName)],
         })
       )
-    } catch (error) {
-      expect(error).toBeInstanceOf(errors.BadRequest)
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.BadRequest)
     }
+  })
 
-    // Failure due to missing name
-    try {
-      await adminClient.query(
-        query.CreateAccessProvider({
-          name: null,
-          issuer: issuerName,
-          jwks_uri: fullUri,
-        })
-      )
-    } catch (error) {
-      expect(error).toBeInstanceOf(errors.BadRequest)
-    }
+  test('create_access_provider fails without issuer', async () => {
+    const providerName = util.randomString('provider_')
+    const jwksUri = util.randomString()
+    const fullUri = `https://${jwksUri}.auth0.com`
+    const roleOneName = util.randomString('role_one_')
 
-    // Failure due to missing issuer
+    // Create Role
+    await adminClient.query(
+      query.CreateRole({
+        name: roleOneName,
+        privileges: [
+          {
+            resource: query.Databases(),
+            actions: { read: true },
+          },
+        ],
+      })
+    )
+
+    // Create provider without issuer
     try {
       await adminClient.query(
         query.CreateAccessProvider({
           name: providerName,
           issuer: null,
           jwks_uri: fullUri,
+          membership: [query.Role(roleOneName)],
         })
       )
-    } catch (error) {
-      expect(error).toBeInstanceOf(errors.BadRequest)
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.BadRequest)
     }
+  })
 
-    // Failure due to invalid URI
+  test('create_access_provider fails without name', async () => {
+    const issuerName = util.randomString('issuer_')
+    const jwksUri = util.randomString()
+    const fullUri = `https://${jwksUri}.auth0.com`
+    const roleOneName = util.randomString('role_one_')
+
+    // Create Role
+    await adminClient.query(
+      query.CreateRole({
+        name: roleOneName,
+        privileges: [
+          {
+            resource: query.Databases(),
+            actions: { read: true },
+          },
+        ],
+      })
+    )
+
+    // Create provider without name
+    try {
+      await adminClient.query(
+        query.CreateAccessProvider({
+          issuer: issuerName,
+          jwks_uri: fullUri,
+          membership: [query.Role(roleOneName)],
+        })
+      )
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.BadRequest)
+    }
+  })
+
+  test('create_access_provider fails with invalid URI', async () => {
+    const providerName = util.randomString('provider_')
+    const issuerName = util.randomString('issuer_')
+    const jwksUri = util.randomString()
+    const roleOneName = util.randomString('role_one_')
+
+    // Create Role
+    await adminClient.query(
+      query.CreateRole({
+        name: roleOneName,
+        privileges: [
+          {
+            resource: query.Databases(),
+            actions: { read: true },
+          },
+        ],
+      })
+    )
+
+    // Create provider with invalid
     try {
       await adminClient.query(
         query.CreateAccessProvider({
           name: providerName,
           issuer: issuerName,
           jwks_uri: jwksUri,
+          membership: [query.Role(roleOneName)],
         })
       )
-    } catch (error) {
-      expect(error).toBeInstanceOf(errors.BadRequest)
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.BadRequest)
     }
   })
 
