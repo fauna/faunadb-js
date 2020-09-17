@@ -2784,7 +2784,7 @@ describe('query', () => {
   })
 
   test('has_current_token returns false when no token present', async () => {
-    const hasCurrentToken = await adminClient.query(query.HasCurrentIdentity())
+    const hasCurrentToken = await client.query(query.HasCurrentToken())
     expect(hasCurrentToken).toBeFalsy()
   })
 
