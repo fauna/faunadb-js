@@ -2710,7 +2710,26 @@ describe('query', () => {
 
   // API v4 AccessProvider functions
 
-  test.only('current_identity returns sub field from JWT', async () => {})
+  test.only('current_identity returns object when authed', async () => {
+    // Create a new Collection
+    const newCollection = await client.query(
+      query.Create(collectionRef, { credentials: { password: 'sekrit' } })
+    )
+
+    // Login with permissions for newly created Collection
+    const newLogin = await client.query(
+      query.Login(newCollection['ref'], { password: 'sekrit' })
+    )
+
+    // Get the newly scoped client
+    const newClient = await util.getClient({ secret: newLogin['secret'] })
+
+    // Retrieve the current identity
+    const currentIdentity = await newClient.query(query.CurrentIdentity())
+    expect(currentIdentity).toEqual(newCollection.ref)
+    expect(currentIdentity).toEqual(newLogin.instance)
+    expect(currentIdentity).toBeInstanceOf(Object)
+  })
 
   test.only('current_identity fails when no identity present', async () => {
     try {
