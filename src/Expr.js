@@ -199,52 +199,12 @@ var exprToString = function(expr, caller) {
 
   if ('object' in expr) return printObject(expr['object'])
 
-  if ('select' in expr) {
+  if ('lambda' in expr) {
     return (
-      'Select(' +
-      exprToString(expr['select']) +
+      'Lambda(' +
+      exprToString(expr['lambda']) +
       ', ' +
-      exprToString(expr['from']) +
-      ')'
-    )
-  }
-
-  if ('contains_path' in expr) {
-    return (
-      'ContainsPath(' +
-      exprToString(expr['contains_path']) +
-      ', ' +
-      exprToString(expr['in']) +
-      ')'
-    )
-  }
-
-  if ('contains_field' in expr) {
-    return (
-      'ContainsField(' +
-      exprToString(expr['contains_field']) +
-      ', ' +
-      exprToString(expr['in']) +
-      ')'
-    )
-  }
-
-  if ('contains_value' in expr) {
-    return (
-      'ContainsValue(' +
-      exprToString(expr['contains_value']) +
-      ', ' +
-      exprToString(expr['in']) +
-      ')'
-    )
-  }
-
-  if ('containsstr' in expr) {
-    return (
-      'ContainsStr(' +
-      exprToString(expr['containsstr']) +
-      ', ' +
-      exprToString(expr['search']) +
+      exprToString(expr['expr']) +
       ')'
     )
   }
@@ -259,38 +219,6 @@ var exprToString = function(expr, caller) {
     )
   }
 
-  if ('lambda' in expr) {
-    return (
-      'Lambda(' +
-      exprToString(expr['lambda']) +
-      ', ' +
-      exprToString(expr['expr']) +
-      ')'
-    )
-  }
-
-  if ('foreach' in expr) {
-    return (
-      'Foreach(' +
-      exprToString(expr['collection']) +
-      ', ' +
-      exprToString(expr['foreach']) +
-      ')'
-    )
-  }
-
-  if ('if' in expr) {
-    return (
-      'If(' +
-      exprToString(expr['if']) +
-      ', ' +
-      exprToString(expr['then']) +
-      ', ' +
-      exprToString(expr['else']) +
-      ')'
-    )
-  }
-
   if ('call' in expr) {
     return (
       'Call(' +
@@ -301,28 +229,22 @@ var exprToString = function(expr, caller) {
     )
   }
 
-  if ('databases' in expr) {
-    if (!expr['databases']) return 'Databases()'
-
-    return 'Databases(' + exprToString(expr['databases']) + ')'
-  }
-
-  if ('collections' in expr) {
-    if (!expr['collections']) return 'Collections()'
-
-    return 'Collections(' + exprToString(expr['collections']) + ')'
-  }
-
-  if ('documents' in expr) {
-    return 'Documents(' + exprToString(expr['documents']) + ')'
-  }
-
   if ('map' in expr) {
     return (
       'Map(' +
       exprToString(expr['collection']) +
       ', ' +
       exprToString(expr['map']) +
+      ')'
+    )
+  }
+
+  if ('foreach' in expr) {
+    return (
+      'Foreach(' +
+      exprToString(expr['collection']) +
+      ', ' +
+      exprToString(expr['foreach']) +
       ')'
     )
   }
