@@ -2316,19 +2316,19 @@ describe('query', () => {
     )
   })
 
-  // test('bytes', () => {
-  //   return Promise.all([
-  //     assertQuery(query.Bytes('AQIDBA=='), new Bytes('AQIDBA==')),
-  //     assertQuery(
-  //       query.Bytes(new Uint8Array([0, 0, 0, 0])),
-  //       new Bytes('AAAAAA==')
-  //     ),
-  //     assertQuery(query.Bytes(new ArrayBuffer(4)), new Bytes('AAAAAA==')),
-  //     assertQuery(new Bytes('AQIDBA=='), new Bytes('AQIDBA==')),
-  //     assertQuery(new Uint8Array([0, 0, 0, 0]), new Bytes('AAAAAA==')),
-  //     assertQuery(new ArrayBuffer(4), new Bytes('AAAAAA==')),
-  //   ])
-  // })
+  test('bytes', () => {
+    return Promise.all([
+      assertQuery(query.Bytes('AQIDBA=='), new Bytes('AQIDBA==')),
+      assertQuery(
+        query.Bytes(new Uint8Array([0, 0, 0, 0])),
+        new Bytes('AAAAAA==')
+      ),
+      assertQuery(query.Bytes(new ArrayBuffer(4)), new Bytes('AAAAAA==')),
+      assertQuery(new Bytes('AQIDBA=='), new Bytes('AQIDBA==')),
+      assertQuery(new Uint8Array([0, 0, 0, 0]), new Bytes('AAAAAA==')),
+      assertQuery(new ArrayBuffer(4), new Bytes('AAAAAA==')),
+    ])
+  })
 
   test('recursive refs', () => {
     return withNewDatabase().then(function(adminCli) {
