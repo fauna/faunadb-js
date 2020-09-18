@@ -602,7 +602,7 @@ describe('Values', () => {
         filter: {
           lambda: 'i',
           expr: {
-            containsstr: { select: 'name', from: { get: { var: 'i' } } },
+            contains_str: { select: 'name', from: { get: { var: 'i' } } },
             search: '-',
           },
         },

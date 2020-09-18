@@ -249,6 +249,70 @@ var exprToString = function(expr, caller) {
     )
   }
 
+  if ('collections' in expr) {
+    if (expr['collections'] === null) {
+      return 'Collections()'
+    }
+  }
+
+  if ('databases' in expr) {
+    if (expr['databases'] === null) {
+      return 'Databases()'
+    }
+  }
+
+  if ('select' in expr) {
+    return (
+      'Select(' +
+      exprToString(expr['select']) +
+      ', ' +
+      exprToString(expr['from']) +
+      ')'
+    )
+  }
+
+  if ('if' in expr) {
+    return (
+      'If(' +
+      exprToString(expr['if']) +
+      ', ' +
+      exprToString(expr['then']) +
+      ', ' +
+      exprToString(expr['else']) +
+      ')'
+    )
+  }
+
+  if ('contains_path' in expr) {
+    return (
+      'ContainsPath(' +
+      exprToString(expr['contains_path']) +
+      ', ' +
+      exprToString(expr['in']) +
+      ')'
+    )
+  }
+
+  if ('contains_field' in expr) {
+    return (
+      'ContainsField(' +
+      exprToString(expr['contains_field']) +
+      ', ' +
+      exprToString(expr['in']) +
+      ')'
+    )
+  }
+
+  if ('contains_value' in expr) {
+    return (
+      'ContainsValue(' +
+      exprToString(expr['contains_value']) +
+      ', ' +
+      exprToString(expr['in']) +
+      ')'
+    )
+  }
+
   var keys = Object.keys(expr)
   var fn = keys[0]
   fn = convertToCamelCase(fn)
