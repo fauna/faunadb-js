@@ -2774,6 +2774,7 @@ describe('query', () => {
   test('current_token fails when unauthenticated', async () => {
     try {
       const currentToken = await client.query(query.CurrentToken())
+      throw currentToken
     } catch (err) {
       expect(err).toBeInstanceOf(errors.BadRequest)
     }
