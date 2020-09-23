@@ -6,6 +6,7 @@ var errors = require('./errors')
 var http = require('./_http')
 var json = require('./_json')
 var query = require('./query')
+var stream = require('./stream')
 var util = require('./_util')
 var values = require('./values')
 
@@ -17,9 +18,102 @@ var values = require('./values')
  */
 
 /**
+ * **WARNING: This is an experimental feature. There are no guarantees to
+ * its API stability and/or service availability. DO NOT USE IT IN
+ * PRODUCTION**.
+ *
+ * Creates a subscription to the result of the given read-only expression. When
+ * executed, the expression must only perform reads and produce a single
+ * streamable type, such as a reference or a version. Expressions that attempt
+ * perform writes or produce non-streamable types will result in an error.
+ * Otherwise, any expression can be used to initiate a stream, including
+ * user-defined function calls.
+ *
+ * The subscription returned by this method does not issue any requests until
+ * the {@link module:stream~Subscription#start} method is called. Make sure to
+ * subscribe to the events of interest, otherwise the received events are simply
+ * ignored. For example:
+ *
+ * ```
+ * client.stream(document.ref)
+ *   .on('version', version => console.log(version))
+ *   .on('error', error => console.log(error))
+ *   .start()
+ * ```
+ *
+ * Please note that streams are not temporal, meaning that there is no option to
+ * configure its starting timestamp. The stream will, however, state its initial
+ * subscription time via the {@link module:stream~Subscription#event:start}
+ * event. A common programming mistake is to read a document, then initiate a
+ * subscription. This approach can miss events that occurred between the initial
+ * read and the subscription request. To prevent event loss, make sure the
+ * subscription has started before performing a data load. The following example
+ * buffer events until the document's data is loaded:
+ *
+ * ```
+ * var buffer = []
+ * var loaded = false
+ *
+ * client.stream(document.ref)
+ *   .on('start', ts => {
+ *     loadData(ts).then(data => {
+ *       processData(data)
+ *       processBuffer(buffer)
+ *       loaded = true
+ *     })
+ *   })
+ *   .on('version', version => {
+ *     if (loaded) {
+ *       processVersion(version)
+ *     } else {
+ *       buffer.push(version)
+ *     }
+ *   })
+ *   .start()
+ * ```
+ *
+ * The reduce boilerplate, the `document` helper implements a similar
+ * functionality, except it discards events prior to the document's snapshot
+ * time. The expression given to this helper must be a reference as it
+ * internally runs a {@link module:query~Get} call with it. The example above
+ * can be rewritten as:
+ *
+ * ```
+ * client.stream.document(document.ref)
+ *   .on('snapshot', data => processData(data))
+ *   .on('version', version => processVersion(version))
+ *   .start()
+ * ```
+ *
+ * Be aware that streams are not available in all browsers. If the client can't
+ * initiate a stream, an error event with the {@link
+ * module:errors~StreamsNotSupported} error will be emmited.
+ *
+ * To stop a subscription, call the {@link module:stream~Subscription#close}
+ * method.
+ *
+ * @param {module:query~ExprArg} expression
+ *   The expression to subscribe to. Created from {@link module:query}
+ *   functions.
+ *
+ * @param {?module:stream~Options} options
+ *   Object that configures the stream.
+ *
+ * @property {function} document
+ *  A document stream helper. See {@link Client#stream} for more information.
+ *
+ * @see module:stream~Subscription
+ *
+ * @function
+ * @name Client#stream
+ * @returns {module:stream~Subscription} A new subscription instance.
+ */
+
+/**
  * A client for interacting with FaunaDB.
  *
- * Users will mainly call the {@link Client#query} method to execute queries.
+ * Users will mainly call the {@link Client#query} method to execute queries, or
+ * the {@link Client#stream} method to subscribe to streams.
  *
  * See the [FaunaDB Documentation](https://fauna.com/documentation) for detailed examples.
  *
@@ -69,6 +163,7 @@ function Client(options) {
 
   this._observer = options.observer
   this._http = new http.HttpClient(options)
+  this.stream = stream.StreamAPI(this)
 }
 
 /**
