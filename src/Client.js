@@ -1,16 +1,13 @@
 'use strict'
 
-var APIVersion = '3'
-
-var btoa = require('btoa-lite')
-var errors = require('./errors')
-var query = require('./query')
-var values = require('./values')
-var json = require('./_json')
-var RequestResult = require('./RequestResult')
-var util = require('./_util')
 var PageHelper = require('./PageHelper')
-var parse = require('url-parse')
+var RequestResult = require('./RequestResult')
+var errors = require('./errors')
+var http = require('./_http')
+var json = require('./_json')
+var query = require('./query')
+var util = require('./_util')
+var values = require('./values')
 
 /**
  * The callback that will be executed after every completed request.
@@ -57,7 +54,7 @@ var parse = require('url-parse')
  *   Sets the maximum amount of time (in milliseconds) for query execution on the server,
  */
 function Client(options) {
-  var opts = util.applyDefaults(options, {
+  options = util.applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
     port: null,
@@ -69,27 +66,9 @@ function Client(options) {
     fetch: undefined,
     queryTimeout: null,
   })
-  var isHttps = opts.scheme === 'https'
 
-  if (opts.port === null) {
-    opts.port = isHttps ? 443 : 80
-  }
-
-  this._baseUrl = opts.scheme + '://' + opts.domain + ':' + opts.port
-  this._timeout = Math.floor(opts.timeout * 1000)
-  this._secret = opts.secret
-  this._observer = opts.observer
-  this._lastSeen = null
-  this._headers = opts.headers
-  this._fetch = opts.fetch || require('cross-fetch')
-  this._queryTimeout = opts.queryTimeout
-
-  if (util.isNodeEnv() && opts.keepAlive) {
-    this._keepAliveEnabledAgent = new (isHttps
-      ? require('https')
-      : require('http')
-    ).Agent({ keepAlive: true })
-  }
+  this._observer = options.observer
+  this._http = new http.HttpClient(options)
 }
 
 /**
@@ -139,7 +118,7 @@ Client.prototype.ping = function(scope, timeout) {
  * @returns {number} the last seen transaction time
  */
 Client.prototype.getLastTxnTime = function() {
-  return this._lastSeen
+  return this._http.getLastTxnTime()
 }
 
 /**
@@ -152,9 +131,7 @@ Client.prototype.getLastTxnTime = function() {
  * @param time {number} the last seen transaction time
  */
 Client.prototype.syncLastTxnTime = function(time) {
-  if (this._lastSeen == null || this._lastSeen < time) {
-    this._lastSeen = time
-  }
+  this._http.syncLastTxnTime(time)
 }
 
 Client.prototype._execute = function(method, path, data, query, options) {
@@ -175,94 +152,44 @@ Client.prototype._execute = function(method, path, data, query, options) {
   var self = this
   var body =
     ['GET', 'HEAD'].indexOf(method) >= 0 ? undefined : JSON.stringify(data)
-
-  return this._performRequest(method, path, body, query, options).then(function(
-    response
-  ) {
-    var endTime = Date.now()
-    var responseText = response.text
-    var responseObject = json.parseJSON(responseText)
-    var requestResult = new RequestResult(
-      method,
-      path,
-      query,
-      body,
-      data,
-      responseText,
-      responseObject,
-      response.status,
-      responseHeadersAsObject(response),
-      startTime,
-      endTime
-    )
-    var txnTimeHeaderKey = 'x-txn-time'
-
-    if (response.headers.has(txnTimeHeaderKey)) {
-      self.syncLastTxnTime(parseInt(response.headers.get(txnTimeHeaderKey), 10))
-    }
-
-    if (self._observer != null) {
-      self._observer(requestResult, self)
-    }
-
-    errors.FaunaHTTPError.raiseForStatusCode(requestResult)
-    return responseObject['resource']
-  })
-}
-
-Client.prototype._performRequest = function(
-  method,
-  path,
-  body,
-  query,
-  options
-) {
-  var url = parse(this._baseUrl)
-  url.set('pathname', path)
-  url.set('query', query)
-  options = util.defaults(options, {})
-  var secret = options.secret || this._secret
-  var queryTimeout = this._queryTimeout
-
-  if (options && options.queryTimeout) {
-    queryTimeout = options.queryTimeout
-  }
-
-  return this._fetch(url.href, {
-    agent: this._keepAliveEnabledAgent,
-    body: body,
-    headers: util.removeNullAndUndefinedValues({
-      ...this._headers,
-      Authorization: secret && secretHeader(secret),
-      'X-FaunaDB-API-Version': APIVersion,
-      'X-Fauna-Driver': 'Javascript',
-      'X-Last-Seen-Txn': this._lastSeen,
-      'X-Query-Timeout': queryTimeout,
-    }),
-    method: method,
-    timeout: this._timeout,
-  }).then(function(response) {
-    return response.text().then(function(text) {
-      response.text = text
-      return response
+  return this._http
+    .execute(method, path, body, query, options)
+    .then(function(response) {
+      return response.text().then(function(responseText) {
+        var endTime = Date.now()
+        var responseObject = json.parseJSON(responseText)
+        var headers = http.responseHeadersAsObject(response)
+        var result = new RequestResult(
+          method,
+          path,
+          query,
+          body,
+          data,
+          responseText,
+          responseObject,
+          response.status,
+          headers,
+          startTime,
+          endTime
+        )
+        self._handleRequestResult(response, result)
+        return responseObject['resource']
+      })
     })
-  })
 }
 
-function secretHeader(secret) {
-  return 'Basic ' + btoa(secret + ':')
-}
+Client.prototype._handleRequestResult = function(response, result) {
+  var txnTimeHeaderKey = 'x-txn-time'
 
-function responseHeadersAsObject(response) {
-  var headers = {}
-
-  for (var header of response.headers.entries()) {
-    var key = header[0]
-    var value = header[1]
-    headers[key] = value
+  if (response.headers.has(txnTimeHeaderKey)) {
+    this.syncLastTxnTime(parseInt(response.headers.get(txnTimeHeaderKey), 10))
   }
 
-  return headers
+  if (this._observer !== null) {
+    this._observer(result, this)
+  }
+
+  errors.FaunaHTTPError.raiseForStatusCode(result)
 }
 
 module.exports = Client
