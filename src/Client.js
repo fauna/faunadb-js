@@ -56,7 +56,6 @@ var parse = require('url-parse')
  *   Sets the maximum amount of time (in milliseconds) for query execution on the server,
  */
 function Client(options) {
-  var isNodeEnv = typeof window === 'undefined'
   var opts = util.applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
@@ -84,7 +83,7 @@ function Client(options) {
   this._fetch = opts.fetch || require('cross-fetch')
   this._queryTimeout = opts.queryTimeout
 
-  if (isNodeEnv && opts.keepAlive) {
+  if (util.isNodeEnv() && opts.keepAlive) {
     this._keepAliveEnabledAgent = new (isHttps
       ? require('https')
       : require('http')
@@ -103,7 +102,6 @@ function Client(options) {
  * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://app.fauna.com/documentation/intro/security))
  * @return {external:Promise<Object>} FaunaDB response object.
  */
-
 Client.prototype.query = function(expression, options) {
   return this._execute('POST', '', query.wrap(expression), null, options)
 }
@@ -121,8 +119,8 @@ Client.prototype.query = function(expression, options) {
  * @returns {PageHelper} A PageHelper that wraps the provided expression.
  */
 Client.prototype.paginate = function(expression, params, options) {
-  params = defaults(params, {})
-  options = defaults(options, {})
+  params = util.defaults(params, {})
+  options = util.defaults(options, {})
 
   return new PageHelper(this, expression, params, options)
 }
@@ -159,7 +157,7 @@ Client.prototype.syncLastTxnTime = function(time) {
 }
 
 Client.prototype._execute = function(method, path, data, query, options) {
-  query = defaults(query, null)
+  query = util.defaults(query, null)
 
   if (
     path instanceof values.Ref ||
@@ -221,7 +219,7 @@ Client.prototype._performRequest = function(
   var url = parse(this._baseUrl)
   url.set('pathname', path)
   url.set('query', query)
-  options = defaults(options, {})
+  options = util.defaults(options, {})
   var secret = options.secret || this._secret
   var queryTimeout = this._queryTimeout
 
@@ -248,14 +246,6 @@ Client.prototype._performRequest = function(
       return response
     })
   })
-}
-
-function defaults(obj, def) {
-  if (obj === undefined) {
-    return def
-  } else {
-    return obj
-  }
 }
 
 function secretHeader(secret) {

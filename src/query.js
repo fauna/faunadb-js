@@ -752,7 +752,7 @@ function IsRole(expr) {
  */
 function Get(ref, ts) {
   arity.between(1, 2, arguments, Get.name)
-  ts = defaults(ts, null)
+  ts = util.defaults(ts, null)
 
   return new Expr(params({ get: wrap(ref) }, { ts: wrap(ts) }))
 }
@@ -806,7 +806,7 @@ function Reduce(lambda, initial, collection) {
  */
 function Paginate(set, opts) {
   arity.between(1, 2, arguments, Paginate.name)
-  opts = defaults(opts, {})
+  opts = util.defaults(opts, {})
 
   return new Expr(objectAssign({ paginate: wrap(set) }, wrapValues(opts)))
 }
@@ -822,7 +822,7 @@ function Paginate(set, opts) {
  */
 function Exists(ref, ts) {
   arity.between(1, 2, arguments, Exists.name)
-  ts = defaults(ts, null)
+  ts = util.defaults(ts, null)
 
   return new Expr(params({ exists: wrap(ref) }, { ts: wrap(ts) }))
 }
@@ -1291,7 +1291,7 @@ function HasCurrentToken() {
  */
 function Concat(strings, separator) {
   arity.min(1, arguments, Concat.name)
-  separator = defaults(separator, null)
+  separator = util.defaults(separator, null)
   return new Expr(
     params({ concat: wrap(strings) }, { separator: wrap(separator) })
   )
@@ -1385,7 +1385,7 @@ function RegexEscape(value) {
  */
 function FindStr(value, find, start) {
   arity.between(2, 3, arguments, FindStr.name)
-  start = defaults(start, null)
+  start = util.defaults(start, null)
   return new Expr(
     params({ findstr: wrap(value), find: wrap(find) }, { start: wrap(start) })
   )
@@ -1402,7 +1402,7 @@ function FindStr(value, find, start) {
  */
 function FindStrRegex(value, pattern, start, numResults) {
   arity.between(2, 4, arguments, FindStrRegex.name)
-  start = defaults(start, null)
+  start = util.defaults(start, null)
   return new Expr(
     params(
       { findstrregex: wrap(value), pattern: wrap(pattern) },
@@ -1457,8 +1457,8 @@ function LTrim(value) {
  */
 function NGram(terms, min, max) {
   arity.between(1, 3, arguments, NGram.name)
-  min = defaults(min, null)
-  max = defaults(max, null)
+  min = util.defaults(min, null)
+  max = util.defaults(max, null)
 
   return new Expr(
     params({ ngram: wrap(terms) }, { min: wrap(min), max: wrap(max) })
@@ -1474,7 +1474,7 @@ function NGram(terms, min, max) {
  */
 function Repeat(value, number) {
   arity.between(1, 2, arguments, Repeat.name)
-  number = defaults(number, null)
+  number = util.defaults(number, null)
   return new Expr(params({ repeat: wrap(value) }, { number: wrap(number) }))
 }
 
@@ -1506,7 +1506,7 @@ function ReplaceStr(value, find, replace) {
  */
 function ReplaceStrRegex(value, pattern, replace, first) {
   arity.between(3, 4, arguments, ReplaceStrRegex.name)
-  first = defaults(first, null)
+  first = util.defaults(first, null)
   return new Expr(
     params(
       {
@@ -1550,8 +1550,8 @@ function Space(num) {
  */
 function SubString(value, start, length) {
   arity.between(1, 3, arguments, SubString.name)
-  start = defaults(start, null)
-  length = defaults(length, null)
+  start = util.defaults(start, null)
+  length = util.defaults(length, null)
   return new Expr(
     params(
       { substring: wrap(value) },
@@ -1849,7 +1849,7 @@ function FunctionFn(name, scope) {
  */
 function Role(name, scope) {
   arity.between(1, 2, arguments, Role.name)
-  scope = defaults(scope, null)
+  scope = util.defaults(scope, null)
   return new Expr(params({ role: wrap(name) }, { scope: wrap(scope) }))
 }
 
@@ -1861,7 +1861,7 @@ function Role(name, scope) {
  */
 function AccessProviders(scope) {
   arity.max(1, arguments, AccessProviders.name)
-  scope = defaults(scope, null)
+  scope = util.defaults(scope, null)
   return new Expr({ access_providers: wrap(scope) })
 }
 
@@ -1876,7 +1876,7 @@ function AccessProviders(scope) {
  */
 function Classes(scope) {
   arity.max(1, arguments, Classes.name)
-  scope = defaults(scope, null)
+  scope = util.defaults(scope, null)
   return new Expr({ classes: wrap(scope) })
 }
 
@@ -1891,7 +1891,7 @@ function Classes(scope) {
  */
 function Collections(scope) {
   arity.max(1, arguments, Collections.name)
-  scope = defaults(scope, null)
+  scope = util.defaults(scope, null)
   return new Expr({ collections: wrap(scope) })
 }
 
@@ -1906,7 +1906,7 @@ function Collections(scope) {
  */
 function Databases(scope) {
   arity.max(1, arguments, Databases.name)
-  scope = defaults(scope, null)
+  scope = util.defaults(scope, null)
   return new Expr({ databases: wrap(scope) })
 }
 
@@ -1921,7 +1921,7 @@ function Databases(scope) {
  */
 function Indexes(scope) {
   arity.max(1, arguments, Indexes.name)
-  scope = defaults(scope, null)
+  scope = util.defaults(scope, null)
   return new Expr({ indexes: wrap(scope) })
 }
 
@@ -1936,7 +1936,7 @@ function Indexes(scope) {
  */
 function Functions(scope) {
   arity.max(1, arguments, Functions.name)
-  scope = defaults(scope, null)
+  scope = util.defaults(scope, null)
   return new Expr({ functions: wrap(scope) })
 }
 
@@ -1951,7 +1951,7 @@ function Functions(scope) {
  */
 function Roles(scope) {
   arity.max(1, arguments, Roles.name)
-  scope = defaults(scope, null)
+  scope = util.defaults(scope, null)
   return new Expr({ roles: wrap(scope) })
 }
 
@@ -1966,7 +1966,7 @@ function Roles(scope) {
  */
 function Keys(scope) {
   arity.max(1, arguments, Keys.name)
-  scope = defaults(scope, null)
+  scope = util.defaults(scope, null)
   return new Expr({ keys: wrap(scope) })
 }
 
@@ -1981,7 +1981,7 @@ function Keys(scope) {
  */
 function Tokens(scope) {
   arity.max(1, arguments, Tokens.name)
-  scope = defaults(scope, null)
+  scope = util.defaults(scope, null)
   return new Expr({ tokens: wrap(scope) })
 }
 
@@ -1996,7 +1996,7 @@ function Tokens(scope) {
  */
 function Credentials(scope) {
   arity.max(1, arguments, Credentials.name)
-  scope = defaults(scope, null)
+  scope = util.defaults(scope, null)
   return new Expr({ credentials: wrap(scope) })
 }
 
@@ -2271,7 +2271,7 @@ function Multiply() {
  */
 function Round(value, precision) {
   arity.min(1, arguments, Round.name)
-  precision = defaults(precision, null)
+  precision = util.defaults(precision, null)
   return new Expr(
     params({ round: wrap(value) }, { precision: wrap(precision) })
   )
@@ -2324,7 +2324,7 @@ function Sqrt(expr) {
  */
 function Trunc(value, precision) {
   arity.min(1, arguments, Trunc.name)
-  precision = defaults(precision, null)
+  precision = util.defaults(precision, null)
   return new Expr(
     params({ trunc: wrap(value) }, { precision: wrap(precision) })
   )
@@ -2490,7 +2490,7 @@ function Exp(expr) {
  */
 function Hypot(value, side) {
   arity.min(1, arguments, Hypot.name)
-  side = defaults(side, null)
+  side = util.defaults(side, null)
   return new Expr(params({ hypot: wrap(value) }, { b: wrap(side) }))
 }
 
@@ -2529,7 +2529,7 @@ function Log(expr) {
  */
 function Pow(value, exponent) {
   arity.min(1, arguments, Pow.name)
-  exponent = defaults(exponent, null)
+  exponent = util.defaults(exponent, null)
   return new Expr(params({ pow: wrap(value) }, { exp: wrap(exponent) }))
 }
 
@@ -3015,17 +3015,6 @@ function argsToArray(args) {
   var rv = []
   rv.push.apply(rv, args)
   return rv
-}
-
-/**
- * @ignore
- */
-function defaults(param, def) {
-  if (param === undefined) {
-    return def
-  } else {
-    return param
-  }
 }
 
 /**
