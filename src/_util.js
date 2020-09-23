@@ -1,6 +1,28 @@
 'use strict'
 
 /**
+ * Determines if the current environment is a NodeJS environment.
+ * @private
+ */
+function isNodeEnv() {
+  return typeof window === 'undefined'
+}
+
+/**
+ * If defined, returns the given value. Otherwise, returns the default value.
+ * @param {any} obj The given value.
+ * @param {any} def The default value.
+ * @private
+ */
+function defaults(obj, def) {
+  if (obj === undefined) {
+    return def
+  } else {
+    return obj
+  }
+}
+
+/**
  * Used for functions that take an options objects.
  * Fills in defaults for options not provided.
  * Throws errors for provided options that aren't recognized.
@@ -65,6 +87,8 @@ function checkInstanceHasProperty(obj, prop) {
 }
 
 module.exports = {
+  isNodeEnv: isNodeEnv,
+  defaults: defaults,
   applyDefaults: applyDefaults,
   removeNullAndUndefinedValues: removeNullAndUndefinedValues,
   removeUndefinedValues: removeUndefinedValues,
