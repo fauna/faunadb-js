@@ -19,7 +19,7 @@ function HttpClient(options) {
     options.port = isHttps ? 443 : 80
   }
 
-  this._fetch = options.fetch || require('cross-fetch')
+  this._fetch = resolveFetch(options.fetch, true)
   this._baseUrl = options.scheme + '://' + options.domain + ':' + options.port
   this._timeout = Math.floor(options.timeout * 1000)
   this._secret = options.secret
@@ -121,7 +121,60 @@ function responseHeadersAsObject(response) {
   return headers
 }
 
+/**
+ * Resolve which Fetch API compatible function to use. If an override is
+ * provided, it returns the override. If no override, and the `preferPolyfill`
+ * is `true`, returns the cross-fetch polyfill. If no override and
+ * `preferPolyfill` is `false`, then attempts to return the fetch function from
+ * the global (window) environment. Returns `null` otherwise.
+ *
+ * This function embeds two boolean values into the returned function:
+ * * override: Set to `true` when a fetch function override is given;
+ * * polyfill: Set to `true` when the cross-fetch polyfill is returned.
+ *
+ * The meta information embedded into the return function is used, for example,
+ * by the {@link module:stream~StreamClient} to determine if the resolved fetch
+ * function is appropriate for its internal network calls since the cross-fetch
+ * library does not support streaming in its browser polyfill, and its build
+ * [removes](https://github.com/lquixada/cross-fetch/blob/v3.0.4/rollup.config.js#L36)
+ * such information from its wrapped libraries
+ *
+ * @param {function} fetchOverride
+ *   An Fetch API compatible function to use.
+ * @param {boolean} preferPolyfill
+ *   If `true`, prefers the cross-fetch polyfill over native browser API.
+ *
+ * @private
+ * @returns {?function} A Fetch API compatible function.
+ */
+function resolveFetch(fetchOverride, preferPolyfill) {
+  var delegate = null
+  var override = false
+
+  if (typeof fetchOverride === 'function') {
+    override = true
+    delegate = fetchOverride
+  } else if (preferPolyfill) {
+    delegate = require('cross-fetch')
+  } else if (typeof global.fetch === 'function') {
+    delegate = global.fetch
+  }
+
+  if (delegate !== null) {
+    var fetch = function() {
+      // NB. Rebinding to global is needed for Safari.
+      return delegate.apply(global, arguments)
+    }
+    fetch.polyfill = true
+    fetch.override = override
+    return fetch
+  }
+
+  return null
+}
+
 module.exports = {
   HttpClient: HttpClient,
   responseHeadersAsObject: responseHeadersAsObject,
+  resolveFetch: resolveFetch,
 }

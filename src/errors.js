@@ -3,10 +3,10 @@
 var util = require('util')
 
 /**
- * FaunaDB error types. Request errors can originate from
- * the client (e.g. bad method parameters) or from the FaunaDB Server (e.g.
- * invalid queries, timeouts.) Server errors will subclass
- * {@link module:errors~FaunaHTTPError}.
+ * FaunaDB error types. Request errors can originate from the client (e.g. bad
+ * method parameters) or from the FaunaDB Server (e.g. invalid queries,
+ * timeouts.) Server errors will subclass {@link module:errors~FaunaHTTPError}.
+ * Stream errors will subclass {@link module:errors~StreamError}.
  *
  * @module errors
  */
@@ -255,7 +255,58 @@ function UnavailableError(requestResult) {
 
 util.inherits(UnavailableError, FaunaHTTPError)
 
+/**
+ * The base exception type for all stream related errors.
+ *
+ * @constructor
+ * @param {string} name The error class name.
+ * @param {string} message The error message.
+ * @param {string} description The error detailed description.
+ * @extends module:errors~FaunaError
+ */
+function StreamError(name, message, description) {
+  FaunaError.call(this, name, message, description)
+}
+
+util.inherits(StreamError, FaunaError)
+
+/**
+ * An error thrown by the client when streams are not supported by the current
+ * platform.
+ *
+ * @constructor
+ * @param {string} description The error description.
+ * @extends module:errors~StreamError
+ */
+function StreamsNotSupported(description) {
+  FaunaError.call(
+    this,
+    'StreamsNotSupported',
+    'streams not supported',
+    description
+  )
+}
+
+util.inherits(StreamsNotSupported, StreamError)
+
+/**
+ * An Error thrown by the server when something wrong happened with the
+ * subscribed stream.
+ * @constructor
+ * @param {Object} event The error event.
+ * @property {Object} event The error event.
+ * @extends module:errors~StreamError
+ */
+function StreamErrorEvent(event) {
+  var error = event.data || {}
+  FaunaError.call(this, 'StreamErrorEvent', error.code, error.description)
+  this.event = event
+}
+
+util.inherits(StreamErrorEvent, StreamError)
+
 module.exports = {
+  FaunaError: FaunaError,
   FaunaHTTPError: FaunaHTTPError,
   InvalidValue: InvalidValue,
   InvalidArity: InvalidArity,
@@ -266,4 +317,7 @@ module.exports = {
   MethodNotAllowed: MethodNotAllowed,
   InternalError: InternalError,
   UnavailableError: UnavailableError,
+  StreamError: StreamError,
+  StreamsNotSupported: StreamsNotSupported,
+  StreamErrorEvent: StreamErrorEvent,
 }
