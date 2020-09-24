@@ -261,6 +261,24 @@ var exprToString = function(expr, caller) {
     }
   }
 
+  if ('functions' in expr) {
+    if (expr['functions'] === null) {
+      return 'Functions()'
+    }
+  }
+
+  if ('indexes' in expr) {
+    if (expr['indexes'] === null) {
+      return 'Indexes()'
+    }
+  }
+
+  if ('roles' in expr) {
+    if (expr['roles'] === null) {
+      return 'Roles()'
+    }
+  }
+
   if ('select' in expr) {
     return (
       'Select(' +
