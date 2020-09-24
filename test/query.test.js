@@ -2864,6 +2864,8 @@ describe('query', () => {
   test('current_identity fails when no identity present', async () => {
     try {
       await adminClient.query(query.CurrentIdentity())
+      
+      throw new Error('Should not reached here')
     } catch (err) {
       expect(err).toBeInstanceOf(errors.BadRequest)
     }
