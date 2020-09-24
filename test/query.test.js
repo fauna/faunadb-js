@@ -28,6 +28,8 @@ var collectionRef,
   thimbleCollectionRef
 
 describe('query', () => {
+  let adminKey = null
+
   beforeAll(async () => {
     // Hideous way to ensure that the client is initialized.
     client = util.client()
@@ -38,7 +40,7 @@ describe('query', () => {
     const serverKey = await rootClient.query(
       query.CreateKey({ database: dbRef, role: 'server' })
     )
-    const adminKey = await rootClient.query(
+    adminKey = await rootClient.query(
       query.CreateKey({ database: dbRef, role: 'admin' })
     )
 
@@ -2835,17 +2837,90 @@ describe('query', () => {
     }
   })
 
-  // TODO Create tests once work is done in Core
-  test.skip('current_identity', () => {})
+  // API v4 AccessProvider functions
+  // TODO: Add tests for JWTs using Auth0/Okta
 
-  // TODO Add test once Core work has been done
-  test.skip('has_current_identity', () => {})
+  test('current_identity returns object when authed', async () => {
+    // Create a new Collection
+    const newCollection = await client.query(
+      query.Create(collectionRef, { credentials: { password: 'sekrit' } })
+    )
 
-  // TODO Finish test after Core work is done
-  test.skip('current_token', () => {})
+    // Login with permissions for newly created Collection
+    const newLogin = await client.query(
+      query.Login(newCollection['ref'], { password: 'sekrit' })
+    )
 
-  // TODO Define test once Core work is done
-  test.skip('has_current_token', () => {})
+    // Get the newly scoped client
+    const newClient = await util.getClient({ secret: newLogin['secret'] })
+
+    // Retrieve the current identity
+    const currentIdentity = await newClient.query(query.CurrentIdentity())
+    expect(currentIdentity).toEqual(newCollection.ref)
+    expect(currentIdentity).toEqual(newLogin.instance)
+    expect(currentIdentity).toBeInstanceOf(Object)
+  })
+
+  test('current_identity fails when no identity present', async () => {
+    try {
+      await adminClient.query(query.CurrentIdentity())
+      
+      throw new Error('Should not reached here')
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.BadRequest)
+    }
+  })
+
+  test('has_current_identity returns true when identity present', async () => {
+    // Create a new Collection
+    const newCollection = await client.query(
+      query.Create(collectionRef, { credentials: { password: 'sekrit' } })
+    )
+
+    // Login with permissions for newly created Collection
+    const newLogin = await client.query(
+      query.Login(newCollection['ref'], { password: 'sekrit' })
+    )
+
+    // Get the newly scoped client
+    const newClient = await util.getClient({ secret: newLogin['secret'] })
+
+    // Retrieve the current identity
+    const currentIdentity = await newClient.query(query.CurrentIdentity())
+    expect(currentIdentity).toBeTruthy()
+  })
+
+  test('has_current_identity returns false without identity present', async () => {
+    const currentIdentity = await adminClient.query(query.HasCurrentIdentity())
+    expect(currentIdentity).toBeFalsy()
+  })
+
+  test('current_token returns proper token', async () => {
+    const currentToken = await adminClient.query(query.CurrentToken())
+    expect(currentToken).toEqual(adminKey.ref)
+  })
+
+  test('current_token fails when unauthenticated', async () => {
+    const newClient = new Client()
+
+    try {
+      const currentToken = await newClient.query(query.CurrentToken())
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.Unauthorized)
+    }
+  })
+
+  test('has_current_token returns true when token present', async () => {
+    const hasCurrentToken = await adminClient.query(query.HasCurrentToken())
+    expect(hasCurrentToken).toBeTruthy()
+  })
+
+  test('has_current_token returns false when no token present', async () => {
+    const hasCurrentToken = await client.query(query.HasCurrentToken())
+    expect(hasCurrentToken).toBeFalsy()
+  })
+
+  // Test versioned queries/lambdas
 
   test('legacy queries/lambdas have default api_version', async () => {
     const res = await client.query(
