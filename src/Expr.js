@@ -77,6 +77,7 @@ var specialCases = {
  *
  * @param {Expr} expression A FQL expression
  * @returns {Boolean} Returns true for valid expressions
+ * @private
  */
 function isExpr(expression) {
   return (
@@ -89,6 +90,7 @@ function isExpr(expression) {
  *
  * @param {Object} obj An object to print
  * @returns {String} String representation of object
+ * @private
  */
 function printObject(obj) {
   return (
@@ -107,6 +109,7 @@ function printObject(obj) {
  * @param {Array} arr An array to print
  * @param {Function} toStr Function used for stringification
  * @returns {String} String representation of array
+ * @private
  */
 function printArray(arr, toStr) {
   return arr
@@ -120,6 +123,7 @@ function printArray(arr, toStr) {
  *
  * @param {String} fn A snake-case FQL function name
  * @returns {String} The correpsonding camel-cased FQL function name
+ * @private
  */
 function convertToCamelCase(fn) {
   // For FQL functions with special formatting concerns, we
