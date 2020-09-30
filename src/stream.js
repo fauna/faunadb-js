@@ -276,7 +276,11 @@ EventDispatcher.prototype.on = function(type, callback) {
  * @param {Object} event The event.
  */
 EventDispatcher.prototype.dispatch = function(event) {
-  var listeners = this._listeners[event.event] || []
+  var listeners = this._listeners[event.event]
+  if (!listeners) {
+    return
+  }
+
   for (var i = 0; i < listeners.length; i++) {
     listeners[i].call(null, event.data, event)
   }
