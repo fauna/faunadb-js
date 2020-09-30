@@ -25,7 +25,7 @@ var values = require('./values')
  * Creates a subscription to the result of the given read-only expression. When
  * executed, the expression must only perform reads and produce a single
  * streamable type, such as a reference or a version. Expressions that attempt
- * perform writes or produce non-streamable types will result in an error.
+ * to perform writes or produce non-streamable types will result in an error.
  * Otherwise, any expression can be used to initiate a stream, including
  * user-defined function calls.
  *
@@ -90,7 +90,16 @@ var values = require('./values')
  * module:errors~StreamsNotSupported} error will be emmited.
  *
  * To stop a subscription, call the {@link module:stream~Subscription#close}
- * method.
+ * method:
+ *
+ * ```
+ * var subscription = client.stream(document.ref)
+ *   .on('version', version => processVersion(version))
+ *   .start()
+ *
+ * // ...
+ * subscription.close()
+ * ```
  *
  * @param {module:query~ExprArg} expression
  *   The expression to subscribe to. Created from {@link module:query}
