@@ -6,9 +6,9 @@
 // responsibilities with both Client and HTTP interfaces, such as updating last
 // seen transaction timestamp, and determining if the fetch function set in the
 // client is appropriate for the current runtime. Therefore, this implementation
-// sometimes break encapsulation and call internal getters and methods. As a
-// general rule: it's okay to call for internal methods. You can interpret this
-// as calling for a package visible method in languages with fine grained
+// sometimes breaks encapsulation and calls internal getters and methods. As a
+// general rule: it's okay to call internal methods. You can interpret this
+// as calling for a package visible method in languages with fine-grained
 // visibility control. However, DO NOT change any internal state from outside of
 // its context as it'd most certainly lead to errors.
 
@@ -35,9 +35,9 @@ var DocumentStreamEvents = DefaultEvents.concat(['snapshot'])
  *
  * @constructor
  * @param {Client} client The FaunaDB client.
- * @param {module:query~ExprArg} expression The fauna expression to subscribe.
+ * @param {module:query~ExprArg} expression The FQL expression you are subscribing to.
  * @param {module:stream~Options} options The stream options.
- * @param {function} onEvent The stream event's callback.
+ * @param {function} onEvent The stream event's callback function.
  * @private
  */
 function StreamClient(client, expression, options, onEvent) {
@@ -70,8 +70,8 @@ function StreamClient(client, expression, options, onEvent) {
       fetch = function() {
         return Promise.reject(
           new errors.StreamsNotSupported(
-            'Could not find a stream compatible fetch function. ' +
-              'Please, consider providing a Fetch API compatible function ' +
+            'Could not find a stream-compatible fetch function. ' +
+              'Please, consider providing a Fetch API-compatible function ' +
               'with streamable response bodies.'
           )
         )
@@ -110,7 +110,7 @@ StreamClient.prototype.subscribe = function() {
   if (self._state === 'idle') {
     self._state = 'open'
   } else {
-    throw new Error('The stream alread started at once.')
+    throw new Error('The stream has already been started.')
   }
 
   var body = JSON.stringify(self._query)
@@ -196,7 +196,7 @@ StreamClient.prototype.subscribe = function() {
       if (util.isNodeEnv()) {
         response.body.on('data', onData).on('error', onError)
       } else {
-        // ATENTION: The following code is meant to run on browsers and it's not
+        // ATENTION: The following code is meant to run in browsers and is not
         // covered by current test automation. Manual testing on major browsers
         // is required after making changes to it.
         var reader = response.body.getReader()
@@ -262,7 +262,7 @@ function EventDispatcher(allowedEvents) {
  */
 EventDispatcher.prototype.on = function(type, callback) {
   if (this._allowedEvents.indexOf(type) === -1) {
-    throw new Error('Unkown event type: ' + type)
+    throw new Error('Unknown event type: ' + type)
   }
   if (this._listeners[type] === undefined) {
     this._listeners[type] = []
@@ -284,7 +284,7 @@ EventDispatcher.prototype.dispatch = function(event) {
 
 /**
  * Stream's start event. A stream subscription always begins with a start event.
- * Upcoming events are guaranteed have transaction timestamps equal or grater to
+ * Upcoming events are guaranteed to have transaction timestamps equal to or greater than
  * the stream's start timestamp.
  *
  * @event module:stream~Subscription#start
@@ -327,7 +327,7 @@ EventDispatcher.prototype.dispatch = function(event) {
 
 /**
  * A snapshot event. A snapshot event is fired once the `document` stream helper
- * finishes loading the subscribed document's snapshot data load. See {@link
+ * finishes loading the subscribed document's snapshot data. See {@link
  * Client#stream} for more details on the `document` stream helper.
  *
  * @event module:stream~Subscription#snapshot
@@ -376,7 +376,7 @@ EventDispatcher.prototype.dispatch = function(event) {
  */
 
 /**
- * A stream subscription which dispatch events received to the registered
+ * A stream subscription which dispatches events received to the registered
  * listener functions. This class must be constructed via {@link Client#stream}
  * method.
  *
@@ -416,7 +416,7 @@ Subscription.prototype.start = function() {
 }
 
 /**
- * Stops the current subscription and close the underlying network connection.
+ * Stops the current subscription and closes the underlying network connection.
  */
 Subscription.prototype.close = function() {
   this._client.close()

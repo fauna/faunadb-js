@@ -190,7 +190,7 @@ describe('StreamAPI', () => {
         .on('error', error => {
           expect(error.message).toEqual('streams not supported')
           expect(error.description).toMatch(
-            /Could not find a stream compatible fetch function/
+            /Could not find a stream-compatible fetch function/
           )
           done()
         })
