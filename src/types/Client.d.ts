@@ -17,6 +17,7 @@ export interface ClientConfig {
 
 export interface QueryOptions {
   secret?: string
+  queryTimeout?: number
 }
 
 export default class Client {

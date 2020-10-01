@@ -1032,8 +1032,8 @@ function CreateRole(params) {
  *     - name: A valid schema name
  *     - issuer: A unique string
  *     - jwks_uri: A valid HTTPS URI
- *     - allowed_roles: An optional list of Role refs
- *     - allowed_collections: An optional list of user-defined Collection refs
+ *     - membership: An array of role/predicate pairs where the predicate returns a boolean.
+ *                   The array can also contain Role references.
  * @return {Expr}
  */
 function CreateAccessProvider(params) {
@@ -1234,9 +1234,50 @@ function Identity() {
  *
  * @return {Expr}
  */
+function CurrentIdentity() {
+  arity.exact(0, arguments, CurrentIdentity.name)
+  return new Expr({ current_identity: null })
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#authentication).
+ *
+ * @return {Expr}
+ */
 function HasIdentity() {
   arity.exact(0, arguments, HasIdentity.name)
   return new Expr({ has_identity: null })
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#authentication).
+ *
+ * @return {Expr}
+ */
+
+function HasCurrentIdentity() {
+  arity.exact(0, arguments, HasCurrentIdentity.name)
+  return new Expr({ has_current_identity: null })
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#authentication).
+ *
+ * @return {Expr}
+ */
+function CurrentToken() {
+  arity.exact(0, arguments, CurrentToken.name)
+  return new Expr({ current_token: null })
+}
+
+/**
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi#authentication).
+ *
+ * @return {Expr}
+ */
+function HasCurrentToken() {
+  arity.exact(0, arguments, HasCurrentToken.name)
+  return new Expr({ has_current_token: null })
 }
 
 // String functions
@@ -3128,8 +3169,18 @@ module.exports = {
   Login: Login,
   Logout: Logout,
   Identify: Identify,
-  Identity: Identity,
-  HasIdentity: HasIdentity,
+  Identity: deprecate(
+    Identity,
+    'Identity() is deprecated, use CurrentIdentity() instead'
+  ),
+  CurrentIdentity: CurrentIdentity,
+  HasIdentity: deprecate(
+    HasIdentity,
+    'HasIdentity() is deprecated, use HasCurrentIdentity() instead'
+  ),
+  HasCurrentIdentity: HasCurrentIdentity,
+  CurrentToken: CurrentToken,
+  HasCurrentToken: HasCurrentToken,
   Concat: Concat,
   Casefold: Casefold,
   ContainsStr: ContainsStr,

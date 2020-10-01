@@ -28,6 +28,8 @@ var collectionRef,
   thimbleCollectionRef
 
 describe('query', () => {
+  let adminKey = null
+
   beforeAll(async () => {
     // Hideous way to ensure that the client is initialized.
     client = util.client()
@@ -38,7 +40,7 @@ describe('query', () => {
     const serverKey = await rootClient.query(
       query.CreateKey({ database: dbRef, role: 'server' })
     )
-    const adminKey = await rootClient.query(
+    adminKey = await rootClient.query(
       query.CreateKey({ database: dbRef, role: 'admin' })
     )
 
@@ -222,7 +224,7 @@ describe('query', () => {
         new values.Query({
           lambda: '_',
           expr: { let: { x: 1, y: 2 }, in: [{ var: 'x' }, { var: 'y' }] },
-          api_version: '3',
+          api_version: '4',
         })
       ),
       assertQuery(
@@ -861,75 +863,203 @@ describe('query', () => {
     })
   })
 
-  test('create access provider', async () => {
+  test('create_access_provider successful creation', async () => {
     const providerName = util.randomString('provider_')
     const issuerName = util.randomString('issuer_')
     const jwksUri = util.randomString()
     const fullUri = `https://${jwksUri}.auth0.com`
+    const roleOneName = util.randomString('role_one_')
+    const roleTwoName = util.randomString('role_two_')
 
-    // Successful instantiation with required fields
+    // Create roles
+    await adminClient.query(
+      query.CreateRole({
+        name: roleOneName,
+        privileges: [
+          {
+            resource: query.Databases(),
+            actions: { read: true },
+          },
+        ],
+      })
+    )
+
+    await adminClient.query(
+      query.CreateRole({
+        name: roleTwoName,
+        privileges: [
+          {
+            resource: query.Databases(),
+            actions: { read: true },
+          },
+        ],
+      })
+    )
+
     const provider = await adminClient.query(
       query.CreateAccessProvider({
         name: providerName,
         issuer: issuerName,
         jwks_uri: fullUri,
+        membership: [
+          query.Role(roleOneName),
+          {
+            role: query.Role(`${roleTwoName}`),
+            predicate: query.Query(query.Lambda(x => true)),
+          },
+        ],
       })
     )
 
     expect(provider.name).toEqual(providerName)
     expect(provider.issuer).toEqual(issuerName)
     expect(provider.jwks_uri).toEqual(fullUri)
+    expect(provider.membership).toBeInstanceOf(Array)
+  })
 
-    // Failure due to non-unique issuer
+  test('create_access_provider fails with non-unique issuer', async () => {
+    const issuerName = util.randomString('issuer_')
+    const roleOneName = util.randomString('role_one_')
+    const providerName = util.randomString('provider_')
+    const jwksUri = util.randomString()
+    const fullUri = `https://${jwksUri}.auth0.com`
+
+    // Create Role
+    await adminClient.query(
+      query.CreateRole({
+        name: roleOneName,
+        privileges: [
+          {
+            resource: query.Databases(),
+            actions: { read: true },
+          },
+        ],
+      })
+    )
+
+    // Create initial provider
+    const provider = await adminClient.query(
+      query.CreateAccessProvider({
+        name: providerName,
+        issuer: issuerName,
+        jwks_uri: fullUri,
+        membership: [query.Role(roleOneName)],
+      })
+    )
+
+    // Create provider with duplicate issuer value
     try {
       await adminClient.query(
         query.CreateAccessProvider({
           name: 'duplicate_provider',
           issuer: issuerName,
           jwks_uri: 'https://db.fauna.com',
+          membership: [query.Role(roleOneName)],
         })
       )
-    } catch (error) {
-      expect(error).toBeInstanceOf(errors.BadRequest)
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.BadRequest)
     }
+  })
 
-    // Failure due to missing name
-    try {
-      await adminClient.query(
-        query.CreateAccessProvider({
-          name: null,
-          issuer: issuerName,
-          jwks_uri: fullUri,
-        })
-      )
-    } catch (error) {
-      expect(error).toBeInstanceOf(errors.BadRequest)
-    }
+  test('create_access_provider fails without issuer', async () => {
+    const providerName = util.randomString('provider_')
+    const jwksUri = util.randomString()
+    const fullUri = `https://${jwksUri}.auth0.com`
+    const roleOneName = util.randomString('role_one_')
 
-    // Failure due to missing issuer
+    // Create Role
+    await adminClient.query(
+      query.CreateRole({
+        name: roleOneName,
+        privileges: [
+          {
+            resource: query.Databases(),
+            actions: { read: true },
+          },
+        ],
+      })
+    )
+
+    // Create provider without issuer
     try {
       await adminClient.query(
         query.CreateAccessProvider({
           name: providerName,
           issuer: null,
           jwks_uri: fullUri,
+          membership: [query.Role(roleOneName)],
         })
       )
-    } catch (error) {
-      expect(error).toBeInstanceOf(errors.BadRequest)
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.BadRequest)
     }
+  })
 
-    // Failure due to invalid URI
+  test('create_access_provider fails without name', async () => {
+    const issuerName = util.randomString('issuer_')
+    const jwksUri = util.randomString()
+    const fullUri = `https://${jwksUri}.auth0.com`
+    const roleOneName = util.randomString('role_one_')
+
+    // Create Role
+    await adminClient.query(
+      query.CreateRole({
+        name: roleOneName,
+        privileges: [
+          {
+            resource: query.Databases(),
+            actions: { read: true },
+          },
+        ],
+      })
+    )
+
+    // Create provider without name
+    try {
+      await adminClient.query(
+        query.CreateAccessProvider({
+          issuer: issuerName,
+          jwks_uri: fullUri,
+          membership: [query.Role(roleOneName)],
+        })
+      )
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.BadRequest)
+    }
+  })
+
+  test('create_access_provider fails with invalid URI', async () => {
+    const providerName = util.randomString('provider_')
+    const issuerName = util.randomString('issuer_')
+    const jwksUri = util.randomString()
+    const roleOneName = util.randomString('role_one_')
+
+    // Create Role
+    await adminClient.query(
+      query.CreateRole({
+        name: roleOneName,
+        privileges: [
+          {
+            resource: query.Databases(),
+            actions: { read: true },
+          },
+        ],
+      })
+    )
+
+    // Create provider with invalid
     try {
       await adminClient.query(
         query.CreateAccessProvider({
           name: providerName,
           issuer: issuerName,
           jwks_uri: jwksUri,
+          membership: [query.Role(roleOneName)],
         })
       )
-    } catch (error) {
-      expect(error).toBeInstanceOf(errors.BadRequest)
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.BadRequest)
     }
   })
 
@@ -1566,14 +1696,6 @@ describe('query', () => {
     var p3 = assertQuery(query.Equals(1), true)
     var p4 = assertQuery(query.Equals({ a: 10, b: 20 }, { a: 10, b: 20 }), true)
     return Promise.all([p1, p2, p3, p4])
-  })
-
-  test('contains', () => {
-    var obj = { a: { b: 1 } }
-    var p1 = assertQuery(query.Contains(['a', 'b'], obj), true)
-    var p2 = assertQuery(query.Contains('a', obj), true)
-    var p3 = assertQuery(query.Contains(['a', 'c'], obj), false)
-    return Promise.all([p1, p2, p3])
   })
 
   test('contains_value arrays', () => {
@@ -2714,6 +2836,90 @@ describe('query', () => {
       console.log(error)
     }
   })
+
+  // API v4 AccessProvider functions
+
+  test('current_identity returns object when authed', async () => {
+    // Create a new Collection
+    const newCollection = await client.query(
+      query.Create(collectionRef, { credentials: { password: 'sekrit' } })
+    )
+
+    // Login with permissions for newly created Collection
+    const newLogin = await client.query(
+      query.Login(newCollection['ref'], { password: 'sekrit' })
+    )
+
+    // Get the newly scoped client
+    const newClient = await util.getClient({ secret: newLogin['secret'] })
+
+    // Retrieve the current identity
+    const currentIdentity = await newClient.query(query.CurrentIdentity())
+    expect(currentIdentity).toEqual(newCollection.ref)
+    expect(currentIdentity).toEqual(newLogin.instance)
+    expect(currentIdentity).toBeInstanceOf(Object)
+  })
+
+  test('current_identity fails when no identity present', async () => {
+    try {
+      await adminClient.query(query.CurrentIdentity())
+
+      throw new Error('Should not reached here')
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.BadRequest)
+    }
+  })
+
+  test('has_current_identity returns true when identity present', async () => {
+    // Create a new Collection
+    const newCollection = await client.query(
+      query.Create(collectionRef, { credentials: { password: 'sekrit' } })
+    )
+
+    // Login with permissions for newly created Collection
+    const newLogin = await client.query(
+      query.Login(newCollection['ref'], { password: 'sekrit' })
+    )
+
+    // Get the newly scoped client
+    const newClient = await util.getClient({ secret: newLogin['secret'] })
+
+    // Retrieve the current identity
+    const currentIdentity = await newClient.query(query.CurrentIdentity())
+    expect(currentIdentity).toBeTruthy()
+  })
+
+  test('has_current_identity returns false without identity present', async () => {
+    const currentIdentity = await adminClient.query(query.HasCurrentIdentity())
+    expect(currentIdentity).toBeFalsy()
+  })
+
+  test('current_token returns proper token', async () => {
+    const currentToken = await adminClient.query(query.CurrentToken())
+    expect(currentToken).toEqual(adminKey.ref)
+  })
+
+  test('current_token fails when unauthenticated', async () => {
+    const newClient = new Client()
+
+    try {
+      const currentToken = await newClient.query(query.CurrentToken())
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.Unauthorized)
+    }
+  })
+
+  test('has_current_token returns true when token present', async () => {
+    const hasCurrentToken = await adminClient.query(query.HasCurrentToken())
+    expect(hasCurrentToken).toBeTruthy()
+  })
+
+  test('has_current_token returns false when no token present', async () => {
+    const hasCurrentToken = await client.query(query.HasCurrentToken())
+    expect(hasCurrentToken).toBeFalsy()
+  })
+
+  // Test versioned queries/lambdas
 
   test('legacy queries/lambdas have default api_version', async () => {
     const res = await client.query(
