@@ -2,7 +2,6 @@
 
 var APIVersion = '4'
 
-var btoa = require('btoa-lite')
 var errors = require('./errors')
 var query = require('./query')
 var values = require('./values')
@@ -260,7 +259,7 @@ function defaults(obj, def) {
 }
 
 function secretHeader(secret) {
-  return 'Basic ' + btoa(secret + ':')
+  return 'Bearer ' + secret
 }
 
 function responseHeadersAsObject(response) {
