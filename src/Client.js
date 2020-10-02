@@ -260,7 +260,7 @@ function defaults(obj, def) {
 }
 
 function secretHeader(secret) {
-  return 'Basic ' + btoa(secret + ':')
+  return 'Bearer ' + btoa(secret + ':')
 }
 
 function responseHeadersAsObject(response) {
