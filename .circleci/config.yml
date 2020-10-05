@@ -18,6 +18,12 @@ executors:
         auth:
           username: _json_key
           password: $GCR_KEY
+      - run: |
+        echo "stream_enable_api: true" > faunadb.yaml
+        docker run -p 8443:8443 \
+         -v faunadb.yaml:/etc/faunadb.yml \
+         gcr.io/faunadb-cloud/faunadb/enterprise/<<parameters.version>>:latest \
+         --config /etc/faunadb.yml
 
     environment:
       FAUNA_ROOT_KEY: secret
