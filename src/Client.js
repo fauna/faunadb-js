@@ -1,15 +1,14 @@
 'use strict'
 
-var APIVersion = '4'
-
-var errors = require('./errors')
-var query = require('./query')
-var values = require('./values')
-var json = require('./_json')
-var RequestResult = require('./RequestResult')
-var util = require('./_util')
 var PageHelper = require('./PageHelper')
-var parse = require('url-parse')
+var RequestResult = require('./RequestResult')
+var errors = require('./errors')
+var http = require('./_http')
+var json = require('./_json')
+var query = require('./query')
+var stream = require('./stream')
+var util = require('./_util')
+var values = require('./values')
 
 /**
  * The callback that will be executed after every completed request.
@@ -19,9 +18,111 @@ var parse = require('url-parse')
  */
 
 /**
+ * **WARNING: This is an experimental feature. There are no guarantees to
+ * its API stability and/or service availability. DO NOT USE IT IN
+ * PRODUCTION**.
+ *
+ * Creates a subscription to the result of the given read-only expression. When
+ * executed, the expression must only perform reads and produce a single
+ * streamable type, such as a reference or a version. Expressions that attempt
+ * to perform writes or produce non-streamable types will result in an error.
+ * Otherwise, any expression can be used to initiate a stream, including
+ * user-defined function calls.
+ *
+ * The subscription returned by this method does not issue any requests until
+ * the {@link module:stream~Subscription#start} method is called. Make sure to
+ * subscribe to the events of interest, otherwise the received events are simply
+ * ignored. For example:
+ *
+ * ```
+ * client.stream(document.ref)
+ *   .on('version', version => console.log(version))
+ *   .on('error', error => console.log(error))
+ *   .start()
+ * ```
+ *
+ * Please note that streams are not temporal, meaning that there is no option to
+ * configure its starting timestamp. The stream will, however, state its initial
+ * subscription time via the {@link module:stream~Subscription#event:start}
+ * event. A common programming mistake is to read a document, then initiate a
+ * subscription. This approach can miss events that occurred between the initial
+ * read and the subscription request. To prevent event loss, make sure the
+ * subscription has started before performing a data load. The following example
+ * buffer events until the document's data is loaded:
+ *
+ * ```
+ * var buffer = []
+ * var loaded = false
+ *
+ * client.stream(document.ref)
+ *   .on('start', ts => {
+ *     loadData(ts).then(data => {
+ *       processData(data)
+ *       processBuffer(buffer)
+ *       loaded = true
+ *     })
+ *   })
+ *   .on('version', version => {
+ *     if (loaded) {
+ *       processVersion(version)
+ *     } else {
+ *       buffer.push(version)
+ *     }
+ *   })
+ *   .start()
+ * ```
+ *
+ * The reduce boilerplate, the `document` helper implements a similar
+ * functionality, except it discards events prior to the document's snapshot
+ * time. The expression given to this helper must be a reference as it
+ * internally runs a {@link module:query~Get} call with it. The example above
+ * can be rewritten as:
+ *
+ * ```
+ * client.stream.document(document.ref)
+ *   .on('snapshot', data => processData(data))
+ *   .on('version', version => processVersion(version))
+ *   .start()
+ * ```
+ *
+ * Be aware that streams are not available in all browsers. If the client can't
+ * initiate a stream, an error event with the {@link
+ * module:errors~StreamsNotSupported} error will be emmited.
+ *
+ * To stop a subscription, call the {@link module:stream~Subscription#close}
+ * method:
+ *
+ * ```
+ * var subscription = client.stream(document.ref)
+ *   .on('version', version => processVersion(version))
+ *   .start()
+ *
+ * // ...
+ * subscription.close()
+ * ```
+ *
+ * @param {module:query~ExprArg} expression
+ *   The expression to subscribe to. Created from {@link module:query}
+ *   functions.
+ *
+ * @param {?module:stream~Options} options
+ *   Object that configures the stream.
+ *
+ * @property {function} document
+ *  A document stream helper. See {@link Client#stream} for more information.
+ *
+ * @see module:stream~Subscription
+ *
+ * @function
+ * @name Client#stream
+ * @returns {module:stream~Subscription} A new subscription instance.
+ */
+
+/**
  * A client for interacting with FaunaDB.
  *
- * Users will mainly call the {@link Client#query} method to execute queries.
+ * Users will mainly call the {@link Client#query} method to execute queries, or
+ * the {@link Client#stream} method to subscribe to streams.
  *
  * See the [FaunaDB Documentation](https://fauna.com/documentation) for detailed examples.
  *
@@ -56,8 +157,7 @@ var parse = require('url-parse')
  *   Sets the maximum amount of time (in milliseconds) for query execution on the server,
  */
 function Client(options) {
-  var isNodeEnv = typeof window === 'undefined'
-  var opts = util.applyDefaults(options, {
+  options = util.applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
     port: null,
@@ -69,27 +169,10 @@ function Client(options) {
     fetch: undefined,
     queryTimeout: null,
   })
-  var isHttps = opts.scheme === 'https'
 
-  if (opts.port === null) {
-    opts.port = isHttps ? 443 : 80
-  }
-
-  this._baseUrl = opts.scheme + '://' + opts.domain + ':' + opts.port
-  this._timeout = Math.floor(opts.timeout * 1000)
-  this._secret = opts.secret
-  this._observer = opts.observer
-  this._lastSeen = null
-  this._headers = opts.headers
-  this._fetch = opts.fetch || require('cross-fetch')
-  this._queryTimeout = opts.queryTimeout
-
-  if (isNodeEnv && opts.keepAlive) {
-    this._keepAliveEnabledAgent = new (isHttps
-      ? require('https')
-      : require('http')
-    ).Agent({ keepAlive: true })
-  }
+  this._observer = options.observer
+  this._http = new http.HttpClient(options)
+  this.stream = stream.StreamAPI(this)
 }
 
 /**
@@ -103,7 +186,6 @@ function Client(options) {
  * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://app.fauna.com/documentation/intro/security))
  * @return {external:Promise<Object>} FaunaDB response object.
  */
-
 Client.prototype.query = function(expression, options) {
   return this._execute('POST', '', query.wrap(expression), null, options)
 }
@@ -121,8 +203,8 @@ Client.prototype.query = function(expression, options) {
  * @returns {PageHelper} A PageHelper that wraps the provided expression.
  */
 Client.prototype.paginate = function(expression, params, options) {
-  params = defaults(params, {})
-  options = defaults(options, {})
+  params = util.defaults(params, {})
+  options = util.defaults(options, {})
 
   return new PageHelper(this, expression, params, options)
 }
@@ -140,7 +222,7 @@ Client.prototype.ping = function(scope, timeout) {
  * @returns {number} the last seen transaction time
  */
 Client.prototype.getLastTxnTime = function() {
-  return this._lastSeen
+  return this._http.getLastTxnTime()
 }
 
 /**
@@ -153,13 +235,11 @@ Client.prototype.getLastTxnTime = function() {
  * @param time {number} the last seen transaction time
  */
 Client.prototype.syncLastTxnTime = function(time) {
-  if (this._lastSeen == null || this._lastSeen < time) {
-    this._lastSeen = time
-  }
+  this._http.syncLastTxnTime(time)
 }
 
 Client.prototype._execute = function(method, path, data, query, options) {
-  query = defaults(query, null)
+  query = util.defaults(query, null)
 
   if (
     path instanceof values.Ref ||
@@ -176,102 +256,44 @@ Client.prototype._execute = function(method, path, data, query, options) {
   var self = this
   var body =
     ['GET', 'HEAD'].indexOf(method) >= 0 ? undefined : JSON.stringify(data)
-
-  return this._performRequest(method, path, body, query, options).then(function(
-    response
-  ) {
-    var endTime = Date.now()
-    var responseText = response.text
-    var responseObject = json.parseJSON(responseText)
-    var requestResult = new RequestResult(
-      method,
-      path,
-      query,
-      body,
-      data,
-      responseText,
-      responseObject,
-      response.status,
-      responseHeadersAsObject(response),
-      startTime,
-      endTime
-    )
-    var txnTimeHeaderKey = 'x-txn-time'
-
-    if (response.headers.has(txnTimeHeaderKey)) {
-      self.syncLastTxnTime(parseInt(response.headers.get(txnTimeHeaderKey), 10))
-    }
-
-    if (self._observer != null) {
-      self._observer(requestResult, self)
-    }
-
-    errors.FaunaHTTPError.raiseForStatusCode(requestResult)
-    return responseObject['resource']
-  })
-}
-
-Client.prototype._performRequest = function(
-  method,
-  path,
-  body,
-  query,
-  options
-) {
-  var url = parse(this._baseUrl)
-  url.set('pathname', path)
-  url.set('query', query)
-  options = defaults(options, {})
-  var secret = options.secret || this._secret
-  var queryTimeout = this._queryTimeout
-
-  if (options && options.queryTimeout) {
-    queryTimeout = options.queryTimeout
-  }
-
-  return this._fetch(url.href, {
-    agent: this._keepAliveEnabledAgent,
-    body: body,
-    headers: util.removeNullAndUndefinedValues({
-      ...this._headers,
-      Authorization: secret && secretHeader(secret),
-      'X-FaunaDB-API-Version': APIVersion,
-      'X-Fauna-Driver': 'Javascript',
-      'X-Last-Seen-Txn': this._lastSeen,
-      'X-Query-Timeout': queryTimeout,
-    }),
-    method: method,
-    timeout: this._timeout,
-  }).then(function(response) {
-    return response.text().then(function(text) {
-      response.text = text
-      return response
+  return this._http
+    .execute(method, path, body, query, options)
+    .then(function(response) {
+      return response.text().then(function(responseText) {
+        var endTime = Date.now()
+        var responseObject = json.parseJSON(responseText)
+        var headers = http.responseHeadersAsObject(response)
+        var result = new RequestResult(
+          method,
+          path,
+          query,
+          body,
+          data,
+          responseText,
+          responseObject,
+          response.status,
+          headers,
+          startTime,
+          endTime
+        )
+        self._handleRequestResult(response, result)
+        return responseObject['resource']
+      })
     })
-  })
 }
 
-function defaults(obj, def) {
-  if (obj === undefined) {
-    return def
-  } else {
-    return obj
-  }
-}
+Client.prototype._handleRequestResult = function(response, result) {
+  var txnTimeHeaderKey = 'x-txn-time'
 
-function secretHeader(secret) {
-  return 'Bearer ' + secret
-}
-
-function responseHeadersAsObject(response) {
-  var headers = {}
-
-  for (var header of response.headers.entries()) {
-    var key = header[0]
-    var value = header[1]
-    headers[key] = value
+  if (response.headers.has(txnTimeHeaderKey)) {
+    this.syncLastTxnTime(parseInt(response.headers.get(txnTimeHeaderKey), 10))
   }
 
-  return headers
+  if (this._observer !== null) {
+    this._observer(result, this)
+  }
+
+  errors.FaunaHTTPError.raiseForStatusCode(result)
 }
 
 module.exports = Client

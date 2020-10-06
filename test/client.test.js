@@ -85,9 +85,13 @@ describe('Client', () => {
 
   test('keeps connection alive', () => {
     var aliveClient = util.getClient({ keepAlive: true })
-    var p1 = expect(aliveClient._keepAliveEnabledAgent).not.toEqual(undefined)
+    var p1 = expect(aliveClient._http._keepAliveEnabledAgent).not.toEqual(
+      undefined
+    )
     var notAliveClient = util.getClient({ keepAlive: false })
-    var p2 = expect(notAliveClient._keepAliveEnabledAgent).toEqual(undefined)
+    var p2 = expect(notAliveClient._http._keepAliveEnabledAgent).toEqual(
+      undefined
+    )
 
     return Promise.all([p1, p2])
   })
