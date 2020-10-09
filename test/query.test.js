@@ -901,7 +901,7 @@ describe('query', () => {
         name: providerName,
         issuer: issuerName,
         jwks_uri: fullUri,
-        membership: [
+        roles: [
           query.Role(roleOneName),
           {
             role: query.Role(`${roleTwoName}`),
@@ -914,7 +914,7 @@ describe('query', () => {
     expect(provider.name).toEqual(providerName)
     expect(provider.issuer).toEqual(issuerName)
     expect(provider.jwks_uri).toEqual(fullUri)
-    expect(provider.membership).toBeInstanceOf(Array)
+    expect(provider.roles).toBeInstanceOf(Array)
   })
 
   test('create_access_provider fails with non-unique issuer', async () => {
@@ -943,7 +943,7 @@ describe('query', () => {
         name: providerName,
         issuer: issuerName,
         jwks_uri: fullUri,
-        membership: [query.Role(roleOneName)],
+        roles: [query.Role(roleOneName)],
       })
     )
 
@@ -954,7 +954,7 @@ describe('query', () => {
           name: 'duplicate_provider',
           issuer: issuerName,
           jwks_uri: 'https://db.fauna.com',
-          membership: [query.Role(roleOneName)],
+          roles: [query.Role(roleOneName)],
         })
       )
     } catch (err) {
@@ -988,7 +988,7 @@ describe('query', () => {
           name: providerName,
           issuer: null,
           jwks_uri: fullUri,
-          membership: [query.Role(roleOneName)],
+          roles: [query.Role(roleOneName)],
         })
       )
     } catch (err) {
@@ -1021,7 +1021,7 @@ describe('query', () => {
         query.CreateAccessProvider({
           issuer: issuerName,
           jwks_uri: fullUri,
-          membership: [query.Role(roleOneName)],
+          roles: [query.Role(roleOneName)],
         })
       )
     } catch (err) {
@@ -1055,7 +1055,7 @@ describe('query', () => {
           name: providerName,
           issuer: issuerName,
           jwks_uri: jwksUri,
-          membership: [query.Role(roleOneName)],
+          roles: [query.Role(roleOneName)],
         })
       )
     } catch (err) {
