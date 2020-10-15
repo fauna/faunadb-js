@@ -2,6 +2,7 @@ import Expr from './Expr'
 import { ExprArg } from './query'
 import PageHelper from './PageHelper'
 import RequestResult from './RequestResult'
+import { Subscription } from './Stream'
 
 export interface ClientConfig {
   secret: string
@@ -13,6 +14,7 @@ export interface ClientConfig {
   keepAlive?: boolean
   headers?: { [key: string]: string | number }
   fetch?: typeof fetch
+  stream?: Subscription
 }
 
 export interface QueryOptions {
@@ -25,4 +27,5 @@ export default class Client {
   query<T = object>(expr: ExprArg, options?: QueryOptions): Promise<T>
   paginate(expr: Expr, params?: object, options?: QueryOptions): PageHelper
   ping(scope?: string, timeout?: number): Promise<string>
+  stream(expr: Expr, options?: object): Subscription
 }
