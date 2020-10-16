@@ -25,3 +25,7 @@ export interface Options {
   diff: string
   action: string
 }
+
+export interface ClientStreamOptions {
+  fields: string[]
+}
