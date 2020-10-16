@@ -14,7 +14,6 @@ export interface ClientConfig {
   keepAlive?: boolean
   headers?: { [key: string]: string | number }
   fetch?: typeof fetch
-  stream?: Subscription
 }
 
 export interface QueryOptions {
