@@ -26,5 +26,5 @@ export default class Client {
   query<T = object>(expr: ExprArg, options?: QueryOptions): Promise<T>
   paginate(expr: Expr, params?: object, options?: QueryOptions): PageHelper
   ping(scope?: string, timeout?: number): Promise<string>
-  stream(expr: Expr, options?: { fields: string[] }): Subscription
+  stream(expr: Expr, options?: { fields?: string[] }): Subscription
 }

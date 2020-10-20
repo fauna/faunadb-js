@@ -1,11 +1,11 @@
 import Client from './Client'
 import { ExprArg } from './query'
-import { FaunaTime, Ref } from './values'
+import { values } from './values'
 
 export interface Subscription {
   on: (type: SubscriptionEvents, callback: Function) => this
   start: () => this
-  close: () => this
+  close: () => void
   event: string
   txnTS: number
   data:
@@ -15,24 +15,24 @@ export interface Subscription {
     | StreamHistoryRewriteEventData
 }
 
-type StreamStartEventData = FaunaTime
+type StreamStartEventData = values.FaunaTime
 
 type StreamVersionEventData = {
-  ref: Ref
+  ref: values.Ref
   ts: number
   action: string
   new: object
   old: object
-  diff: string
+  diff: object
 }
 
 type StreamErrorEventData = {
-  code: number
+  code: string
   description: string
 }
 
 type StreamHistoryRewriteEventData = {
-  ref: Ref
+  ref: values.Ref
   ts: number
   action: string
 }
