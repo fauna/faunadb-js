@@ -2,39 +2,52 @@ import Client from './Client'
 import { ExprArg } from './query'
 import { values } from './values'
 
-export interface Subscription {
-  on: (type: SubscriptionEvents, callback: Function) => this
+export type StreamSubscription =
+  | StreamStartSubscription
+  | StreamVersionSubscription
+  | StreamErrorSubscription
+  | StreamHistoryRewriteSubscription
+
+interface Subscription {
   start: () => this
   close: () => void
-  event: string
   txnTS: number
-  data:
-    | StreamStartEventData
-    | StreamVersionEventData
-    | StreamErrorEventData
-    | StreamHistoryRewriteEventData
 }
 
-type StreamStartEventData = values.FaunaTime
-
-type StreamVersionEventData = {
-  ref: values.Ref
-  ts: number
-  action: string
-  new: object
-  old: object
-  diff: object
+interface StreamStartSubscription extends Subscription {
+  on: (type: 'start', callback: Function) => this
+  event: 'start'
+  data: values.FaunaTime
 }
 
-type StreamErrorEventData = {
-  code: string
-  description: string
+interface StreamVersionSubscription extends Subscription {
+  on: (type: 'version', callback: Function) => this
+  event: 'version'
+  data: {
+    ref: values.Ref
+    ts: number
+    action: string
+    new: object
+    old: object
+    diff: object
+  }
 }
 
-type StreamHistoryRewriteEventData = {
-  ref: values.Ref
-  ts: number
-  action: string
+interface StreamErrorSubscription extends Subscription {
+  on: (type: 'error', callback: Function) => this
+  event: 'error'
+  data: {
+    code: string
+    description: string
+  }
 }
 
-type SubscriptionEvents = 'start' | 'version' | 'history_rewrite' | 'error'
+interface StreamHistoryRewriteSubscription extends Subscription {
+  on: (type: 'history_rewrite', callback: Function) => this
+  event: 'history_rewrite'
+  data: {
+    ref: values.Ref
+    ts: number
+    action: string
+  }
+}
