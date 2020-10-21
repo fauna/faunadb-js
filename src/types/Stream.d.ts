@@ -2,52 +2,72 @@ import Client from './Client'
 import { ExprArg } from './query'
 import { values } from './values'
 
-export type StreamSubscription =
-  | StreamStartSubscription
-  | StreamVersionSubscription
-  | StreamErrorSubscription
-  | StreamHistoryRewriteSubscription
-
-interface Subscription {
+export interface Subscription {
+  on: <T extends keyof SubscriptionEventHandlers>(
+    type: T,
+    callback: SubscriptionEventHandlers[T]
+  ) => this
   start: () => this
   close: () => void
-  txnTS: number
 }
 
-interface StreamStartSubscription extends Subscription {
-  on: (type: 'start', callback: Function) => this
-  event: 'start'
-  data: values.FaunaTime
-}
-
-interface StreamVersionSubscription extends Subscription {
-  on: (type: 'version', callback: Function) => this
-  event: 'version'
-  data: {
-    ref: values.Ref
-    ts: number
-    action: string
-    new: object
-    old: object
-    diff: object
-  }
-}
-
-interface StreamErrorSubscription extends Subscription {
-  on: (type: 'error', callback: Function) => this
-  event: 'error'
-  data: {
-    code: string
-    description: string
-  }
-}
-
-interface StreamHistoryRewriteSubscription extends Subscription {
-  on: (type: 'history_rewrite', callback: Function) => this
-  event: 'history_rewrite'
-  data: {
-    ref: values.Ref
-    ts: number
-    action: string
-  }
+type SubscriptionEventHandlers = {
+  start: (
+    ts: values.FaunaTime,
+    event: {
+      event: 'start'
+      txnTs: number
+      data: values.FaunaTime
+    }
+  ) => void
+  error: (
+    ts: values.FaunaTime,
+    event: {
+      event: 'error'
+      txnTs: number
+      data: {
+        code: string
+        description: string
+      }
+    }
+  ) => void
+  version: (
+    ts: values.FaunaTime,
+    event: {
+      event: 'version'
+      txnTs: number
+      data: {
+        ref: values.Ref
+        ts: values.FaunaTime
+        action: string
+        new: object
+        old?: object
+        diff?: object
+      }
+    }
+  ) => void
+  history_rewrite: (
+    ts: values.FaunaTime,
+    event: {
+      event: 'history_rewrite'
+      txnTs: number
+      data: {
+        ref: values.Ref
+        ts: values.FaunaTime
+        action: string
+      }
+    }
+  ) => void
+  snapshot: (
+    ts: values.FaunaTime,
+    event: {
+      event: 'snapshot'
+      txnTs: number
+      // TODO Confirm this 'data' object is properly defined
+      data: {
+        ref: values.Ref
+        ts: values.FaunaTime
+      }
+    }
+  ) => void
 }
