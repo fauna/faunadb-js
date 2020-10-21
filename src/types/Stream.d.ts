@@ -63,11 +63,7 @@ type SubscriptionEventHandlers = {
     event: {
       event: 'snapshot'
       txnTs: number
-      // TODO Confirm this 'data' object is properly defined
-      data: {
-        ref: values.Ref
-        ts: values.FaunaTime
-      }
+      data: object
     }
   ) => void
 }
