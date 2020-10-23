@@ -16,6 +16,36 @@ function parseJSON(json) {
   return JSON.parse(json, json_parse)
 }
 
+function parseJSONStreaming(json) {
+  var results = []
+
+  try {
+    results.push(parseJSON(json))
+  } catch (error) {
+    var position
+
+    /** JSON parse error message is throw by the browser */
+    if (error.message.match(/JSON.parse/g)) {
+      var matchResult = error.message.match(/column ([0-9+]*)/)
+      position = matchResult[1] - 1
+      /** Unexpected token message is throw by NodeJS */
+    } else if (error.message.match(/Unexpected token/g)) {
+      var matchResult = error.message.match(/at position ([0-9+]*)$/)
+      position = matchResult[1]
+    } else {
+      throw error
+    }
+
+    var left = json.slice(0, position)
+    var right = json.slice(position)
+
+    results.push(parseJSONStreaming(left))
+    results.push(parseJSONStreaming(right))
+  }
+
+  return results.flat()
+}
+
 function json_parse(_, val) {
   if (typeof val !== 'object' || val === null) {
     return val
@@ -50,4 +80,5 @@ function json_parse(_, val) {
 module.exports = {
   toJSON: toJSON,
   parseJSON: parseJSON,
+  parseJSONStreaming: parseJSONStreaming,
 }
