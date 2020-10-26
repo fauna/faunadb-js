@@ -210,7 +210,7 @@ StreamClient.prototype.subscribe = function() {
             .read()
             .then(function process(msg) {
               if (!msg.done) {
-                onData(decoder.decode(msg.value))
+                onData(decoder.decode(msg.value, { stream: true }))
                 return pump()
               }
             })
