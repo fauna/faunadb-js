@@ -192,6 +192,58 @@ describe('Values', () => {
     expect(expected).toEqual(value.toString())
   }
 
+  test('allow collections with schema names', () => {
+    assertPrint(
+      new Ref('databases', values.Native.COLLECTIONS),
+      'Collection("databases")'
+    )
+    assertPrint(
+      new Ref('collections', values.Native.COLLECTIONS),
+      'Collection("collections")'
+    )
+    assertPrint(
+      new Ref('indexes', values.Native.COLLECTIONS),
+      'Collection("indexes")'
+    )
+    assertPrint(
+      new Ref('functions', values.Native.COLLECTIONS),
+      'Collection("functions")'
+    )
+    assertPrint(
+      new Ref('roles', values.Native.COLLECTIONS),
+      'Collection("roles")'
+    )
+    assertPrint(
+      new Ref('access_providers', values.Native.COLLECTIONS),
+      'Collection("access_providers")'
+    )
+
+    assertPrint(
+      new Ref('123', new Ref('databases', values.Native.COLLECTIONS)),
+      'Ref(Collection("databases"), "123")'
+    )
+    assertPrint(
+      new Ref('123', new Ref('collections', values.Native.COLLECTIONS)),
+      'Ref(Collection("collections"), "123")'
+    )
+    assertPrint(
+      new Ref('123', new Ref('indexes', values.Native.COLLECTIONS)),
+      'Ref(Collection("indexes"), "123")'
+    )
+    assertPrint(
+      new Ref('123', new Ref('functions', values.Native.COLLECTIONS)),
+      'Ref(Collection("functions"), "123")'
+    )
+    assertPrint(
+      new Ref('123', new Ref('roles', values.Native.COLLECTIONS)),
+      'Ref(Collection("roles"), "123")'
+    )
+    assertPrint(
+      new Ref('123', new Ref('access_providers', values.Native.COLLECTIONS)),
+      'Ref(Collection("access_providers"), "123")'
+    )
+  })
+
   test('pretty print', () => {
     assertPrint(new Ref('col', values.Native.COLLECTIONS), 'Collection("col")')
     assertPrint(new Ref('db', values.Native.DATABASES), 'Database("db")')
