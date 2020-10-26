@@ -24,12 +24,12 @@ function parseJSONStreaming(json) {
   } catch (error) {
     var position
 
-    /** JSON parse error message is throw by the browser */
-    if (error.message.match(/JSON.parse/g)) {
+    /** NodeJS and Chrome Syntax error message */
+    if (error.message.indexOf('JSON.parse') > -1) {
       var matchResult = error.message.match(/column ([0-9+]*)/)
       position = matchResult[1] - 1
-      /** Unexpected token message is throw by NodeJS */
-    } else if (error.message.match(/Unexpected token/g)) {
+      /** Firefox Syntax error message */
+    } else if (error.message.indexOf('Unexpected token') > -1) {
       var matchResult = error.message.match(/at position ([0-9+]*)$/)
       position = matchResult[1]
     } else {
