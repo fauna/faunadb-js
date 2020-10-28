@@ -16,6 +16,11 @@ function parseJSON(json) {
   return JSON.parse(json, json_parse)
 }
 
+/**
+ * This function allow us to parse responses as streaming
+ * currently, this is not allowed by Firefox only
+ * https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+ */
 function parseJSONStreaming(json) {
   var results = []
 
