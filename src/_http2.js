@@ -10,7 +10,6 @@ function request({
 } = {}) {
   var method = http2.constants.HTTP2_METHOD_POST
   var client = http2.connect(url)
-  var buffer = Buffer.from(body)
 
   client.on('error', onError)
 
@@ -30,7 +29,7 @@ function request({
   }
 
   request.setEncoding('utf8')
-  request.write(buffer)
+  request.write(Buffer.from(body))
 
   return request
 }
