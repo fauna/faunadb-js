@@ -56,6 +56,27 @@ HttpClient.prototype.syncLastTxnTime = function(time) {
 }
 
 /**
+ * Get HTTP request headers
+ *
+ * @param {?Object} options The request options.
+ */
+HttpClient.prototype.getHeaders = function(options) {
+  options = util.defaults(options, {})
+
+  var secret = options.secret || this._secret
+  var queryTimeout = options.queryTimeout || this._queryTimeout
+  var headers = this._headers
+
+  headers['Authorization'] = secret && secretHeader(secret)
+  headers['X-FaunaDB-API-Version'] = APIVersion
+  headers['X-Fauna-Driver'] = 'Javascript'
+  headers['X-Last-Seen-Txn'] = this._lastSeen
+  headers['X-Query-Timeout'] = queryTimeout
+
+  return util.removeNullAndUndefinedValues(headers)
+}
+
+/**
  * Executes an HTTP request.
  *
  * @param {string} method The HTTP request method.
@@ -71,28 +92,19 @@ HttpClient.prototype.syncLastTxnTime = function(time) {
  * @returns {Promise} The response promise.
  */
 HttpClient.prototype.execute = function(method, path, body, query, options) {
-  var url = parse(this._baseUrl)
-  url.set('pathname', path)
-  url.set('query', query)
   options = util.defaults(options, {})
 
   var signal = options.signal
   var fetch = options.fetch || this._fetch
-  var secret = options.secret || this._secret
-  var queryTimeout = options.queryTimeout || this._queryTimeout
-
-  var headers = this._headers
-  headers['Authorization'] = secret && secretHeader(secret)
-  headers['X-FaunaDB-API-Version'] = APIVersion
-  headers['X-Fauna-Driver'] = 'Javascript'
-  headers['X-Last-Seen-Txn'] = this._lastSeen
-  headers['X-Query-Timeout'] = queryTimeout
+  var url = parse(this._baseUrl)
+  url.set('pathname', path)
+  url.set('query', query)
 
   return fetch(url.href, {
     agent: this._keepAliveEnabledAgent,
     body: body,
     signal: signal,
-    headers: util.removeNullAndUndefinedValues(headers),
+    headers: this.getHeaders(options),
     method: method,
     timeout: this._timeout,
   })

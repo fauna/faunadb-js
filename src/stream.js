@@ -19,6 +19,7 @@ var http = require('./_http')
 var json = require('./_json')
 var q = require('./query')
 var util = require('./_util')
+var http2 = require('./_http2')
 
 var DefaultEvents = ['start', 'error', 'version', 'history_rewrite']
 var DocumentStreamEvents = DefaultEvents.concat(['snapshot'])
@@ -49,7 +50,6 @@ function StreamClient(client, expression, options, onEvent) {
   this._onEvent = onEvent
   this._query = q.wrap(expression)
   this._urlParams = options.fields ? { fields: options.fields.join(',') } : null
-  this._fetch = platformCompatibleFetchOverride()
   this._abort = new AbortController()
   this._state = 'idle'
 
@@ -194,7 +194,7 @@ StreamClient.prototype.subscribe = function() {
   function platformSpecificEventRead(response) {
     try {
       if (util.isNodeEnv()) {
-        response.body.on('data', onData).on('error', onError)
+        response.on('data', onData).on('error', onError)
       } else {
         // ATENTION: The following code is meant to run in browsers and is not
         // covered by current test automation. Manual testing on major browsers
@@ -221,17 +221,31 @@ StreamClient.prototype.subscribe = function() {
     }
   }
 
-  self._client._http
-    .execute('POST', 'stream', body, self._urlParams, {
-      fetch: self._fetch,
-      signal: self._abort.signal,
+  if (util.isNodeEnv()) {
+    const http = self._client._http
+    const request = http2.request({
+      url: http._baseUrl,
+      scheme: http._scheme,
+      timeout: http._timeout,
+      headers: http.getHeaders(),
+      body,
+      onError,
     })
-    .then(function(response) {
-      return handleResponse(response).then(function() {
-        platformSpecificEventRead(response, onData, onError)
+
+    platformSpecificEventRead(request)
+  } else {
+    self._client._http
+      .execute('POST', 'stream', body, self._urlParams, {
+        fetch: self._fetch,
+        signal: self._abort.signal,
       })
-    })
-    .catch(onError)
+      .then(function(response) {
+        return handleResponse(response).then(function() {
+          platformSpecificEventRead(response, onData, onError)
+        })
+      })
+      .catch(onError)
+  }
 }
 
 /** Closes the stream subscription by aborting its underlying http request. */
