@@ -156,15 +156,19 @@ StreamClient.prototype.subscribe = function() {
   }
 
   function onData(data) {
-    var event = json.parseJSON(data)
-    if (event.txnTS !== undefined) {
-      self._client.syncLastTxnTime(event.txnTS)
-    }
-    if (event.event === 'error') {
-      onError(new errors.StreamErrorEvent(event))
-    } else {
-      self._onEvent(event)
-    }
+    var events = json.parseJSONStreaming(data)
+
+    events.forEach(function(event) {
+      if (event.txnTS !== undefined) {
+        self._client.syncLastTxnTime(event.txnTS)
+      }
+
+      if (event.event === 'error') {
+        onError(new errors.StreamErrorEvent(event))
+      } else {
+        self._onEvent(event)
+      }
+    })
   }
 
   function onError(error) {
@@ -206,7 +210,7 @@ StreamClient.prototype.subscribe = function() {
             .read()
             .then(function process(msg) {
               if (!msg.done) {
-                onData(decoder.decode(msg.value))
+                onData(decoder.decode(msg.value, { stream: true }))
                 return pump()
               }
             })
