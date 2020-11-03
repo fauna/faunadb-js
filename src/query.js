@@ -1032,7 +1032,7 @@ function CreateRole(params) {
  *     - name: A valid schema name
  *     - issuer: A unique string
  *     - jwks_uri: A valid HTTPS URI
- *     - membership: An array of role/predicate pairs where the predicate returns a boolean.
+ *     - roles: An array of role/predicate pairs where the predicate returns a boolean.
  *                   The array can also contain Role references.
  * @return {Expr}
  */
