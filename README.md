@@ -82,7 +82,7 @@ To get up and running quickly, below is a full example for connecting from the b
     q.ToDate('2018-06-06')
   )
   .then(function (res) { console.log('Result:', res) })
-  a.catch(function (err) { console.log('Error:', err) })
+  .catch(function (err) { console.log('Error:', err) })
 </script>
 </html>
 ```
