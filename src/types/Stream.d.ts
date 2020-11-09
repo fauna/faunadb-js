@@ -12,58 +12,58 @@ export interface Subscription {
 }
 
 type SubscriptionEventHandlers = {
-  start: (
-    ts: values.FaunaTime,
-    event: {
-      event: 'start'
-      txnTs: number
-      data: values.FaunaTime
-    }
-  ) => void
+  start: (type: 'start', txn: values.FaunaTime, event: values.FaunaTime) => void
   error: (
-    ts: values.FaunaTime,
+    type: 'error',
+    txn: values.FaunaTime,
     event: {
-      event: 'error'
-      txnTs: number
-      data: {
-        code: string
-        description: string
-      }
+      code: string
+      description: string
     }
   ) => void
   version: (
-    ts: values.FaunaTime,
+    type: 'version',
+    txn: values.FaunaTime,
     event: {
-      event: 'version'
-      txnTs: number
-      data: {
+      action: 'create' | 'update' | 'delete'
+      document: {
         ref: values.Ref
         ts: values.FaunaTime
-        action: string
-        new: object
-        old?: object
-        diff?: object
+        data: object
+      }
+      diff: {
+        ref: values.Ref
+        ts: values.FaunaTime
+        data: object
+      }
+      prev: {
+        ref: values.Ref
+        ts: values.FaunaTime
+        data?: object
       }
     }
   ) => void
   history_rewrite: (
-    ts: values.FaunaTime,
+    type: 'history_rewrite',
+    txn: values.FaunaTime,
     event: {
-      event: 'history_rewrite'
-      txnTs: number
-      data: {
+      action: 'history_rewrite'
+      document: {
         ref: values.Ref
         ts: values.FaunaTime
-        action: string
       }
     }
   ) => void
   snapshot: (
-    ts: values.FaunaTime,
+    type: 'snapshot',
+    txn: values.FaunaTime,
     event: {
-      event: 'snapshot'
-      txnTs: number
-      data: object
+      action: 'snapshot'
+      document: {
+        ref: values.Ref
+        ts: values.FaunaTime
+        data: object
+      }
     }
   ) => void
 }
