@@ -12,10 +12,10 @@ export interface Subscription {
 }
 
 type SubscriptionEventHandlers = {
-  start: (type: 'start', txn: values.FaunaTime, event: values.FaunaTime) => void
+  start: (type: 'start', txn: number, event: number) => void
   error: (
     type: 'error',
-    txn: values.FaunaTime,
+    txn: number,
     event: {
       code: string
       description: string
@@ -23,47 +23,28 @@ type SubscriptionEventHandlers = {
   ) => void
   version: (
     type: 'version',
-    txn: values.FaunaTime,
+    txn: number,
     event: {
       action: 'create' | 'update' | 'delete'
-      document: {
-        ref: values.Ref
-        ts: values.FaunaTime
-        data: object
-      }
-      diff: {
-        ref: values.Ref
-        ts: values.FaunaTime
-        data: object
-      }
-      prev: {
-        ref: values.Ref
-        ts: values.FaunaTime
-        data?: object
-      }
+      document: object
+      diff: object
+      prev: object
     }
   ) => void
   history_rewrite: (
     type: 'history_rewrite',
-    txn: values.FaunaTime,
+    txn: number,
     event: {
       action: 'history_rewrite'
-      document: {
-        ref: values.Ref
-        ts: values.FaunaTime
-      }
+      document: object
     }
   ) => void
   snapshot: (
     type: 'snapshot',
-    txn: values.FaunaTime,
+    txn: number,
     event: {
       action: 'snapshot'
-      document: {
-        ref: values.Ref
-        ts: values.FaunaTime
-        data: object
-      }
+      document: object
     }
   ) => void
 }
