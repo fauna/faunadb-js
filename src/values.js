@@ -126,8 +126,12 @@ wrapToString(Ref, function() {
     access_providers: 'AccessProvider',
   }
 
+  var isNative = function(ref) {
+    return ref.collection === undefined
+  }
+
   var toString = function(ref) {
-    if (ref.collection === undefined) {
+    if (isNative(ref)) {
       var db = ref.database !== undefined ? ref.database.toString() : ''
 
       if (ref.id === 'access_providers') return 'AccessProviders(' + db + ')'
@@ -135,10 +139,13 @@ wrapToString(Ref, function() {
       return ref.id.charAt(0).toUpperCase() + ref.id.slice(1) + '(' + db + ')'
     }
 
-    var constructor = constructors[ref.collection.id]
-    if (constructor !== undefined) {
-      var db = ref.database !== undefined ? ', ' + ref.database.toString() : ''
-      return constructor + '("' + ref.id + '"' + db + ')'
+    if (isNative(ref.collection)) {
+      var constructor = constructors[ref.collection.id]
+      if (constructor !== undefined) {
+        var db =
+          ref.database !== undefined ? ', ' + ref.database.toString() : ''
+        return constructor + '("' + ref.id + '"' + db + ')'
+      }
     }
 
     return 'Ref(' + toString(ref.collection) + ', "' + ref.id + '")'
