@@ -297,11 +297,11 @@ EventDispatcher.prototype.dispatch = function(event) {
  *
  * @event module:stream~Subscription#start
  * @type {object}
- * @property {string} event='start'
+ * @property {string} type='start'
  *   The event type.
- * @property {number} txnTS
+ * @property {number} txn
  *   The event's transaction timestamp.
- * @property {module:values~FaunaTime} data
+ * @property {module:number} event
  *   The stream start timestamp.
  */
 
@@ -311,11 +311,11 @@ EventDispatcher.prototype.dispatch = function(event) {
  *
  * @event module:stream~Subscription#version
  * @type {object}
- * @property {string} event='version'
+ * @property {string} type='version'
  *   The event type.
- * @property {number} txnTS
+ * @property {number} txn
  *   The event's transaction timestamp.
- * @property {object} data
+ * @property {object} event
  *   The event's data.
  */
 
@@ -327,9 +327,9 @@ EventDispatcher.prototype.dispatch = function(event) {
  * @type {object}
  * @property {string} event='history_rewrite'
  *   The event type.
- * @property {number} txnTS
+ * @property {number} txn
  *   The event's transaction timestamp.
- * @property {object} data
+ * @property {object} event
  *   The event's data.
  */
 
@@ -340,9 +340,9 @@ EventDispatcher.prototype.dispatch = function(event) {
  *
  * @event module:stream~Subscription#snapshot
  * @type {object}
- * @property {string} event='version'
+ * @property {string} event='snapshot'
  *   The event type.
- * @property {number} txnTS
+ * @property {number} txn
  *   The event's transaction timestamp.
  * @property {object} data
  *   The event's data.
@@ -356,23 +356,21 @@ EventDispatcher.prototype.dispatch = function(event) {
  * @type {object}
  * @property {string} event='error'
  *   The event type.
- * @property {?number} txnTS
+ * @property {?number} txn
  *   The event's transaction timestamp.
- * @property {Error} data
+ * @property {Error} event
  *   The underlying error.
  */
 
 /**
  * @typedef {Object} Options
- * @property {string[]} [fields=['ref', 'ts', 'action', 'new']]
+ * @property {string[]} [fields=['action', 'document', 'diff', 'prev']]
  *   The fields event fields to opt-in during stream subscription. Possible
  *   options:
- *   * 'ref': The event's document reference;
- *   * 'ts': The event's valid time;
- *   * 'new': The event's new data;
- *   * 'old': The event's old data;
- *   * 'diff': The event's data difference;
- *   * 'action': The event's action.
+ *   * 'action': The action type
+ *   * 'document': The document's data
+ *   * 'diff': The difference between 'document' and 'prev'
+ *   * 'prev': The event's old data
  */
 
 /**
