@@ -340,7 +340,7 @@ EventDispatcher.prototype.dispatch = function(event) {
  *
  * @event module:stream~Subscription#snapshot
  * @type {object}
- * @property {string} event='snapshot'
+ * @property {string} type='snapshot'
  *   The event type.
  * @property {number} txn
  *   The event's transaction timestamp.
