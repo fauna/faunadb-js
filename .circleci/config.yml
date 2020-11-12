@@ -8,7 +8,7 @@ executors:
         type: integer
       version:
         type: enum
-        enum: ["stable", "nightly", "preview"]
+        enum: ['stable', 'nightly', 'preview']
     resource_class: large
     docker:
       - image: circleci/node:<<parameters.node_version>>
@@ -30,13 +30,13 @@ commands:
     parameters:
       node_version:
         type: integer
-    description: "Run JS tests"
+    description: 'Run JS tests'
     steps:
       - checkout
 
       - restore_cache:
           keys:
-          - v1-deps-<<parameters.node_version>>-{{ checksum "yarn.lock" }}
+            - v1-deps-<<parameters.node_version>>-{{ checksum "yarn.lock" }}
 
       - run:
           name: Install dependencies
@@ -44,13 +44,18 @@ commands:
 
       - save_cache:
           paths:
-          - node_modules
+            - node_modules
           key: v1-deps-<<parameters.node_version>>-{{ checksum "yarn.lock" }}
 
       - run:
           name: Wait FaunaDB init
           command: |
             while ! $(curl --output /dev/null --silent --fail --max-time 1 http://core:8443/ping); do sleep 1; done
+
+      - run:
+          name: Fauna init
+          command: |
+            curl -u secret: -XGET localhost:8444/admin/host/config
 
       - run:
           name: Run Tests
