@@ -164,7 +164,6 @@ describe('StreamAPI', () => {
       stream = client
         .stream(doc.ref)
         .on('error', error => {
-          console.log(error)
           expect(error.message).toEqual('client fetch used')
           done()
         })
@@ -225,11 +224,11 @@ describe('StreamAPI', () => {
   })
 
   describe('document', () => {
-    test.only('can take snapshot before processing events', done => {
+    test('can take snapshot before processing events', done => {
       stream = client.stream
         .document(doc.ref)
         .on('snapshot', snapshot => {
-          expect(snapshot.event).toEqual(doc.data)
+          expect(snapshot.data).toEqual(doc.data)
           done()
         })
         .start()
@@ -264,13 +263,13 @@ describe('StreamAPI', () => {
           client.query(q.Update(doc.ref, {}))
         })
         .on('version', (_, event) => {
-          expect(event.txnTS).toBeGreaterThanOrEqual(snapshot.ts)
+          expect(event.txn).toBeGreaterThanOrEqual(snapshot.ts)
           done()
         })
         .start()
     })
 
-    test.skip('report failure during snapshot', done => {
+    test('report failure during snapshot', done => {
       // Non-existing ref should fail to run q.Get(..).
       let ref = q.Ref(coll.ref, 1234)
       stream = client.stream

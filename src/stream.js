@@ -92,14 +92,14 @@ StreamClient.prototype.snapshot = function() {
     .query(q.Get(self._query))
     .then(function(doc) {
       self._onEvent({
-        event: 'snapshot',
-        data: doc,
+        type: 'snapshot',
+        event: doc,
       })
     })
     .catch(function(error) {
       self._onEvent({
-        event: 'error',
-        data: error,
+        type: 'error',
+        event: error,
       })
     })
 }
@@ -451,7 +451,7 @@ function StreamAPI(client) {
     var streamClient = new StreamClient(client, expression, options, onEvent)
 
     function onEvent(event) {
-      switch (event.event) {
+      switch (event.type) {
         case 'start':
           dispatcher.dispatch(event)
           streamClient.snapshot()
