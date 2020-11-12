@@ -159,8 +159,8 @@ StreamClient.prototype.subscribe = function() {
     var events = json.parseJSONStreaming(data)
 
     events.forEach(function(event) {
-      if (event.txnTS !== undefined) {
-        self._client.syncLastTxnTime(event.txnTS)
+      if (event.txn !== undefined) {
+        self._client.syncLastTxnTime(event.txn)
       }
 
       if (event.event === 'error') {
@@ -176,8 +176,8 @@ StreamClient.prototype.subscribe = function() {
     // close() on a Subscription. There's no need to relay this event back up.
     if (error.name !== 'AbortError') {
       self._onEvent({
-        event: 'error',
-        data: error,
+        type: 'error',
+        event: error,
       })
     }
   }
@@ -280,13 +280,13 @@ EventDispatcher.prototype.on = function(type, callback) {
  * @param {Object} event The event.
  */
 EventDispatcher.prototype.dispatch = function(event) {
-  var listeners = this._listeners[event.event]
+  var listeners = this._listeners[event.type]
   if (!listeners) {
     return
   }
 
   for (var i = 0; i < listeners.length; i++) {
-    listeners[i].call(null, event.data, event)
+    listeners[i].call(null, event.event, event)
   }
 }
 

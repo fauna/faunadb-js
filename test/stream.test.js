@@ -98,11 +98,10 @@ describe('StreamAPI', () => {
         .start()
     })
 
-    test.skip('can handle request failures', done => {
+    test('can handle request failures', done => {
       stream = client
         .stream('invalid stream')
         .on('error', err => {
-          console.log('err', err)
           expect(err).toBeInstanceOf(BadRequest)
           done()
         })
@@ -158,7 +157,7 @@ describe('StreamAPI', () => {
       stream = client.stream(doc.ref).start()
     })
 
-    test.skip('use client fetch override if available', done => {
+    test('use client fetch override if available', done => {
       let client = util.getClient({
         fetch: () => Promise.reject(new Error('client fetch used')),
       })
@@ -172,7 +171,7 @@ describe('StreamAPI', () => {
         .start()
     })
 
-    test.skip('override fetch polyfill if possible', done => {
+    test('override fetch polyfill if possible', done => {
       global.fetch = () => Promise.reject(new Error('global fetch called'))
       global.window = {} // deceive util.isNodeEnv()
       stream = client
@@ -184,7 +183,7 @@ describe('StreamAPI', () => {
         .start()
     })
 
-    test.skip('report failure if no fetch compatible function is found', done => {
+    test('report failure if no fetch compatible function is found', done => {
       global.window = {} // deceive util.isNodeEnv()
       stream = client
         .stream(doc.ref)
@@ -198,7 +197,7 @@ describe('StreamAPI', () => {
         .start()
     })
 
-    test.skip('report failure if failed to read a stream', done => {
+    test('report failure if failed to read a stream', done => {
       global.window = {} // deceive util.isNodeEnv()
       let client = util.getClient({
         // Mock the HTTP response and return a null body to force an error
@@ -226,11 +225,11 @@ describe('StreamAPI', () => {
   })
 
   describe('document', () => {
-    test.skip('can take snapshot before processing events', done => {
+    test.only('can take snapshot before processing events', done => {
       stream = client.stream
         .document(doc.ref)
         .on('snapshot', snapshot => {
-          expect(snapshot.data).toEqual(doc.data)
+          expect(snapshot.event).toEqual(doc.data)
           done()
         })
         .start()
