@@ -53,11 +53,6 @@ commands:
             while ! $(curl --output /dev/null --silent --fail --max-time 1 http://core:8443/ping); do sleep 1; done
 
       - run:
-          name: Fauna init
-          command: |
-            curl -u secret: -XGET localhost:8444/admin/host/config
-
-      - run:
           name: Run Tests
           command: yarn test
 
