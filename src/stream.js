@@ -325,7 +325,7 @@ EventDispatcher.prototype.dispatch = function(event) {
  *
  * @event module:stream~Subscription#history_rewrite
  * @type {object}
- * @property {string} event='history_rewrite'
+ * @property {string} type='history_rewrite'
  *   The event type.
  * @property {number} txn
  *   The event's transaction timestamp.
