@@ -354,7 +354,7 @@ EventDispatcher.prototype.dispatch = function(event) {
  *
  * @event module:stream~Subscription#error
  * @type {object}
- * @property {string} event='error'
+ * @property {string} type='error'
  *   The event type.
  * @property {?number} txn
  *   The event's transaction timestamp.
