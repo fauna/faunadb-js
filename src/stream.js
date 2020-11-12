@@ -344,7 +344,7 @@ EventDispatcher.prototype.dispatch = function(event) {
  *   The event type.
  * @property {number} txn
  *   The event's transaction timestamp.
- * @property {object} data
+ * @property {object} event
  *   The event's data.
  */
 
