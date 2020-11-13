@@ -370,7 +370,7 @@ EventDispatcher.prototype.dispatch = function(event) {
  *   * 'action': The action type
  *   * 'document': The document's data
  *   * 'diff': The difference between 'document' and 'prev'
- *   * 'prev': The event's old data
+ *   * 'prev': The event's previous data
  */
 
 /**
