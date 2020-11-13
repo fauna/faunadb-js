@@ -39,12 +39,5 @@ type SubscriptionEventHandlers = {
       document: object
     }
   ) => void
-  snapshot: (
-    type: 'snapshot',
-    txn: number,
-    event: {
-      action: 'snapshot'
-      document: object
-    }
-  ) => void
+  snapshot: (type: 'snapshot', txn: number, event: object) => void
 }
