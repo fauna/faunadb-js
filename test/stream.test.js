@@ -92,7 +92,7 @@ describe('StreamAPI', () => {
           client.query(q.Update(doc.ref, {}))
         })
         .on('version', (_, event) => {
-          expect(client.getLastTxnTime()).toEqual(event.event.document.ts)
+          expect(client.getLastTxnTime()).toEqual(event.txn)
           done()
         })
         .start()
