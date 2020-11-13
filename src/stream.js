@@ -92,14 +92,14 @@ StreamClient.prototype.snapshot = function() {
     .query(q.Get(self._query))
     .then(function(doc) {
       self._onEvent({
-        event: 'snapshot',
-        data: doc,
+        type: 'snapshot',
+        event: doc,
       })
     })
     .catch(function(error) {
       self._onEvent({
-        event: 'error',
-        data: error,
+        type: 'error',
+        event: error,
       })
     })
 }
@@ -159,8 +159,8 @@ StreamClient.prototype.subscribe = function() {
     var events = json.parseJSONStreaming(data)
 
     events.forEach(function(event) {
-      if (event.txnTS !== undefined) {
-        self._client.syncLastTxnTime(event.txnTS)
+      if (event.txn !== undefined) {
+        self._client.syncLastTxnTime(event.txn)
       }
 
       if (event.event === 'error') {
@@ -176,8 +176,8 @@ StreamClient.prototype.subscribe = function() {
     // close() on a Subscription. There's no need to relay this event back up.
     if (error.name !== 'AbortError') {
       self._onEvent({
-        event: 'error',
-        data: error,
+        type: 'error',
+        event: error,
       })
     }
   }
@@ -280,13 +280,13 @@ EventDispatcher.prototype.on = function(type, callback) {
  * @param {Object} event The event.
  */
 EventDispatcher.prototype.dispatch = function(event) {
-  var listeners = this._listeners[event.event]
+  var listeners = this._listeners[event.type]
   if (!listeners) {
     return
   }
 
   for (var i = 0; i < listeners.length; i++) {
-    listeners[i].call(null, event.data, event)
+    listeners[i].call(null, event.event, event)
   }
 }
 
@@ -297,11 +297,11 @@ EventDispatcher.prototype.dispatch = function(event) {
  *
  * @event module:stream~Subscription#start
  * @type {object}
- * @property {string} event='start'
+ * @property {string} type='start'
  *   The event type.
- * @property {number} txnTS
+ * @property {number} txn
  *   The event's transaction timestamp.
- * @property {module:values~FaunaTime} data
+ * @property {module:number} event
  *   The stream start timestamp.
  */
 
@@ -311,11 +311,11 @@ EventDispatcher.prototype.dispatch = function(event) {
  *
  * @event module:stream~Subscription#version
  * @type {object}
- * @property {string} event='version'
+ * @property {string} type='version'
  *   The event type.
- * @property {number} txnTS
+ * @property {number} txn
  *   The event's transaction timestamp.
- * @property {object} data
+ * @property {object} event
  *   The event's data.
  */
 
@@ -325,11 +325,11 @@ EventDispatcher.prototype.dispatch = function(event) {
  *
  * @event module:stream~Subscription#history_rewrite
  * @type {object}
- * @property {string} event='history_rewrite'
+ * @property {string} type='history_rewrite'
  *   The event type.
- * @property {number} txnTS
+ * @property {number} txn
  *   The event's transaction timestamp.
- * @property {object} data
+ * @property {object} event
  *   The event's data.
  */
 
@@ -340,11 +340,11 @@ EventDispatcher.prototype.dispatch = function(event) {
  *
  * @event module:stream~Subscription#snapshot
  * @type {object}
- * @property {string} event='version'
+ * @property {string} type='snapshot'
  *   The event type.
- * @property {number} txnTS
+ * @property {number} txn
  *   The event's transaction timestamp.
- * @property {object} data
+ * @property {object} event
  *   The event's data.
  */
 
@@ -354,25 +354,23 @@ EventDispatcher.prototype.dispatch = function(event) {
  *
  * @event module:stream~Subscription#error
  * @type {object}
- * @property {string} event='error'
+ * @property {string} type='error'
  *   The event type.
- * @property {?number} txnTS
+ * @property {?number} txn
  *   The event's transaction timestamp.
- * @property {Error} data
+ * @property {Error} event
  *   The underlying error.
  */
 
 /**
  * @typedef {Object} Options
- * @property {string[]} [fields=['ref', 'ts', 'action', 'new']]
+ * @property {string[]} [fields=['action', 'document', 'diff', 'prev']]
  *   The fields event fields to opt-in during stream subscription. Possible
  *   options:
- *   * 'ref': The event's document reference;
- *   * 'ts': The event's valid time;
- *   * 'new': The event's new data;
- *   * 'old': The event's old data;
- *   * 'diff': The event's data difference;
- *   * 'action': The event's action.
+ *   * 'action': The action type
+ *   * 'document': The document's data
+ *   * 'diff': The difference between 'document' and 'prev'
+ *   * 'prev': The event's previous data
  */
 
 /**
@@ -453,7 +451,7 @@ function StreamAPI(client) {
     var streamClient = new StreamClient(client, expression, options, onEvent)
 
     function onEvent(event) {
-      switch (event.event) {
+      switch (event.type) {
         case 'start':
           dispatcher.dispatch(event)
           streamClient.snapshot()
@@ -477,7 +475,7 @@ function StreamAPI(client) {
       dispatcher.dispatch(snapshotEvent)
       for (var i = 0; i < buffer.length; i++) {
         var bufferedEvent = buffer[i]
-        if (bufferedEvent.txnTS > snapshotEvent.data.ts) {
+        if (bufferedEvent.txn > snapshotEvent.event.ts) {
           dispatcher.dispatch(bufferedEvent)
         }
       }

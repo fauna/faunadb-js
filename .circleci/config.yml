@@ -8,7 +8,7 @@ executors:
         type: integer
       version:
         type: enum
-        enum: ["stable", "nightly", "preview"]
+        enum: ['stable', 'nightly']
     resource_class: large
     docker:
       - image: circleci/node:<<parameters.node_version>>
@@ -30,13 +30,13 @@ commands:
     parameters:
       node_version:
         type: integer
-    description: "Run JS tests"
+    description: 'Run JS tests'
     steps:
       - checkout
 
       - restore_cache:
           keys:
-          - v1-deps-<<parameters.node_version>>-{{ checksum "yarn.lock" }}
+            - v1-deps-<<parameters.node_version>>-{{ checksum "yarn.lock" }}
 
       - run:
           name: Install dependencies
@@ -44,7 +44,7 @@ commands:
 
       - save_cache:
           paths:
-          - node_modules
+            - node_modules
           key: v1-deps-<<parameters.node_version>>-{{ checksum "yarn.lock" }}
 
       - run:
@@ -75,15 +75,6 @@ jobs:
       - build_and_test:
           node_version: 10
 
-  core-preview-10:
-    executor:
-      name: core
-      node_version: 10
-      version: preview
-    steps:
-      - build_and_test:
-          node_version: 10
-
   core-stable-11:
     executor:
       name: core
@@ -102,15 +93,6 @@ jobs:
       - build_and_test:
           node_version: 11
 
-  core-preview-11:
-    executor:
-      name: core
-      node_version: 11
-      version: preview
-    steps:
-      - build_and_test:
-          node_version: 11
-
 workflows:
   version: 2
   build_and_test:
@@ -119,11 +101,7 @@ workflows:
           context: faunadb-drivers
       - core-nightly-10:
           context: faunadb-drivers
-      - core-preview-10:
-          context: faunadb-drivers
       - core-stable-11:
           context: faunadb-drivers
       - core-nightly-11:
-          context: faunadb-drivers
-      - core-preview-11:
           context: faunadb-drivers

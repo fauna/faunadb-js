@@ -59,10 +59,10 @@ describe('StreamAPI', () => {
     test('can listen to events', done => {
       stream = client
         .stream(doc.ref)
-        .on('start', (ts, event) => {
-          expect(event.event).toEqual('start')
-          expect(event.txnTS).toBeDefined()
-          expect(event.data).toEqual(ts)
+        .on('start', (_, event) => {
+          expect(event.type).toEqual('start')
+          expect(typeof event.txn).toBe('number')
+          expect(typeof event.event).toBe('number')
           done()
         })
         .start()
@@ -74,12 +74,12 @@ describe('StreamAPI', () => {
 
     test('can select fields', done => {
       stream = client
-        .stream(doc.ref, { fields: ['new', 'old'] })
+        .stream(doc.ref, { fields: ['diff', 'prev'] })
         .on('start', () => {
           client.query(q.Update(doc.ref, {}))
         })
         .on('version', data => {
-          expect(Object.keys(data)).toEqual(['new', 'old'])
+          expect(Object.keys(data)).toEqual(['diff', 'prev'])
           done()
         })
         .start()
@@ -92,7 +92,7 @@ describe('StreamAPI', () => {
           client.query(q.Update(doc.ref, {}))
         })
         .on('version', (_, event) => {
-          expect(client.getLastTxnTime()).toEqual(event.txnTS)
+          expect(client.getLastTxnTime()).toEqual(event.txn)
           done()
         })
         .start()
@@ -136,9 +136,8 @@ describe('StreamAPI', () => {
           await client.query(q.Update(doc.ref, {}))
         })
         .on('error', error => {
-          let data = error.event.data
-          expect(data.code).toEqual('permission denied')
-          expect(data.description).toEqual(
+          expect(error.code).toEqual('permission denied')
+          expect(error.description).toEqual(
             'Authorization lost during stream evaluation.'
           )
           done()
@@ -264,7 +263,7 @@ describe('StreamAPI', () => {
           client.query(q.Update(doc.ref, {}))
         })
         .on('version', (_, event) => {
-          expect(event.txnTS).toBeGreaterThanOrEqual(snapshot.ts)
+          expect(event.txn).toBeGreaterThanOrEqual(snapshot.ts)
           done()
         })
         .start()
