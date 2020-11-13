@@ -234,7 +234,7 @@ describe('StreamAPI', () => {
         .start()
     })
 
-    test.skip('filter buffered events prior to snapshot', done => {
+    test('filter buffered events prior to snapshot', done => {
       let fetch = require('cross-fetch')
       let buffering = false
 

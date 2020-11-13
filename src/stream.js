@@ -475,7 +475,7 @@ function StreamAPI(client) {
       dispatcher.dispatch(snapshotEvent)
       for (var i = 0; i < buffer.length; i++) {
         var bufferedEvent = buffer[i]
-        if (bufferedEvent.txnTS > snapshotEvent.data.ts) {
+        if (bufferedEvent.txn > snapshotEvent.event.ts) {
           dispatcher.dispatch(bufferedEvent)
         }
       }
