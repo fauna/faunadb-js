@@ -2,9 +2,9 @@ import Expr from './Expr'
 import { ExprArg } from './query'
 import PageHelper from './PageHelper'
 import RequestResult from './RequestResult'
-import { Subscription } from './Stream'
+import { Subscription, SubscriptionEventHandlers } from './Stream'
 
-type StreamEventFields = ['action', 'document', 'diff', 'prev']
+type StreamEventFields = 'action' | 'document' | 'diff' | 'prev'
 
 export interface ClientConfig {
   secret: string
@@ -28,5 +28,13 @@ export default class Client {
   query<T = object>(expr: ExprArg, options?: QueryOptions): Promise<T>
   paginate(expr: Expr, params?: object, options?: QueryOptions): PageHelper
   ping(scope?: string, timeout?: number): Promise<string>
-  stream(expr: Expr, options?: { fields?: StreamEventFields[] }): Subscription
+  stream: {
+    (expr: Expr, options?: { fields?: StreamEventFields[] }): Subscription<
+      Omit<SubscriptionEventHandlers, 'snapshot'>
+    >
+    document: (
+      expr: Expr,
+      options?: { fields?: StreamEventFields[] }
+    ) => Subscription<SubscriptionEventHandlers>
+  }
 }
