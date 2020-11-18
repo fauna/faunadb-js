@@ -4,6 +4,7 @@ var APIVersion = '4'
 
 var parse = require('url-parse')
 var util = require('./_util')
+var btoa = require('btoa-lite')
 
 /**
  * The driver's internal HTTP client.
@@ -100,7 +101,7 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
 
 /** @ignore */
 function secretHeader(secret) {
-  return 'Bearer ' + secret
+  return 'Basic ' + btoa(secret + ':')
 }
 
 /**
