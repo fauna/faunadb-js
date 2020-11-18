@@ -33,21 +33,28 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module-clientLogger.html">clientLogger</a></li><li><a href="module-errors.html">errors</a></li><li><a href="module-query.html">query</a></li><li><a href="module-values.html">values</a></li>
+					<li><a href="module-clientLogger.html">clientLogger</a></li><li><a href="module-errors.html">errors</a></li><li><a href="module-query.html">query</a></li><li><a href="module-stream.html">stream</a></li><li><a href="module-values.html">values</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Client.html">Client</a></li><li><a href="Expr.html">Expr</a></li><li><a href="module-errors-BadRequest.html">errors~BadRequest</a></li><li><a href="module-errors-FaunaError.html">errors~FaunaError</a></li><li><a href="module-errors-FaunaHTTPError.html">errors~FaunaHTTPError</a></li><li><a href="module-errors-InternalError.html">errors~InternalError</a></li><li><a href="module-errors-InvalidArity.html">errors~InvalidArity</a></li><li><a href="module-errors-InvalidValue.html">errors~InvalidValue</a></li><li><a href="module-errors-MethodNotAllowed.html">errors~MethodNotAllowed</a></li><li><a href="module-errors-NotFound.html">errors~NotFound</a></li><li><a href="module-errors-PermissionDenied.html">errors~PermissionDenied</a></li><li><a href="module-errors-Unauthorized.html">errors~Unauthorized</a></li><li><a href="module-errors-UnavailableError.html">errors~UnavailableError</a></li><li><a href="module-values-Bytes.html">values~Bytes</a></li><li><a href="module-values-FaunaDate.html">values~FaunaDate</a></li><li><a href="module-values-FaunaTime.html">values~FaunaTime</a></li><li><a href="module-values-Query.html">values~Query</a></li><li><a href="module-values-Ref.html">values~Ref</a></li><li><a href="module-values-SetRef.html">values~SetRef</a></li><li><a href="module-values-Value.html">values~Value</a></li><li><a href="PageHelper.html">PageHelper</a></li><li><a href="RequestResult.html">RequestResult</a></li>
+					<li><a href="Client.html">Client</a></li><li><a href="Expr.html">Expr</a></li><li><a href="module-errors-BadRequest.html">errors~BadRequest</a></li><li><a href="module-errors-FaunaError.html">errors~FaunaError</a></li><li><a href="module-errors-FaunaHTTPError.html">errors~FaunaHTTPError</a></li><li><a href="module-errors-InternalError.html">errors~InternalError</a></li><li><a href="module-errors-InvalidArity.html">errors~InvalidArity</a></li><li><a href="module-errors-InvalidValue.html">errors~InvalidValue</a></li><li><a href="module-errors-MethodNotAllowed.html">errors~MethodNotAllowed</a></li><li><a href="module-errors-NotFound.html">errors~NotFound</a></li><li><a href="module-errors-PermissionDenied.html">errors~PermissionDenied</a></li><li><a href="module-errors-StreamError.html">errors~StreamError</a></li><li><a href="module-errors-StreamErrorEvent.html">errors~StreamErrorEvent</a></li><li><a href="module-errors-StreamsNotSupported.html">errors~StreamsNotSupported</a></li><li><a href="module-errors-Unauthorized.html">errors~Unauthorized</a></li><li><a href="module-errors-UnavailableError.html">errors~UnavailableError</a></li><li><a href="module-stream-Subscription.html">stream~Subscription</a></li><li><a href="module-values-Bytes.html">values~Bytes</a></li><li><a href="module-values-FaunaDate.html">values~FaunaDate</a></li><li><a href="module-values-FaunaTime.html">values~FaunaTime</a></li><li><a href="module-values-Query.html">values~Query</a></li><li><a href="module-values-Ref.html">values~Ref</a></li><li><a href="module-values-SetRef.html">values~SetRef</a></li><li><a href="module-values-Value.html">values~Value</a></li><li><a href="PageHelper.html">PageHelper</a></li><li><a href="RequestResult.html">RequestResult</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-stream-Subscription.html#event:error">stream~Subscription#event:error</a></li><li><a href="module-stream-Subscription.html#event:history_rewrite">stream~Subscription#event:history_rewrite</a></li><li><a href="module-stream-Subscription.html#event:snapshot">stream~Subscription#event:snapshot</a></li><li><a href="module-stream-Subscription.html#event:start">stream~Subscription#event:start</a></li><li><a href="module-stream-Subscription.html#event:version">stream~Subscription#event:version</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#convertToCamelCase">convertToCamelCase</a></li><li><a href="global.html#isExpr">isExpr</a></li><li><a href="global.html#printArray">printArray</a></li><li><a href="global.html#printObject">printObject</a></li>
+					<li><a href="global.html#parseJSONStreaming">parseJSONStreaming</a></li>
 				</ul>
 			</li>
 			
@@ -107,7 +114,8 @@
     
     <div class="description">
         <p>A client for interacting with FaunaDB.</p>
-<p>Users will mainly call the <a href="Client.html#query">Client#query</a> method to execute queries.</p>
+<p>Users will mainly call the <a href="Client.html#query">Client#query</a> method to execute queries, or
+the <a href="Client.html#stream">Client#stream</a> method to subscribe to streams.</p>
 <p>See the <a href="https://fauna.com/documentation">FaunaDB Documentation</a> for detailed examples.</p>
 <p>All methods return promises containing a JSON object that represents the FaunaDB response.
 Literal types in the response object will remain as strings, Arrays, and objects.
@@ -1183,7 +1191,7 @@ and the query functions in this documentation.</p>
             <td class="type">
             
                 
-<span class="param-type">ExprArg</span>
+<span class="param-type"><a href="module-query.html#~ExprArg">module:query~ExprArg</a></span>
 
 
 
@@ -1202,7 +1210,7 @@ and the query functions in this documentation.</p>
 
             
 
-            <td class="description last"><p>The query to execute. Created from query functions such as add.</p></td>
+            <td class="description last"><p>The query to execute. Created from <a href="module-query.html">module:query</a> functions.</p></td>
         </tr>
 
     
@@ -1374,6 +1382,329 @@ and the query functions in this documentation.</p>
     <dd>
         
 <span class="param-type">external:Promise.&lt;Object></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="stream"><span class="type-signature"></span>stream(expression, options)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p><strong>WARNING: This is an experimental feature. There are no guarantees to
+its API stability and/or service availability. DO NOT USE IT IN
+PRODUCTION</strong>.</p>
+<p>Creates a subscription to the result of the given read-only expression. When
+executed, the expression must only perform reads and produce a single
+streamable type, such as a reference or a version. Expressions that attempt
+to perform writes or produce non-streamable types will result in an error.
+Otherwise, any expression can be used to initiate a stream, including
+user-defined function calls.</p>
+<p>The subscription returned by this method does not issue any requests until
+the <a href="module-stream-Subscription.html#start">module:stream~Subscription#start</a> method is called. Make sure to
+subscribe to the events of interest, otherwise the received events are simply
+ignored. For example:</p>
+<pre class="prettyprint source"><code>client.stream(document.ref)
+  .on('version', version => console.log(version))
+  .on('error', error => console.log(error))
+  .start()
+</code></pre>
+<p>Please note that streams are not temporal, meaning that there is no option to
+configure its starting timestamp. The stream will, however, state its initial
+subscription time via the <a href="module-stream-Subscription.html#event:start">module:stream~Subscription#event:start</a>
+event. A common programming mistake is to read a document, then initiate a
+subscription. This approach can miss events that occurred between the initial
+read and the subscription request. To prevent event loss, make sure the
+subscription has started before performing a data load. The following example
+buffer events until the document's data is loaded:</p>
+<pre class="prettyprint source"><code>var buffer = []
+var loaded = false
+
+client.stream(document.ref)
+  .on('start', ts => {
+    loadData(ts).then(data => {
+      processData(data)
+      processBuffer(buffer)
+      loaded = true
+    })
+  })
+  .on('version', version => {
+    if (loaded) {
+      processVersion(version)
+    } else {
+      buffer.push(version)
+    }
+  })
+  .start()
+</code></pre>
+<p>The reduce boilerplate, the <code>document</code> helper implements a similar
+functionality, except it discards events prior to the document's snapshot
+time. The expression given to this helper must be a reference as it
+internally runs a <a href="module-query.html#~Get">module:query~Get</a> call with it. The example above
+can be rewritten as:</p>
+<pre class="prettyprint source"><code>client.stream.document(document.ref)
+  .on('snapshot', data => processData(data))
+  .on('version', version => processVersion(version))
+  .start()
+</code></pre>
+<p>Be aware that streams are not available in all browsers. If the client can't
+initiate a stream, an error event with the <a href="module-errors-StreamsNotSupported.html">module:errors~StreamsNotSupported</a> error will be emmited.</p>
+<p>To stop a subscription, call the <a href="module-stream-Subscription.html#close">module:stream~Subscription#close</a>
+method:</p>
+<pre class="prettyprint source"><code>var subscription = client.stream(document.ref)
+  .on('version', version => processVersion(version))
+  .start()
+
+// ...
+subscription.close()
+</code></pre>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>expression</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-query.html#~ExprArg">module:query~ExprArg</a></span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The expression to subscribe to. Created from <a href="module-query.html">module:query</a>
+functions.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-stream.html#~Options">module:stream~Options</a></span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                    &lt;nullable><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Object that configures the stream.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    <dl>
+
+<table class="props table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>document</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A document stream helper. See <a href="Client.html#stream">Client#stream</a> for more information.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+</dl>
+
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="module-stream-Subscription.html">module:stream~Subscription</a></li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>A new subscription instance.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="module-stream-Subscription.html">module:stream~Subscription</a></span>
 
 
 
@@ -1700,7 +2031,7 @@ the future will cause transactions to stall.</p>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on 2020-08-18T17:36:21+00:00
+		on 2020-11-18T19:32:50+00:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

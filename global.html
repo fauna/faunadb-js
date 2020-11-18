@@ -33,21 +33,28 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module-clientLogger.html">clientLogger</a></li><li><a href="module-errors.html">errors</a></li><li><a href="module-query.html">query</a></li><li><a href="module-values.html">values</a></li>
+					<li><a href="module-clientLogger.html">clientLogger</a></li><li><a href="module-errors.html">errors</a></li><li><a href="module-query.html">query</a></li><li><a href="module-stream.html">stream</a></li><li><a href="module-values.html">values</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Client.html">Client</a></li><li><a href="Expr.html">Expr</a></li><li><a href="module-errors-BadRequest.html">errors~BadRequest</a></li><li><a href="module-errors-FaunaError.html">errors~FaunaError</a></li><li><a href="module-errors-FaunaHTTPError.html">errors~FaunaHTTPError</a></li><li><a href="module-errors-InternalError.html">errors~InternalError</a></li><li><a href="module-errors-InvalidArity.html">errors~InvalidArity</a></li><li><a href="module-errors-InvalidValue.html">errors~InvalidValue</a></li><li><a href="module-errors-MethodNotAllowed.html">errors~MethodNotAllowed</a></li><li><a href="module-errors-NotFound.html">errors~NotFound</a></li><li><a href="module-errors-PermissionDenied.html">errors~PermissionDenied</a></li><li><a href="module-errors-Unauthorized.html">errors~Unauthorized</a></li><li><a href="module-errors-UnavailableError.html">errors~UnavailableError</a></li><li><a href="module-values-Bytes.html">values~Bytes</a></li><li><a href="module-values-FaunaDate.html">values~FaunaDate</a></li><li><a href="module-values-FaunaTime.html">values~FaunaTime</a></li><li><a href="module-values-Query.html">values~Query</a></li><li><a href="module-values-Ref.html">values~Ref</a></li><li><a href="module-values-SetRef.html">values~SetRef</a></li><li><a href="module-values-Value.html">values~Value</a></li><li><a href="PageHelper.html">PageHelper</a></li><li><a href="RequestResult.html">RequestResult</a></li>
+					<li><a href="Client.html">Client</a></li><li><a href="Expr.html">Expr</a></li><li><a href="module-errors-BadRequest.html">errors~BadRequest</a></li><li><a href="module-errors-FaunaError.html">errors~FaunaError</a></li><li><a href="module-errors-FaunaHTTPError.html">errors~FaunaHTTPError</a></li><li><a href="module-errors-InternalError.html">errors~InternalError</a></li><li><a href="module-errors-InvalidArity.html">errors~InvalidArity</a></li><li><a href="module-errors-InvalidValue.html">errors~InvalidValue</a></li><li><a href="module-errors-MethodNotAllowed.html">errors~MethodNotAllowed</a></li><li><a href="module-errors-NotFound.html">errors~NotFound</a></li><li><a href="module-errors-PermissionDenied.html">errors~PermissionDenied</a></li><li><a href="module-errors-StreamError.html">errors~StreamError</a></li><li><a href="module-errors-StreamErrorEvent.html">errors~StreamErrorEvent</a></li><li><a href="module-errors-StreamsNotSupported.html">errors~StreamsNotSupported</a></li><li><a href="module-errors-Unauthorized.html">errors~Unauthorized</a></li><li><a href="module-errors-UnavailableError.html">errors~UnavailableError</a></li><li><a href="module-stream-Subscription.html">stream~Subscription</a></li><li><a href="module-values-Bytes.html">values~Bytes</a></li><li><a href="module-values-FaunaDate.html">values~FaunaDate</a></li><li><a href="module-values-FaunaTime.html">values~FaunaTime</a></li><li><a href="module-values-Query.html">values~Query</a></li><li><a href="module-values-Ref.html">values~Ref</a></li><li><a href="module-values-SetRef.html">values~SetRef</a></li><li><a href="module-values-Value.html">values~Value</a></li><li><a href="PageHelper.html">PageHelper</a></li><li><a href="RequestResult.html">RequestResult</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-stream-Subscription.html#event:error">stream~Subscription#event:error</a></li><li><a href="module-stream-Subscription.html#event:history_rewrite">stream~Subscription#event:history_rewrite</a></li><li><a href="module-stream-Subscription.html#event:snapshot">stream~Subscription#event:snapshot</a></li><li><a href="module-stream-Subscription.html#event:start">stream~Subscription#event:start</a></li><li><a href="module-stream-Subscription.html#event:version">stream~Subscription#event:version</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#convertToCamelCase">convertToCamelCase</a></li><li><a href="global.html#isExpr">isExpr</a></li><li><a href="global.html#printArray">printArray</a></li><li><a href="global.html#printObject">printObject</a></li>
+					<li><a href="global.html#parseJSONStreaming">parseJSONStreaming</a></li>
 				</ul>
 			</li>
 			
@@ -160,69 +167,25 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="convertToCamelCase"><span class="type-signature"></span>convertToCamelCase(fn)</h4>
+    <h4 class="name" id="parseJSONStreaming"><span class="type-signature"></span>parseJSONStreaming()</h4>
     
     
 </dt>
 <dd>
 
     
-
+    <div class="description">
+        <p>This function allow us to parse responses as streaming
+currently, this is not allowed by Firefox only
+https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API</p>
+    </div>
     
 
     
 
     
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>fn</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>A snake-case FQL function name</p></td>
-        </tr>
 
     
-    </tbody>
-</table>
-
     
 
     
@@ -276,498 +239,6 @@
     
 
     
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>The correpsonding camel-cased FQL function name</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">String</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="isExpr"><span class="type-signature"></span>isExpr(expression)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>expression</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Expr.html">Expr</a></span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>A FQL expression</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>Returns true for valid expressions</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Boolean</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="printArray"><span class="type-signature"></span>printArray(arr, toStr)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>arr</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>An array to print</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>toStr</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Function used for stringification</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>String representation of array</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">String</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="printObject"><span class="type-signature"></span>printObject(obj)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>obj</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>An object to print</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>String representation of object</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">String</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
 
     
 </dd>
@@ -822,7 +293,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on 2020-08-18T17:36:21+00:00
+		on 2020-11-18T19:32:50+00:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

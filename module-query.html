@@ -33,21 +33,28 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module-clientLogger.html">clientLogger</a></li><li><a href="module-errors.html">errors</a></li><li><a href="module-query.html">query</a></li><li><a href="module-values.html">values</a></li>
+					<li><a href="module-clientLogger.html">clientLogger</a></li><li><a href="module-errors.html">errors</a></li><li><a href="module-query.html">query</a></li><li><a href="module-stream.html">stream</a></li><li><a href="module-values.html">values</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Client.html">Client</a></li><li><a href="Expr.html">Expr</a></li><li><a href="module-errors-BadRequest.html">errors~BadRequest</a></li><li><a href="module-errors-FaunaError.html">errors~FaunaError</a></li><li><a href="module-errors-FaunaHTTPError.html">errors~FaunaHTTPError</a></li><li><a href="module-errors-InternalError.html">errors~InternalError</a></li><li><a href="module-errors-InvalidArity.html">errors~InvalidArity</a></li><li><a href="module-errors-InvalidValue.html">errors~InvalidValue</a></li><li><a href="module-errors-MethodNotAllowed.html">errors~MethodNotAllowed</a></li><li><a href="module-errors-NotFound.html">errors~NotFound</a></li><li><a href="module-errors-PermissionDenied.html">errors~PermissionDenied</a></li><li><a href="module-errors-Unauthorized.html">errors~Unauthorized</a></li><li><a href="module-errors-UnavailableError.html">errors~UnavailableError</a></li><li><a href="module-values-Bytes.html">values~Bytes</a></li><li><a href="module-values-FaunaDate.html">values~FaunaDate</a></li><li><a href="module-values-FaunaTime.html">values~FaunaTime</a></li><li><a href="module-values-Query.html">values~Query</a></li><li><a href="module-values-Ref.html">values~Ref</a></li><li><a href="module-values-SetRef.html">values~SetRef</a></li><li><a href="module-values-Value.html">values~Value</a></li><li><a href="PageHelper.html">PageHelper</a></li><li><a href="RequestResult.html">RequestResult</a></li>
+					<li><a href="Client.html">Client</a></li><li><a href="Expr.html">Expr</a></li><li><a href="module-errors-BadRequest.html">errors~BadRequest</a></li><li><a href="module-errors-FaunaError.html">errors~FaunaError</a></li><li><a href="module-errors-FaunaHTTPError.html">errors~FaunaHTTPError</a></li><li><a href="module-errors-InternalError.html">errors~InternalError</a></li><li><a href="module-errors-InvalidArity.html">errors~InvalidArity</a></li><li><a href="module-errors-InvalidValue.html">errors~InvalidValue</a></li><li><a href="module-errors-MethodNotAllowed.html">errors~MethodNotAllowed</a></li><li><a href="module-errors-NotFound.html">errors~NotFound</a></li><li><a href="module-errors-PermissionDenied.html">errors~PermissionDenied</a></li><li><a href="module-errors-StreamError.html">errors~StreamError</a></li><li><a href="module-errors-StreamErrorEvent.html">errors~StreamErrorEvent</a></li><li><a href="module-errors-StreamsNotSupported.html">errors~StreamsNotSupported</a></li><li><a href="module-errors-Unauthorized.html">errors~Unauthorized</a></li><li><a href="module-errors-UnavailableError.html">errors~UnavailableError</a></li><li><a href="module-stream-Subscription.html">stream~Subscription</a></li><li><a href="module-values-Bytes.html">values~Bytes</a></li><li><a href="module-values-FaunaDate.html">values~FaunaDate</a></li><li><a href="module-values-FaunaTime.html">values~FaunaTime</a></li><li><a href="module-values-Query.html">values~Query</a></li><li><a href="module-values-Ref.html">values~Ref</a></li><li><a href="module-values-SetRef.html">values~SetRef</a></li><li><a href="module-values-Value.html">values~Value</a></li><li><a href="PageHelper.html">PageHelper</a></li><li><a href="RequestResult.html">RequestResult</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b class="caret"></b></a>
+				<ul class="dropdown-menu ">
+					<li><a href="module-stream-Subscription.html#event:error">stream~Subscription#event:error</a></li><li><a href="module-stream-Subscription.html#event:history_rewrite">stream~Subscription#event:history_rewrite</a></li><li><a href="module-stream-Subscription.html#event:snapshot">stream~Subscription#event:snapshot</a></li><li><a href="module-stream-Subscription.html#event:start">stream~Subscription#event:start</a></li><li><a href="module-stream-Subscription.html#event:version">stream~Subscription#event:version</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#convertToCamelCase">convertToCamelCase</a></li><li><a href="global.html#isExpr">isExpr</a></li><li><a href="global.html#printArray">printArray</a></li><li><a href="global.html#printObject">printObject</a></li>
+					<li><a href="global.html#parseJSONStreaming">parseJSONStreaming</a></li>
 				</ul>
 			</li>
 			
@@ -380,6 +387,294 @@ for per-function documentation.</p></div>
             
 
             <td class="description last"><p>A numbers to provide the absolute value.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Expr.html">Expr</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="~AccessProvider"><span class="type-signature">&lt;inner> </span>AccessProvider(name)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-query.html#~ExprArg">module:query~ExprArg</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A string representing an AccessProvider's name</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Expr.html">Expr</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="~AccessProviders"><span class="type-signature">&lt;inner> </span>AccessProviders(scope)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>scope</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-query.html#~ExprArg">module:query~ExprArg</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The Ref of the database set's scope.</p></td>
         </tr>
 
     
@@ -5869,6 +6164,159 @@ for per-function documentation.</p></div>
             
 <hr>
 <dt>
+    <h4 class="name" id="~CreateAccessProvider"><span class="type-signature">&lt;inner> </span>CreateAccessProvider(params)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>See the <a href="https://app.fauna.com/documentation/reference/queryapi#write-functions">docs</a>.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>params</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-query.html#~ExprArg">module:query~ExprArg</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>An object of parameters used to create a new access provider.
+- name: A valid schema name
+- issuer: A unique string
+- jwks_uri: A valid HTTPS URI
+- roles: An array of role/predicate pairs where the predicate returns a boolean.
+The array can also contain Role references.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Expr.html">Expr</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
     <h4 class="name" id="~CreateClass"><span class="type-signature">&lt;inner> </span>CreateClass(params)</h4>
     
     
@@ -7010,6 +7458,202 @@ for per-function documentation.</p></div>
     </tbody>
 </table>
 
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Expr.html">Expr</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="~CurrentIdentity"><span class="type-signature">&lt;inner> </span>CurrentIdentity()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>See the <a href="https://app.fauna.com/documentation/reference/queryapi#authentication">docs</a>.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Expr.html">Expr</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="~CurrentToken"><span class="type-signature">&lt;inner> </span>CurrentToken()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>See the <a href="https://app.fauna.com/documentation/reference/queryapi#authentication">docs</a>.</p>
+    </div>
+    
+
+    
+
+    
+
+    
     
 
     
@@ -12196,6 +12840,202 @@ A set must be paginated in order to retrieve its values.</p>
     </tbody>
 </table>
 
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Expr.html">Expr</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="~HasCurrentIdentity"><span class="type-signature">&lt;inner> </span>HasCurrentIdentity()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>See the <a href="https://app.fauna.com/documentation/reference/queryapi#authentication">docs</a>.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Expr.html">Expr</a></span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="~HasCurrentToken"><span class="type-signature">&lt;inner> </span>HasCurrentToken()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>See the <a href="https://app.fauna.com/documentation/reference/queryapi#authentication">docs</a>.</p>
+    </div>
+    
+
+    
+
+    
+
+    
     
 
     
@@ -32933,7 +33773,7 @@ subtracted.</p>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on 2020-08-18T17:36:21+00:00
+		on 2020-11-18T19:32:50+00:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

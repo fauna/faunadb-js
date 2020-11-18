@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>Documentation Class: UnavailableError</title>
+	<title>Documentation Class: StreamError</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,7 +86,7 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: UnavailableError</h1>
+	<h1 class="page-title">Class: StreamError</h1>
 <section>
 
 <header>
@@ -94,7 +94,7 @@
         <h2>
             <span class="ancestors"><a href="module-errors.html">errors</a>~</span>
         
-        UnavailableError
+        StreamError
         </h2>
         
     
@@ -107,7 +107,7 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="UnavailableError"><span class="type-signature"></span>new UnavailableError(requestResult)</h4>
+    <h4 class="name" id="StreamError"><span class="type-signature"></span>new StreamError(name, message, description)</h4>
     
     
 </dt>
@@ -115,7 +115,7 @@
 
     
     <div class="description">
-        <p>A HTTP 503 error.</p>
+        <p>The base exception type for all stream related errors.</p>
     </div>
     
 
@@ -150,13 +150,13 @@
 
         <tr>
             
-                <td class="name"><code>requestResult</code></td>
+                <td class="name"><code>name</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="RequestResult.html">RequestResult</a></span>
+<span class="param-type">string</span>
 
 
 
@@ -167,7 +167,55 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>The error class name.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The error message.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>description</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The error detailed description.</p></td>
         </tr>
 
     
@@ -241,7 +289,7 @@
 
 
     <ul>
-        <li><a href="module-errors-FaunaHTTPError.html">module:errors~FaunaHTTPError</a></li>
+        <li><a href="module-errors-FaunaError.html">module:errors~FaunaError</a></li>
     </ul>
 
 
@@ -498,201 +546,9 @@
     
 </dd>
 
-        
-            
-<hr>
-<dt class="name" id="requestResult">
-    <h4 id="requestResult"><span class="type-signature"></span>requestResult<span class="type-signature"> :<a href="RequestResult.html">RequestResult</a></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>A wrapped <a href="RequestResult.html">RequestResult</a> object, containing the request and response
-context of the failed request.</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type"><a href="RequestResult.html">RequestResult</a></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="module-errors-FaunaHTTPError.html#requestResult">module:errors~FaunaHTTPError#requestResult</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
         </dl>
     
 
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        <dl>
-            
-<hr>
-<dt>
-    <h4 class="name" id="errors"><span class="type-signature"></span>errors()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Convenience method to return the errors from the response object.</p>
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="module-errors-FaunaHTTPError.html#errors">module:errors~FaunaHTTPError#errors</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Object</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        </dl>
     
 
     

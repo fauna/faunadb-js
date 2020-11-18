@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>Documentation Modules</title>
+	<title>Documentation Class: Subscription</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,13 +86,15 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Modules</h1>
+	<h1 class="page-title">Class: Subscription</h1>
 <section>
 
 <header>
     
         <h2>
+            <span class="ancestors"><a href="module-stream.html">stream</a>~</span>
         
+        Subscription
         </h2>
         
     
@@ -103,8 +105,104 @@
     <div class="container-overview">
     
         
+<hr>
+<dt>
+    <h4 class="name" id="Subscription"><span class="type-signature"></span>new Subscription(client, dispatcher)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>A stream subscription which dispatches events received to the registered
+listener functions. This class must be constructed via <a href="Client.html#stream">Client#stream</a>
+method.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
 
         
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>client</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">StreamClient</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Internal stream client interface.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dispatcher</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">EventDispatcher</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Internal event dispatcher interface.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
 <dl class="details">
     
 
@@ -144,7 +242,21 @@
 </dl>
 
 
-        
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
     
     </div>
 
@@ -153,90 +265,484 @@
     
 
     
-        <h3 class="subsection-title">Classes</h3>
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
 
         <dl>
-            <dt><a href="Client.html">Client</a></dt>
-            <dd></dd>
+            
+<hr>
+<dt>
+    <h4 class="name" id="close"><span class="type-signature"></span>close()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Stops the current subscription and closes the underlying network connection.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
         
-            <dt><a href="Expr.html">Expr</a></dt>
-            <dd></dd>
+            
+<hr>
+<dt>
+    <h4 class="name" id="on"><span class="type-signature"></span>on(event, callback)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Subscribes to an event type.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
         
-            <dt><a href="module-errors-BadRequest.html">BadRequest</a></dt>
-            <dd></dd>
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
         
-            <dt><a href="module-errors-FaunaError.html">FaunaError</a></dt>
-            <dd></dd>
+        <th>Name</th>
         
-            <dt><a href="module-errors-FaunaHTTPError.html">FaunaHTTPError</a></dt>
-            <dd></dd>
+
+        <th>Type</th>
+
         
-            <dt><a href="module-errors-InternalError.html">InternalError</a></dt>
-            <dd></dd>
+
         
-            <dt><a href="module-errors-InvalidArity.html">InvalidArity</a></dt>
-            <dd></dd>
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The event's type.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-stream-Subscription.html#~eventCalllback">module:stream~Subscription~eventCalllback</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>A callback function.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>This instance.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
         
-            <dt><a href="module-errors-InvalidValue.html">InvalidValue</a></dt>
-            <dd></dd>
+<span class="param-type"><a href="module-stream-Subscription.html">module:stream~Subscription</a></span>
+
+
+
+    </dd>
+</dl>
+
+
         
-            <dt><a href="module-errors-MethodNotAllowed.html">MethodNotAllowed</a></dt>
-            <dd></dd>
+
+    
+</dd>
+
         
-            <dt><a href="module-errors-NotFound.html">NotFound</a></dt>
-            <dd></dd>
+            
+<hr>
+<dt>
+    <h4 class="name" id="start"><span class="type-signature"></span>start()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Initiates the underlying subscription network calls.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>This instance.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
         
-            <dt><a href="module-errors-PermissionDenied.html">PermissionDenied</a></dt>
-            <dd></dd>
+<span class="param-type"><a href="module-stream-Subscription.html">module:stream~Subscription</a></span>
+
+
+
+    </dd>
+</dl>
+
+
         
-            <dt><a href="module-errors-StreamError.html">StreamError</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-errors-StreamErrorEvent.html">StreamErrorEvent</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-errors-StreamsNotSupported.html">StreamsNotSupported</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-errors-Unauthorized.html">Unauthorized</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-errors-UnavailableError.html">UnavailableError</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-stream-Subscription.html">Subscription</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-values-Bytes.html">Bytes</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-values-FaunaDate.html">FaunaDate</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-values-FaunaTime.html">FaunaTime</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-values-Query.html">Query</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-values-Ref.html">Ref</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-values-SetRef.html">SetRef</a></dt>
-            <dd></dd>
-        
-            <dt><a href="module-values-Value.html">Value</a></dt>
-            <dd></dd>
-        
-            <dt><a href="PageHelper.html">PageHelper</a></dt>
-            <dd></dd>
-        
-            <dt><a href="RequestResult.html">RequestResult</a></dt>
-            <dd></dd>
+
+    
+</dd>
+
         </dl>
     
 
     
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        <dl>
+                
+<hr>
+<dt>
+    <h4 class="name" id="~eventCalllback"><span class="type-signature"></span>eventCalllback(data, event)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>The callback to be executed when an new event occurs.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The event's data field.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>event</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The event's entire object.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -244,6 +750,46 @@
 
     
 
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+            </dl>
     
 
     

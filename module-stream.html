@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>Documentation Class: UnavailableError</title>
+	<title>Documentation Module: stream</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,17 +86,10 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: UnavailableError</h1>
+	<h1 class="page-title">Module: stream</h1>
 <section>
 
 <header>
-    
-        <h2>
-            <span class="ancestors"><a href="module-errors.html">errors</a>~</span>
-        
-        UnavailableError
-        </h2>
-        
     
 </header>
 
@@ -105,30 +98,108 @@
     <div class="container-overview">
     
         
-<hr>
-<dt>
-    <h4 class="name" id="UnavailableError"><span class="type-signature"></span>new UnavailableError(requestResult)</h4>
+
+        
+<dl class="details">
     
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="module-stream-Subscription.html">Subscription</a></dt>
+            <dd></dd>
+        </dl>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        <dl>
+                
+<hr>
+<dt class="name" id="~Options">
+    <h4 id="~Options">Options</h4>
+
     
 </dt>
 <dd>
-
-    
-    <div class="description">
-        <p>A HTTP 503 error.</p>
-    </div>
     
 
     
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Object</span>
 
+
+
+            </li>
+        </ul>
     
 
     
+<dl class="details">
     
-        <h5>Parameters:</h5>
-        
 
-<table class="params table table-striped">
+    <h5 class="subsection-title">Properties:</h5>
+
+    <dl>
+
+<table class="props table table-striped">
     <thead>
     <tr>
         
@@ -138,7 +209,11 @@
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -150,13 +225,13 @@
 
         <tr>
             
-                <td class="name"><code>requestResult</code></td>
+                <td class="name"><code>fields</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="RequestResult.html">RequestResult</a></span>
+<span class="param-type">Array.&lt;string></span>
 
 
 
@@ -164,145 +239,44 @@
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+                </td>
             
 
-            <td class="description last"></td>
+            
+                <td class="default">
+                
+                    ['action', 'document', 'diff', 'prev']
+                
+                </td>
+            
+
+            <td class="description last"><p>The fields event fields to opt-in during stream subscription. Possible
+options:</p>
+<ul>
+<li>'action': The action type</li>
+<li>'document': The document's data</li>
+<li>'diff': The difference between 'document' and 'prev'</li>
+<li>'prev': The event's previous data</li>
+</ul></td>
         </tr>
 
     
     </tbody>
 </table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
 </dl>
 
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-    
-    </div>
-
-    
-        <h3 class="subsection-title">Extends</h3>
-
-        
-
-
-    <ul>
-        <li><a href="module-errors-FaunaHTTPError.html">module:errors~FaunaHTTPError</a></li>
-    </ul>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        <dl>
-            
-<hr>
-<dt class="name" id="description">
-    <h4 id="description"><span class="type-signature"></span>description<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Description for this exception.</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
     
 
 	
 
 	
 
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="module-errors-FaunaError.html#description">module:errors~FaunaError#description</a>
-			</li>
-		</ul>
-	</dd>
 	
 
     
@@ -338,363 +312,7 @@
     
 </dd>
 
-        
-            
-<hr>
-<dt class="name" id="message">
-    <h4 id="message"><span class="type-signature"></span>message<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Message for this exception.</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="module-errors-FaunaError.html#message">module:errors~FaunaError#message</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="name">
-    <h4 id="name"><span class="type-signature"></span>name<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Name of this exception.</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="module-errors-FaunaError.html#name">module:errors~FaunaError#name</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="requestResult">
-    <h4 id="requestResult"><span class="type-signature"></span>requestResult<span class="type-signature"> :<a href="RequestResult.html">RequestResult</a></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>A wrapped <a href="RequestResult.html">RequestResult</a> object, containing the request and response
-context of the failed request.</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type"><a href="RequestResult.html">RequestResult</a></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="module-errors-FaunaHTTPError.html#requestResult">module:errors~FaunaHTTPError#requestResult</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        </dl>
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        <dl>
-            
-<hr>
-<dt>
-    <h4 class="name" id="errors"><span class="type-signature"></span>errors()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Convenience method to return the errors from the response object.</p>
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="module-errors-FaunaHTTPError.html#errors">module:errors~FaunaHTTPError#errors</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Object</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        </dl>
-    
-
+            </dl>
     
 
     
