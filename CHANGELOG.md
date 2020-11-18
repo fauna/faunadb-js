@@ -1,3 +1,11 @@
+## 4.0.0
+
+- Adds AccessProvider() support for authenticating with external auth providers (ex. Auth0, Okta)
+- Adds beta support for event streaming
+- Adds new FQL functions: CreateAccessProvider(), AccessProviders(), AccessProvider(), CurrentIdentity(), and HasCurrentIdentity()
+- Deprecates Identity() function in favor of CurrentIdentity()
+- Deprecates HasIdentity() in favor of HasCurrentIdentity()
+
 ## 3.0.0
 
 - Added an alias of the Contains function called ContainsPath, and deprecated the Contains function.
