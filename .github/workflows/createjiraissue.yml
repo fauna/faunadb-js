@@ -23,6 +23,6 @@ jobs:
         project: FE
         issuetype: Task
         summary: |
-         New PR: ${{ github.evnet.pull_request.title }} 
+         New PR: ${{ github.event.pull_request.title }} 
         description: |
           ${{ github.event.pull_request.url }}
