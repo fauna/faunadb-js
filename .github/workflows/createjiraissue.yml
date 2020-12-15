@@ -6,6 +6,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Login and Create issue
+    if: github.event.pull_request.head.repo.full_name == github.repository
     steps:
     - name: Login
       uses: atlassian/gajira-login@master
