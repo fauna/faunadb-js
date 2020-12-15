@@ -19,6 +19,10 @@ Expr.prototype.toJSON = function() {
   return this.raw
 }
 
+Expr.prototype.toFQL = function() {
+  return exprToString(this.raw)
+}
+
 var varArgsFunctions = [
   'Do',
   'Call',
