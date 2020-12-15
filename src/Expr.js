@@ -271,9 +271,13 @@ var exprToString = function(expr, caller) {
   var fn = keys[0]
   fn = convertToCamelCase(fn)
 
-  var args = keys.map(function(k) {
+  var args = []
+
+  keys.forEach(function(k) {
     var v = expr[k]
-    return exprToString(v, fn)
+    if (v !== null) {
+      args.push(exprToString(v, fn))
+    }
   })
 
   args = args.join(', ')
