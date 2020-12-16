@@ -115,6 +115,7 @@ StreamClient.prototype.subscribe = function() {
 
   var body = JSON.stringify(self._query)
   var startTime = Date.now()
+  var buffer = ''
 
   function handleResponse(response) {
     var endTime = Date.now()
@@ -156,9 +157,10 @@ StreamClient.prototype.subscribe = function() {
   }
 
   function onData(data) {
-    var events = json.parseJSONStreaming(data)
+    var result = json.parseJSONStreaming(buffer + data)
+    buffer = result.buffer
 
-    events.forEach(function(event) {
+    result.values.forEach(function(event) {
       if (event.txn !== undefined) {
         self._client.syncLastTxnTime(event.txn)
       }

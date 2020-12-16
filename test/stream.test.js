@@ -221,6 +221,31 @@ describe('StreamAPI', () => {
         })
         .start()
     })
+
+    test('can listen to large events', done => {
+      var arr = []
+      for (let i = 0; i < 4096; i++) {
+        // at least 4KB
+        arr.push({ value: i.toString() })
+      }
+
+      stream = client
+        .stream(doc.ref)
+        .on('start', () => {
+          client.query(
+            q.Update(doc.ref, {
+              data: {
+                values: arr,
+              },
+            })
+          )
+        })
+        .on('version', evt => {
+          expect(evt.document.data.values).toEqual(arr)
+          done()
+        })
+        .start()
+    })
   })
 
   describe('document', () => {
