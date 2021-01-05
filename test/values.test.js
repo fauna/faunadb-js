@@ -564,6 +564,9 @@ describe('Values', () => {
       ),
       'Query(Foreach([1, 2, 3], Lambda("i", Equals(0, Modulo(Var("i"), 2)))))'
     )
+
+    // now expr
+    assertPrint(new Query(q.Now()), 'Query(Now())')
   })
 
   test('pretty print Expr with primitive types', () => {
