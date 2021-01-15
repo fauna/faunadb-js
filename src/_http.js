@@ -93,9 +93,7 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
   if (!signal && this._timeout) {
     var abortController = new AbortController()
     signal = abortController.signal
-    timeout = setTimeout(function() {
-      abortController.abort()
-    }, this._timeout)
+    timeout = setTimeout(abortController.abort, this._timeout)
   }
 
   return fetch(url.href, {
