@@ -1,6 +1,6 @@
 'use strict'
 
-var util = require('util')
+var util = require('./_util')
 
 /**
  * FaunaDB error types. Request errors can originate from the client (e.g. bad
