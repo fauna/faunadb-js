@@ -1,6 +1,43 @@
 'use strict'
 
 /**
+ * Inherit the prototype methods from one constructor into another.
+ * Source: https://github.com/kaelzhang/node-util-inherits
+ * @param {function} ctor Constructor function which needs to inherit the prototype.
+ * @param {function} superCtor Constructor function to inherit prototype from.
+ * @private
+ */
+function inherits(ctor, superCtor) {
+  if (ctor === undefined || ctor === null) {
+    throw new TypeError(
+      'The constructor to "inherits" must not be null or undefined'
+    )
+  }
+
+  if (superCtor === undefined || superCtor === null) {
+    throw new TypeError(
+      'The super constructor to "inherits" must not be null or undefined'
+    )
+  }
+
+  if (superCtor.prototype === undefined) {
+    throw new TypeError(
+      'The super constructor to "inherits" must have a prototype'
+    )
+  }
+
+  ctor.super_ = superCtor
+  ctor.prototype = Object.create(superCtor.prototype, {
+    constructor: {
+      value: ctor,
+      enumerable: false,
+      writable: true,
+      configurable: true,
+    },
+  })
+}
+
+/**
  * Determines if the current environment is a NodeJS environment.
  * @private
  */
@@ -87,6 +124,7 @@ function checkInstanceHasProperty(obj, prop) {
 }
 
 module.exports = {
+  inherits: inherits,
   isNodeEnv: isNodeEnv,
   defaults: defaults,
   applyDefaults: applyDefaults,
