@@ -83,7 +83,7 @@ describe('Values', () => {
   })
 
   test('date', () => {
-    var test_date = new FaunaDate(new Date(1970, 0, 1))
+    var test_date = new FaunaDate(new Date(Date.UTC(1970, 0, 1)))
     var test_date_json = '{"@date":"1970-01-01"}'
     expect(json.toJSON(test_date)).toEqual(test_date_json)
     expect(json.parseJSON(test_date_json)).toEqual(test_date)
