@@ -275,16 +275,13 @@ var exprToString = function(expr, caller) {
   var fn = keys[0]
   fn = convertToCamelCase(fn)
 
-  var args = []
-
-  keys.forEach(function(k) {
-    var v = expr[k]
-    if (v !== null) {
-      args.push(exprToString(v, fn))
-    }
-  })
-
-  args = args.join(', ')
+  // The filter prevents zero arity functions from having a null argument
+  // This only works under the assumptions
+  // that there are no functions where a single 'null' argument makes sense.
+  var args = keys
+    .filter(k => expr[k] !== null || keys.length > 1)
+    .map(k => exprToString(expr[k], fn))
+    .join(', ')
 
   return fn + '(' + args + ')'
 }
