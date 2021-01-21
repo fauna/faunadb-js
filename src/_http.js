@@ -4,6 +4,7 @@ var APIVersion = '4'
 
 var parse = require('url-parse')
 var util = require('./_util')
+var AbortController = require('abort-controller')
 
 /**
  * The driver's internal HTTP client.
@@ -88,14 +89,28 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
   headers['X-Last-Seen-Txn'] = this._lastSeen
   headers['X-Query-Timeout'] = queryTimeout
 
+  var timeout
+  if (!signal && this._timeout) {
+    var abortController = new AbortController()
+    signal = abortController.signal
+    timeout = setTimeout(abortController.abort, this._timeout)
+  }
+
   return fetch(url.href, {
     agent: this._keepAliveEnabledAgent,
     body: body,
     signal: signal,
     headers: util.removeNullAndUndefinedValues(headers),
     method: method,
-    timeout: this._timeout,
   })
+    .then(function(response) {
+      clearTimeout(timeout)
+      return response
+    })
+    .catch(function(error) {
+      clearTimeout(timeout)
+      throw error
+    })
 }
 
 /** @ignore */
