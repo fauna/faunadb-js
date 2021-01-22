@@ -184,6 +184,14 @@ StreamClient.prototype.subscribe = function() {
     }
   }
 
+  function onEnd() {
+    // Temporally fix to simulate the same behaviour as browser has with http2
+    self._onEvent({
+      type: 'error',
+      event: new TypeError('network error'),
+    })
+  }
+
   // Minimum browser compatibility based on current code:
   //   Chrome                52
   //   Edge                  79
@@ -200,7 +208,10 @@ StreamClient.prototype.subscribe = function() {
   function platformSpecificEventRead(response) {
     try {
       if (util.isNodeEnv()) {
-        response.body.on('data', onData).on('error', onError)
+        response.body
+          .on('data', onData)
+          .on('error', onError)
+          .on('end', onEnd)
       } else {
         // ATENTION: The following code is meant to run in browsers and is not
         // covered by current test automation. Manual testing on major browsers
