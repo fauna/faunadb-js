@@ -12,6 +12,7 @@ export interface ClientConfig {
   scheme?: 'http' | 'https'
   port?: number
   timeout?: number
+  queryTimeout?: number
   observer?: (res: RequestResult, client: Client) => void
   keepAlive?: boolean
   headers?: { [key: string]: string | number }
