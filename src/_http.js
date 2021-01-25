@@ -64,7 +64,7 @@ HttpClient.prototype.syncLastTxnTime = function(time) {
  * @param {?string} body The HTTP request body.
  * @param {?string} query The HTTP request query parameters.
  * @param {?Object} options The request options.
- * @param {?Object} options.signal An abort signal object.
+ * @param {?Object} options.abortController An abort controller object.
  * @param {?Object} options.fetch A Fetch API compatible function.
  * @param {?string} options.secret A FaunaDB secret.
  * @param {?string} options.queryTimeout A FaunaDB query timeout.
@@ -77,7 +77,7 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
   url.set('query', query)
   options = util.defaults(options, {})
 
-  var signal = options.signal
+  var abortController = options.abortController || new AbortController()
   var fetch = options.fetch || this._fetch
   var secret = options.secret || this._secret
   var queryTimeout = options.queryTimeout || this._queryTimeout
@@ -90,16 +90,14 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
   headers['X-Query-Timeout'] = queryTimeout
 
   var timeout
-  if (!signal && this._timeout) {
-    var abortController = new AbortController()
-    signal = abortController.signal
-    timeout = setTimeout(abortController.abort, this._timeout)
+  if (this._timeout) {
+    timeout = setTimeout(() => abortController.abort(), this._timeout)
   }
 
   return fetch(url.href, {
     agent: this._keepAliveEnabledAgent,
     body: body,
-    signal: signal,
+    signal: abortController.signal,
     headers: util.removeNullAndUndefinedValues(headers),
     method: method,
   })

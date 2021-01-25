@@ -241,7 +241,7 @@ StreamClient.prototype.subscribe = function() {
   self._client._http
     .execute('POST', 'stream', body, self._urlParams, {
       fetch: self._fetch,
-      signal: self._abort.signal,
+      abortController: self._abort,
     })
     .then(function(response) {
       return handleResponse(response).then(function() {
