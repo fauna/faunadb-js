@@ -165,7 +165,7 @@ function querystringify(obj, prefix) {
       // Edge cases where we actually want to encode the value to an empty
       // string instead of the stringified value.
       //
-      if (!value && (value === null || value === undef || isNaN(value))) {
+      if (!value && (value === null || value === undefined || isNaN(value))) {
         value = ''
       }
 
@@ -219,6 +219,7 @@ function mergeObjects(obj1, obj2) {
 module.exports = {
   mergeObjects: mergeObjects,
   formatUrl: formatUrl,
+  querystringify: querystringify,
   inherits: inherits,
   isNodeEnv: isNodeEnv,
   defaults: defaults,
