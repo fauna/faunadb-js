@@ -256,37 +256,43 @@ Client.prototype._execute = function(method, path, data, query, options) {
   var self = this
   var body =
     ['GET', 'HEAD'].indexOf(method) >= 0 ? undefined : JSON.stringify(data)
+
   return this._http
-    .execute(method, path, body, query, options)
-    .then(function(response) {
-      return response.text().then(function(responseText) {
-        var endTime = Date.now()
-        var responseObject = json.parseJSON(responseText)
-        var headers = http.responseHeadersAsObject(response)
-        var result = new RequestResult(
-          method,
-          path,
-          query,
-          body,
-          data,
-          responseText,
-          responseObject,
-          response.status,
-          headers,
-          startTime,
-          endTime
-        )
-        self._handleRequestResult(response, result)
-        return responseObject['resource']
+    .execute(
+      Object.assign({}, options, {
+        path: path,
+        query: query,
+        method: method,
+        body: body,
       })
+    )
+    .then(function(response) {
+      var endTime = Date.now()
+      var responseObject = json.parseJSON(response.body)
+      var result = new RequestResult(
+        method,
+        path,
+        query,
+        body,
+        data,
+        response.body,
+        responseObject,
+        response.status,
+        response.headers,
+        startTime,
+        endTime
+      )
+      self._handleRequestResult(response, result)
+
+      return responseObject['resource']
     })
 }
 
 Client.prototype._handleRequestResult = function(response, result) {
   var txnTimeHeaderKey = 'x-txn-time'
 
-  if (response.headers.has(txnTimeHeaderKey)) {
-    this.syncLastTxnTime(parseInt(response.headers.get(txnTimeHeaderKey), 10))
+  if (response.headers[txnTimeHeaderKey] != null) {
+    this.syncLastTxnTime(parseInt(response.headers[txnTimeHeaderKey], 10))
   }
 
   if (this._observer !== null) {

@@ -84,15 +84,20 @@ describe('Client', () => {
 
   test('keeps connection alive', () => {
     var aliveClient = util.getClient({ keepAlive: true })
-    var p1 = expect(aliveClient._http._keepAliveEnabledAgent).not.toEqual(
-      undefined
-    )
-    var notAliveClient = util.getClient({ keepAlive: false })
-    var p2 = expect(notAliveClient._http._keepAliveEnabledAgent).toEqual(
-      undefined
-    )
 
-    return Promise.all([p1, p2])
+    // Keep alive agent is only applicable for fetch-backed HttpClient
+    if (aliveClient._http.type !== 'fetch') {
+      return
+    }
+
+    var notAliveClient = util.getClient({ keepAlive: false })
+
+    expect(aliveClient._http._adapter._keepAliveEnabledAgent).not.toEqual(
+      undefined
+    )
+    expect(notAliveClient._http._adapter._keepAliveEnabledAgent).toEqual(
+      undefined
+    )
   })
 
   test('sets authorization header per query', async function() {
@@ -137,8 +142,8 @@ describe('Client', () => {
       fetch: mockedFetch,
     })
 
-    expect(clientWithTimeout.query(query.Databases())).rejects.toThrow(
-      'Aborted'
+    return expect(clientWithTimeout.query(query.Databases())).rejects.toThrow(
+      'Request aborted due to timeout'
     )
   })
 

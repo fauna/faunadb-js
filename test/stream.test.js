@@ -189,6 +189,11 @@ describe('StreamAPI', () => {
     test('override fetch polyfill if possible', done => {
       global.fetch = () => Promise.reject(new Error('global fetch called'))
       global.window = {} // deceive util.isNodeEnv()
+
+      // Re-initiate the client in order to re-initiate underlying
+      // HttpClient's adapter and pull new fetch API from global.
+      const client = util.getClient()
+
       stream = client
         .stream(doc.ref)
         .on('error', error => {
@@ -200,12 +205,19 @@ describe('StreamAPI', () => {
 
     test('report failure if no fetch compatible function is found', done => {
       global.window = {} // deceive util.isNodeEnv()
+
+      // Re-initiate the client in order to re-initiate underlying
+      // HttpClient's adapter and pull new fetch API from global.
+      const client = util.getClient({
+        secret: key.secret,
+      })
+
       stream = client
         .stream(doc.ref)
         .on('error', error => {
           expect(error.message).toEqual('streams not supported')
           expect(error.description).toMatch(
-            /Could not find a stream-compatible fetch function/
+            /Please, consider providing a Fetch API-compatible function/
           )
           done()
         })
@@ -231,7 +243,7 @@ describe('StreamAPI', () => {
         .on('error', error => {
           expect(error.message).toEqual('streams not supported')
           expect(error.description).toMatch(
-            /Unexpected error during stream initialization/
+            /Please, consider providing a Fetch API-compatible function/
           )
           done()
         })
