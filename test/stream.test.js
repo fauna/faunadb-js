@@ -145,6 +145,34 @@ describe('StreamAPI', () => {
         .start()
     })
 
+    test('can listen to end event', async done => {
+      let role = await client.query(
+        q.CreateRole({
+          name: util.randomString('role'),
+          privileges: [
+            {
+              resource: coll.ref,
+              actions: { read: true },
+            },
+          ],
+        })
+      )
+      let key = await client.query(q.CreateKey({ role: role.ref }))
+      stream = util
+        .getClient({ secret: key.secret })
+        .stream(doc.ref)
+        .on('start', async () => {
+          // Force an error event by deleting the key used to start the stream,
+          // then issue update to force auth revalidation.
+          await client.query(q.Delete(key.ref))
+          await client.query(q.Update(doc.ref, {}))
+        })
+        .on('end', () => {
+          done()
+        })
+        .start()
+    })
+
     test('reports to client observer', done => {
       let client = util.getClient({
         secret: key.secret,
