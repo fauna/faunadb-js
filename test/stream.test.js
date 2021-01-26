@@ -143,7 +143,7 @@ describe('StreamAPI', () => {
           done()
         })
         .start()
-    }, 1000)
+    }, 5000)
 
     test('reports to client observer', done => {
       let client = util.getClient({
