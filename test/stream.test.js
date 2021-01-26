@@ -136,13 +136,11 @@ describe('StreamAPI', () => {
           await client.query(q.Update(doc.ref, {}))
         })
         .on('error', error => {
-          if (error.name !== 'TypeError') {
-            expect(error.code).toEqual('permission denied')
-            expect(error.description).toEqual(
-              'Authorization lost during stream evaluation.'
-            )
-            done()
-          }
+          expect(error.code).toEqual('permission denied')
+          expect(error.description).toEqual(
+            'Authorization lost during stream evaluation.'
+          )
+          done()
         })
         .start()
     })
