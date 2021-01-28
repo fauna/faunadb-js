@@ -1,9 +1,8 @@
 'use strict'
 
-var APIVersion = '4'
-
 var parse = require('url-parse')
 var util = require('./_util')
+var pjson = require('../package.json')
 var AbortController = require('abort-controller')
 
 /**
@@ -24,7 +23,14 @@ function HttpClient(options) {
   this._baseUrl = options.scheme + '://' + options.domain + ':' + options.port
   this._timeout = Math.floor(options.timeout * 1000)
   this._secret = options.secret
-  this._headers = options.headers
+  this._headers = util.applyDefaults(options.headers, {
+    'X-Fauna-Driver': 'Javascript',
+    'X-FaunaDB-API-Version': pjson.apiVersion,
+    'X-Fauna-Driver-Version': pjson.version,
+    'X-Runtime-Environment': util.isNodeEnv()
+      ? getNodeRuntimeEnv()
+      : navigator.userAgent,
+  })
   this._queryTimeout = options.queryTimeout
   this._lastSeen = null
 
@@ -84,10 +90,11 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
 
   var headers = this._headers
   headers['Authorization'] = secret && secretHeader(secret)
-  headers['X-FaunaDB-API-Version'] = APIVersion
-  headers['X-Fauna-Driver'] = 'Javascript'
   headers['X-Last-Seen-Txn'] = this._lastSeen
   headers['X-Query-Timeout'] = queryTimeout
+
+  console.debug('request headers for ')
+  console.debug(headers)
 
   var timeout
   if (!signal && this._timeout) {
@@ -186,6 +193,79 @@ function resolveFetch(fetchOverride, preferPolyfill) {
   }
 
   return null
+}
+
+/** @ignore */
+function getNodeRuntimeEnv() {
+  var runtimeEnvs = [
+    {
+      name: 'Netlify',
+      check: () => process.env.hasOwnProperty('NETLIFY_IMAGES_CDN_DOMAIN'),
+    },
+    {
+      name: 'Vercel',
+      check: () => process.env.hasOwnProperty('VERCEL'),
+    },
+    {
+      name: 'Heroku',
+      check: () => process.env.PATH.indexOf('.heroku') !== -1,
+    },
+    {
+      name: 'AWS Lambda',
+      check: () => process.env.hasOwnProperty('AWS_LAMBDA_FUNCTION_VERSION'),
+    },
+    {
+      name: 'GCP Cloud Functions',
+      check: () =>
+        process.env.hasOwnProperty('FUNCTION_TARGET') &&
+        process.env._.indexOf('google') !== -1,
+    },
+    {
+      name: 'GCP Compute Instances',
+      check: () => process.env.hasOwnProperty('GOOGLE_CLOUD_PROJECT'),
+    },
+    {
+      name: 'Azure Cloud Functions',
+      check: () =>
+        process.env.hasOwnProperty('WEBSITE_FUNCTIONS_AZUREMONITOR_CATEGORIES'),
+    },
+    {
+      name: 'Azure Compute',
+      check: () =>
+        process.env.ORYX_ENV_TYPE === 'AppService' &&
+        process.env.WEBSITE_INSTANCE_ID,
+    },
+    {
+      name: 'Worker',
+      check: () => {
+        try {
+          return global instanceof ServiceWorkerGlobalScope
+        } catch (error) {
+          return false
+        }
+      },
+    },
+    {
+      name: 'Mongo Stitch',
+      check: () => typeof global.StitchError === 'function',
+    },
+    {
+      name: 'Render',
+      check: () => process.env.hasOwnProperty('RENDER_SERVICE_ID'),
+    },
+    {
+      name: 'Begin',
+      check: () => process.env.hasOwnProperty('BEGIN_DATA_SCOPE_ID'),
+    },
+  ]
+
+  var detectedEnv = runtimeEnvs.find(env => env.check())
+
+  return [
+    detectedEnv ? detectedEnv.name : 'Unknown environment',
+    'NodeJs@' + process.version,
+    require('os').version(),
+  ].join(', ')
 }
 
 module.exports = {
