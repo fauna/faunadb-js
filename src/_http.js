@@ -23,7 +23,7 @@ function HttpClient(options) {
     options.port = isHttps ? 443 : 80
   }
 
-  this._fetch = abortableFetch(resolveFetch(options.fetch, true)).fetch
+  this._fetch = resolveFetch(options.fetch, true)
   this._baseUrl = options.scheme + '://' + options.domain + ':' + options.port
   this._timeout = Math.floor(options.timeout * 1000)
   this._secret = options.secret
@@ -96,7 +96,7 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
   if (!signal && this._timeout) {
     var abortController = new AbortController()
     signal = abortController.signal
-    timeout = setTimeout(abortController.abort, this._timeout)
+    timeout = setTimeout(() => abortController.abort(), this._timeout)
   }
 
   return fetch(url.href, {
@@ -179,9 +179,10 @@ function resolveFetch(fetchOverride, preferPolyfill) {
   }
 
   if (delegate !== null) {
+    var abortableDelegate = abortableFetch(delegate).fetch
     var fetch = function() {
       // NB. Rebinding to global is needed for Safari.
-      return delegate.apply(global, arguments)
+      return abortableDelegate.apply(global, arguments)
     }
     fetch.polyfill = true
     fetch.override = override

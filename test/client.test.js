@@ -5,8 +5,6 @@ var query = require('../src/query')
 var util = require('./util')
 var Client = require('../src/Client')
 var json = require('../src/_json')
-var AbortController = require('abort-controller')
-
 var client
 
 describe('Client', () => {
@@ -131,31 +129,16 @@ describe('Client', () => {
     expect(fetch).toBeCalled()
   })
 
-  test('instantiate client using default http timeout', async () => {
-    const mockedFetch = mockFetch()
-    const clientWithTimeout = new Client({
-      fetch: mockedFetch,
-    })
-
-    await clientWithTimeout.query(query.Databases())
-
-    expect(mockedFetch).toBeCalledTimes(1)
-    expect(mockedFetch.mock.calls[0][1].signal).toBeInstanceOf(
-      AbortController.AbortSignal
-    )
-  })
-
   test('instantiate client using custom http timeout', async () => {
     const customTimeout = 3
-    const timeoutError = new Error('timeout')
-    const mockedFetch = mockFetch({}, 60, timeoutError)
+    const mockedFetch = mockFetch({}, true)
     const clientWithTimeout = new Client({
       timeout: customTimeout,
       fetch: mockedFetch,
     })
 
     expect(clientWithTimeout.query(query.Databases())).rejects.toThrow(
-      timeoutError
+      'Aborted'
     )
   })
 
@@ -247,27 +230,15 @@ function createDocument() {
   return client.query(query.Create(query.Collection('my_collection'), {}))
 }
 
-function mockFetch(
-  content = {},
-  timeout = 0,
-  timeoutError = new Error('timeout')
-) {
-  return jest.fn().mockImplementation((_, options) => {
-    return new Promise((resolve, reject) => {
-      var timer = setTimeout(
-        () =>
-          resolve({
-            headers: new Set(),
-            text: () => Promise.resolve(JSON.stringify(content)),
-          }),
-        timeout * 1000
-      )
-      if (options.signal) {
-        options.signal.onabort = () => {
-          clearTimeout(timer)
-          reject(timeoutError)
-        }
-      }
+function mockFetch(content = {}, simulateTimeout) {
+  return jest.fn().mockImplementation(() => {
+    return new Promise(resolve => {
+      if (simulateTimeout) return
+
+      resolve({
+        headers: new Set(),
+        text: () => Promise.resolve(JSON.stringify(content)),
+      })
     })
   })
 }
