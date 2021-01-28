@@ -3,7 +3,7 @@
 var parse = require('url-parse')
 var util = require('./_util')
 var pjson = require('../package.json')
-var AbortController = require('abort-controller')
+var { AbortController } = require('abort-controller')
 
 /**
  * The driver's internal HTTP client.
