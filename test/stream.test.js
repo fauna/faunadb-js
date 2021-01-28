@@ -155,8 +155,8 @@ describe('StreamAPI', () => {
 
     test('wraps delegated error events if stream closed unexpectedly', async done => {
       testErrorEvent(done, error => {
-        if (error.code === undefined) {
-          expect(error.name).toEqual('TypeError')
+        if (error instanceof TypeError) {
+          expect(error.message).toEqual('network error')
         }
       })
     })
