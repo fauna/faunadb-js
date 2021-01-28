@@ -3,7 +3,7 @@
 var parse = require('url-parse')
 var util = require('./_util')
 var pjson = require('../package.json')
-var { AbortController } = require('abort-controller')
+var AbortController = require('abort-controller')
 
 /**
  * The driver's internal HTTP client.
@@ -108,7 +108,7 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
   var timeout
   if (!signal && this._timeout) {
     console.debug('11', AbortController)
-    var abortController = new AbortController()
+    var abortController = new AbortController.AbortController()
     console.debug('22')
     signal = abortController.signal
     console.debug('33')
