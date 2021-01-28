@@ -26,11 +26,19 @@ function HttpClient(options) {
   this._headers = util.applyDefaults(options.headers, {
     'X-Fauna-Driver': 'Javascript',
     'X-FaunaDB-API-Version': pjson.apiVersion,
-    'X-Fauna-Driver-Version': pjson.version,
-    'X-Runtime-Environment': util.isNodeEnv()
-      ? getNodeRuntimeEnv()
-      : navigator.userAgent,
   })
+
+  // FaunaDB server doesn't whitelist headers below for CORS
+  // As soon as it whitelisted, we can apply them
+  // via `this._headers = util.applyDefaults` for browser as well
+  if (util.isNodeEnv()) {
+    this._headers['X-Fauna-Driver-Version'] = pjson.version
+    this._headers['X-Runtime-Environment'] = getNodeRuntimeEnv()
+    // util.isNodeEnv()
+    //   ? getNodeRuntimeEnv()
+    //   : navigator.userAgent,
+  }
+
   this._queryTimeout = options.queryTimeout
   this._lastSeen = null
 
@@ -111,10 +119,12 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
     method: method,
   })
     .then(function(response) {
+      console.info('fetch success')
       clearTimeout(timeout)
       return response
     })
     .catch(function(error) {
+      console.info('fetch error')
       clearTimeout(timeout)
       throw error
     })
@@ -264,7 +274,7 @@ function getNodeRuntimeEnv() {
   return [
     detectedEnv ? detectedEnv.name : 'Unknown environment',
     'NodeJs@' + process.version,
-    require('os').version(),
+    require('os').platform(),
   ].join(', ')
 }
 
