@@ -111,6 +111,8 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
     timeout = setTimeout(abortController.abort, this._timeout)
   }
 
+  console.debug('before fetch')
+  console.debug(util.removeNullAndUndefinedValues(headers))
   return fetch(url.href, {
     agent: this._keepAliveEnabledAgent,
     body: body,
