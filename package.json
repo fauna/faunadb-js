@@ -32,6 +32,7 @@
   "types": "index.d.ts",
   "dependencies": {
     "abort-controller": "^3.0.0",
+    "abortcontroller-polyfill": "^1.7.1",
     "base64-js": "^1.2.0",
     "btoa-lite": "^1.0.0",
     "cross-fetch": "^3.0.6",
