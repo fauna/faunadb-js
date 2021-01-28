@@ -4,7 +4,10 @@ var APIVersion = '4'
 
 var parse = require('url-parse')
 var util = require('./_util')
-var AbortController = require('abort-controller')
+var {
+  AbortController,
+  abortableFetch,
+} = require('abortcontroller-polyfill/dist/cjs-ponyfill')
 
 /**
  * The driver's internal HTTP client.
@@ -20,7 +23,7 @@ function HttpClient(options) {
     options.port = isHttps ? 443 : 80
   }
 
-  this._fetch = resolveFetch(options.fetch, true)
+  this._fetch = abortableFetch(resolveFetch(options.fetch, true)).fetch
   this._baseUrl = options.scheme + '://' + options.domain + ':' + options.port
   this._timeout = Math.floor(options.timeout * 1000)
   this._secret = options.secret

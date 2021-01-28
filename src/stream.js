@@ -12,7 +12,7 @@
 // visibility control. However, DO NOT change any internal state from outside of
 // its context as it'd most certainly lead to errors.
 
-var AbortController = require('abort-controller')
+var { AbortController } = require('abortcontroller-polyfill/dist/cjs-ponyfill')
 var RequestResult = require('./RequestResult')
 var errors = require('./errors')
 var http = require('./_http')
