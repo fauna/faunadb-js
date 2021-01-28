@@ -4,7 +4,10 @@ var APIVersion = '4'
 
 var parse = require('url-parse')
 var util = require('./_util')
-var AbortController = require('abort-controller')
+var {
+  AbortController,
+  abortableFetch,
+} = require('abortcontroller-polyfill/dist/cjs-ponyfill')
 
 /**
  * The driver's internal HTTP client.
@@ -93,7 +96,7 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
   if (!signal && this._timeout) {
     var abortController = new AbortController()
     signal = abortController.signal
-    timeout = setTimeout(abortController.abort, this._timeout)
+    timeout = setTimeout(() => abortController.abort(), this._timeout)
   }
 
   return fetch(url.href, {
@@ -176,9 +179,10 @@ function resolveFetch(fetchOverride, preferPolyfill) {
   }
 
   if (delegate !== null) {
+    var abortableDelegate = abortableFetch(delegate).fetch
     var fetch = function() {
       // NB. Rebinding to global is needed for Safari.
-      return delegate.apply(global, arguments)
+      return abortableDelegate.apply(global, arguments)
     }
     fetch.polyfill = true
     fetch.override = override
