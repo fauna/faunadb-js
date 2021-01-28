@@ -101,9 +101,10 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
   headers['X-Last-Seen-Txn'] = this._lastSeen
   headers['X-Query-Timeout'] = queryTimeout
 
-  console.debug('request headers for ')
+  console.debug('request headers for test ')
   console.debug(headers)
 
+  console.debug('0000')
   var timeout
   if (!signal && this._timeout) {
     console.debug('11', AbortController)
