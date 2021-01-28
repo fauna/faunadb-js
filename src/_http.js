@@ -106,9 +106,14 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
 
   var timeout
   if (!signal && this._timeout) {
+    console.debug('11', AbortController)
     var abortController = new AbortController()
+    console.debug('22')
     signal = abortController.signal
-    timeout = setTimeout(abortController.abort, this._timeout)
+    console.debug('33')
+    timeout = setTimeout(() => {
+      abortController.abort()
+    }, this._timeout)
   }
 
   console.debug('before fetch')
