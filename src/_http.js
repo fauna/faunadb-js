@@ -33,10 +33,10 @@ function HttpClient(options) {
   // via `this._headers = util.applyDefaults` for browser as well
   if (util.isNodeEnv()) {
     this._headers['X-Fauna-Driver-Version'] = pjson.version
-    this._headers['X-Runtime-Environment'] = getNodeRuntimeEnv()
-    // util.isNodeEnv()
-    //   ? getNodeRuntimeEnv()
-    //   : navigator.userAgent,
+    this._headers['X-Runtime-Environment'] = util.isNodeEnv()
+      ? getNodeRuntimeEnv()
+      : navigator.userAgent
+    this._headers['X-NodeJS-Version'] = process.version
   }
 
   this._queryTimeout = options.queryTimeout
@@ -270,12 +270,7 @@ function getNodeRuntimeEnv() {
   ]
 
   var detectedEnv = runtimeEnvs.find(env => env.check())
-
-  return [
-    detectedEnv ? detectedEnv.name : 'Unknown environment',
-    'NodeJs@' + process.version,
-    require('os').platform(),
-  ].join(', ')
+  return detectedEnv ? detectedEnv.name : require('os').platform()
 }
 
 module.exports = {
