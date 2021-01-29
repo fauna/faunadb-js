@@ -217,7 +217,10 @@ function getDefaultHeaders() {
   return headers
 }
 
-/** @ignore */
+/**
+ * For checking process.env always use `hasOwnProperty`
+ * Some providers could throw an error when trying to access env variables that does not exists
+ * @ignore */
 function getNodeRuntimeEnv() {
   var runtimeEnvs = [
     {
