@@ -113,7 +113,7 @@ describe('StreamAPI', () => {
       expect(() => stream.start()).toThrow(Error)
     })
 
-    test('wraps error events', async done => {
+    async function testErrorEvent(done, checkErrorCallback) {
       let role = await client.query(
         q.CreateRole({
           name: util.randomString('role'),
@@ -136,13 +136,29 @@ describe('StreamAPI', () => {
           await client.query(q.Update(doc.ref, {}))
         })
         .on('error', error => {
+          checkErrorCallback(error)
+          done()
+        })
+        .start()
+    }
+
+    test('wraps error events', async done => {
+      testErrorEvent(done, error => {
+        if (error.code && error.description) {
           expect(error.code).toEqual('permission denied')
           expect(error.description).toEqual(
             'Authorization lost during stream evaluation.'
           )
-          done()
-        })
-        .start()
+        }
+      })
+    })
+
+    test('wraps delegated error events if stream closed unexpectedly', async done => {
+      testErrorEvent(done, error => {
+        if (error instanceof TypeError) {
+          expect(error.message).toEqual('network error')
+        }
+      })
     })
 
     test('reports to client observer', done => {
