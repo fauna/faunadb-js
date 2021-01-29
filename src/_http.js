@@ -230,7 +230,9 @@ function getNodeRuntimeEnv() {
     },
     {
       name: 'Heroku',
-      check: () => process.env.PATH.indexOf('.heroku') !== -1,
+      check: () =>
+        process.env.hasOwnProperty('PATH') &&
+        process.env.PATH.indexOf('.heroku') !== -1,
     },
     {
       name: 'AWS Lambda',
@@ -239,7 +241,7 @@ function getNodeRuntimeEnv() {
     {
       name: 'GCP Cloud Functions',
       check: () =>
-        process.env.hasOwnProperty('FUNCTION_TARGET') &&
+        process.env.hasOwnProperty('_') &&
         process.env._.indexOf('google') !== -1,
     },
     {
@@ -254,8 +256,9 @@ function getNodeRuntimeEnv() {
     {
       name: 'Azure Compute',
       check: () =>
-        process.env.ORYX_ENV_TYPE === 'AppService' &&
-        process.env.WEBSITE_INSTANCE_ID,
+        process.env.hasOwnProperty('ORYX_ENV_TYPE') &&
+        process.env.hasOwnProperty('WEBSITE_INSTANCE_ID') &&
+        process.env.ORYX_ENV_TYPE === 'AppService',
     },
     {
       name: 'Worker',
