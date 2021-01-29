@@ -1,5 +1,6 @@
 'use strict'
 
+var pjson = require('../package.json')
 var parse = require('url-parse')
 var util = require('./_util')
 var {
@@ -25,22 +26,7 @@ function HttpClient(options) {
   this._baseUrl = options.scheme + '://' + options.domain + ':' + options.port
   this._timeout = Math.floor(options.timeout * 1000)
   this._secret = options.secret
-  this._headers = util.applyDefaults(options.headers, {
-    'X-Fauna-Driver': 'Javascript',
-    'X-FaunaDB-API-Version': pjson.apiVersion,
-  })
-
-  // FaunaDB server doesn't whitelist headers below for CORS
-  // As soon as it whitelisted, we can apply them
-  // via `this._headers = util.applyDefaults` for browser as well
-  if (util.isNodeEnv()) {
-    this._headers['X-Fauna-Driver-Version'] = pjson.version
-    this._headers['X-Runtime-Environment'] = util.isNodeEnv()
-      ? getNodeRuntimeEnv()
-      : navigator.userAgent
-    this._headers['X-NodeJS-Version'] = process.version
-  }
-
+  this._headers = util.applyDefaults(options.headers, getDefaultHeaders())
   this._queryTimeout = options.queryTimeout
   this._lastSeen = null
 
@@ -209,6 +195,29 @@ function resolveFetch(fetchOverride, preferPolyfill) {
 }
 
 /** @ignore */
+function getDefaultHeaders() {
+  var headers = {
+    'X-Fauna-Driver': 'Javascript',
+    'X-FaunaDB-API-Version': pjson.apiVersion,
+  }
+
+  if (util.isNodeEnv()) {
+    headers['X-Fauna-Driver-Version'] = pjson.version // TODO: should be at the browser as well. waiting to enable CORS headers
+    headers['X-Runtime-Environment'] = getNodeRuntimeEnv()
+    headers['X-Runtime-Environment-OS'] = require('os').platform()
+    headers['X-NodeJS-Version'] = process.version
+  } else {
+    // TODO: uncomment when CORS enabled
+    // var browser = require('browser-detect')()
+    // headers['X-Runtime-Environment'] = browser.name
+    // headers['X-Runtime-Environment-Version'] = browser.version
+    // headers['X-Runtime-Environment-OS'] = browser.os
+  }
+
+  return headers
+}
+
+/** @ignore */
 function getNodeRuntimeEnv() {
   var runtimeEnvs = [
     {
@@ -273,7 +282,7 @@ function getNodeRuntimeEnv() {
   ]
 
   var detectedEnv = runtimeEnvs.find(env => env.check())
-  return detectedEnv ? detectedEnv.name : require('os').platform()
+  return detectedEnv ? detectedEnv.name : 'Unknown'
 }
 
 module.exports = {

@@ -33,6 +33,7 @@
   "dependencies": {
     "abortcontroller-polyfill": "^1.7.1",
     "base64-js": "^1.2.0",
+    "browser-detect": "^0.2.28",
     "btoa-lite": "^1.0.0",
     "cross-fetch": "^3.0.6",
     "dotenv": "^8.2.0",
