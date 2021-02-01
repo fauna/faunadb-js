@@ -96,12 +96,6 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
     timeout = setTimeout(() => abortController.abort(), this._timeout)
   }
 
-  console.info('_baseUrl', this._baseUrl)
-  console.info('path', path)
-  console.info('query', query)
-
-  console.info('formtted ', formatUrl(this._baseUrl, path, query))
-
   return fetch(formatUrl(this._baseUrl, path, query), {
     agent: this._keepAliveEnabledAgent,
     body: body,
