@@ -37,7 +37,6 @@
     "dotenv": "^8.2.0",
     "fn-annotate": "^1.1.3",
     "object-assign": "^4.1.0",
-    "url-parse": "^1.4.7",
     "util-deprecate": "^1.0.2"
   },
   "devDependencies": {
@@ -74,5 +73,11 @@
     "branches": [
       "master"
     ]
+  },
+  "browser": {
+    "http": false,
+    "https": false,
+    "os": false,
+    "util": false
   }
 }

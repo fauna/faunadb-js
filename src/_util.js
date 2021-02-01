@@ -123,7 +123,79 @@ function checkInstanceHasProperty(obj, prop) {
   return typeof obj === 'object' && obj !== null && Boolean(obj[prop])
 }
 
+function formatUrl(base, path, query) {
+  query = typeof query === 'object' ? querystringify(query) : query
+  return [
+    base,
+    path ? (path.charAt(0) === '/' ? '' : '/' + path) : '',
+    query ? (query.charAt(0) === '?' ? '' : '?' + query) : '',
+  ].join('')
+}
+
+/**
+ * Transform a query string to an object.
+ *
+ * @param {Object} obj Object that should be transformed.
+ * @param {String} prefix Optional prefix.
+ * @returns {String}
+ * @api public
+ */
+function querystringify(obj, prefix) {
+  prefix = prefix || ''
+
+  var pairs = [],
+    value,
+    key
+
+  //
+  // Optionally prefix with a '?' if needed
+  //
+  if ('string' !== typeof prefix) prefix = '?'
+
+  for (key in obj) {
+    if (checkInstanceHasProperty(obj, key)) {
+      value = obj[key]
+
+      //
+      // Edge cases where we actually want to encode the value to an empty
+      // string instead of the stringified value.
+      //
+      if (!value && (value === null || value === undef || isNaN(value))) {
+        value = ''
+      }
+
+      key = encode(key)
+      value = encode(value)
+
+      //
+      // If we failed to encode the strings, we should bail out as we don't
+      // want to add invalid strings to the query.
+      //
+      if (key === null || value === null) continue
+      pairs.push(key + '=' + value)
+    }
+  }
+
+  return pairs.length ? prefix + pairs.join('&') : ''
+}
+
+/**
+ * Attempts to encode a given input.
+ *
+ * @param {String} input The string that needs to be encoded.
+ * @returns {String|Null} The encoded string.
+ * @api private
+ */
+function encode(input) {
+  try {
+    return encodeURIComponent(input)
+  } catch (e) {
+    return null
+  }
+}
+
 module.exports = {
+  formatUrl: formatUrl,
   inherits: inherits,
   isNodeEnv: isNodeEnv,
   defaults: defaults,
