@@ -2,12 +2,12 @@
 
 var APIVersion = '4'
 
-var parse = require('url-parse')
 var util = require('./_util')
 var {
   AbortController,
   abortableFetch,
 } = require('abortcontroller-polyfill/dist/cjs-ponyfill')
+const { formatUrl } = require('./_util')
 
 /**
  * The driver's internal HTTP client.
@@ -75,9 +75,6 @@ HttpClient.prototype.syncLastTxnTime = function(time) {
  * @returns {Promise} The response promise.
  */
 HttpClient.prototype.execute = function(method, path, body, query, options) {
-  var url = parse(this._baseUrl)
-  url.set('pathname', path)
-  url.set('query', query)
   options = util.defaults(options, {})
 
   var signal = options.signal
@@ -99,7 +96,7 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
     timeout = setTimeout(() => abortController.abort(), this._timeout)
   }
 
-  return fetch(url.href, {
+  return fetch(formatUrl(this._baseUrl, path, query), {
     agent: this._keepAliveEnabledAgent,
     body: body,
     signal: signal,
