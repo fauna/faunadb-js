@@ -4,8 +4,7 @@
 
 // NOTE: Although implemented in a separate module, streaming shares internal
 // responsibilities with both Client and HTTP interfaces, such as updating last
-// seen transaction timestamp, and determining if the fetch function set in the
-// client is appropriate for the current runtime. Therefore, this implementation
+// seen transaction timestamp. Therefore, this implementation
 // sometimes breaks encapsulation and calls internal getters and methods. As a
 // general rule: it's okay to call internal methods. You can interpret this
 // as calling for a package visible method in languages with fine-grained
@@ -18,8 +17,8 @@ var {
 } = require('abortcontroller-polyfill/dist/cjs-ponyfill')
 var RequestResult = require('./RequestResult')
 var errors = require('./errors')
-var http = require('./_http')
 var json = require('./_json')
+var http = require('./_http')
 var q = require('./query')
 var util = require('./_util')
 
@@ -28,13 +27,7 @@ var DocumentStreamEvents = DefaultEvents.concat(['snapshot'])
 
 /**
  * The internal stream client interface. This class handles the network side of
- * a stream subscription. This implementation is environment aware. It attempts
- * to use the native `fetch` API on browsers, while relying on the underlying
- * `cross-fetch` polyfill from {@link Client} on NodeJS.
- *
- * Known limitations:
- * * NodeJS uses HTTP1;
- * * Only modern browsers are supported.
+ * a stream subscription.
  *
  * @constructor
  * @param {Client} client The FaunaDB client.
@@ -52,37 +45,8 @@ function StreamClient(client, expression, options, onEvent) {
   this._onEvent = onEvent
   this._query = q.wrap(expression)
   this._urlParams = options.fields ? { fields: options.fields.join(',') } : null
-  this._fetch = platformCompatibleFetchOverride()
   this._abort = new AbortController()
   this._state = 'idle'
-
-  // Determines a suitable override for the `cross-fetch` polyfill in the
-  // current platform. If the `fetch` API is not supported, returns a function
-  // that fails any requests so that errors are dispatched to appropriate error
-  // handlers rather than introducing the need for a try/catch.
-  function platformCompatibleFetchOverride() {
-    var httpClient = client._http
-    var fetch = httpClient._fetch
-
-    if (util.isNodeEnv() || fetch.override || !fetch.polyfill) {
-      return null // no override needed
-    }
-
-    fetch = http.resolveFetch(null, false)
-    if (fetch === null) {
-      fetch = function() {
-        return Promise.reject(
-          new errors.StreamsNotSupported(
-            'Could not find a stream-compatible fetch function. ' +
-              'Please, consider providing a Fetch API-compatible function ' +
-              'with streamable response bodies.'
-          )
-        )
-      }
-    }
-
-    return fetch
-  }
 }
 
 /**
@@ -110,6 +74,7 @@ StreamClient.prototype.snapshot = function() {
 /** Initiates the stream subscription.  */
 StreamClient.prototype.subscribe = function() {
   var self = this
+
   if (self._state === 'idle') {
     self._state = 'open'
   } else {
@@ -120,47 +85,36 @@ StreamClient.prototype.subscribe = function() {
   var startTime = Date.now()
   var buffer = ''
 
-  function handleResponse(response) {
+  function onResponse(response) {
     var endTime = Date.now()
     var parsed
 
-    if (response.ok) {
-      // There's no textual representation to be set here since streams are an
-      // unbounded event source, hence, the syntactic representation.
-      parsed = Promise.resolve({
-        text: '[stream]',
-        data: '[stream]',
-      })
-    } else {
-      parsed = response.text().then(function(text) {
-        return {
-          text: text,
-          data: json.parseJSON(text),
-        }
-      })
+    try {
+      parsed = json.parseJSON(response.body)
+    } catch (_) {
+      parsed = response.body
     }
 
-    return parsed.then(function(parsed) {
-      var headers = http.responseHeadersAsObject(response)
-      var result = new RequestResult(
-        'POST',
-        'stream',
-        self._urlParams,
-        body,
-        self._query,
-        parsed.text,
-        parsed.data,
-        response.status,
-        headers,
-        startTime,
-        endTime
-      )
-      self._client._handleRequestResult(response, result)
-    })
+    var result = new RequestResult(
+      'POST',
+      'stream',
+      self._urlParams,
+      body,
+      self._query,
+      response.body,
+      parsed,
+      response.status,
+      response.headers,
+      startTime,
+      endTime
+    )
+
+    self._client._handleRequestResult(response, result)
   }
 
   function onData(data) {
     var result = json.parseJSONStreaming(buffer + data)
+
     buffer = result.buffer
 
     result.values.forEach(function(event) {
@@ -177,80 +131,31 @@ StreamClient.prototype.subscribe = function() {
   }
 
   function onError(error) {
-    // AbortError is triggered by the AbortController as result of calling
+    // AbortError is triggered as result of calling
     // close() on a Subscription. There's no need to relay this event back up.
-    if (error.name !== 'AbortError') {
-      self._onEvent({
-        type: 'error',
-        event: error,
-      })
+    if (error instanceof http.AbortError) {
+      return
     }
-  }
 
-  function onEnd() {
-    // Temporally fix to simulate the same behaviour as browser has with http2
     self._onEvent({
       type: 'error',
-      event: new TypeError('network error'),
+      event: error,
     })
-  }
-
-  // Minimum browser compatibility based on current code:
-  //   Chrome                52
-  //   Edge                  79
-  //   Firefox               65
-  //   IE                    NA
-  //   Opera                 39
-  //   Safari                10.1
-  //   Android Webview       52
-  //   Chrome for Android    52
-  //   Firefox for Android   65
-  //   Opera for Android     41
-  //   Safari on iOS         10.3
-  //   Samsung Internet      6.0
-  function platformSpecificEventRead(response) {
-    try {
-      if (util.isNodeEnv()) {
-        response.body
-          .on('data', onData)
-          .on('error', onError)
-          .on('end', onEnd)
-      } else {
-        // ATENTION: The following code is meant to run in browsers and is not
-        // covered by current test automation. Manual testing on major browsers
-        // is required after making changes to it.
-        var reader = response.body.getReader()
-        var decoder = new TextDecoder('utf-8')
-        function pump() {
-          return reader
-            .read()
-            .then(function process(msg) {
-              if (!msg.done) {
-                onData(decoder.decode(msg.value, { stream: true }))
-                return pump()
-              }
-            })
-            .catch(onError)
-        }
-        pump()
-      }
-    } catch (err) {
-      throw new errors.StreamsNotSupported(
-        'Unexpected error during stream initialization: ' + err
-      )
-    }
   }
 
   self._client._http
-    .execute('POST', 'stream', body, self._urlParams, {
-      fetch: self._fetch,
-      signal: self._abort.signal,
+    .execute({
+      method: 'POST',
+      path: 'stream',
+      body: body,
+      query: self._urlParams,
+      signal: this._abort.signal,
+      streamConsumer: {
+        onError: onError,
+        onData: onData,
+      },
     })
-    .then(function(response) {
-      return handleResponse(response).then(function() {
-        platformSpecificEventRead(response, onData, onError)
-      })
-    })
+    .then(onResponse)
     .catch(onError)
 }
 
