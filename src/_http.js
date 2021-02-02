@@ -101,12 +101,10 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
     method: method,
   })
     .then(function(response) {
-      console.info('fetch success')
       clearTimeout(timeout)
       return response
     })
     .catch(function(error) {
-      console.info('fetch error')
       clearTimeout(timeout)
       throw error
     })
