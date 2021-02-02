@@ -145,14 +145,14 @@ Http2Adapter.prototype.execute = function(options) {
       var status = responseHeaders[http2.constants.HTTP2_HEADER_STATUS]
       var isOkStatus = status >= 200 && status < 400
       var processStream = isOkStatus && isStreaming
-      var responseBody = ''
+      var responseBody = []
 
       var onData = function(chunk) {
         if (processStream) {
           return options.streamConsumer.onData(chunk)
         }
 
-        responseBody += chunk
+        responseBody.push(chunk)
       }
 
       var onEnd = function() {
@@ -160,7 +160,7 @@ Http2Adapter.prototype.execute = function(options) {
 
         if (!processStream) {
           return resolve({
-            body: responseBody,
+            body: Buffer.concat(responseBody).toString(),
             headers: responseHeaders,
             status: status,
           })
@@ -192,13 +192,12 @@ Http2Adapter.prototype.execute = function(options) {
         ? options.url.pathname + '?' + querystring
         : options.url.pathname
       var requestHeaders = Object.assign({}, options.headers, {
-        [http2.constants.HTTP2_HEADER_PATH]: pathname,
+        [http2.constants.HTTP2_HEADER_PATH]: pathname || '/',
         [http2.constants.HTTP2_HEADER_METHOD]: options.method,
       })
       var session = self._resolveSessionFor(origin, isStreaming)
       var request = session
         .request(requestHeaders)
-        .setEncoding('utf8')
         .on('error', onError)
         .on('response', onResponse)
 

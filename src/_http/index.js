@@ -103,6 +103,8 @@ HttpClient.prototype.execute = function(options) {
   headers['X-Fauna-Driver'] = 'Javascript'
   headers['X-Last-Seen-Txn'] = this._lastSeen
   headers['X-Query-Timeout'] = queryTimeout
+  headers['content-type'] = 'application/json'
+  headers['accept'] = 'application/json'
 
   return this._adapter.execute({
     url: url,

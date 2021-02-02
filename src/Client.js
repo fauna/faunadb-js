@@ -268,7 +268,16 @@ Client.prototype._execute = function(method, path, data, query, options) {
     )
     .then(function(response) {
       var endTime = Date.now()
-      var responseObject = json.parseJSON(response.body)
+      var responseObject
+
+      try {
+        responseObject = json.parseJSON(response.body)
+      } catch (err) {
+        console.log('>>>>> Parsing failed: ', err)
+        console.log('Response is: ', response)
+        console.log(`Response body is "${response.body}"`)
+      }
+
       var result = new RequestResult(
         method,
         path,
