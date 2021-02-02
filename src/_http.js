@@ -1,7 +1,6 @@
 'use strict'
 
 var pjson = require('../package.json')
-var parse = require('url-parse')
 var util = require('./_util')
 var {
   AbortController,
@@ -86,9 +85,6 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
   headers['Authorization'] = secret && secretHeader(secret)
   headers['X-Last-Seen-Txn'] = this._lastSeen
   headers['X-Query-Timeout'] = queryTimeout
-
-  console.debug('request headers for test ')
-  console.debug(headers)
 
   var timeout
   if (!signal && this._timeout) {
