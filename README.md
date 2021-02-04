@@ -242,6 +242,31 @@ const client = new faunadb.Client({
 })
 ```
 
+## Knowing issues
+
+### Using at Cloudflare workers
+
+Cloudflare workers doesn't have XMLHttpRequest neither fetch in global scope,
+therefore cross-fetch package unable to inject fetch and throw an error.
+fetch function is injected via closure, so workaround would be to pass
+those fetch object to initiate FaunaDB client config. Cloudflare also doesn't support AbortController which terminate requests as well as streams. Here is workaround
+
+```javascript
+const c = new faunadb.Client({
+  secret: 'your secret',
+  fetch: (url, params) => {
+    const signal = params.signal
+    delete params.signal
+    const abortPromise = new Promise(resolve => {
+      if (signal) {
+        signal.onabort = resolve
+      }
+    })
+    return Promise.race([abortPromise, fetch(url, params)])
+  },
+})
+```
+
 ## Client Development
 
 Run `yarn` to install dependencies.
