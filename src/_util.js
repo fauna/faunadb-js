@@ -43,6 +43,7 @@ function inherits(ctor, superCtor) {
  */
 function isNodeEnv() {
   return (
+    typeof window === 'undefined' &&
     typeof process !== 'undefined' &&
     process.versions != null &&
     process.versions.node != null
