@@ -1,6 +1,6 @@
 import Expr from './Expr'
-import { ExprArg } from './query'
 import PageHelper from './PageHelper'
+import { ExprArg } from './query'
 import RequestResult from './RequestResult'
 import { Subscription } from './Stream'
 
@@ -19,9 +19,7 @@ export interface ClientConfig {
   fetch?: typeof fetch
 }
 
-export interface QueryOptions {
-  secret?: string
-  queryTimeout?: number
+export interface QueryOptions extends Partial<Pick<ClientConfig, 'secret' | 'queryTimeout' | 'fetch' | 'observer'>> {
 }
 
 export default class Client {

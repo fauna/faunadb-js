@@ -82,6 +82,18 @@ describe('Client', () => {
     )
   })
 
+  test('query observer', async () => {
+    var clientObserver = jest.fn()
+    var queryObserver = jest.fn()
+    var client = util.getClient({ observer: clientObserver })
+
+    await client.query(query.Now(), {
+      observer: queryObserver,
+    })
+    expect(clientObserver).toBeCalledTimes(0)
+    expect(queryObserver).toBeCalledTimes(1)
+  })
+
   test('keeps connection alive', () => {
     var aliveClient = util.getClient({ keepAlive: true })
     var p1 = expect(aliveClient._http._keepAliveEnabledAgent).not.toEqual(
