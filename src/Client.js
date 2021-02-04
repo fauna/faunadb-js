@@ -277,20 +277,20 @@ Client.prototype._execute = function(method, path, data, query, options) {
           endTime
         )
 
-        var observer =
-          options && options.observer ? options.observer : self._observer
-        self._handleRequestResult(response, result, observer)
+        self._handleRequestResult(response, result, options)
         return responseObject['resource']
       })
     })
 }
 
-Client.prototype._handleRequestResult = function(response, result, observer) {
+Client.prototype._handleRequestResult = function(response, result, options) {
   var txnTimeHeaderKey = 'x-txn-time'
 
   if (response.headers.has(txnTimeHeaderKey)) {
     this.syncLastTxnTime(parseInt(response.headers.get(txnTimeHeaderKey), 10))
   }
+
+  var observer = (options && options.observer) || this._observer
 
   if (typeof observer == 'function') {
     observer(result, this)
