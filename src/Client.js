@@ -292,7 +292,7 @@ Client.prototype._handleRequestResult = function(response, result, observer) {
     this.syncLastTxnTime(parseInt(response.headers.get(txnTimeHeaderKey), 10))
   }
 
-  if (observer !== null) {
+  if (typeof observer == 'function') {
     observer(result, this)
   }
 
