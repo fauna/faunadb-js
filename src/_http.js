@@ -1,7 +1,6 @@
 'use strict'
 
-var APIVersion = '4'
-
+var pjson = require('../package.json')
 var util = require('./_util')
 var {
   AbortController,
@@ -27,7 +26,7 @@ function HttpClient(options) {
   this._baseUrl = options.scheme + '://' + options.domain + ':' + options.port
   this._timeout = Math.floor(options.timeout * 1000)
   this._secret = options.secret
-  this._headers = options.headers
+  this._headers = util.applyDefaults(options.headers, getDefaultHeaders())
   this._queryTimeout = options.queryTimeout
   this._lastSeen = null
 
@@ -84,8 +83,6 @@ HttpClient.prototype.execute = function(method, path, body, query, options) {
 
   var headers = this._headers
   headers['Authorization'] = secret && secretHeader(secret)
-  headers['X-FaunaDB-API-Version'] = APIVersion
-  headers['X-Fauna-Driver'] = 'Javascript'
   headers['X-Last-Seen-Txn'] = this._lastSeen
   headers['X-Query-Timeout'] = queryTimeout
 
@@ -187,6 +184,103 @@ function resolveFetch(fetchOverride, preferPolyfill) {
   }
 
   return null
+}
+
+/** @ignore */
+function getDefaultHeaders() {
+  var headers = {
+    'X-Fauna-Driver': 'Javascript',
+    'X-FaunaDB-API-Version': pjson.apiVersion,
+  }
+
+  if (util.isNodeEnv()) {
+    headers['X-Fauna-Driver-Version'] = pjson.version // TODO: should be at the browser as well. waiting to enable CORS headers
+    headers['X-Runtime-Environment'] = getNodeRuntimeEnv()
+    headers['X-Runtime-Environment-OS'] = require('os').platform()
+    headers['X-NodeJS-Version'] = process.version
+  } else {
+    // TODO: uncomment when CORS enabled
+    // var browser = require('browser-detect')()
+    // headers['X-Runtime-Environment'] = browser.name
+    // headers['X-Runtime-Environment-Version'] = browser.version
+    // headers['X-Runtime-Environment-OS'] = browser.os
+  }
+
+  return headers
+}
+
+/**
+ * For checking process.env always use `hasOwnProperty`
+ * Some providers could throw an error when trying to access env variables that does not exists
+ * @ignore */
+function getNodeRuntimeEnv() {
+  var runtimeEnvs = [
+    {
+      name: 'Netlify',
+      check: () => process.env.hasOwnProperty('NETLIFY_IMAGES_CDN_DOMAIN'),
+    },
+    {
+      name: 'Vercel',
+      check: () => process.env.hasOwnProperty('VERCEL'),
+    },
+    {
+      name: 'Heroku',
+      check: () =>
+        process.env.hasOwnProperty('PATH') &&
+        process.env.PATH.indexOf('.heroku') !== -1,
+    },
+    {
+      name: 'AWS Lambda',
+      check: () => process.env.hasOwnProperty('AWS_LAMBDA_FUNCTION_VERSION'),
+    },
+    {
+      name: 'GCP Cloud Functions',
+      check: () =>
+        process.env.hasOwnProperty('_') &&
+        process.env._.indexOf('google') !== -1,
+    },
+    {
+      name: 'GCP Compute Instances',
+      check: () => process.env.hasOwnProperty('GOOGLE_CLOUD_PROJECT'),
+    },
+    {
+      name: 'Azure Cloud Functions',
+      check: () =>
+        process.env.hasOwnProperty('WEBSITE_FUNCTIONS_AZUREMONITOR_CATEGORIES'),
+    },
+    {
+      name: 'Azure Compute',
+      check: () =>
+        process.env.hasOwnProperty('ORYX_ENV_TYPE') &&
+        process.env.hasOwnProperty('WEBSITE_INSTANCE_ID') &&
+        process.env.ORYX_ENV_TYPE === 'AppService',
+    },
+    {
+      name: 'Worker',
+      check: () => {
+        try {
+          return global instanceof ServiceWorkerGlobalScope
+        } catch (error) {
+          return false
+        }
+      },
+    },
+    {
+      name: 'Mongo Stitch',
+      check: () => typeof global.StitchError === 'function',
+    },
+    {
+      name: 'Render',
+      check: () => process.env.hasOwnProperty('RENDER_SERVICE_ID'),
+    },
+    {
+      name: 'Begin',
+      check: () => process.env.hasOwnProperty('BEGIN_DATA_SCOPE_ID'),
+    },
+  ]
+
+  var detectedEnv = runtimeEnvs.find(env => env.check())
+  return detectedEnv ? detectedEnv.name : 'Unknown'
 }
 
 module.exports = {
