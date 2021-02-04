@@ -11,9 +11,9 @@ A Javascript driver for [FaunaDB](https://fauna.com).
 [View reference JSDocs here](https://fauna.github.com/faunadb-js).
 
 See the [FaunaDB Documentation](https://docs.fauna.com/) and
-[Tutorials](https://docs.fauna.com/fauna/current/howto/) for guides and
-a complete database [API
-reference](https://docs.fauna.com/fauna/current/reference/queryapi/).
+[Tutorials](https://docs.fauna.com/fauna/current/tutorials/crud) for
+guides and a complete database [API
+reference](https://docs.fauna.com/fauna/current/api/fql/).
 
 ## Supported Runtimes
 
@@ -55,8 +55,8 @@ The minified version of the driver can also be used via CDN:
 
 ### Use
 
-The [tutorials](https://docs.fauna.com/fauna/current/howto/) in the
-FaunaDB documentation contain other driver-specific examples.
+The [tutorials](https://docs.fauna.com/fauna/current/tutorials/crud) in
+the FaunaDB documentation contain other driver-specific examples.
 
 #### Connecting from the browser
 
@@ -129,7 +129,8 @@ createP.then(function(response) {
 #### Pagination Helpers
 
 This driver contains helpers to provide a simpler API for consuming paged
-responses from FaunaDB. See the [Paginate Function Reference](https://docs.fauna.com/fauna/current/reference/queryapi/read/paginate)
+responses from FaunaDB. See the [Paginate function
+reference](https://docs.fauna.com/fauna/current/api/fql/functions/paginate)
 for a description of paged responses.
 
 Using the helper to page over sets lets the driver handle cursoring and
@@ -274,8 +275,8 @@ database created for this purpose, rather than your account's root key. This
 will make cleanup of test databases as easy as removing the parent database.
 
 See the [FaunaDB Multitenancy
-Tutorial](https://docs.fauna.com/fauna/current/howto/multitenant) for
-more information about nested databases.
+Tutorial](https://docs.fauna.com/fauna/current/tutorials/multitenant)
+for more information about nested databases.
 
 Alternatively, tests can be run via a Docker container with
 `FAUNA_ROOT_KEY="your-cloud-secret" make docker-test` (an alternate
@@ -336,7 +337,7 @@ npm install /path/to/tarball
 
 ## License
 
-Copyright 2019 [Fauna, Inc.](https://fauna.com/)
+Copyright 2021 [Fauna, Inc.](https://fauna.com/)
 
 Licensed under the Mozilla Public License, Version 2.0 (the "License"); you may
 not use this software except in compliance with the License. You may obtain a

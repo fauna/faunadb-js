@@ -6,6 +6,7 @@ export module errors {
 
     name: string
     message: string
+    description: string
   }
 
   export class InvalidValue extends FaunaError {}
