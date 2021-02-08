@@ -290,11 +290,13 @@ Client.prototype._handleRequestResult = function(response, result, options) {
     this.syncLastTxnTime(parseInt(response.headers.get(txnTimeHeaderKey), 10))
   }
 
-  var observer = (options && options.observer) || this._observer
+  var observers = [this._observer, options && options.observer]
 
-  if (typeof observer == 'function') {
-    observer(result, this)
-  }
+  observers.forEach(observer => {
+    if (typeof observer == 'function') {
+      observer(result, this)
+    }
+  })
 
   errors.FaunaHTTPError.raiseForStatusCode(result)
 }

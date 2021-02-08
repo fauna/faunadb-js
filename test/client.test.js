@@ -90,8 +90,8 @@ describe('Client', () => {
     await client.query(query.Now(), {
       observer: queryObserver,
     })
-    expect(clientObserver).toBeCalledTimes(0)
-    expect(queryObserver).toBeCalledTimes(1)
+    expect(clientObserver).toBeCalled()
+    expect(queryObserver).toBeCalled()
   })
 
   test('keeps connection alive', () => {
