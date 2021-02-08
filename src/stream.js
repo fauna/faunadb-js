@@ -149,9 +149,7 @@ StreamClient.prototype.subscribe = function() {
         body,
         self._query,
         parsed.text,
-        parsed.data && parsed.data.errors
-          ? new FaunaHttpErrorResponseContent(responseObject.errors)
-          : responseObject,
+        parsed.data,
         response.status,
         headers,
         startTime,
