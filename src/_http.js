@@ -2,10 +2,7 @@
 
 var pjson = require('../package.json')
 var util = require('./_util')
-var {
-  AbortController,
-  abortableFetch,
-} = require('abortcontroller-polyfill/dist/cjs-ponyfill')
+require('abort-controller/polyfill')
 const { formatUrl } = require('./_util')
 
 /**
@@ -173,10 +170,9 @@ function resolveFetch(fetchOverride, preferPolyfill) {
   }
 
   if (delegate !== null) {
-    var abortableDelegate = abortableFetch(delegate).fetch
     var fetch = function() {
       // NB. Rebinding to global is needed for Safari.
-      return abortableDelegate.apply(global, arguments)
+      return delegate.apply(global, arguments)
     }
     fetch.polyfill = true
     fetch.override = override

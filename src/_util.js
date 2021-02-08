@@ -42,7 +42,12 @@ function inherits(ctor, superCtor) {
  * @private
  */
 function isNodeEnv() {
-  return typeof window === 'undefined'
+  return (
+    typeof window === 'undefined' &&
+    typeof process !== 'undefined' &&
+    process.versions != null &&
+    process.versions.node != null
+  )
 }
 
 /**
