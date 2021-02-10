@@ -94,19 +94,3 @@ Object.defineProperty(RequestResult.prototype, 'timeTaken', {
 })
 
 module.exports = RequestResult
-
-// /**
-//  * A structure containing the response errors for a given FaunaDB request.
-//  * Provided to an observer function optionally defined in the {@link Client} constructor.
-//  *
-//  * @param {'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'} method
-//  *   The HTTP method used in the request.
-//  * @param {Array.<{code: string, description: string}>} errors
-//  * @constructor
-//  */
-// function FaunaHttpErrorResponseContent(errors) {
-//   /** @type {Array.<{code: string, description: string}>} */
-//   this.errors = errors
-// }
-
-// module.exports.FaunaHttpErrorResponseContent = FaunaHttpErrorResponseContent

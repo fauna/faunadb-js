@@ -28,7 +28,7 @@ export interface QueryOptions {
 
 export default class Client {
   constructor(opts?: ClientConfig)
-  query<T extends object = object>(expr: ExprArg, options?: QueryOptions): Promise<T>
+  query<T = object>(expr: ExprArg, options?: QueryOptions): Promise<T>
   paginate(expr: Expr, params?: object, options?: QueryOptions): PageHelper
   ping(scope?: string, timeout?: number): Promise<string>
   stream(expr: Expr, options?: { fields?: StreamEventFields[] }): Subscription
