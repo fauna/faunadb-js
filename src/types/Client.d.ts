@@ -1,3 +1,5 @@
+import { fetch } from 'cross-fetch'
+import { errors } from './errors'
 import Expr from './Expr'
 import PageHelper from './PageHelper'
 import { ExprArg } from './query'
@@ -13,7 +15,7 @@ export interface ClientConfig {
   port?: number
   timeout?: number
   queryTimeout?: number
-  observer?: (res: RequestResult, client: Client) => void
+  observer?: <T extends object = object>(res: RequestResult<T | errors.FaunaHTTPError>, client: Client) => void
   keepAlive?: boolean
   headers?: { [key: string]: string | number }
   fetch?: typeof fetch

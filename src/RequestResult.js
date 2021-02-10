@@ -16,7 +16,7 @@
  *   The request data.
  * @param {string} responseRaw
  *   The unparsed response data, as a string.
- * @param {object} responseContent
+ * @param {object | FaunaHttpErrorResponseContent} responseContent
  *   The response data parsed as JSON.
  * @param {number} statusCode
  *   The HTTP response status code.
@@ -65,8 +65,8 @@ function RequestResult(
 
   /**
    * Parsed value returned by the server.
-   * Includes "resource" wrapper dict, or may be an "errors" dict instead.
-   * @type {object}
+   * Includes "resource" wrapper dict, or may be an FaunaHttpErrorResponseContent instead
+   * @type {object | FaunaHttpErrorResponseContent}
    */
   this.responseContent = responseContent
 

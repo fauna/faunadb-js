@@ -1,5 +1,11 @@
 import RequestResult from './RequestResult'
 
+export type FaunaHttpErrorResponseContent = {
+  errors: {
+    code: string,
+    description: string
+  }[]
+}
 export module errors {
   export class FaunaError extends Error {
     constructor(message: string)
@@ -10,13 +16,12 @@ export module errors {
   }
 
   export class InvalidValue extends FaunaError {}
-
   export class FaunaHTTPError extends FaunaError {
-    static raiseForStatusCode(requestResult: RequestResult): void
+    static raiseForStatusCode(requestResult: RequestResult<FaunaHttpErrorResponseContent>): void
 
-    constructor(name: string, requestResult: RequestResult)
+    constructor(name: string, requestResult: RequestResult<FaunaHttpErrorResponseContent>)
 
-    requestResult: RequestResult
+    requestResult: RequestResult<FaunaHttpErrorResponseContent>
     errors(): object
   }
 
