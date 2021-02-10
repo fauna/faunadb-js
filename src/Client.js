@@ -276,22 +276,27 @@ Client.prototype._execute = function(method, path, data, query, options) {
           startTime,
           endTime
         )
-        self._handleRequestResult(response, result)
+
+        self._handleRequestResult(response, result, options)
         return responseObject['resource']
       })
     })
 }
 
-Client.prototype._handleRequestResult = function(response, result) {
+Client.prototype._handleRequestResult = function(response, result, options) {
   var txnTimeHeaderKey = 'x-txn-time'
 
   if (response.headers.has(txnTimeHeaderKey)) {
     this.syncLastTxnTime(parseInt(response.headers.get(txnTimeHeaderKey), 10))
   }
 
-  if (this._observer !== null) {
-    this._observer(result, this)
-  }
+  var observers = [this._observer, options && options.observer]
+
+  observers.forEach(observer => {
+    if (typeof observer == 'function') {
+      observer(result, this)
+    }
+  })
 
   errors.FaunaHTTPError.raiseForStatusCode(result)
 }
