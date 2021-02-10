@@ -110,7 +110,10 @@ StreamClient.prototype.subscribe = function() {
   if (self._state === 'idle') {
     self._state = 'open'
   } else {
-    throw new Error('The stream has already been started.')
+    throw new Error(
+      'Subscription#start should not be called several times, ' +
+        'consider instantiating a new stream instead.'
+    )
   }
 
   var body = JSON.stringify(self._query)
