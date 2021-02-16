@@ -40,7 +40,7 @@ if (missedFields.length) {
   console.log(
     `Environment variables (${missedFields}) not defined. Please create a config file or set env vars.`
   )
-  process.exit()
+  // process.exit()
 }
 
 function takeObjectKeys(object) {
