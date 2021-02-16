@@ -289,7 +289,11 @@ FAUNA_DOMAIN=localhost
 FAUNA_SCHEME=http
 FAUNA_PORT=8443
 FAUNA_ROOT_KEY=secret
+AUTH_0_URI=https://{TENANT}.auth0.com/
+AUTH_0_TOKEN=auth0 token
 ```
+
+[Guide for Auth0](https://auth0.com/docs/tokens/management-api-access-tokens/create-and-authorize-a-machine-to-machine-application)
 
 - `yarn test`: This will run tests against the current version of Node.js.
   [nvm](https://github.com/creationix/nvm) is useful for managing multiple
