@@ -36,7 +36,6 @@ var requiredConfigFields = [
   'auth0token',
 ]
 var missedFields = requiredConfigFields.filter(key => !testConfig[key])
-console.info('missed ', missedFields)
 if (missedFields.length) {
   console.log(
     `Environment variables (${missedFields}) not defined. Please create a config file or set env vars.`
@@ -136,7 +135,6 @@ beforeAll(() => {
   return rootClient
     .query(query.CreateDatabase({ name: dbName }))
     .then(function() {
-      console.info('db name ', dbName)
       return rootClient.query(
         query.CreateKey({ database: Database(dbName), role: 'admin' })
       )
