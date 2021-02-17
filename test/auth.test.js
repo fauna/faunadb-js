@@ -2,7 +2,6 @@ const fetch = require('cross-fetch')
 const query = require('../src/query')
 const util = require('./util')
 const errors = require('../src/errors')
-const { testConfig } = require('./util')
 
 describe('auth', () => {
   describe('AccessProvider Auth0', () => {
@@ -32,9 +31,9 @@ describe('auth', () => {
 
     beforeAll(async () => {
       const adminToken = await getAuth0Token({
-        client_id: testConfig.auth0clientId,
-        client_secret: testConfig.auth0clientSecret,
-        audience: `${testConfig.auth0uri}api/v2/`,
+        client_id: util.testConfig.auth0clientId,
+        client_secret: util.testConfig.auth0clientSecret,
+        audience: `${util.testConfig.auth0uri}api/v2/`,
       })
       headers.authorization = `Bearer ${adminToken}`
       await util.client().query(
