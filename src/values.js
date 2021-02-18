@@ -360,7 +360,12 @@ function Query(value) {
 util.inherits(Query, Value)
 
 wrapToString(Query, function() {
-  return 'Query(' + Expr.toString(this.value) + ')'
+  const metadata = {
+    'api-version': +this.value.api_version,
+  }
+  return (
+    'Query(' + Expr.toString(this.value) + ', ' + JSON.stringify(metadata) + ')'
+  )
 })
 
 /** @ignore */
