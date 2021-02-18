@@ -24,7 +24,8 @@ try {
     port: env.FAUNA_PORT,
     auth: env.FAUNA_ROOT_KEY,
     auth0uri: env.AUTH_0_URI,
-    auth0token: env.AUTH_0_TOKEN,
+    auth0clientId: env.AUTH_0_CLIENT_ID,
+    auth0clientSecret: env.AUTH_0_CLIENT_SECRET,
   }
 }
 
@@ -33,14 +34,15 @@ var requiredConfigFields = [
   'scheme',
   'auth',
   'auth0uri',
-  'auth0token',
+  'auth0clientId',
+  'auth0clientSecret',
 ]
 var missedFields = requiredConfigFields.filter(key => !testConfig[key])
 if (missedFields.length) {
   console.log(
     `Environment variables (${missedFields}) not defined. Please create a config file or set env vars.`
   )
-  // process.exit()
+  process.exit()
 }
 
 function takeObjectKeys(object) {

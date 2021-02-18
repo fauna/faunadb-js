@@ -7,7 +7,19 @@ describe('auth', () => {
   describe('AccessProvider Auth0', () => {
     const headers = {
       'Content-Type': 'application/json',
-      authorization: `Bearer ${util.testConfig.auth0token}`,
+    }
+
+    function getAuth0Token(params) {
+      return fetch(`${util.testConfig.auth0uri}oauth/token`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          ...params,
+          grant_type: 'client_credentials',
+        }),
+      })
+        .then(resp => resp.json())
+        .then(data => data.access_token)
     }
     const providerName = util.randomString('provider_')
     const roleOneName = util.randomString('role_one_')
@@ -18,6 +30,12 @@ describe('auth', () => {
     let clientWithAuth0Token
 
     beforeAll(async () => {
+      const adminToken = await getAuth0Token({
+        client_id: util.testConfig.auth0clientId,
+        client_secret: util.testConfig.auth0clientSecret,
+        audience: `${util.testConfig.auth0uri}api/v2/`,
+      })
+      headers.authorization = `Bearer ${adminToken}`
       await util.client().query(
         query.CreateRole({
           name: roleOneName,
@@ -77,18 +95,13 @@ describe('auth', () => {
         }),
       }).then(resp => resp.json())
 
-      const token = await fetch(`${util.testConfig.auth0uri}oauth/token`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
+      clientWithAuth0Token = util.getClient({
+        secret: await getAuth0Token({
           client_id: authClient.client_id,
           client_secret: authClient.client_secret,
           audience: provider.audience,
-          grant_type: 'client_credentials',
         }),
-      }).then(resp => resp.json())
-
-      clientWithAuth0Token = util.getClient({ secret: token.access_token })
+      })
     })
 
     test('should have read access for Roles', async () => {
