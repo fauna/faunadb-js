@@ -19,7 +19,7 @@ function HttpClient(options) {
 
   // HTTP2 adapter is applicable only if it's NodeJS env and
   // no fetch API override provided (to preserve backward-compatibility).
-  var useHttp2Adapter = !options.fetch && util.isNodeEnv()
+  var useHttp2Adapter = !options.fetch && util.isNodeEnv() && isHttp2Supported()
 
   this._adapter = useHttp2Adapter
     ? new (require('./http2Adapter'))()
@@ -136,6 +136,16 @@ function getDefaultHeaders() {
   }
 
   return headers
+}
+
+function isHttp2Supported() {
+  try {
+    require('http2')
+
+    return true
+  } catch (_) {
+    return false
+  }
 }
 
 /**
