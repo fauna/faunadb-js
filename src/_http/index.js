@@ -30,7 +30,7 @@ function HttpClient(options) {
       })
   this._baseUrl = options.scheme + '://' + options.domain + ':' + options.port
   this._secret = options.secret
-  this._headers = util.applyDefaults(options.headers, getDefaultHeaders())
+  this._headers = Object.assign({}, options.headers, getDefaultHeaders())
   this._queryTimeout = options.queryTimeout
   this._lastSeen = null
   this._timeout = Math.floor(options.timeout * 1000)
