@@ -79,6 +79,7 @@
     ]
   },
   "browser": {
+    "http2": false,
     "http": false,
     "https": false,
     "os": false,
