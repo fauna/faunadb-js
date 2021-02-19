@@ -54,6 +54,15 @@ commands:
           command: yarn test
 
 jobs:
+  core-stable-8:
+    executor:
+      name: core
+      node_version: 8
+      version: stable
+    steps:
+      - build_and_test:
+          node_version: 8
+
   core-stable-10:
     executor:
       name: core
@@ -94,6 +103,8 @@ workflows:
   version: 2
   build_and_test:
     jobs:
+      - core-stable-8:
+          context: faunadb-drivers
       - core-stable-10:
           context: faunadb-drivers
       - core-nightly-10:
