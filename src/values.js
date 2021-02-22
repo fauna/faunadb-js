@@ -363,9 +363,23 @@ wrapToString(Query, function() {
   const metadata = {
     api_version: +this.value.api_version,
   }
-  return (
-    'Query(' + Expr.toString(this.value) + ', ' + JSON.stringify(metadata) + ')'
-  )
+
+  const notEmptyMetadata = Object.keys(metadata).some(key => metadata[key])
+
+  let stringified
+  if (notEmptyMetadata) {
+    stringified = [
+      'Query(',
+      Expr.toString(this.value),
+      ', ',
+      JSON.stringify(metadata),
+      ')',
+    ]
+  } else {
+    stringified = ['Query(', Expr.toString(this.value), ')']
+  }
+
+  return stringified.join('')
 })
 
 /** @ignore */
