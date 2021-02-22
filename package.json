@@ -27,7 +27,8 @@
     "browserify-min": "browserify index.js --standalone faunadb | terser -c -m --keep-fnames --keep-classnames -o dist/faunadb-min.js",
     "prettify": "prettier --write \"{src,test}/**/*.{js,ts}\"",
     "test": "jest --env=node --verbose=false ./test",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "wp": "webpack"
   },
   "types": "index.d.ts",
   "dependencies": {
@@ -54,7 +55,8 @@
     "prettier": "1.18.2",
     "semantic-release": "^17.1.2",
     "terser": "^4.3.9",
-    "typescript": "^3.0.1"
+    "webpack": "^5.23.0",
+    "webpack-cli": "^4.5.0"
   },
   "husky": {
     "hooks": {
