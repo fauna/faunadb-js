@@ -188,8 +188,8 @@ describe('Values', () => {
   })
 
   var assertPrint = function(value, expected) {
-    expect(expected).toEqual(util.inspect(value, { depth: null }))
-    expect(expected).toEqual(value.toString())
+    expect(util.inspect(value, { depth: null })).toEqual(expected)
+    expect(value.toString()).toEqual(expected)
   }
 
   test('allow collections with schema names', () => {
@@ -604,6 +604,19 @@ describe('Values', () => {
         })
       ),
       'Query(Merge(Select("data", Var("doc")), {id: Select(["ref", "id"], Var("doc"))}))'
+    )
+
+    assertPrint(
+      new Query(
+        q.Merge(
+          q.Select('data', q.Var('doc')),
+          {
+            id: q.Select(['ref', 'id'], q.Var('doc')),
+          },
+          q.Lambda(['key', 'a', 'b'], q.Var('a'))
+        )
+      ),
+      'Query(Merge(Select("data", Var("doc")), {id: Select(["ref", "id"], Var("doc"))}, Lambda(["key", "a", "b"], Var("a"))))'
     )
   })
 

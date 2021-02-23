@@ -221,6 +221,24 @@ var exprToString = function(expr, caller) {
 
   if ('object' in expr) return printObject(expr['object'])
 
+  if ('merge' in expr) {
+    if (expr.lambda) {
+      return (
+        'Merge(' +
+        exprToString(expr.merge) +
+        ', ' +
+        exprToString(expr.with) +
+        ', ' +
+        exprToString(expr.lambda) +
+        ')'
+      )
+    }
+
+    return (
+      'Merge(' + exprToString(expr.merge) + ', ' + exprToString(expr.with) + ')'
+    )
+  }
+
   if ('lambda' in expr) {
     return (
       'Lambda(' +
