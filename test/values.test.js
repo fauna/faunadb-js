@@ -596,6 +596,17 @@ describe('Values', () => {
     assertPrint(new Query(q.NewId()), 'Query(NewId())')
   })
 
+  test('pretty print Merge', () => {
+    assertPrint(
+      new Query(
+        q.Merge(q.Select('data', q.Var('doc')), {
+          id: q.Select(['ref', 'id'], q.Var('doc')),
+        })
+      ),
+      'Query(Merge(Select("data", Var("doc")), {id: Select(["ref", "id"], Var("doc"))}))'
+    )
+  })
+
   test('pretty print Expr with primitive types', () => {
     assertPrint(
       new Query(q.Lambda('_', { x: true, y: false, z: 'str', w: 10 })),
