@@ -620,6 +620,36 @@ describe('Values', () => {
     )
   })
 
+  test('pretty print Join', () => {
+    assertPrint(
+      new Query(
+        q.Join(
+          q.Match(
+            q.Index('spellbooks_by_owner'),
+            q.Ref(q.Collection('characters'), '181388642114077184')
+          ),
+          q.Index('spells_by_spellbook')
+        )
+      ),
+      'Query(Join(Match(Index("spellbooks_by_owner"), Ref(Collection("characters"), "181388642114077184")), Index("spells_by_spellbook")))'
+    )
+    assertPrint(
+      new Query(
+        q.Join(
+          q.Match(
+            q.Index('spellbooks_by_owner'),
+            q.Ref(q.Collection('characters'), '181388642114077184')
+          ),
+          q.Lambda(
+            'spellbook',
+            q.Match(q.Index('spells_by_spellbook'), q.Var('spellbook'))
+          )
+        )
+      ),
+      'Query(Join(Match(Index("spellbooks_by_owner"), Ref(Collection("characters"), "181388642114077184")), Lambda("spellbook", Match(Index("spells_by_spellbook"), Var("spellbook")))))'
+    )
+  })
+
   test('pretty print Expr with primitive types', () => {
     assertPrint(
       new Query(q.Lambda('_', { x: true, y: false, z: 'str', w: 10 })),
