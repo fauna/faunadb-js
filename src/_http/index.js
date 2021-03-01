@@ -13,7 +13,8 @@ var errors = require('./errors')
 function HttpClient(options) {
   var isHttps = options.scheme === 'https'
 
-  if (options.port == null) {
+  // If the port is a falsy value - replace it with default one.
+  if (!options.port) {
     options.port = isHttps ? 443 : 80
   }
 

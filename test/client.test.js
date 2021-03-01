@@ -26,6 +26,15 @@ describe('Client', () => {
     })
   })
 
+  test("omits the port value if it's falsy", () => {
+    const client = new Client({
+      secret: 'FAKED',
+      port: 0,
+    })
+
+    expect(client._http._baseUrl.endsWith(':0')).toBeFalsy()
+  })
+
   test('paginates', () => {
     return createDocument().then(function(document) {
       return client.paginate(document.ref).each(function(page) {
