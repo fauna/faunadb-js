@@ -104,6 +104,12 @@ describe('auth', () => {
       })
     })
 
+    test('auth0 setup', () => {
+      expect(authClient.error).toBeUndefined()
+      expect(resource.error).toBeUndefined()
+      expect(grants.error).toBeUndefined()
+    })
+
     test('should have read access for Roles', async () => {
       const res = await clientWithAuth0Token.query(
         query.Get(query.Role(roleOneName))
