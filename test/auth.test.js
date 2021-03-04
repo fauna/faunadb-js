@@ -104,6 +104,12 @@ describe('auth', () => {
       })
     })
 
+    test('auth0 setup', () => {
+      expect(authClient).toBeUndefined()
+      expect(resource.error).toBeUndefined()
+      expect(grants.error).toBeUndefined()
+    })
+
     test('should have read access for Roles', async () => {
       const res = await clientWithAuth0Token.query(
         query.Get(query.Role(roleOneName))
@@ -138,7 +144,9 @@ describe('auth', () => {
           headers,
           method: 'DELETE',
         }),
-      ])
+      ]).then(resp => {
+        console.info(resp)
+      })
     })
   })
 })
