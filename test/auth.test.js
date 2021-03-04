@@ -105,7 +105,7 @@ describe('auth', () => {
     })
 
     test('auth0 setup', () => {
-      expect(authClient).toBeUndefined()
+      expect(authClient.error).toBeUndefined()
       expect(resource.error).toBeUndefined()
       expect(grants.error).toBeUndefined()
     })
