@@ -58,6 +58,8 @@ Http2Adapter.prototype._resolveSessionFor = function(origin, isStreaming) {
       .connect(origin)
       .once('error', cleanup)
       .once('goaway', cleanup)
+      // Destroys http2 session after specified time of inactivity
+      // and releases event loop.
       .setTimeout(this.http2SessionIdleTime, cleanup)
   }
 
