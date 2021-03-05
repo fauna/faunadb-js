@@ -156,7 +156,7 @@ var values = require('./values')
  * @param {?number} options.queryTimeout
  *   Sets the maximum amount of time (in milliseconds) for query execution on the server,
  * @param {?number} options.http2SessionIdleTime
- *   Sets the maximum amount of time (in milliseconds) for http2 session to release connection. By default 1 minute
+ *   Sets the maximum amount of time (in milliseconds) for http2 session to release connection. By default 500ms
  */
 function Client(options) {
   options = util.applyDefaults(options, {
