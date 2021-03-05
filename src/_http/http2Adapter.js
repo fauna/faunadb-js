@@ -54,18 +54,11 @@ Http2Adapter.prototype._resolveSessionFor = function(origin, isStreaming) {
     }
 
     // Initializing http2 session.
-    this._sessionMap[sessionKey] = http2.connect(origin)
-
-    this._sessionMap[sessionKey].once('error', cleanup).once('goaway', cleanup)
-
-    if (this.http2SessionIdleTime) {
-      // Destroys http2 session after specified time of inactivity
-      // and releases event loop.
-      this._sessionMap[sessionKey].setTimeout(
-        this.http2SessionIdleTime,
-        cleanup
-      )
-    }
+    this._sessionMap[sessionKey] = http2
+      .connect(origin)
+      .once('error', cleanup)
+      .once('goaway', cleanup)
+      .setTimeout(this.http2SessionIdleTime, cleanup)
   }
 
   return this._sessionMap[sessionKey]

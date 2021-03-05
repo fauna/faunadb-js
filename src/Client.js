@@ -170,7 +170,7 @@ function Client(options) {
     headers: {},
     fetch: undefined,
     queryTimeout: null,
-    http2SessionIdleTime: 1000 * 60,
+    http2SessionIdleTime: 500,
   })
 
   this._observer = options.observer
