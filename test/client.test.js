@@ -150,7 +150,7 @@ describe('Client', () => {
     const customTimeout = 3
     const mockedFetch = mockFetch({}, true)
     const clientWithTimeout = new Client({
-      timeout: customTimeout,
+      queryTimeout: customTimeout,
       fetch: mockedFetch,
     })
 

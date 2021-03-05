@@ -32,8 +32,7 @@ function HttpClient(options) {
   this._secret = options.secret
   this._headers = Object.assign({}, options.headers, getDefaultHeaders())
   this._lastSeen = null
-  this._timeout = Math.floor(options.timeout * 1000)
-  this._queryTimeout = options.queryTimeout || this._timeout
+  this._queryTimeout = options.queryTimeout
 }
 
 /**
@@ -105,7 +104,7 @@ HttpClient.prototype.execute = function(options) {
     headers: util.removeNullAndUndefinedValues(headers),
     body: options.body,
     signal: options.signal,
-    timeout: this._timeout,
+    queryTimeout: this._queryTimeout,
     streamConsumer: options.streamConsumer,
   })
 }
