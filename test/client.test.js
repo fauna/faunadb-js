@@ -161,7 +161,7 @@ describe('Client', () => {
     const customTimeout = 3
     const mockedFetch = mockFetch({}, true)
     const clientWithTimeout = new Client({
-      timeout: customTimeout,
+      queryTimeout: customTimeout,
       fetch: mockedFetch,
     })
 
@@ -179,9 +179,9 @@ describe('Client', () => {
     await clientWithDefaultTimeout.query(query.Databases())
 
     expect(mockedFetch).toBeCalledTimes(1)
-    expect(
-      mockedFetch.mock.calls[0][1].headers['X-Query-Timeout']
-    ).not.toBeDefined()
+    expect(mockedFetch.mock.calls[0][1].headers['X-Query-Timeout']).toEqual(
+      60000
+    )
   })
 
   test('instantiate client using custom queryTimeout', async () => {
