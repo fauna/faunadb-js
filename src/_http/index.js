@@ -13,7 +13,8 @@ var errors = require('./errors')
 function HttpClient(options) {
   var isHttps = options.scheme === 'https'
 
-  if (options.port == null) {
+  // If the port is a falsy value - replace it with default one.
+  if (!options.port) {
     options.port = isHttps ? 443 : 80
   }
 
@@ -22,7 +23,9 @@ function HttpClient(options) {
   var useHttp2Adapter = !options.fetch && util.isNodeEnv() && isHttp2Supported()
 
   this._adapter = useHttp2Adapter
-    ? new (require('./http2Adapter'))()
+    ? new (require('./http2Adapter'))({
+        http2SessionIdleTime: options.http2SessionIdleTime,
+      })
     : new (require('./fetchAdapter'))({
         isHttps: isHttps,
         fetch: options.fetch,
