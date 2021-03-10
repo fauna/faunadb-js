@@ -26,7 +26,7 @@
     "browserify": "browserify index.js --standalone faunadb -o dist/faunadb.js",
     "browserify-min": "browserify index.js --standalone faunadb | terser -c -m --keep-fnames --keep-classnames -o dist/faunadb-min.js",
     "prettify": "prettier --write \"{src,test}/**/*.{js,ts}\"",
-    "test": "jest --env=node --verbose=false ./test",
+    "test": "jest --env=node --verbose=false --forceExit ./test",
     "semantic-release": "semantic-release",
     "wp": "webpack"
   },
