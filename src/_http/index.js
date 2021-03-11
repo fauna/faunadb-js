@@ -129,7 +129,7 @@ function getDefaultHeaders() {
     driverEnv.os = require('os').platform()
   } else {
     driverEnv.driver = 'javascript'
-    driverEnv.env = navigator.userAgent || 'unknown'
+    driverEnv.env = window.navigator ? window.navigator.userAgent : 'unknown'
   }
 
   var headers = {
