@@ -128,11 +128,8 @@ function getDefaultHeaders() {
     driverEnv.env = getNodeRuntimeEnv()
     driverEnv.os = require('os').platform()
   } else {
-    var browser = require('browser-detect')
-    var env = browser.__esModule ? browser.default() : browser()
     driverEnv.driver = 'javascript'
-    driverEnv.env = env.name + '(' + env.version + ')'
-    driverEnv.os = env.os
+    driverEnv.env = navigator.userAgent || 'unknown'
   }
 
   var headers = {
