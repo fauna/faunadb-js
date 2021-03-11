@@ -142,11 +142,9 @@ function getDefaultHeaders() {
   // TODO: api cors must be enabled to accept header X-Driver-Env
   if (util.isNodeEnv()) {
     headers['X-Driver-Env'] = Object.keys(driverEnv)
-      .map(key => [key, driverEnv[key]].join('='))
+      .map(key => [key, driverEnv[key].toLowerCase()].join('='))
       .join('; ')
-      .toLowerCase()
   }
-
   return headers
 }
 
