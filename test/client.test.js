@@ -274,6 +274,32 @@ describe('Client', () => {
     expect(response.message).toEqual(errors[0].code)
     expect(response.description).toEqual(errors[0].description)
   })
+
+  test('default headers has been applied', async () => {
+    const mockedFetch = mockFetch()
+    const clientWithDefaultTimeout = new Client({
+      fetch: mockedFetch,
+    })
+
+    await clientWithDefaultTimeout.query(query.Databases())
+
+    expect(mockedFetch).toBeCalledTimes(1)
+    expect(
+      mockedFetch.mock.calls[0][1].headers['X-FaunaDB-API-Version']
+    ).toBeDefined()
+
+    const driverEnvHeader = mockedFetch.mock.calls[0][1].headers['X-Driver-Env']
+    const requiredKeys = [
+      'driver',
+      'driverVersion',
+      'languageVersion',
+      'env',
+      'os',
+    ]
+    expect(
+      requiredKeys.every(key => driverEnvHeader.includes(key))
+    ).toBeDefined()
+  })
 })
 
 function assertHeader(headers, name) {

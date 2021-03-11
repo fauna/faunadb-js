@@ -118,23 +118,33 @@ function secretHeader(secret) {
 
 /** @ignore */
 function getDefaultHeaders() {
-  var headers = {
-    'X-Fauna-Driver': 'Javascript',
-    'X-FaunaDB-API-Version': packageJson.apiVersion,
+  var driverEnv = {
+    driverVersion: packageJson.version,
   }
 
   if (util.isNodeEnv()) {
-    // TODO: should be at the browser as well. waiting to enable CORS headers
-    headers['X-Fauna-Driver-Version'] = packageJson.version
-    headers['X-Runtime-Environment'] = getNodeRuntimeEnv()
-    headers['X-Runtime-Environment-OS'] = require('os').platform()
-    headers['X-NodeJS-Version'] = process.version
+    driverEnv.driver = 'nodejs'
+    driverEnv.languageVersion = process.version
+    driverEnv.env = getNodeRuntimeEnv()
+    driverEnv.os = require('os').platform()
   } else {
-    // TODO: uncomment when CORS enabled
-    // var browser = require('browser-detect')()
-    // headers['X-Runtime-Environment'] = browser.name
-    // headers['X-Runtime-Environment-Version'] = browser.version
-    // headers['X-Runtime-Environment-OS'] = browser.os
+    var browser = require('browser-detect')
+    var env = browser.__esModule ? browser.default() : browser()
+    driverEnv.driver = 'javascript'
+    driverEnv.env = env.name + '(' + env.version + ')'
+    driverEnv.os = env.os
+  }
+
+  var headers = {
+    'X-FaunaDB-API-Version': packageJson.apiVersion,
+  }
+
+  // TODO: api cors must be enabled to accept header X-Driver-Env
+  if (util.isNodeEnv()) {
+    headers['X-Driver-Env'] = Object.keys(driverEnv)
+      .map(key => [key, driverEnv[key]].join('='))
+      .join('; ')
+      .toLowerCase()
   }
 
   return headers
