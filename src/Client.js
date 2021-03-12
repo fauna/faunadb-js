@@ -1,5 +1,6 @@
 'use strict'
 
+var packageJson = require('../package.json')
 var PageHelper = require('./PageHelper')
 var RequestResult = require('./RequestResult')
 var errors = require('./errors')
@@ -175,6 +176,13 @@ function Client(options) {
   this._http = new http.HttpClient(options)
   this.stream = stream.StreamAPI(this)
 }
+
+/**
+ * Current API version.
+ *
+ * @type {string}
+ */
+Client.apiVersion = packageJson.apiVersion
 
 /**
  * Executes a query via the FaunaDB Query API.
