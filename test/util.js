@@ -157,7 +157,7 @@ afterAll(() => {
 
 function simulateBrowser() {
   global.window = {} // deceive util.isNodeEnv()
-  global.navigator = {} // mock browser navigator
+  global.navigator = { userAgent: '' } // mock browser navigator
 }
 
 module.exports = {
