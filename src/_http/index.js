@@ -1,5 +1,6 @@
 'use strict'
 var packageJson = require('../../package.json')
+const { getBrowserOsDetails } = require('../_util')
 var util = require('../_util')
 var errors = require('./errors')
 
@@ -119,17 +120,18 @@ function secretHeader(secret) {
 /** @ignore */
 function getDefaultHeaders() {
   var driverEnv = {
-    driverVersion: packageJson.version,
+    driver: ['javascript', packageJson.version].join('-'),
   }
 
   if (util.isNodeEnv()) {
-    driverEnv.driver = 'nodejs'
-    driverEnv.languageVersion = process.version
-    driverEnv.env = getNodeRuntimeEnv()
-    driverEnv.os = require('os').platform()
+    driverEnv.runtime = ['nodejs', process.version].join('-')
+    driverEnv.env = util.getNodeRuntimeEnv()
+    var os = require('os')
+    driverEnv.os = [os.platform(), os.release()].join('-')
   } else {
-    driverEnv.driver = 'javascript'
-    driverEnv.env = window.navigator ? window.navigator.userAgent : 'unknown'
+    driverEnv.runtime = util.getBrowserDetails()
+    driverEnv.env = 'unknown'
+    driverEnv.os = getBrowserOsDetails()
   }
 
   var headers = {
@@ -153,80 +155,6 @@ function isHttp2Supported() {
   } catch (_) {
     return false
   }
-}
-
-/**
- * For checking process.env always use `hasOwnProperty`
- * Some providers could throw an error when trying to access env variables that does not exists
- * @ignore */
-function getNodeRuntimeEnv() {
-  var runtimeEnvs = [
-    {
-      name: 'Netlify',
-      check: () => process.env.hasOwnProperty('NETLIFY_IMAGES_CDN_DOMAIN'),
-    },
-    {
-      name: 'Vercel',
-      check: () => process.env.hasOwnProperty('VERCEL'),
-    },
-    {
-      name: 'Heroku',
-      check: () =>
-        process.env.hasOwnProperty('PATH') &&
-        process.env.PATH.indexOf('.heroku') !== -1,
-    },
-    {
-      name: 'AWS Lambda',
-      check: () => process.env.hasOwnProperty('AWS_LAMBDA_FUNCTION_VERSION'),
-    },
-    {
-      name: 'GCP Cloud Functions',
-      check: () =>
-        process.env.hasOwnProperty('_') &&
-        process.env._.indexOf('google') !== -1,
-    },
-    {
-      name: 'GCP Compute Instances',
-      check: () => process.env.hasOwnProperty('GOOGLE_CLOUD_PROJECT'),
-    },
-    {
-      name: 'Azure Cloud Functions',
-      check: () =>
-        process.env.hasOwnProperty('WEBSITE_FUNCTIONS_AZUREMONITOR_CATEGORIES'),
-    },
-    {
-      name: 'Azure Compute',
-      check: () =>
-        process.env.hasOwnProperty('ORYX_ENV_TYPE') &&
-        process.env.hasOwnProperty('WEBSITE_INSTANCE_ID') &&
-        process.env.ORYX_ENV_TYPE === 'AppService',
-    },
-    {
-      name: 'Worker',
-      check: () => {
-        try {
-          return global instanceof ServiceWorkerGlobalScope
-        } catch (error) {
-          return false
-        }
-      },
-    },
-    {
-      name: 'Mongo Stitch',
-      check: () => typeof global.StitchError === 'function',
-    },
-    {
-      name: 'Render',
-      check: () => process.env.hasOwnProperty('RENDER_SERVICE_ID'),
-    },
-    {
-      name: 'Begin',
-      check: () => process.env.hasOwnProperty('BEGIN_DATA_SCOPE_ID'),
-    },
-  ]
-  var detectedEnv = runtimeEnvs.find(env => env.check())
-
-  return detectedEnv ? detectedEnv.name : 'Unknown'
 }
 
 module.exports = {
