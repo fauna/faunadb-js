@@ -15,13 +15,29 @@ export interface ClientConfig {
   port?: number
   timeout?: number
   queryTimeout?: number
-  observer?: <T extends object = object>(res: RequestResult<T | errors.FaunaHTTPError>, client: Client) => void
+  observer?: <T extends object = object>(
+    res: RequestResult<T | errors.FaunaHTTPError>,
+    client: Client
+  ) => void
   keepAlive?: boolean
   headers?: { [key: string]: string | number }
   fetch?: typeof fetch
 }
 
-export interface QueryOptions extends Partial<Pick<ClientConfig, 'secret' | 'queryTimeout' | 'fetch' | 'observer'>> {
+export interface QueryOptions
+  extends Partial<
+    Pick<ClientConfig, 'secret' | 'queryTimeout' | 'fetch' | 'observer'>
+  > {}
+
+type StreamFn = (
+  expr: Expr,
+  options?: {
+    fields?: StreamEventFields[]
+  }
+) => Subscription
+
+interface StreamApi extends StreamFn {
+  document: StreamFn
 }
 
 export default class Client {
@@ -29,5 +45,5 @@ export default class Client {
   query<T = object>(expr: ExprArg, options?: QueryOptions): Promise<T>
   paginate(expr: Expr, params?: object, options?: QueryOptions): PageHelper
   ping(scope?: string, timeout?: number): Promise<string>
-  stream(expr: Expr, options?: { fields?: StreamEventFields[] }): Subscription
+  stream: StreamApi
 }
