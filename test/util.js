@@ -155,6 +155,11 @@ afterAll(() => {
   return rootClient.query(query.Delete(dbRef))
 })
 
+function simulateBrowser() {
+  global.window = {} // deceive util.isNodeEnv()
+  global.navigator = {} // mock browser navigator
+}
+
 module.exports = {
   testConfig: testConfig,
   getCfg: getCfg,
@@ -166,4 +171,5 @@ module.exports = {
   dbRef: dbRef,
   unwrapExpr: unwrapExpr,
   randomString: randomString,
+  simulateBrowser: simulateBrowser,
 }

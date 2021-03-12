@@ -55,7 +55,6 @@ function isNodeEnv() {
  * @private
  */
 function getBrowserDetails() {
-  if (!navigator) return 'unknown'
   var browser = navigator.appName
   var browserVersion = '' + parseFloat(navigator.appVersion)
   var nameOffset, verOffset, ix
@@ -139,7 +138,6 @@ function getBrowserDetails() {
 
 function getBrowserOsDetails() {
   var os = 'unknown'
-  if (!navigator) return os
   var clientStrings = [
     { s: 'Windows 10', r: /(Windows 10.0|Windows NT 10.0)/ },
     { s: 'Windows 8.1', r: /(Windows 8.1|Windows NT 6.3)/ },

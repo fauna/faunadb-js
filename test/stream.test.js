@@ -188,7 +188,7 @@ describe('StreamAPI', () => {
 
     test('override fetch polyfill if possible', done => {
       global.fetch = () => Promise.reject(new Error('global fetch called'))
-      global.window = {} // deceive util.isNodeEnv()
+      util.simulateBrowser()
 
       // Re-initiate the client in order to re-initiate underlying
       // HttpClient's adapter and pull new fetch API from global.
@@ -204,7 +204,7 @@ describe('StreamAPI', () => {
     })
 
     test('report failure if no fetch compatible function is found', done => {
-      global.window = {} // deceive util.isNodeEnv()
+      util.simulateBrowser()
 
       // Re-initiate the client in order to re-initiate underlying
       // HttpClient's adapter and pull new fetch API from global.
@@ -225,7 +225,7 @@ describe('StreamAPI', () => {
     })
 
     test('report failure if failed to read a stream', done => {
-      global.window = {} // deceive util.isNodeEnv()
+      util.simulateBrowser()
       let client = util.getClient({
         // Mock the HTTP response and return a null body to force an error
         // during stream data read.
