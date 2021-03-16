@@ -5,7 +5,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 module.exports = env => ({
   entry: path.resolve(__dirname, 'index.js'),
   output: {
-    path: path.resolve(__dirname, 'wp_dist'),
+    path: path.resolve(__dirname, 'dist'),
     filename: 'faunadb.js',
     library: 'faunadb',
     libraryTarget: 'umd',
