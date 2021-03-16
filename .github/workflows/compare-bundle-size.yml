@@ -49,7 +49,7 @@ jobs:
       with:
         name: head-stats
     - name: Diff between base & head
-      uses: chronotruck/webpack-stats-diff-action@1.0.0
+      run: npm run bundle:diff
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         base_stats_path: ./base-stats/stats.json

@@ -30,6 +30,7 @@
     "build:clean": "shx rm -rf ./dist",
     "bundle:view": "webpack --env analyze",
     "bundle:stats": "webpack --env analyze --env stats",
+    "bundle:diff": "node bundleDiff.js",
     "build:browser": "webpack",
     "build:cjs": "cross-env BABEL_ENV=cjs npx babel src -d cjs",
     "build:package": "npm-run-all build:clean build:browser build:cjs"
@@ -52,9 +53,7 @@
     "@actions/github": "^4.0.0",
     "@babel/cli": "^7.13.10",
     "@babel/core": "^7.13.10",
-    "@babel/plugin-transform-modules-commonjs": "^7.13.8",
     "@babel/preset-env": "^7.13.10",
-    "babel-cli": "^6.26.0",
     "babel-loader": "^8.2.2",
     "browserify": "^16.2.2",
     "cross-env": "^7.0.3",
