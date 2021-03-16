@@ -4,7 +4,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 const packageJson = require('./package.json')
 
 module.exports = env => ({
-  entry: path.resolve(__dirname, 'src/index.js'),
+  entry: path.resolve(__dirname, './src/index.js'),
   mode: 'production',
   output: {
     path: path.resolve(__dirname, 'dist'),
