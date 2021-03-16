@@ -50,7 +50,7 @@ jobs:
         name: head-stats
     - name: Diff between base & head
       run: npm run bundle:diff
-      with:
+      env:
         token: ${{ secrets.GITHUB_TOKEN }}
         base_stats_path: ./base-stats/stats.json
         head_stats_path: ./head-stats/stats.json

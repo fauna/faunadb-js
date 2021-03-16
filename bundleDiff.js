@@ -68,4 +68,6 @@ ${summaryTable}
   }
 }
 
+console.info(process.env)
+
 run()
