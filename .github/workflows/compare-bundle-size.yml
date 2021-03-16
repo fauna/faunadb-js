@@ -36,6 +36,7 @@ jobs:
     - name: Diff between base & head
       run: npm run bundle:diff
       env:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        base_stats_path: ./base-stats/stats.json
-        head_stats_path: ./dist/stats.json
+        gitToken: ${{ secrets.GITHUB_TOKEN }}
+        baseStatsPath: ./base-stats/stats.json
+        headStatsPath: ./dist/stats.json
+        baseRef: ${{ github.base_ref }}
