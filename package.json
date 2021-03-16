@@ -30,6 +30,7 @@
     "build:clean": "shx rm -rf ./dist",
     "bundle:view": "webpack --env analyze",
     "bundle:stats": "webpack --env analyze --env stats",
+    "prebundle:diff": "npm install @actions/github @actions/core webpack-stats-diff filesize markdown-table",
     "bundle:diff": "node bundleDiff.js",
     "build:browser": "webpack",
     "build:cjs": "cross-env BABEL_ENV=cjs npx babel src -d cjs",
