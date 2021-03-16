@@ -14,7 +14,8 @@ async function run() {
     // One module may cause a whole subgraph of dependencies to get included in the bundle. The Count indicates how many modules were included due to this module.
     // Size is the total change in size due to this module and any dependencies it brings in.
     const summaryTable = generateReport(diff(stats.base, stats.head))
-
+    console.info(summaryTable)
+    const { size } = stats.head.assets[0]
     if (process.env.gitToken) {
       const octokit = github.getOctokit(process.env.gitToken)
 
@@ -27,7 +28,7 @@ async function run() {
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         issue_number: pullRequestId,
-        body: `## Bundle difference
+        body: `## Total size ${size} bytes. Changes:
       ${summaryTable}
       `,
       })
