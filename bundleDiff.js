@@ -38,5 +38,3 @@ async function run() {
 }
 
 run()
-
-console.info('base pref ', process.env.baseRef)
