@@ -28,7 +28,7 @@ async function run() {
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         issue_number: pullRequestId,
-        body: `## Total size ${size} bytes. Changes:
+        body: `## Bundle size ${size} bytes. Diff:
       ${summaryTable}
       `,
       })
