@@ -115,7 +115,13 @@ util.inherits(InvalidArity, FaunaError)
 function FaunaHTTPError(name, requestResult) {
   var response = requestResult.responseContent
   var errors = response.errors
-  var message = errors.length === 0 ? '(empty "errors")' : errors[0].code
+  var message
+
+  if (errors.length === 0) {
+    message = '(empty "errors")'
+  } else {
+    errors[0].code
+  }
   var description =
     errors.length === 0 ? '(empty "errors")' : errors[0].description
   FaunaError.call(this, name, message, description)
