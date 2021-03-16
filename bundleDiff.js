@@ -10,16 +10,10 @@ async function run() {
       head: require(path.resolve(process.cwd(), process.env.headStatsPath)),
     }
 
-    console.info('================BASE============================')
-    console.info(stats.base)
-    console.info('================HEAD============================')
-    console.info(stats.head)
-
     // The first column of the table indicates whether modules were added (+), removed (-), or changed (△). Modules with only minor changes (possibly due to internal webpack heuristics) are aggregated together in the last row of the table.
     // One module may cause a whole subgraph of dependencies to get included in the bundle. The Count indicates how many modules were included due to this module.
     // Size is the total change in size due to this module and any dependencies it brings in.
     const summaryTable = generateReport(diff(stats.base, stats.head))
-    console.info(summaryTable)
 
     if (process.env.gitToken) {
       const octokit = github.getOctokit(process.env.gitToken)
