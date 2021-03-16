@@ -1,0 +1,13 @@
+{
+  "env": {
+    "cjs": {
+      "presets": [["@babel/preset-env", { 
+        "modules": "cjs",
+        "targets": {
+          "node": "current"
+        },
+        "debug": true
+      }]]
+    }
+  }
+}

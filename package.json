@@ -20,15 +20,18 @@
     "src/",
     "dist/"
   ],
-  "main": "index.js",
+  "main": "./cjs/index.js",
+  "module": "./src/index.js",
   "scripts": {
     "doc": "jsdoc -c ./jsdoc.json",
-    "browserify": "browserify index.js --standalone faunadb -o dist/faunadb.js",
-    "browserify-min": "browserify index.js --standalone faunadb | terser -c -m --keep-fnames --keep-classnames -o dist/faunadb-min.js",
     "prettify": "prettier --write \"{src,test}/**/*.{js,ts}\"",
     "test": "jest --env=node --verbose=false --forceExit ./test",
     "semantic-release": "semantic-release",
-    "wp": "webpack"
+    "build:clean": "shx rm -rf ./dist",
+    "debug:bundle": "webpack --env analyze",
+    "build:browser": "webpack",
+    "build:cjs": "cross-env BABEL_ENV=cjs npx babel src -d cjs",
+    "build:package": "npm-run-all build:clean build:browser build:cjs"
   },
   "types": "index.d.ts",
   "dependencies": {
@@ -42,7 +45,14 @@
     "util-deprecate": "^1.0.2"
   },
   "devDependencies": {
+    "babel-loader": "^8.2.2",
+    "@babel/cli": "^7.13.10",
+    "@babel/core": "^7.13.10",
+    "@babel/plugin-transform-modules-commonjs": "^7.13.8",
+    "@babel/preset-env": "^7.13.10",
+    "babel-cli": "^6.26.0",
     "browserify": "^16.2.2",
+    "cross-env": "^7.0.3",
     "eslint": "^5.3.0",
     "eslint-config-prettier": "^6.5.0",
     "eslint-plugin-prettier": "^3.1.1",
@@ -51,10 +61,13 @@
     "jest": "^24.9.0",
     "jsdoc": "^3.6.3",
     "lint-staged": ">=8",
+    "npm-run-all": "^4.1.5",
     "prettier": "1.18.2",
     "semantic-release": "^17.1.2",
+    "shx": "^0.3.3",
     "terser": "^4.3.9",
     "webpack": "^5.23.0",
+    "webpack-bundle-analyzer": "^4.4.0",
     "webpack-cli": "^4.5.0"
   },
   "husky": {
@@ -83,5 +96,6 @@
     "https": false,
     "os": false,
     "util": false
-  }
+  },
+  "browserslist": "> 0.25%, not dead"
 }
