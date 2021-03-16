@@ -35,5 +35,16 @@ module.exports = env => ({
       },
     ],
   },
-  ...(env.analyze && { plugins: [new BundleAnalyzerPlugin()] }),
+  ...(env.analyze && {
+    plugins: [
+      new BundleAnalyzerPlugin(
+        env.stats
+          ? {
+              analyzerMode: 'disabled',
+              generateStatsFile: true,
+            }
+          : {}
+      ),
+    ],
+  }),
 })
