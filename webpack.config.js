@@ -1,6 +1,8 @@
 const path = require('path')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+  .BundleAnalyzerPlugin
 
-module.exports = {
+module.exports = env => ({
   entry: path.resolve(__dirname, 'index.js'),
   output: {
     path: path.resolve(__dirname, 'wp_dist'),
@@ -10,4 +12,16 @@ module.exports = {
     globalObject: 'this',
   },
   mode: 'production',
-}
+  ...(env.analyze && {
+    plugins: [
+      new BundleAnalyzerPlugin(
+        env.stats
+          ? {
+              analyzerMode: 'disabled',
+              generateStatsFile: true,
+            }
+          : {}
+      ),
+    ],
+  }),
+})
