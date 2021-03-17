@@ -21,15 +21,7 @@ module.exports = env => ({
         use: {
           loader: 'babel-loader',
           options: {
-            presets: [
-              [
-                '@babel/preset-env',
-                {
-                  modules: 'umd',
-                  targets: packageJson.browserslist,
-                },
-              ],
-            ],
+            envName: 'umd',
           },
         },
       },

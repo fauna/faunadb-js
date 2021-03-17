@@ -21,19 +21,21 @@
     "dist/"
   ],
   "main": "./cjs/index.js",
-  "module": "./src/index.js",
+  "module": "./esm5/index.js",
+  "es2015": "./src/index.js",
   "scripts": {
     "doc": "jsdoc -c ./jsdoc.json",
     "prettify": "prettier --write \"{src,test}/**/*.{js,ts}\"",
     "test": "jest --env=node --verbose=false --forceExit ./test",
     "semantic-release": "semantic-release",
-    "build:clean": "shx rm -rf ./dist",
+    "build:clean": "shx rm -rf ./dist ./cjs ./esm5",
     "bundle:view": "webpack --env analyze",
     "bundle:stats": "webpack --env analyze --env stats",
     "bundle:diff": "node bundleDiff.js",
     "build:browser": "webpack",
     "build:cjs": "cross-env BABEL_ENV=cjs npx babel src -d cjs",
-    "build:package": "npm-run-all build:clean build:browser build:cjs"
+    "build:esm5": "cross-env BABEL_ENV=esm npx babel src -d esm5",
+    "build:package": "npm-run-all build:clean build:browser build:cjs build:esm5"
   },
   "types": "index.d.ts",
   "dependencies": {
@@ -99,6 +101,5 @@
     "https": false,
     "os": false,
     "util": false
-  },
-  "browserslist": "> 0.25%, not dead"
+  }
 }

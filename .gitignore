@@ -115,3 +115,4 @@ testConfig.json
 doc/
 yarn.lock
 /cjs/
+/esm5/

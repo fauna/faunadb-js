@@ -1,13 +1,37 @@
 {
   "env": {
+    "umd": {
+      "presets": [["@babel/preset-env", { 
+        "modules": "umd",
+        "useBuiltIns": "usage",
+        "targets": {
+          "browsers": "last 2 versions"
+        },
+        "bugfixes": true,
+        "corejs": 3,
+        "debug": true
+      }]]
+    },
     "cjs": {
       "presets": [["@babel/preset-env", { 
         "modules": "cjs",
         "targets": {
-          "node": "current"
+          "node": "10.24.0"
         },
-        "debug": true
+        "useBuiltIns": "usage",
+        "corejs": 3
+      }]]
+    },
+    "esm": {
+      "presets": [["@babel/preset-env", { 
+        "modules": false,
+        "targets": {
+          "node": "10.24.0"
+        },
+        "useBuiltIns": "usage",
+        "corejs": 3
       }]]
     }
   }
 }
+
