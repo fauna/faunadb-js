@@ -5,7 +5,7 @@
         "modules": "umd",
         "useBuiltIns": "usage",
         "targets": {
-          "browsers": "last 2 versions"
+          "browsers": "defaults"
         },
         "bugfixes": true,
         "corejs": 3,
