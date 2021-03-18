@@ -1,3 +1,13 @@
+## 4.1.2
+
+- Expose API version as a Client's static property
+- Fix Stream API type definition (TypeScript)
+- Always pass X-Query-Timeout
+- Combine timeout & queryTimeout
+- Set http2 session idle time
+- Omit the port value if it's falsy
+- Expr to FQL logic fixes
+
 ## 4.1.1
 
 - Fallback to HTTP1 in case old NodeJS version doesn't support it
