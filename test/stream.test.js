@@ -1,9 +1,8 @@
 'use strict'
 
-const Client = require('../src/Client')
-const q = require('../src/query')
-const util = require('./util')
-const { BadRequest, UnavailableError } = require('../src/errors/')
+import { BadRequest } from '../src/errors/'
+import * as q from '../src/query'
+import * as util from './util'
 
 let db, key, client, coll, doc, stream, window, fetch
 

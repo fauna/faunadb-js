@@ -94,7 +94,7 @@ var faunadb = require('faunadb'),
   q = faunadb.query
 ```
 
-This is the recommended require stanza. The `faunadb.query` module contains all
+The `faunadb.query` module contains all
 of the functions to create FaunaDB Query expressions.
 
 #### Instantiating a Client and Issuing Queries
@@ -125,6 +125,30 @@ createP.then(function(response) {
 
 `response` is a JSON object containing the FaunaDB response. See the JSDocs for
 `faunadb.Client`.
+
+#### ES6 modules
+
+This is recommended way to inject faunadb-js. Many build tools supports three shaking which relies on the static structure of ES6 module syntax, i.e. `import` and `export`.
+
+```
+import { Client, query } from 'faunadb'
+
+const client =new Client({secret: 'your_key_here'})
+client.query(query.Now()).then(console.info)
+```
+
+Another way to import queries functions
+
+```
+import { Now, Select, Var } from 'faunadb/query'
+```
+
+Or even more explicit (note: will be implemented in next PR)
+
+```
+import Select from 'faunadb/query/Select'
+import Var from 'faunadb/query/Var'
+```
 
 #### Pagination Helpers
 

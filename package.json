@@ -46,7 +46,6 @@
     "cross-fetch": "^3.0.6",
     "dotenv": "^8.2.0",
     "fn-annotate": "^1.1.3",
-    "object-assign": "^4.1.0",
     "util-deprecate": "^1.0.2"
   },
   "devDependencies": {
@@ -63,7 +62,7 @@
     "eslint-plugin-prettier": "^3.1.1",
     "husky": ">=1",
     "ink-docstrap": "^1.2.1",
-    "jest": "^24.9.0",
+    "jest": "^26.6.3",
     "jsdoc": "^3.6.3",
     "lint-staged": ">=8",
     "npm-run-all": "^4.1.5",
@@ -102,5 +101,10 @@
     "https": false,
     "os": false,
     "util": false
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    }
   }
 }
