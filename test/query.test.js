@@ -314,7 +314,7 @@ describe('query', () => {
       .query(query.CreateFunction({ name: 'concat_with_slash', body: body }))
       .then(function() {
         return assertQuery(
-          query.Call(query.Function('concat_with_slash'), 'a', 'b'),
+          query.Call(query.FaunaFunction('concat_with_slash'), 'a', 'b'),
           'a/b'
         )
       })
@@ -336,7 +336,7 @@ describe('query', () => {
       )
       .then(function() {
         return assertQuery(
-          query.Call(query.Function('concat_with_slash_obj'), {
+          query.Call(query.FaunaFunction('concat_with_slash_obj'), {
             a: 'a',
             b: 'b',
           }),
@@ -835,7 +835,10 @@ describe('query', () => {
     return client
       .query(query.CreateFunction({ name: 'a_function', body: body }))
       .then(function() {
-        return assertQuery(query.Exists(query.Function('a_function')), true)
+        return assertQuery(
+          query.Exists(query.FaunaFunction('a_function')),
+          true
+        )
       })
   })
 
@@ -2934,7 +2937,7 @@ describe('query', () => {
 
   // Check arity of all query functions
 
-  test('arity', () => {
+  test.only('arity', () => {
     // By default assume all functions should have strict arity
     var testParams = {
       Ref: [3, 'from 1 to 2'],

@@ -140,8 +140,9 @@ client.query(query.Now()).then(console.info)
 Another way to import queries functions
 
 ```
-import { Now, Select, Var, FaunaObject } from 'faunadb/query'
-not that query.Object has been replated to FaunaObject
+import { Now, Select, Var, FaunaObject, FaunaFunction } from 'faunadb/query'
+query.Object has been replaced to FaunaObject
+query.Function has been replaced to FaunaFunction
 ```
 
 Or even more explicit (note: will be implemented in next PR)

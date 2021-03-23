@@ -269,7 +269,7 @@ export function _lambdaFunc(func) {
 /**
  * @private
  */
-export function _lambdaExpr(var_name, expr) {
+function _lambdaExpr(var_name, expr) {
   return new Expr({ lambda: wrap(var_name), expr: wrap(expr) })
 }
 
@@ -1827,8 +1827,8 @@ export function Collection(name, scope) {
  *   The Ref of the user defined function's scope.
  * @return {Expr}
  */
-export function FunctionFn(name, scope) {
-  arity.between(1, 2, arguments, FunctionFn.name)
+export function FaunaFunction(name, scope) {
+  arity.between(1, 2, arguments, FaunaFunction.name)
   switch (arguments.length) {
     case 1:
       return new Expr({ function: wrap(name) })
@@ -2983,7 +2983,7 @@ arity.between = function(min, max, args, callerFunc) {
  *
  * @ignore
  * */
-export function params(mainParams, optionalParams) {
+function params(mainParams, optionalParams) {
   for (var key in optionalParams) {
     var val = optionalParams[key]
     if (val !== null && val !== undefined) {
@@ -3000,7 +3000,7 @@ export function params(mainParams, optionalParams) {
  *
  * @ignore
  */
-export function varargs(values) {
+function varargs(values) {
   var valuesAsArr = Array.isArray(values)
     ? values
     : Array.prototype.slice.call(values)
@@ -3010,7 +3010,7 @@ export function varargs(values) {
 /**
  * @ignore
  */
-export function argsToArray(args) {
+function argsToArray(args) {
   var rv = []
   rv.push.apply(rv, args)
   return rv
