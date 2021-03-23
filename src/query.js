@@ -182,8 +182,8 @@ export function Do() {
  *   The object to be escaped.
  * @return {Expr}
  * */
-var objectFunction = function(fields) {
-  arity.exact(1, arguments, objectFunction.name)
+export var FaunaObject = function(fields) {
+  arity.exact(1, arguments, FaunaObject.name)
   return new Expr({ object: wrapValues(fields) })
 }
 /**

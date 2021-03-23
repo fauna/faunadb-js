@@ -265,7 +265,7 @@ describe('query', () => {
   })
 
   test('object', () => {
-    var obj = query.Object({ x: query.Let({ x: 1 }, query.Var('x')) })
+    var obj = query.FaunaObject({ x: query.Let({ x: 1 }, query.Var('x')) })
     return assertQuery(obj, { x: 1 })
   })
 
