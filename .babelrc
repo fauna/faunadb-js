@@ -31,6 +31,16 @@
         "useBuiltIns": "usage",
         "corejs": 3
       }]]
+    },
+    "test": {
+      "presets": [["@babel/preset-env", { 
+        "modules": "cjs",
+        "targets": {
+          "node": "current"
+        },
+        "useBuiltIns": "usage",
+        "corejs": 3
+      }]]
     }
   }
 }

@@ -1,11 +1,10 @@
 'use strict'
 
 var util = require('util')
-var errors = require('../src/errors')
-var json = require('../src/_json')
-var Expr = require('../src/Expr')
-var values = require('../src/values')
-var q = require('../src/query')
+import Expr from '../src/Expr'
+import * as q from '../src/query'
+import * as values from '../src/values'
+import * as json from '../src/_json'
 
 var FaunaDate = values.FaunaDate,
   FaunaTime = values.FaunaTime,

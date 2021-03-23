@@ -1,8 +1,14 @@
 'use strict'
 var packageJson = require('../../package.json')
-const { getBrowserOsDetails } = require('../_util')
-var util = require('../_util')
-var errors = require('./errors')
+import {
+  getBrowserDetails,
+  getBrowserOsDetails,
+  getNodeRuntimeEnv,
+  isNodeEnv,
+  removeNullAndUndefinedValues,
+} from '../_util'
+import FetchAdapter from './fetchAdapter'
+import Http2Adapter from './http2Adapter'
 
 /**
  * The driver's internal HTTP client.
@@ -11,7 +17,7 @@ var errors = require('./errors')
  * @param {Object} options Same as the {@link Client} options.
  * @private
  */
-function HttpClient(options) {
+export default function HttpClient(options) {
   var isHttps = options.scheme === 'https'
 
   // If the port is a falsy value - replace it with default one.
@@ -21,13 +27,14 @@ function HttpClient(options) {
 
   // HTTP2 adapter is applicable only if it's NodeJS env and
   // no fetch API override provided (to preserve backward-compatibility).
-  var useHttp2Adapter = !options.fetch && util.isNodeEnv() && isHttp2Supported()
+  var useHttp2Adapter = !options.fetch && isNodeEnv() && isHttp2Supported()
 
+  // this._adapter
   this._adapter = useHttp2Adapter
-    ? new (require('./http2Adapter'))({
+    ? new Http2Adapter({
         http2SessionIdleTime: options.http2SessionIdleTime,
       })
-    : new (require('./fetchAdapter'))({
+    : new FetchAdapter({
         isHttps: isHttps,
         fetch: options.fetch,
         keepAlive: options.keepAlive,
@@ -105,7 +112,7 @@ HttpClient.prototype.execute = function(options) {
     path: options.path || '/',
     query: options.query,
     method: options.method || 'GET',
-    headers: util.removeNullAndUndefinedValues(headers),
+    headers: removeNullAndUndefinedValues(headers),
     body: options.body,
     signal: options.signal,
     queryTimeout: this._queryTimeout,
@@ -123,13 +130,13 @@ function getDefaultHeaders() {
     driver: ['javascript', packageJson.version].join('-'),
   }
 
-  if (util.isNodeEnv()) {
+  if (isNodeEnv()) {
     driverEnv.runtime = ['nodejs', process.version].join('-')
-    driverEnv.env = util.getNodeRuntimeEnv()
+    driverEnv.env = getNodeRuntimeEnv()
     var os = require('os')
     driverEnv.os = [os.platform(), os.release()].join('-')
   } else {
-    driverEnv.runtime = util.getBrowserDetails()
+    driverEnv.runtime = getBrowserDetails()
     driverEnv.env = 'unknown'
     driverEnv.os = getBrowserOsDetails()
   }
@@ -139,7 +146,7 @@ function getDefaultHeaders() {
   }
 
   // TODO: api cors must be enabled to accept header X-Driver-Env
-  if (util.isNodeEnv()) {
+  if (isNodeEnv()) {
     headers['X-Driver-Env'] = Object.keys(driverEnv)
       .map(key => [key, driverEnv[key].toLowerCase()].join('='))
       .join('; ')
@@ -155,10 +162,4 @@ function isHttp2Supported() {
   } catch (_) {
     return false
   }
-}
-
-module.exports = {
-  HttpClient: HttpClient,
-  TimeoutError: errors.TimeoutError,
-  AbortError: errors.AbortError,
 }
