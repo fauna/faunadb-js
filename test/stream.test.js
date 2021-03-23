@@ -1,6 +1,6 @@
 'use strict'
 
-import { BadRequest } from '../src/errors/'
+import { BadRequest } from '../src/errors'
 import * as q from '../src/query'
 import * as util from './util'
 
