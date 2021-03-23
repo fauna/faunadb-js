@@ -1,7 +1,6 @@
 'use strict'
 
-var query = require('./query')
-var objectAssign = require('object-assign')
+import { Filter, Map, Paginate } from './query'
 
 /**
  * A FaunaDB Lambda expression to be passed into one of the collection
@@ -48,7 +47,7 @@ var objectAssign = require('object-assign')
  * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://app.fauna.com/documentation/intro/security))
  * @constructor
  */
-function PageHelper(client, set, params, options) {
+export default function PageHelper(client, set, params, options) {
   if (params === undefined) {
     params = {}
   }
@@ -63,7 +62,7 @@ function PageHelper(client, set, params, options) {
   this.before = undefined
   this.after = undefined
 
-  objectAssign(this.params, params)
+  Object.assign(this.params, params)
 
   var cursorParams = this.params.cursor || this.params
 
@@ -76,7 +75,7 @@ function PageHelper(client, set, params, options) {
   }
 
   this.options = {}
-  objectAssign(this.options, options)
+  Object.assign(this.options, options)
 
   this.client = client
   this.set = set
@@ -102,7 +101,7 @@ function PageHelper(client, set, params, options) {
 PageHelper.prototype.map = function(lambda) {
   var rv = this._clone()
   rv._faunaFunctions.push(function(q) {
-    return query.Map(q, lambda)
+    return Map(q, lambda)
   })
   return rv
 }
@@ -119,7 +118,7 @@ PageHelper.prototype.map = function(lambda) {
 PageHelper.prototype.filter = function(lambda) {
   var rv = this._clone()
   rv._faunaFunctions.push(function(q) {
-    return query.Filter(q, lambda)
+    return Filter(q, lambda)
   })
   return rv
 }
@@ -227,7 +226,7 @@ PageHelper.prototype._consumePages = function(lambda, reverse) {
  */
 PageHelper.prototype._retrieveNextPage = function(cursor, reverse) {
   var opts = {}
-  objectAssign(opts, this.params)
+  Object.assign(opts, this.params)
   var cursorOpts = opts.cursor || opts
 
   if (cursor !== undefined) {
@@ -242,7 +241,7 @@ PageHelper.prototype._retrieveNextPage = function(cursor, reverse) {
     }
   }
 
-  var q = query.Paginate(this.set, opts)
+  var q = Paginate(this.set, opts)
 
   if (this._faunaFunctions.length > 0) {
     this._faunaFunctions.forEach(function(lambda) {
@@ -266,5 +265,3 @@ PageHelper.prototype._clone = function() {
     after: { value: this.after },
   })
 }
-
-module.exports = PageHelper

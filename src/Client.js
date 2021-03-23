@@ -1,15 +1,20 @@
 'use strict'
 
 var packageJson = require('../package.json')
-var PageHelper = require('./PageHelper')
-var RequestResult = require('./RequestResult')
-var errors = require('./errors')
-var http = require('./_http')
-var json = require('./_json')
-var query = require('./query')
-var stream = require('./stream')
-var util = require('./_util')
-var values = require('./values')
+import { FaunaHTTPError } from './errors'
+import PageHelper from './PageHelper'
+import { wrap } from './query'
+import RequestResult from './RequestResult'
+import StreamAPI from './stream'
+import { Ref } from './values'
+import HttpClient from './_http'
+import { parseJSON } from './_json'
+import {
+  applyDefaults,
+  checkInstanceHasProperty,
+  defaults,
+  removeUndefinedValues,
+} from './_util'
 
 /**
  * The callback that will be executed after every completed request.
@@ -158,8 +163,8 @@ var values = require('./values')
  * @param {?number} options.http2SessionIdleTime
  *   Sets the maximum amount of time (in milliseconds) for http2 session to release connection. By default 500ms
  */
-function Client(options) {
-  options = util.applyDefaults(options, {
+export default function Client(options) {
+  options = applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
     port: null,
@@ -173,8 +178,8 @@ function Client(options) {
   })
 
   this._observer = options.observer
-  this._http = new http.HttpClient(options)
-  this.stream = stream.StreamAPI(this)
+  this._http = new HttpClient(options)
+  this.stream = StreamAPI(this)
 }
 
 /**
@@ -196,7 +201,7 @@ Client.apiVersion = packageJson.apiVersion
  * @return {external:Promise<Object>} FaunaDB response object.
  */
 Client.prototype.query = function(expression, options) {
-  return this._execute('POST', '', query.wrap(expression), null, options)
+  return this._execute('POST', '', wrap(expression), null, options)
 }
 
 /**
@@ -212,8 +217,8 @@ Client.prototype.query = function(expression, options) {
  * @returns {PageHelper} A PageHelper that wraps the provided expression.
  */
 Client.prototype.paginate = function(expression, params, options) {
-  params = util.defaults(params, {})
-  options = util.defaults(options, {})
+  params = defaults(params, {})
+  options = defaults(options, {})
 
   return new PageHelper(this, expression, params, options)
 }
@@ -251,17 +256,14 @@ Client.prototype.syncLastTxnTime = function(time) {
 }
 
 Client.prototype._execute = function(method, path, data, query, options) {
-  query = util.defaults(query, null)
+  query = defaults(query, null)
 
-  if (
-    path instanceof values.Ref ||
-    util.checkInstanceHasProperty(path, '_isFaunaRef')
-  ) {
+  if (path instanceof Ref || checkInstanceHasProperty(path, '_isFaunaRef')) {
     path = path.value
   }
 
   if (query !== null) {
-    query = util.removeUndefinedValues(query)
+    query = removeUndefinedValues(query)
   }
 
   var startTime = Date.now()
@@ -280,7 +282,7 @@ Client.prototype._execute = function(method, path, data, query, options) {
     )
     .then(function(response) {
       var endTime = Date.now()
-      var responseObject = json.parseJSON(response.body)
+      var responseObject = parseJSON(response.body)
       var result = new RequestResult(
         method,
         path,
@@ -315,7 +317,5 @@ Client.prototype._handleRequestResult = function(response, result, options) {
     }
   })
 
-  errors.FaunaHTTPError.raiseForStatusCode(result)
+  FaunaHTTPError.raiseForStatusCode(result)
 }
-
-module.exports = Client
