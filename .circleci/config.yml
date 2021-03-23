@@ -51,7 +51,7 @@ commands:
 
       - run:
           name: Test webpack build
-          command: yarn wp
+          command: yarn build:browser
 
       - run:
           name: Run Tests
