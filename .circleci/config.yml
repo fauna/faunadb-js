@@ -54,10 +54,6 @@ commands:
           command: yarn build:package
 
       - run:
-          name: debug jest verison
-          command: npx jest --version
-
-      - run:
           name: Run Tests
           command: yarn test
 
