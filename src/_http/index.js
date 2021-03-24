@@ -123,14 +123,24 @@ function getDefaultHeaders() {
     driver: ['javascript', packageJson.version].join('-'),
   }
 
+  let isServiceWorker
+
+  try {
+    isServiceWorker = global instanceof ServiceWorkerGlobalScope
+  } catch (error) {
+    isServiceWorker = false
+  }
+
   if (util.isNodeEnv()) {
     driverEnv.runtime = ['nodejs', process.version].join('-')
     driverEnv.env = util.getNodeRuntimeEnv()
     var os = require('os')
     driverEnv.os = [os.platform(), os.release()].join('-')
+  } else if (isServiceWorker) {
+    driverEnv.runtime = 'Service Worker'
   } else {
     driverEnv.runtime = util.getBrowserDetails()
-    driverEnv.env = 'unknown'
+    driverEnv.env = 'browser'
     driverEnv.os = getBrowserOsDetails()
   }
 
