@@ -45,13 +45,13 @@ function FetchAdapter(options) {
  * @param {?string} options.body Request body utf8 string.
  * @params {?object} options.streamConsumer Stream consumer.
  * @param {?object} options.signal Abort signal object.
- * @param {?number} options.queryTimeout Request timeout.
+ * @param {?number} options.timeout Request timeout.
  * @returns {Promise} Request result.
  */
 FetchAdapter.prototype.execute = function(options) {
   var signal = options.signal
   // Use timeout only if no signal provided
-  var useTimeout = !options.signal && !!options.queryTimeout
+  var useTimeout = !options.signal && !!options.timeout
   var timerId
 
   var cleanup = function() {
@@ -97,7 +97,7 @@ FetchAdapter.prototype.execute = function(options) {
     var ctrl = new AbortController()
 
     signal = ctrl.signal
-    timerId = setTimeout(ctrl.abort.bind(ctrl), options.queryTimeout)
+    timerId = setTimeout(ctrl.abort.bind(ctrl), options.timeout)
   }
 
   return this._fetch(

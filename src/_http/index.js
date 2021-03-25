@@ -24,9 +24,7 @@ function HttpClient(options) {
   var useHttp2Adapter = !options.fetch && util.isNodeEnv() && isHttp2Supported()
 
   this._adapter = useHttp2Adapter
-    ? new (require('./http2Adapter'))({
-        http2SessionIdleTime: options.http2SessionIdleTime,
-      })
+    ? new (require('./http2Adapter'))()
     : new (require('./fetchAdapter'))({
         isHttps: isHttps,
         fetch: options.fetch,
@@ -35,8 +33,9 @@ function HttpClient(options) {
   this._baseUrl = options.scheme + '://' + options.domain + ':' + options.port
   this._secret = options.secret
   this._headers = Object.assign({}, options.headers, getDefaultHeaders())
-  this._lastSeen = null
   this._queryTimeout = options.queryTimeout
+  this._lastSeen = null
+  this._timeout = Math.floor(options.timeout * 1000)
 }
 
 /**
@@ -108,7 +107,7 @@ HttpClient.prototype.execute = function(options) {
     headers: util.removeNullAndUndefinedValues(headers),
     body: options.body,
     signal: options.signal,
-    queryTimeout: this._queryTimeout,
+    timeout: this._timeout,
     streamConsumer: options.streamConsumer,
   })
 }

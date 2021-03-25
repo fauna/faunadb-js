@@ -5,8 +5,6 @@ var query = require('../src/query')
 var util = require('./util')
 var Client = require('../src/Client')
 var json = require('../src/_json')
-const { getClient } = require('./util')
-var http2 = require('http2')
 var client
 
 describe('Client', () => {
@@ -161,7 +159,7 @@ describe('Client', () => {
     const customTimeout = 3
     const mockedFetch = mockFetch({}, true)
     const clientWithTimeout = new Client({
-      queryTimeout: customTimeout,
+      timeout: customTimeout,
       fetch: mockedFetch,
     })
 
@@ -179,9 +177,9 @@ describe('Client', () => {
     await clientWithDefaultTimeout.query(query.Databases())
 
     expect(mockedFetch).toBeCalledTimes(1)
-    expect(mockedFetch.mock.calls[0][1].headers['X-Query-Timeout']).toEqual(
-      60000
-    )
+    expect(
+      mockedFetch.mock.calls[0][1].headers['X-Query-Timeout']
+    ).not.toBeDefined()
   })
 
   test('instantiate client using custom queryTimeout', async () => {
@@ -212,33 +210,6 @@ describe('Client', () => {
     expect(mockedFetch.mock.calls[0][1].headers['X-Query-Timeout']).toEqual(
       overrideQueryTimeout
     )
-  })
-
-  test('set custom http2SessionIdleTime', async () => {
-    let setTimeoutSpy
-    const http2OriginConnect = http2.connect
-    jest.spyOn(http2, 'connect').mockImplementationOnce(origin => {
-      const session = http2OriginConnect(origin)
-      setTimeoutSpy = jest.spyOn(session, 'setTimeout')
-      return session
-    })
-    const http2SessionIdleTime = 3 * 1000
-
-    const client = getClient({ http2SessionIdleTime: http2SessionIdleTime })
-    await client.query(query.Now())
-
-    expect(setTimeoutSpy.mock.calls[0][0]).toBe(http2SessionIdleTime)
-  })
-
-  test('http2 session released', async () => {
-    const http2SessionIdleTime = 500
-    const client = getClient({ http2SessionIdleTime: http2SessionIdleTime })
-    await client.query(query.Now())
-    const sessions = client._http._adapter._sessionMap
-
-    expect(Object.keys(sessions).length).toBe(1)
-    await new Promise(resolve => setTimeout(resolve, http2SessionIdleTime + 1))
-    expect(Object.keys(sessions).length).toBe(0)
   })
 
   test('Unauthorized error has the proper fields', async () => {
