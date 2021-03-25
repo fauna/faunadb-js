@@ -1,3 +1,8 @@
+## 4.1.3
+
+- Revert X-Query-Timeout improvement (will be introduced in a major release)
+- Revert http2 session idle time (will be changed to a manual handling by a 'close' method in a major release)
+
 ## 4.1.2
 
 - Expose API version as a Client's static property
