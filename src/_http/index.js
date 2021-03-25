@@ -24,9 +24,7 @@ function HttpClient(options) {
   var useHttp2Adapter = !options.fetch && util.isNodeEnv() && isHttp2Supported()
 
   this._adapter = useHttp2Adapter
-    ? new (require('./http2Adapter'))({
-        http2SessionIdleTime: options.http2SessionIdleTime,
-      })
+    ? new (require('./http2Adapter'))()
     : new (require('./fetchAdapter'))({
         isHttps: isHttps,
         fetch: options.fetch,

@@ -156,8 +156,6 @@ var values = require('./values')
  *   a fetch compatible [API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) for making a request
  * @param {?number} options.queryTimeout
  *   Sets the maximum amount of time (in milliseconds) for query execution on the server,
- * @param {?number} options.http2SessionIdleTime
- *   Sets the maximum amount of time (in milliseconds) for http2 session to release connection. By default 500ms
  */
 function Client(options) {
   options = util.applyDefaults(options, {
@@ -171,7 +169,6 @@ function Client(options) {
     headers: {},
     fetch: undefined,
     queryTimeout: null,
-    http2SessionIdleTime: 500,
   })
 
   this._observer = options.observer
