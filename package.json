@@ -32,8 +32,8 @@
       "import": "./esm5/index.js"
     },
     "./query": {
-      "require": "./cjs/query/index.js",
-      "import": "./esm5/query/index.js"
+      "require": "./cjs/query/main.js",
+      "import": "./esm5/query/main.js"
     },
     "./query/*": {
       "require": "./cjs/query/*.js",
@@ -45,7 +45,7 @@
     "prettify": "prettier --write \"{src,test}/**/*.{js,ts}\"",
     "test": "node --experimental-vm-modules node_modules/.bin/jest  --env=node --verbose=false --forceExit ./test",
     "semantic-release": "semantic-release",
-    "bundle:view": "webpack --env analyze",
+    "bundle:analyze": "webpack --env analyze",
     "bundle:stats": "webpack --env analyze --env stats",
     "bundle:diff": "node tools/bundleDiff.js",
     "build:clean": "shx rm -rf ./dist ./cjs ./esm5 ./query",

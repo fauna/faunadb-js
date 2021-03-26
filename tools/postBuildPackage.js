@@ -5,6 +5,7 @@
 const fs = require('fs-extra')
 const path = require('path')
 const pkg = require('../package.json')
+const queryPkg = require('../src/query/package.json')
 
 const commonPkgFields = {
   name: pkg.name,
@@ -14,6 +15,7 @@ const commonPkgFields = {
   browser: pkg.browser,
 }
 
+// rewrite type="modules" for esm5 to support NodeJS
 writePkg({
   rootPath: 'esm5',
   pkgManifest: {
@@ -22,23 +24,33 @@ writePkg({
   },
 })
 
-const roots = [
+// copy query/package.json for each module systems (has `main` rewrite)
+const moduleSystems = ['esm5', 'cjs']
+moduleSystems.forEach(moduleSystem =>
+  writePkg({
+    rootPath: `${moduleSystem}/query`,
+    pkgManifest: queryPkg,
+  })
+)
+
+const rootAliases = [
   {
     alias: 'query',
+    main: 'main',
     aliasForFiles: true,
   },
 ]
 
-roots.forEach(({ alias, aliasForFiles }) => {
+rootAliases.forEach(({ alias, aliasForFiles, main = 'index' }) => {
   ensureDir(alias)
   writePkg({
     rootPath: alias,
     pkgManifest: {
       name: `faunadb/${alias}`,
       types: `../src/types/${alias}.d.ts`,
-      main: `../cjs/${alias}/index.js`,
-      module: `../esm5/${alias}/index.js`,
-      es2015: `../src/${alias}/index.js`,
+      main: `../cjs/${alias}/${main}.js`,
+      module: `../esm5/${alias}/${main}.js`,
+      es2015: `../src/${alias}/${main}.js`,
       sideEffects: false,
     },
   })

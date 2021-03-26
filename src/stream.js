@@ -13,8 +13,7 @@
 
 import 'abort-controller/polyfill'
 import { AbortError, StreamErrorEvent } from './errors'
-import Get from './query/Get'
-import { wrap } from './query/wrap'
+import { Get, wrap } from './query'
 import RequestResult from './RequestResult'
 import { parseJSON, parseJSONStreaming } from './_json'
 import { applyDefaults } from './_util'

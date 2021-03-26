@@ -72,14 +72,13 @@ To get up and running quickly, below is a full example for connecting from the b
 <script src="https://cdn.jsdelivr.net/npm/faunadb@latest/dist/faunadb.js"></script>
 <script type="text/javascript">
   var faunadb = window.faunadb
-  var q = faunadb.query
   var client = new faunadb.Client({
     secret: 'your_key_here',
     domain: 'db.fauna.com',
     scheme: 'https',
   })
   client.query(
-    q.ToDate('2018-06-06')
+    faunadb.ToDate('2018-06-06')
   )
   .then(function (res) { console.log('Result:', res) })
   .catch(function (err) { console.log('Error:', err) })
@@ -91,10 +90,10 @@ To get up and running quickly, below is a full example for connecting from the b
 
 ```javascript
 var faunadb = require('faunadb'),
-  q = faunadb.query
+var query = require('faunadb/query)
 ```
 
-The `faunadb.query` module contains all
+The `faunadb/query` module contains all
 of the functions to create FaunaDB Query expressions.
 
 #### Instantiating a Client and Issuing Queries
@@ -173,6 +172,9 @@ EcmaScript
 
 ```javascript
 import Client from 'faunadb'
+
+// Import query from root
+import { Select } from 'faunadb'
 
 // Import all queries by one command
 import * as q from 'faunadb/query'

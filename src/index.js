@@ -1,6 +1,7 @@
 export { default as Client, default } from './Client'
 export { default as Expr } from './Expr'
 export { default as PageHelper } from './PageHelper'
+export * from './query'
 export { default as RequestResult } from './RequestResult'
 
 import * as _clientLogger from './clientLogger'
