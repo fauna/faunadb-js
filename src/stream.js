@@ -11,9 +11,10 @@
 // visibility control. However, DO NOT change any internal state from outside of
 // its context as it'd most certainly lead to errors.
 
-require('abort-controller/polyfill')
+import 'abort-controller/polyfill'
 import { AbortError, StreamErrorEvent } from './errors'
-import { Get, wrap } from './query'
+import Get from './query/Get'
+import { wrap } from './query/wrap'
 import RequestResult from './RequestResult'
 import { parseJSON, parseJSONStreaming } from './_json'
 import { applyDefaults } from './_util'

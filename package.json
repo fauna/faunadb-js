@@ -18,11 +18,28 @@
   "files": [
     "index.d.ts",
     "src/",
-    "dist/"
+    "dist/",
+    "cjs/",
+    "esm5/",
+    "query/"
   ],
   "main": "./cjs/index.js",
   "module": "./esm5/index.js",
   "es2015": "./src/index.js",
+  "exports": {
+    ".": {
+      "require": "./cjs/index.js",
+      "import": "./esm5/index.js"
+    },
+    "./query": {
+      "require": "./cjs/query/index.js",
+      "import": "./esm5/query/index.js"
+    },
+    "./query/*": {
+      "require": "./cjs/query/*.js",
+      "import": "./esm5/query/*.js"
+    }
+  },
   "scripts": {
     "doc": "jsdoc -c ./jsdoc.json",
     "prettify": "prettier --write \"{src,test}/**/*.{js,ts}\"",
@@ -30,12 +47,13 @@
     "semantic-release": "semantic-release",
     "bundle:view": "webpack --env analyze",
     "bundle:stats": "webpack --env analyze --env stats",
-    "bundle:diff": "node bundleDiff.js",
-    "build:clean": "shx rm -rf ./dist ./cjs ./esm5",
+    "bundle:diff": "node tools/bundleDiff.js",
+    "build:clean": "shx rm -rf ./dist ./cjs ./esm5 ./query",
     "build:browser": "webpack",
-    "build:cjs": "cross-env BABEL_ENV=cjs npx babel src -d cjs",
+    "build:cjs": "cross-env BABEL_ENV=cjs npx babel src -d ./cjs",
     "build:esm5": "cross-env BABEL_ENV=esm npx babel src -d esm5",
-    "build:package": "npm-run-all build:clean build:browser build:cjs build:esm5"
+    "build:package": "npm-run-all build:clean build:browser build:cjs build:esm5",
+    "postbuild:package": "node tools/postBuildPackage.js"
   },
   "types": "index.d.ts",
   "dependencies": {

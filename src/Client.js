@@ -1,9 +1,9 @@
 'use strict'
 
-var packageJson = require('../package.json')
+import packageJson from '../package.json'
 import { FaunaHTTPError } from './errors'
 import PageHelper from './PageHelper'
-import { wrap } from './query'
+import { wrap } from './query/wrap'
 import RequestResult from './RequestResult'
 import StreamAPI from './stream'
 import { Ref } from './values'

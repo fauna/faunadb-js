@@ -116,3 +116,4 @@ doc/
 yarn.lock
 /cjs/
 /esm5/
+/query/

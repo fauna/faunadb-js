@@ -1,5 +1,7 @@
 'use strict'
-var packageJson = require('../../package.json')
+import http2 from 'http2'
+import os from 'os'
+import packageJson from '../../package.json'
 import {
   getBrowserDetails,
   getBrowserOsDetails,
@@ -27,7 +29,7 @@ export default function HttpClient(options) {
 
   // HTTP2 adapter is applicable only if it's NodeJS env and
   // no fetch API override provided (to preserve backward-compatibility).
-  var useHttp2Adapter = !options.fetch && isNodeEnv() && isHttp2Supported()
+  var useHttp2Adapter = !options.fetch && isNodeEnv() && http2
 
   // this._adapter
   this._adapter = useHttp2Adapter
@@ -133,7 +135,6 @@ function getDefaultHeaders() {
   if (isNodeEnv()) {
     driverEnv.runtime = ['nodejs', process.version].join('-')
     driverEnv.env = getNodeRuntimeEnv()
-    var os = require('os')
     driverEnv.os = [os.platform(), os.release()].join('-')
   } else {
     driverEnv.runtime = getBrowserDetails()
@@ -152,14 +153,4 @@ function getDefaultHeaders() {
       .join('; ')
   }
   return headers
-}
-
-function isHttp2Supported() {
-  try {
-    require('http2')
-
-    return true
-  } catch (_) {
-    return false
-  }
 }

@@ -5,7 +5,11 @@
         "modules": "umd",
         "useBuiltIns": "usage",
         "targets": {
-          "browsers": "defaults"
+          "browsers": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+          ]
         },
         "bugfixes": true,
         "corejs": 3,

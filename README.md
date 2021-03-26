@@ -131,26 +131,80 @@ createP.then(function(response) {
 This is recommended way to inject faunadb-js. Many build tools supports three shaking which relies on the static structure of ES6 module syntax, i.e. `import` and `export`.
 
 ```
-import { Client, query } from 'faunadb'
+import Client from 'faunadb'
+import { Now } from 'faunadb/query'
 
 const client =new Client({secret: 'your_key_here'})
-client.query(query.Now()).then(console.info)
+client.query(Now()).then(console.info)
 ```
 
-Another way to import queries functions
+Import all query functions in one line
 
 ```
-import { Now, Select, Var, FaunaObject, FaunaFunction } from 'faunadb/query'
-query.Object has been replaced to FaunaObject
-query.Function has been replaced to FaunaFunction
+import * as q from 'faunadb/query'
 ```
 
-Or even more explicit (note: will be implemented in next PR)
+Deep imports. This is the recommended way to import query functions as modern bundle tools would tree-shake package and include only used functions.
 
 ```
 import Select from 'faunadb/query/Select'
 import Var from 'faunadb/query/Var'
 ```
+
+#### Migration guide from 4.X.X to 5.X.X
+
+##### Overview
+
+faunadb-js from version 5.X.X support EcmaScript modules system which brings availability for bundle tools like webpack, rollup execute three-shake package and remove unused code, therefore bundle size would be smaller
+
+##### Import query functions
+
+All query functions has been removed from main package and hosted under sub-module `faunadb/query`.
+
+CommonJS
+
+```diff
+const faunadb = require('faunadb');
+-const q = faunadb.query;
++const q = require('faunadb/query');
+```
+
+EcmaScript
+
+```javascript
+import Client from 'faunadb'
+
+// Import all queries by one command
+import * as q from 'faunadb/query'
+
+// Named imports
+import { Select, Var } from 'faunadb/query'
+
+// Deep imports
+import Select from 'faunadb/query/Select'
+import Var from 'faunadb/query/Var'
+```
+
+Although most modern bundle tools are able to tree-shake package with named imports, we recommend to use deep imports.
+
+##### Renamed queries
+
+Due to restriction of JS reserved words some queries has been renamed
+
+```diff
+client.query(
+-  Get(Function('increment'))
++  Get(FaunaFunction('increment'))
+)
+.then((ret) => console.log(ret))
+.catch((err) => console.error('Error: %s', err))
+```
+
+Object to FaunaObject (can't find usage at [cheat sheet](https://docs.fauna.com/fauna/current/api/fql/cheat_sheet))
+
+##### Streaming API
+
+Doc would be ready as soon as stream api extracted from main package
 
 #### Pagination Helpers
 
