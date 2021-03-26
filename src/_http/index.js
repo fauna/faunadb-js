@@ -123,7 +123,7 @@ function getDefaultHeaders() {
     driver: ['javascript', packageJson.version].join('-'),
   }
 
-  let isServiceWorker
+  var isServiceWorker
 
   try {
     isServiceWorker = global instanceof ServiceWorkerGlobalScope
