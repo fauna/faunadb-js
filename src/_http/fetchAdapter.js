@@ -1,6 +1,8 @@
 'use strict'
-require('abort-controller/polyfill')
+import 'abort-controller/polyfill'
 import crossFetch from 'cross-fetch'
+import http from 'http'
+import https from 'https'
 import { AbortError, StreamsNotSupported, TimeoutError } from '../errors'
 import { formatUrl, isNodeEnv } from '../_util'
 
@@ -26,10 +28,9 @@ export default function FetchAdapter(options) {
   this._fetch = resolveFetch(options.fetch)
 
   if (isNodeEnv() && options.keepAlive) {
-    this._keepAliveEnabledAgent = new (options.isHttps
-      ? require('https')
-      : require('http')
-    ).Agent({ keepAlive: true })
+    this._keepAliveEnabledAgent = new (options.isHttps ? https : http).Agent({
+      keepAlive: true,
+    })
   }
 }
 

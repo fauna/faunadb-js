@@ -1,6 +1,8 @@
 'use strict'
 
-import { Filter, Map, Paginate } from './query'
+import Filter from './query/Filter'
+import Map from './query/Map'
+import Paginate from './query/Paginate'
 
 /**
  * A FaunaDB Lambda expression to be passed into one of the collection

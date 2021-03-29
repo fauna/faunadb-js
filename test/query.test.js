@@ -1682,7 +1682,7 @@ describe('query', () => {
   })
 
   test('index', () => {
-    return client.query(query.Index('widgets_by_n')).then(function(res) {
+    return client.query(query.FaunaIndex('widgets_by_n')).then(function(res) {
       expect(res).toEqual(nIndexRef)
     })
   })
@@ -1780,7 +1780,7 @@ describe('query', () => {
 
   test('contains_value page', async () => {
     const page = await client.query(query.Paginate(query.Indexes()))
-    const indexRef = await client.query(query.Index('widgets_by_m'))
+    const indexRef = await client.query(query.FaunaIndex('widgets_by_m'))
     assertQuery(query.ContainsValue(indexRef, page.data), true)
   })
 
@@ -1987,15 +1987,21 @@ describe('query', () => {
               assertQuery(query.Mean(values), 50.5),
 
               assertQuery(
-                query.Count(query.Match(query.Index('math_collection_index'))),
+                query.Count(
+                  query.Match(query.FaunaIndex('math_collection_index'))
+                ),
                 100
               ),
               assertQuery(
-                query.Sum(query.Match(query.Index('math_collection_index'))),
+                query.Sum(
+                  query.Match(query.FaunaIndex('math_collection_index'))
+                ),
                 5050
               ),
               assertQuery(
-                query.Mean(query.Match(query.Index('math_collection_index'))),
+                query.Mean(
+                  query.Match(query.FaunaIndex('math_collection_index'))
+                ),
                 50.5
               ),
 
@@ -2004,7 +2010,7 @@ describe('query', () => {
                   ['data'],
                   query.Count(
                     query.Paginate(
-                      query.Match(query.Index('math_collection_index')),
+                      query.Match(query.FaunaIndex('math_collection_index')),
                       { size: 1000 }
                     )
                   )
@@ -2016,7 +2022,7 @@ describe('query', () => {
                   ['data'],
                   query.Sum(
                     query.Paginate(
-                      query.Match(query.Index('math_collection_index')),
+                      query.Match(query.FaunaIndex('math_collection_index')),
                       { size: 1000 }
                     )
                   )
@@ -2028,7 +2034,7 @@ describe('query', () => {
                   ['data'],
                   query.Mean(
                     query.Paginate(
-                      query.Match(query.Index('math_collection_index')),
+                      query.Match(query.FaunaIndex('math_collection_index')),
                       { size: 1000 }
                     )
                   )
@@ -2078,7 +2084,7 @@ describe('query', () => {
         )
       })
       .then(function() {
-        var index = query.Index(indexName)
+        var index = query.FaunaIndex(indexName)
         var dataPath = ['data', 0]
 
         var p1 = assertQuery(query.Any([false, false, false]), false)
@@ -2308,7 +2314,7 @@ describe('query', () => {
           query.ToObject(
             query.Select(
               ['data'],
-              query.Paginate(query.Match(query.Index(indexName)))
+              query.Paginate(query.Match(query.FaunaIndex(indexName)))
             )
           ),
           obj
@@ -2731,7 +2737,7 @@ describe('query', () => {
     )
 
     const multiPage = await client.query(
-      query.Paginate(query.Match(query.Index('widgets_by_n'), 100), {
+      query.Paginate(query.Match(query.FaunaIndex('widgets_by_n'), 100), {
         size: 2,
         after: [anderson.ref],
       })
@@ -2739,7 +2745,7 @@ describe('query', () => {
 
     const reverseMultiPage = await client.query(
       query.Reverse(
-        query.Paginate(query.Match(query.Index('widgets_by_n'), 100), {
+        query.Paginate(query.Match(query.FaunaIndex('widgets_by_n'), 100), {
           size: 2,
           after: [anderson.ref],
         })
@@ -2937,9 +2943,10 @@ describe('query', () => {
 
   // Check arity of all query functions
 
-  test.only('arity', () => {
+  test('arity', () => {
     // By default assume all functions should have strict arity
     var testParams = {
+      AccessProviders: [2, 'up to 1'],
       Ref: [3, 'from 1 to 2'],
       Do: [0, 'at least 1'],
       Lambda: [3, 'from 1 to 2'],
@@ -2984,11 +2991,11 @@ describe('query', () => {
       GTE: [0, 'at least 1'],
       And: [0, 'at least 1'],
       Or: [0, 'at least 1'],
-      Index: [3, 'from 1 to 2'],
+      FaunaIndex: [3, 'from 1 to 2'],
       Class: [3, 'from 1 to 2'],
       Collection: [3, 'from 1 to 2'],
       Database: [3, 'from 1 to 2'],
-      Function: [3, 'from 1 to 2'],
+      FaunaFunction: [3, 'from 1 to 2'],
       Role: [3, 'from 1 to 2'],
       Classes: [2, 'up to 1'],
       Collections: [2, 'up to 1'],
@@ -3005,15 +3012,12 @@ describe('query', () => {
       var params = testParams[fun] || [],
         arity = params[0] !== undefined ? params[0] : 100,
         errorMessage = new RegExp(
-          'Function requires ' +
-            (params[1] || '\\d+') +
-            ' arguments but ' +
-            arity +
-            ' were given'
+          `${fun} function requires ${params[1] ||
+            '\\d'} argument\\(s\\) but ${arity} were given`
         )
       expect(function() {
         query[fun].apply(null, new Array(arity))
-      }).toThrow()
+      }).toThrow(errorMessage)
     }
   })
 

@@ -18,7 +18,10 @@
   "files": [
     "index.d.ts",
     "src/",
-    "dist/"
+    "dist/",
+    "cjs/",
+    "esm5/",
+    "query/"
   ],
   "main": "./cjs/index.js",
   "module": "./esm5/index.js",
@@ -28,14 +31,15 @@
     "prettify": "prettier --write \"{src,test}/**/*.{js,ts}\"",
     "test": "node --experimental-vm-modules node_modules/.bin/jest  --env=node --verbose=false --forceExit ./test",
     "semantic-release": "semantic-release",
-    "bundle:view": "webpack --env analyze",
+    "bundle:analyze": "webpack --env analyze",
     "bundle:stats": "webpack --env analyze --env stats",
-    "bundle:diff": "node bundleDiff.js",
-    "build:clean": "shx rm -rf ./dist ./cjs ./esm5",
+    "bundle:diff": "node tools/bundleDiff.js",
+    "build:clean": "shx rm -rf ./dist ./cjs ./esm5 ./query",
     "build:browser": "webpack",
-    "build:cjs": "cross-env BABEL_ENV=cjs npx babel src -d cjs",
-    "build:esm5": "cross-env BABEL_ENV=esm npx babel src -d esm5",
-    "build:package": "npm-run-all build:clean build:browser build:cjs build:esm5"
+    "build:cjs": "cross-env BABEL_ENV=cjs npx babel src -d ./cjs",
+    "build:esm5": "cross-env BABEL_ENV=esm npx babel src -d ./esm5",
+    "build:package": "npm-run-all build:clean build:browser build:cjs build:esm5",
+    "postbuild:package": "node tools/postBuildPackage.js"
   },
   "types": "index.d.ts",
   "dependencies": {
