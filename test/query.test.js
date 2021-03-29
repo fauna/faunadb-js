@@ -2937,9 +2937,10 @@ describe('query', () => {
 
   // Check arity of all query functions
 
-  test.only('arity', () => {
+  test('arity', () => {
     // By default assume all functions should have strict arity
     var testParams = {
+      AccessProviders: [2, 'up to 1'],
       Ref: [3, 'from 1 to 2'],
       Do: [0, 'at least 1'],
       Lambda: [3, 'from 1 to 2'],
@@ -2984,11 +2985,11 @@ describe('query', () => {
       GTE: [0, 'at least 1'],
       And: [0, 'at least 1'],
       Or: [0, 'at least 1'],
-      Index: [3, 'from 1 to 2'],
+      FaunaIndex: [3, 'from 1 to 2'],
       Class: [3, 'from 1 to 2'],
       Collection: [3, 'from 1 to 2'],
       Database: [3, 'from 1 to 2'],
-      Function: [3, 'from 1 to 2'],
+      FaunaFunction: [3, 'from 1 to 2'],
       Role: [3, 'from 1 to 2'],
       Classes: [2, 'up to 1'],
       Collections: [2, 'up to 1'],
@@ -3005,15 +3006,12 @@ describe('query', () => {
       var params = testParams[fun] || [],
         arity = params[0] !== undefined ? params[0] : 100,
         errorMessage = new RegExp(
-          'Function requires ' +
-            (params[1] || '\\d+') +
-            ' arguments but ' +
-            arity +
-            ' were given'
+          `${fun} function requires ${params[1] ||
+            '\\d'} argument\\(s\\) but ${arity} were given`
         )
       expect(function() {
         query[fun].apply(null, new Array(arity))
-      }).toThrow()
+      }).toThrow(errorMessage)
     }
   })
 

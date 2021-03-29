@@ -13,9 +13,7 @@ import { arity, wrap } from './common'
  *
  * @deprecated avoid using
  */
-const SelectAll = deprecate(function(path, from) {
-  arity.exact(2, arguments, SelectAll.name)
+export default deprecate(function(path, from) {
+  arity.exact(2, arguments, 'SelectAll')
   return new Expr({ select_all: wrap(path), from: wrap(from) })
 }, 'SelectAll() is deprecated. Avoid use.')
-
-export default SelectAll

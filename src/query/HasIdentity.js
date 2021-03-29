@@ -7,12 +7,8 @@ import { arity } from './common'
  *
  * @return {Expr}
  */
-function HasIdentity() {
-  arity.exact(0, arguments, HasIdentity.name)
-  return new Expr({ has_identity: null })
-}
 
-export default deprecate(
-  HasIdentity,
-  'HasIdentity() is deprecated, use HasCurrentIdentity() instead'
-)
+export default deprecate(function() {
+  arity.exact(0, arguments, 'HasIdentity')
+  return new Expr({ has_identity: null })
+}, 'HasIdentity() is deprecated, use HasCurrentIdentity() instead')

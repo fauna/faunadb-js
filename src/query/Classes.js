@@ -12,10 +12,8 @@ import { arity, wrap } from './common'
  *   The Ref of the class set's scope.
  * @return {Expr}
  */
-const Classes = deprecate(function(scope) {
-  arity.max(1, arguments, Classes.name)
+export default deprecate(function(scope) {
+  arity.max(1, arguments, 'Classes')
   scope = defaults(scope, null)
   return new Expr({ classes: wrap(scope) })
 }, 'Classes() is deprecated, use Collections() instead')
-
-export default Classes

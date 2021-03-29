@@ -13,9 +13,7 @@ import { arity, wrap } from './common'
  *
  * @deprecated use ContainsPath instead
  */
-const Contains = deprecate(function(path, _in) {
-  arity.exact(2, arguments, Contains.name)
+export default deprecate(function(path, _in) {
+  arity.exact(2, arguments, 'Contains')
   return new Expr({ contains: wrap(path), in: wrap(_in) })
 }, 'Contains() is deprecated, use ContainsPath() instead')
-
-export default Contains

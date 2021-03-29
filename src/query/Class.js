@@ -1,6 +1,6 @@
 import deprecate from 'util-deprecate'
 import Expr from '../Expr'
-import { wrap, arity } from './common'
+import { arity, wrap } from './common'
 
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#miscellaneous-functions).
@@ -13,8 +13,9 @@ import { wrap, arity } from './common'
  *
  * @deprecated Class is deprecated, use Collection instead
  */
-const Class = deprecate(function(name, scope) {
-  arity.between(1, 2, arguments, Class.name)
+
+export default deprecate(function(name, scope) {
+  arity.between(1, 2, arguments, 'Class')
   switch (arguments.length) {
     case 1:
       return new Expr({ class: wrap(name) })
@@ -22,5 +23,3 @@ const Class = deprecate(function(name, scope) {
       return new Expr({ class: wrap(name), scope: wrap(scope) })
   }
 }, 'Class() is deprecated, use Collection() instead')
-
-export default Class

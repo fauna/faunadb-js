@@ -12,9 +12,7 @@ import { arity, wrap } from './common'
  *
  * @deprecated use CreateCollection instead
  */
-const CreateClass = deprecate(function(params) {
-  arity.exact(1, arguments, CreateClass.name)
+export default deprecate(function(params) {
+  arity.exact(1, arguments, 'CreateClass')
   return new Expr({ create_class: wrap(params) })
 }, 'CreateClass() is deprecated, use CreateCollection() instead')
-
-export default CreateClass

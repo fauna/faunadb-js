@@ -8,9 +8,7 @@ import { arity } from './common'
  * @deprecated use NewId instead
  * @return {Expr}
  */
-const NextId = deprecate(function() {
-  arity.exact(0, arguments, NextId.name)
+export default deprecate(function() {
+  arity.exact(0, arguments, 'NextId')
   return new Expr({ next_id: null })
 }, 'NextId() is deprecated, use NewId() instead')
-
-export default NextId

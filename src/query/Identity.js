@@ -8,9 +8,7 @@ import { arity } from './common'
  * @return {Expr}
  */
 
-const Identity = deprecate(function() {
-  arity.exact(0, arguments, Identity.name)
+export default deprecate(function() {
+  arity.exact(0, arguments, 'Identity')
   return new Expr({ identity: null })
 }, 'Identity() is deprecated, use CurrentIdentity() instead')
-
-export default Identity
