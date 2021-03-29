@@ -226,7 +226,9 @@ Using the helper to page over sets lets the driver handle cursoring and
 pagination state. For example, `client.paginate`:
 
 ```javascript
-var helper = client.paginate(q.Match(q.Index('test_index'), 'example-term'))
+var helper = client.paginate(
+  q.Match(q.FaunaIndex('test_index'), 'example-term')
+)
 ```
 
 The return value, `helper`, is an instance of `PageHelper`. The `each` method will execute a
@@ -293,7 +295,7 @@ var createP = client.query(
 
 ```javascript
 var helper = client.paginate(
-  q.Match(q.Index('test_index'), 'example-term'),
+  q.Match(q.FaunaIndex('test_index'), 'example-term'),
   null,
   {
     secret: 'YOUR_FAUNADB_SECRET',
