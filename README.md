@@ -213,7 +213,33 @@ client.query(
 
 ##### Streaming API
 
-Doc would be ready as soon as stream api extracted from main package
+```diff
+- const { Client } = require('faunadb')
++ const { Client, StreamAPI } = require('faunadb')
+const client = new Client({secret: 'YOUR_FAUNA_SECRET'})
++ const streamApi = new StreamAPI({ client })
+const docRef = q.Ref(q.Collection('Scores'), '1')
+
+let stream
+const startStream = () => {
+-  stream = client.stream.document(docRef)
++  stream = streamApi.document(docRef)
+  .on('snapshot', snapshot => {
+    report(snapshot)
+  })
+  .on('version', version => {
+    report(version)
+  })
+  .on('error', error => {
+    console.log('Error:', error)
+    stream.close()
+    setTimeout(startStream, 1000)
+  })
+  .start()
+}
+
+startStream()
+```
 
 #### Pagination Helpers
 
