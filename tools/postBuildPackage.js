@@ -25,7 +25,6 @@ writePkg({
 const rootAliases = [
   {
     alias: 'query',
-    main: 'main',
     aliasForFiles: true,
   },
 ]
