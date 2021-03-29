@@ -1,7 +1,6 @@
 import Expr from '../Expr'
 import { defaults } from '../_util'
-import arity from './arity'
-import { wrap } from './wrap'
+import { wrap, arity } from './common'
 
 /**
  *

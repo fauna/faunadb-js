@@ -1,6 +1,5 @@
 import Expr from '../Expr'
-import arity from './arity'
-import { wrap } from './wrap'
+import { wrap, arity } from './common'
 /**
  *
  * @param {module:query~ExprArg} name

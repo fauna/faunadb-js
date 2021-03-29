@@ -1,6 +1,5 @@
 import Expr from '../Expr'
-import arity from './arity'
-import { wrap } from './wrap'
+import { arity, wrap } from './common'
 
 /**
  * Returns a time expression's day of the year, from 1 to 365, or 366 in a leap year.

@@ -1,7 +1,5 @@
 import Expr from '../Expr'
-import arity from './arity'
-import params from './params'
-import { wrap } from './wrap'
+import { arity, params, wrap } from './common'
 
 /**
  * Merge two or more objects..

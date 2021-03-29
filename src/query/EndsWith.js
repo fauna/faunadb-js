@@ -1,6 +1,5 @@
 import Expr from '../Expr'
-import arity from './arity'
-import { wrap } from './wrap'
+import { arity, wrap } from './common'
 
 /**
  * Returns true if the string ends with the given suffix value, or false if otherwise

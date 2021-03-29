@@ -1,6 +1,5 @@
 import Expr from '../Expr'
-import arity from './arity'
-import { wrap } from './wrap'
+import { arity, wrap } from './common'
 
 /**
  * Returns a time expression's month of the year, from 1 to 12.

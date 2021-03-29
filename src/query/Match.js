@@ -1,8 +1,5 @@
 import Expr from '../Expr'
-import argsToArray from './argsToArray'
-import arity from './arity'
-import varargs from './varargs'
-import { wrap } from './wrap'
+import { argsToArray, arity, varargs, wrap } from './common'
 
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#sets).

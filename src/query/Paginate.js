@@ -1,7 +1,6 @@
 import Expr from '../Expr'
 import { defaults } from '../_util'
-import arity from './arity'
-import { wrap, wrapValues } from './wrap'
+import { arity, wrap, wrapValues } from './common'
 
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#read-functions).

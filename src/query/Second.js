@@ -1,6 +1,5 @@
 import Expr from '../Expr'
-import arity from './arity'
-import { wrap } from './wrap'
+import { arity, wrap } from './common'
 
 /**
  * Returns a time expression's second of the minute, from 0 to 59.

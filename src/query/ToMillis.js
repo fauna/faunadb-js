@@ -1,6 +1,5 @@
 import Expr from '../Expr'
-import arity from './arity'
-import { wrap } from './wrap'
+import { arity, wrap } from './common'
 
 /**
  * Converts a time expression to milliseconds since the UNIX epoch.

@@ -1,9 +1,9 @@
+import annotate from 'fn-annotate'
 import { InvalidValue } from '../errors'
 import Expr from '../Expr'
 import { checkInstanceHasProperty } from '../_util'
-import arity from './arity'
-import lambdaExpr from './lambdaExpr'
-import lambdaFunc from './lambdaFunc'
+import { arity, wrap } from './common'
+import Var from './Var'
 
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
@@ -47,4 +47,34 @@ export default function Lambda() {
 
       return lambdaExpr(var_name, expr)
   }
+}
+
+/**
+ * @private
+ */
+function lambdaFunc(func) {
+  var vars = annotate(func)
+  switch (vars.length) {
+    case 0:
+      throw new InvalidValue('Provided Function must take at least 1 argument.')
+    case 1:
+      return lambdaExpr(vars[0], func(Var(vars[0])))
+    default:
+      return lambdaExpr(
+        vars,
+        func.apply(
+          null,
+          vars.map(function(name) {
+            return Var(name)
+          })
+        )
+      )
+  }
+}
+
+/**
+ * @private
+ */
+function lambdaExpr(var_name, expr) {
+  return new Expr({ lambda: wrap(var_name), expr: wrap(expr) })
 }

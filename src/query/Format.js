@@ -1,8 +1,5 @@
 import Expr from '../Expr'
-import argsToArray from './argsToArray'
-import arity from './arity'
-import varargs from './varargs'
-import { wrap } from './wrap'
+import { arity, varargs, wrap, argsToArray } from './common'
 
 /**
  * Format values into a string.

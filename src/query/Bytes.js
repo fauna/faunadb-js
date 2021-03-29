@@ -1,5 +1,5 @@
 import { Bytes as BytesValue } from '../values'
-import arity from './arity'
+import { arity } from './common'
 
 /**
  * @param {Uint8Array|ArrayBuffer|module:query~ExprArg} bytes

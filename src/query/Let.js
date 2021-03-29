@@ -1,7 +1,6 @@
 import Expr from '../Expr'
-import arity from './arity'
+import { arity, wrap, wrapValues } from './common'
 import Var from './Var'
-import { wrap, wrapValues } from './wrap'
 /**
  * See the [docs](https://app.fauna.com/documentation/reference/queryapi#basic-forms).
  *

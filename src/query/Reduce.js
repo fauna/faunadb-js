@@ -1,6 +1,5 @@
 import Expr from '../Expr'
-import arity from './arity'
-import { wrap } from './wrap'
+import { arity, wrap } from './common'
 
 /**
  * See the [docs](https://docs.fauna.com/fauna/current/api/fql/functions/reduce).
