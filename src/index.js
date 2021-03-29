@@ -1,9 +1,9 @@
 export { default as Client, default } from './Client'
 export { default as Expr } from './Expr'
 export { default as PageHelper } from './PageHelper'
-export * from './query'
 export { default as RequestResult } from './RequestResult'
-export { default as StreamAPI } from './stream'
+
+/* @replace:umd_imports (webpack will import all queries and stream api) */
 
 import * as _clientLogger from './clientLogger'
 import * as _errors from './errors'

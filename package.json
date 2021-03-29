@@ -31,6 +31,10 @@
       "require": "./cjs/index.js",
       "import": "./esm5/index.js"
     },
+    "./stream": {
+      "require": "./cjs/stream.js",
+      "import": "./esm5/stream.js"
+    },
     "./query": {
       "require": "./cjs/query/index.js",
       "import": "./esm5/query/index.js"
@@ -86,6 +90,7 @@
     "jest": "^26.6.3",
     "jsdoc": "^3.6.3",
     "lint-staged": ">=8",
+    "modify-source-webpack-plugin": "^1.1.0-beta.3",
     "npm-run-all": "^4.1.5",
     "prettier": "1.18.2",
     "semantic-release": "^17.1.2",

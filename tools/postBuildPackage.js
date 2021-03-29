@@ -25,20 +25,25 @@ writePkg({
 const rootAliases = [
   {
     alias: 'query',
+    main: 'query/index.js',
     aliasForFiles: true,
+  },
+  {
+    alias: 'stream',
+    main: 'stream.js',
   },
 ]
 
-rootAliases.forEach(({ alias, aliasForFiles, main = 'index' }) => {
+rootAliases.forEach(({ alias, aliasForFiles, main }) => {
   ensureDir(alias)
   writePkg({
     rootPath: alias,
     pkgManifest: {
       name: `faunadb/${alias}`,
       types: `../src/types/${alias}.d.ts`,
-      main: `../cjs/${alias}/${main}.js`,
-      module: `../esm5/${alias}/${main}.js`,
-      es2015: `../src/${alias}/${main}.js`,
+      main: `../cjs/${main}`,
+      module: `../esm5/${main}`,
+      es2015: `../src/${main}`,
       sideEffects: false,
     },
   })

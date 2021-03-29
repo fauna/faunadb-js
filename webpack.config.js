@@ -1,6 +1,7 @@
 const path = require('path')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const TerserPlugin = require('terser-webpack-plugin')
+const { ModifySourcePlugin } = require('modify-source-webpack-plugin')
 
 const entry = path.resolve(__dirname, './src/index.js')
 
@@ -31,6 +32,27 @@ module.exports = env => ({
       },
     ],
   },
+  plugins: [
+    new ModifySourcePlugin({
+      rules: [
+        {
+          test: /src\/index\.js$/,
+          modify: src => {
+            return src.replace(
+              /\/\* @replace:umd_imports \(webpack will import all queries and stream api\) \*\//,
+              [
+                "import * as _query from './query'",
+                'export const query = _query',
+
+                "import * as _stream from './stream'",
+                'export const stream = _stream',
+              ].join('\r\n')
+            )
+          },
+        },
+      ],
+    }),
+  ],
   ...(env.analyze && {
     plugins: [
       new BundleAnalyzerPlugin(

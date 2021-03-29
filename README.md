@@ -78,7 +78,7 @@ To get up and running quickly, below is a full example for connecting from the b
     scheme: 'https',
   })
   client.query(
-    faunadb.ToDate('2018-06-06')
+    faunadb.query.ToDate('2018-06-06')
   )
   .then(function (res) { console.log('Result:', res) })
   .catch(function (err) { console.log('Error:', err) })
@@ -173,9 +173,6 @@ EcmaScript
 ```javascript
 import Client from 'faunadb'
 
-// Import query from root
-import { Select } from 'faunadb'
-
 // Import all queries by one command
 import * as q from 'faunadb/query'
 
@@ -214,10 +211,11 @@ client.query(
 ##### Streaming API
 
 ```diff
-- const { Client } = require('faunadb')
-+ const { Client, StreamAPI } = require('faunadb')
+const { Client } = require('faunadb')
+const q = require('faunadb/query')
++ const Stream = require('faunadb/stream')
 const client = new Client({secret: 'YOUR_FAUNA_SECRET'})
-+ const streamApi = new StreamAPI({ client })
++ const streamApi = new Stream.Api({ client })
 const docRef = q.Ref(q.Collection('Scores'), '1')
 
 let stream
