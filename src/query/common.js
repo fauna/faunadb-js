@@ -122,7 +122,7 @@ arity.between = function(min, max, args, callerFunc) {
 /**
  * @ignore
  */
-export default function argsToArray(args) {
+export function argsToArray(args) {
   var rv = []
   rv.push.apply(rv, args)
   return rv

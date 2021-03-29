@@ -5,7 +5,6 @@
 const fs = require('fs-extra')
 const path = require('path')
 const pkg = require('../package.json')
-const queryPkg = require('../src/query/package.json')
 
 const commonPkgFields = {
   name: pkg.name,
@@ -19,19 +18,9 @@ const commonPkgFields = {
 writePkg({
   rootPath: 'esm5',
   pkgManifest: {
-    ...commonPkgFields,
     type: 'module',
   },
 })
-
-// copy query/package.json for each module systems (has `main` rewrite)
-const moduleSystems = ['esm5', 'cjs']
-moduleSystems.forEach(moduleSystem =>
-  writePkg({
-    rootPath: `${moduleSystem}/query`,
-    pkgManifest: queryPkg,
-  })
-)
 
 const rootAliases = [
   {

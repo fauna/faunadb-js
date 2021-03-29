@@ -202,7 +202,14 @@ client.query(
 .catch((err) => console.error('Error: %s', err))
 ```
 
-Object to FaunaObject (can't find usage at [cheat sheet](https://docs.fauna.com/fauna/current/api/fql/cheat_sheet))
+```diff
+client.query(
+-  Paginate(Match(Index('name'))),
++  Paginate(Match(FaunaIndex('name'))),
+)
+.then((ret) => console.log(ret))
+.catch((err) => console.error('Error: %s', err))
+```
 
 ##### Streaming API
 

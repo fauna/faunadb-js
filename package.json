@@ -32,8 +32,8 @@
       "import": "./esm5/index.js"
     },
     "./query": {
-      "require": "./cjs/query/main.js",
-      "import": "./esm5/query/main.js"
+      "require": "./cjs/query/index.js",
+      "import": "./esm5/query/index.js"
     },
     "./query/*": {
       "require": "./cjs/query/*.js",
