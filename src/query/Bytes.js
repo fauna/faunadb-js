@@ -8,5 +8,5 @@ import { arity } from './common'
  */
 export default function Bytes(bytes) {
   arity.exact(1, arguments, Bytes.name)
-  return BytesValue(bytes)
+  return new BytesValue(bytes)
 }
