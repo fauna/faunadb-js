@@ -5,7 +5,6 @@ import { FaunaHTTPError } from './errors'
 import PageHelper from './PageHelper'
 import { wrap } from './query/common'
 import RequestResult from './RequestResult'
-import StreamAPI from './stream'
 import { Ref } from './values'
 import HttpClient from './_http'
 import { parseJSON } from './_json'
@@ -179,7 +178,6 @@ export default function Client(options) {
 
   this._observer = options.observer
   this._http = new HttpClient(options)
-  this.stream = StreamAPI(this)
 }
 
 /**
