@@ -26,20 +26,6 @@
   "main": "./cjs/index.js",
   "module": "./esm5/index.js",
   "es2015": "./src/index.js",
-  "exports": {
-    ".": {
-      "require": "./cjs/index.js",
-      "import": "./esm5/index.js"
-    },
-    "./query": {
-      "require": "./cjs/query/index.js",
-      "import": "./esm5/query/index.js"
-    },
-    "./query/*": {
-      "require": "./cjs/query/*.js",
-      "import": "./esm5/query/*.js"
-    }
-  },
   "scripts": {
     "doc": "jsdoc -c ./jsdoc.json",
     "prettify": "prettier --write \"{src,test}/**/*.{js,ts}\"",
