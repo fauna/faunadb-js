@@ -1,4 +1,5 @@
 export { default as Client } from './Client'
+export * from './clientLogger'
 export * from './errors'
 export { default as Expr } from './Expr'
 export { default as PageHelper } from './PageHelper'

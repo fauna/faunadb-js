@@ -167,7 +167,7 @@ const faunadb = require('faunadb')
 + const { InvalidArity, FaunaHTTPError, BadRequest, ... } = faunadb
 
 - const { logger, showRequestResult } = faunadb.clientLogger
-+ // removed as faunadb doesn't have described type for clientLogger
++ const { logger, showRequestResult } = faunadb
 
 ```
 
