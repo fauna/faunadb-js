@@ -13,10 +13,6 @@ export interface StreamApi extends StreamFn {
   document: StreamFn
 }
 
-export default interface Stream {
-  Api: StreamApi
-}
-
 export interface Subscription {
   on: <T extends keyof SubscriptionEventHandlers>(
     type: T,

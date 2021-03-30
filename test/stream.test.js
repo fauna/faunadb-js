@@ -2,7 +2,7 @@
 
 import { BadRequest } from '../src/errors'
 import * as q from '../src/query'
-import Stream from '../src/stream'
+import { StreamApi } from '../src/stream'
 import * as util from './util'
 
 let db, key, client, coll, doc, stream, window, fetch, streamApi
@@ -26,7 +26,7 @@ describe('StreamAPI', () => {
     client = util.getClient({
       secret: key.secret,
     })
-    streamApi = new Stream.Api({ client })
+    streamApi = new StreamApi({ client })
     coll = await client.query(
       q.CreateCollection({
         name: 'stream_docs',
@@ -127,7 +127,7 @@ describe('StreamAPI', () => {
         })
       )
       let key = await client.query(q.CreateKey({ role: role.ref }))
-      stream = new Stream.Api({
+      stream = new StreamApi({
         client: util.getClient({ secret: key.secret }),
       })
         .document(doc.ref)
@@ -172,14 +172,14 @@ describe('StreamAPI', () => {
           done()
         },
       })
-      stream = new Stream.Api({ client }).document(doc.ref).start()
+      stream = new StreamApi({ client }).document(doc.ref).start()
     })
 
     test('use client fetch override if available', done => {
       let client = util.getClient({
         fetch: () => Promise.reject(new Error('client fetch used')),
       })
-      stream = new Stream.Api({ client })
+      stream = new StreamApi({ client })
         .document(doc.ref)
         .on('error', error => {
           expect(error.message).toEqual('client fetch used')
@@ -196,7 +196,7 @@ describe('StreamAPI', () => {
       // HttpClient's adapter and pull new fetch API from global.
       const client = util.getClient()
 
-      stream = new Stream.Api({ client })
+      stream = new StreamApi({ client })
         .document(doc.ref)
         .on('error', error => {
           expect(error.message).toEqual('global fetch called')
@@ -214,7 +214,7 @@ describe('StreamAPI', () => {
         secret: key.secret,
       })
 
-      stream = new Stream.Api({ client })
+      stream = new StreamApi({ client })
         .document(doc.ref)
         .on('error', error => {
           expect(error.message).toEqual('streams not supported')
@@ -240,7 +240,7 @@ describe('StreamAPI', () => {
             },
           }),
       })
-      stream = new Stream.Api({ client })
+      stream = new StreamApi({ client })
         .document(doc.ref)
         .on('error', error => {
           expect(error.message).toEqual('streams not supported')
@@ -307,7 +307,7 @@ describe('StreamAPI', () => {
 
       let snapshot
 
-      stream = new Stream.Api({
+      stream = new StreamApi({
         client: util.getClient({ secret: key.secret, fetch: fetchWrapper }),
       })
         .document(doc.ref)

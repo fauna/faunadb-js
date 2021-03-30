@@ -354,7 +354,7 @@ Subscription.prototype.close = function() {
  * use stream's public interface.
  * @private
  */
-export function Api({ client }) {
+export function StreamApi({ client }) {
   var api = function(expression, options) {
     var dispatcher = new EventDispatcher(DefaultEvents)
     var streamClient = new StreamClient(client, expression, options, function(
@@ -409,5 +409,3 @@ export function Api({ client }) {
 
   return api
 }
-
-export default { Api }

@@ -156,6 +156,21 @@ import Var from 'faunadb/query/Var'
 
 faunadb-js from version 5.X.X support EcmaScript modules system which brings availability for bundle tools like webpack, rollup execute three-shake package and remove unused code, therefore bundle size would be smaller
 
+##### Faunadb imports (TBD if this have to be public API)
+
+```diff
+const faunadb = require('faunadb')
+- const { Ref, FaunaDate, Bytes, ... } = faunadb.values
++ const { Ref, FaunaDate, Bytes, ... } = faunadb
+
+- const { InvalidArity, FaunaHTTPError, BadRequest, ... } = faunadb.errors
++ const { InvalidArity, FaunaHTTPError, BadRequest, ... } = faunadb
+
+- const { logger, showRequestResult } = faunadb.clientLogger
++ // removed as faunadb doesn't have described type for clientLogger
+
+```
+
 ##### Import query functions
 
 All query functions has been removed from main package and hosted under sub-module `faunadb/query`.
@@ -211,11 +226,11 @@ client.query(
 ##### Streaming API
 
 ```diff
-const { Client } = require('faunadb')
+const faunadb = require('faunadb')
 const q = require('faunadb/query')
 + const Stream = require('faunadb/stream')
-const client = new Client({secret: 'YOUR_FAUNA_SECRET'})
-+ const streamApi = new Stream.Api({ client })
+const client = new faunadb.Client({secret: 'YOUR_FAUNA_SECRET'})
++ const streamApi = new StreamApi({ client })
 const docRef = q.Ref(q.Collection('Scores'), '1')
 
 let stream
