@@ -280,7 +280,7 @@ describe('StreamAPI', () => {
 
   describe('document', () => {
     test('can take snapshot before processing events', done => {
-      stream = client.stream
+      stream = streamApi
         .document(doc.ref)
         .on('snapshot', snapshot => {
           expect(snapshot.data).toEqual(doc.data)
@@ -307,9 +307,10 @@ describe('StreamAPI', () => {
 
       let snapshot
 
-      stream = util
-        .getClient({ secret: key.secret, fetch: fetchWrapper })
-        .stream.document(doc.ref)
+      stream = new Stream.Api({
+        client: util.getClient({ secret: key.secret, fetch: fetchWrapper }),
+      })
+        .document(doc.ref)
         .on('start', () => {
           buffering = true
         })
