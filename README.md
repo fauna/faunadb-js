@@ -130,7 +130,7 @@ createP.then(function(response) {
 This is recommended way to inject faunadb-js. Many build tools supports three shaking which relies on the static structure of ES6 module syntax, i.e. `import` and `export`.
 
 ```
-import Client from 'faunadb'
+import { Client } from 'faunadb'
 import { Now } from 'faunadb/query'
 
 const client =new Client({secret: 'your_key_here'})
@@ -186,7 +186,7 @@ const faunadb = require('faunadb');
 EcmaScript
 
 ```javascript
-import Client from 'faunadb'
+import { Client } from 'faunadb'
 
 // Import all queries by one command
 import * as q from 'faunadb/query'
