@@ -45,26 +45,26 @@ module.exports = env => ({
                 'export const query = _query',
 
                 "import * as _stream from './stream'",
-                'export const stream = _stream',
+                'export const Stream = _stream',
               ].join('\r\n')
             )
           },
         },
       ],
     }),
+    ...(env.analyze
+      ? [
+          new BundleAnalyzerPlugin(
+            env.stats
+              ? {
+                  analyzerMode: 'disabled',
+                  generateStatsFile: true,
+                }
+              : {}
+          ),
+        ]
+      : []),
   ],
-  ...(env.analyze && {
-    plugins: [
-      new BundleAnalyzerPlugin(
-        env.stats
-          ? {
-              analyzerMode: 'disabled',
-              generateStatsFile: true,
-            }
-          : {}
-      ),
-    ],
-  }),
   optimization: {
     minimize: true,
     minimizer: [new TerserPlugin({ test: /\min.js(\?.*)?$/i })],

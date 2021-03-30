@@ -409,3 +409,5 @@ export function Api({ client }) {
 
   return api
 }
+
+export default { Api }

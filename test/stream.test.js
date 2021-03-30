@@ -2,9 +2,10 @@
 
 import { BadRequest } from '../src/errors'
 import * as q from '../src/query'
+import Stream from '../src/stream'
 import * as util from './util'
 
-let db, key, client, coll, doc, stream, window, fetch
+let db, key, client, coll, doc, stream, window, fetch, streamApi
 
 describe('StreamAPI', () => {
   beforeAll(async () => {
@@ -25,6 +26,7 @@ describe('StreamAPI', () => {
     client = util.getClient({
       secret: key.secret,
     })
+    streamApi = new Stream.Api({ client })
     coll = await client.query(
       q.CreateCollection({
         name: 'stream_docs',
@@ -56,8 +58,8 @@ describe('StreamAPI', () => {
 
   describe('stream', () => {
     test('can listen to events', done => {
-      stream = client
-        .stream(doc.ref)
+      stream = streamApi
+        .document(doc.ref)
         .on('start', (_, event) => {
           expect(event.type).toEqual('start')
           expect(typeof event.txn).toBe('number')
@@ -68,12 +70,12 @@ describe('StreamAPI', () => {
     })
 
     test('reject unknown events', () => {
-      expect(() => client.stream(doc.ref).on('foo')).toThrow(Error)
+      expect(() => streamApi.document(doc.ref).on('foo')).toThrow(Error)
     })
 
     test('can select fields', done => {
-      stream = client
-        .stream(doc.ref, { fields: ['diff', 'prev'] })
+      stream = streamApi
+        .document(doc.ref, { fields: ['diff', 'prev'] })
         .on('start', () => {
           client.query(q.Update(doc.ref, {}))
         })
@@ -85,8 +87,8 @@ describe('StreamAPI', () => {
     })
 
     test('events update last seen transacton time', done => {
-      stream = client
-        .stream(doc.ref)
+      stream = streamApi
+        .document(doc.ref)
         .on('start', () => {
           client.query(q.Update(doc.ref, {}))
         })
@@ -98,8 +100,8 @@ describe('StreamAPI', () => {
     })
 
     test('can handle request failures', done => {
-      stream = client
-        .stream('invalid stream')
+      stream = streamApi
+        .document('invalid stream')
         .on('error', err => {
           expect(err).toBeInstanceOf(BadRequest)
           done()
@@ -108,7 +110,7 @@ describe('StreamAPI', () => {
     })
 
     test('can not start an already started stream', () => {
-      stream = client.stream(doc.ref).start()
+      stream = streamApi.document(doc.ref).start()
       expect(() => stream.start()).toThrow(Error)
     })
 
@@ -125,9 +127,10 @@ describe('StreamAPI', () => {
         })
       )
       let key = await client.query(q.CreateKey({ role: role.ref }))
-      stream = util
-        .getClient({ secret: key.secret })
-        .stream(doc.ref)
+      stream = new Stream.Api({
+        client: util.getClient({ secret: key.secret }),
+      })
+        .document(doc.ref)
         .on('start', async () => {
           // Force an error event by deleting the key used to start the stream,
           // then issue update to force auth revalidation.
@@ -169,15 +172,15 @@ describe('StreamAPI', () => {
           done()
         },
       })
-      stream = client.stream(doc.ref).start()
+      stream = new Stream.Api({ client }).document(doc.ref).start()
     })
 
     test('use client fetch override if available', done => {
       let client = util.getClient({
         fetch: () => Promise.reject(new Error('client fetch used')),
       })
-      stream = client
-        .stream(doc.ref)
+      stream = new Stream.Api({ client })
+        .document(doc.ref)
         .on('error', error => {
           expect(error.message).toEqual('client fetch used')
           done()
@@ -193,8 +196,8 @@ describe('StreamAPI', () => {
       // HttpClient's adapter and pull new fetch API from global.
       const client = util.getClient()
 
-      stream = client
-        .stream(doc.ref)
+      stream = new Stream.Api({ client })
+        .document(doc.ref)
         .on('error', error => {
           expect(error.message).toEqual('global fetch called')
           done()
@@ -211,8 +214,8 @@ describe('StreamAPI', () => {
         secret: key.secret,
       })
 
-      stream = client
-        .stream(doc.ref)
+      stream = new Stream.Api({ client })
+        .document(doc.ref)
         .on('error', error => {
           expect(error.message).toEqual('streams not supported')
           expect(error.description).toMatch(
@@ -237,8 +240,8 @@ describe('StreamAPI', () => {
             },
           }),
       })
-      stream = client
-        .stream(doc.ref)
+      stream = new Stream.Api({ client })
+        .document(doc.ref)
         .on('error', error => {
           expect(error.message).toEqual('streams not supported')
           expect(error.description).toMatch(
@@ -256,8 +259,8 @@ describe('StreamAPI', () => {
         arr.push({ value: i.toString() })
       }
 
-      stream = client
-        .stream(doc.ref)
+      stream = streamApi
+        .document(doc.ref)
         .on('start', () => {
           client.query(
             q.Update(doc.ref, {
