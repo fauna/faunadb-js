@@ -328,7 +328,7 @@ describe('StreamAPI', () => {
     test('report failure during snapshot', done => {
       // Non-existing ref should fail to run q.Get(..).
       let ref = q.Ref(coll.ref, 1234)
-      stream = client.stream
+      stream = streamApi
         .document(ref)
         .on('snapshot', snapshot => {})
         .on('error', error => {
