@@ -151,6 +151,7 @@ import {
  * @param {?number} options.port
  *   Port of the FaunaDB server.
  * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://app.fauna.com/documentation/intro/security))
+ * @param {?number} options.timeout Read timeout in seconds.
  * @param {?Client~observerCallback} options.observer
  *   Callback that will be called after every completed request.
  * @param {?boolean} options.keepAlive
@@ -159,8 +160,6 @@ import {
  *   a fetch compatible [API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) for making a request
  * @param {?number} options.queryTimeout
  *   Sets the maximum amount of time (in milliseconds) for query execution on the server,
- * @param {?number} options.http2SessionIdleTime
- *   Sets the maximum amount of time (in milliseconds) for http2 session to release connection. By default 500ms
  */
 export default function Client(options) {
   options = applyDefaults(options, {
@@ -168,12 +167,12 @@ export default function Client(options) {
     scheme: 'https',
     port: null,
     secret: null,
+    timeout: 60,
     observer: null,
     keepAlive: true,
     headers: {},
     fetch: undefined,
-    queryTimeout: 60 * 1000,
-    http2SessionIdleTime: 500,
+    queryTimeout: null,
   })
 
   this._observer = options.observer
@@ -225,11 +224,8 @@ Client.prototype.paginate = function(expression, params, options) {
  * Sends a `ping` request to FaunaDB.
  * @return {external:Promise<string>} Ping response.
  */
-Client.prototype.ping = function(scope, queryTimeout) {
-  return this._execute('GET', 'ping', null, {
-    scope: scope,
-    queryTimeout: queryTimeout,
-  })
+Client.prototype.ping = function(scope, timeout) {
+  return this._execute('GET', 'ping', null, { scope: scope, timeout: timeout })
 }
 
 /**

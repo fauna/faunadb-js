@@ -3,6 +3,8 @@ import http2 from 'http2'
 import { AbortError, TimeoutError } from '../errors'
 import { querystringify } from '../_util'
 
+// Destroy session after 1 minute of inactivity.
+var DESTROY_HTTP2_SESSION_TIME = 1000 * 60
 var STREAM_PREFIX = 'stream::'
 
 /**
@@ -11,7 +13,7 @@ var STREAM_PREFIX = 'stream::'
  * @constructor
  * @private
  */
-export default function Http2Adapter(options) {
+export default function Http2Adapter() {
   /**
    * Identifies a type of adapter.
    *
@@ -25,13 +27,6 @@ export default function Http2Adapter(options) {
    * @private
    */
   this._sessionMap = {}
-
-  /**
-   Sets the maximum amount of time (in milliseconds) for session to release connection
-   *
-   * @type {number}
-   */
-  this.http2SessionIdleTime = options.http2SessionIdleTime
 }
 
 /**
@@ -60,7 +55,7 @@ Http2Adapter.prototype._resolveSessionFor = function(origin, isStreaming) {
       .once('goaway', cleanup)
       // Destroys http2 session after specified time of inactivity
       // and releases event loop.
-      .setTimeout(this.http2SessionIdleTime, cleanup)
+      .setTimeout(DESTROY_HTTP2_SESSION_TIME, cleanup)
   }
 
   return this._sessionMap[sessionKey]
@@ -94,7 +89,7 @@ Http2Adapter.prototype._cleanupSessionFor = function(origin, isStreaming) {
  * @param {?string} options.body Request body utf8 string.
  * @params {?object} options.streamConsumer Stream consumer.
  * @param {?object} options.signal Abort signal object.
- * @param {?number} options.queryTimeout Request timeout.
+ * @param {?number} options.timeout Request timeout.
  * @returns {Promise} Request result.
  */
 Http2Adapter.prototype.execute = function(options) {
@@ -208,8 +203,8 @@ Http2Adapter.prototype.execute = function(options) {
         .on('response', onResponse)
 
       // Set up timeout only if no signal provided.
-      if (!options.signal && options.queryTimeout) {
-        request.setTimeout(options.queryTimeout, onTimeout)
+      if (!options.signal && options.timeout) {
+        request.setTimeout(options.timeout, onTimeout)
       }
 
       if (options.signal) {

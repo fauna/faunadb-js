@@ -31,11 +31,8 @@ export default function HttpClient(options) {
   // no fetch API override provided (to preserve backward-compatibility).
   var useHttp2Adapter = !options.fetch && isNodeEnv() && http2
 
-  // this._adapter
   this._adapter = useHttp2Adapter
-    ? new Http2Adapter({
-        http2SessionIdleTime: options.http2SessionIdleTime,
-      })
+    ? new Http2Adapter()
     : new FetchAdapter({
         isHttps: isHttps,
         fetch: options.fetch,
@@ -44,8 +41,9 @@ export default function HttpClient(options) {
   this._baseUrl = options.scheme + '://' + options.domain + ':' + options.port
   this._secret = options.secret
   this._headers = Object.assign({}, options.headers, getDefaultHeaders())
-  this._lastSeen = null
   this._queryTimeout = options.queryTimeout
+  this._lastSeen = null
+  this._timeout = Math.floor(options.timeout * 1000)
 }
 
 /**
@@ -117,7 +115,7 @@ HttpClient.prototype.execute = function(options) {
     headers: removeNullAndUndefinedValues(headers),
     body: options.body,
     signal: options.signal,
-    queryTimeout: this._queryTimeout,
+    timeout: this._timeout,
     streamConsumer: options.streamConsumer,
   })
 }
