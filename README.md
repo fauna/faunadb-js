@@ -78,7 +78,7 @@ To get up and running quickly, below is a full example for connecting from the b
     scheme: 'https',
   })
   client.query(
-    faunadb.ToDate('2018-06-06')
+    faunadb.query.ToDate('2018-06-06')
   )
   .then(function (res) { console.log('Result:', res) })
   .catch(function (err) { console.log('Error:', err) })
@@ -156,6 +156,21 @@ import Var from 'faunadb/query/Var'
 
 faunadb-js from version 5.X.X support EcmaScript modules system which brings availability for bundle tools like webpack, rollup execute three-shake package and remove unused code, therefore bundle size would be smaller
 
+##### Faunadb imports (TBD if this have to be public API)
+
+```diff
+const faunadb = require('faunadb')
+- const { Ref, FaunaDate, Bytes, ... } = faunadb.values
++ const { Ref, FaunaDate, Bytes, ... } = faunadb
+
+- const { InvalidArity, FaunaHTTPError, BadRequest, ... } = faunadb.errors
++ const { InvalidArity, FaunaHTTPError, BadRequest, ... } = faunadb
+
+- const { logger, showRequestResult } = faunadb.clientLogger
++ const { logger, showRequestResult } = faunadb
+
+```
+
 ##### Import query functions
 
 All query functions has been removed from main package and hosted under sub-module `faunadb/query`.
@@ -172,9 +187,6 @@ EcmaScript
 
 ```javascript
 import Client from 'faunadb'
-
-// Import query from root
-import { Select } from 'faunadb'
 
 // Import all queries by one command
 import * as q from 'faunadb/query'
@@ -213,7 +225,34 @@ client.query(
 
 ##### Streaming API
 
-Doc would be ready as soon as stream api extracted from main package
+```diff
+const faunadb = require('faunadb')
+const q = require('faunadb/query')
++ const Stream = require('faunadb/stream')
+const client = new faunadb.Client({secret: 'YOUR_FAUNA_SECRET'})
++ const streamApi = new StreamApi({ client })
+const docRef = q.Ref(q.Collection('Scores'), '1')
+
+let stream
+const startStream = () => {
+-  stream = client.stream.document(docRef)
++  stream = streamApi.document(docRef)
+  .on('snapshot', snapshot => {
+    report(snapshot)
+  })
+  .on('version', version => {
+    report(version)
+  })
+  .on('error', error => {
+    console.log('Error:', error)
+    stream.close()
+    setTimeout(startStream, 1000)
+  })
+  .start()
+}
+
+startStream()
+```
 
 #### Pagination Helpers
 

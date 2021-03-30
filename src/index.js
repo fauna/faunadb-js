@@ -1,12 +1,9 @@
-export { default as Client, default } from './Client'
+export { default as Client } from './Client'
+export * from './clientLogger'
+export * from './errors'
 export { default as Expr } from './Expr'
 export { default as PageHelper } from './PageHelper'
-export * from './query'
 export { default as RequestResult } from './RequestResult'
+export * from './values'
 
-import * as _clientLogger from './clientLogger'
-import * as _errors from './errors'
-import * as _values from './values'
-export const errors = _errors
-export const values = _values
-export const clientLogger = _clientLogger
+/* @replace:umd_imports (webpack will import all queries and stream api) */
