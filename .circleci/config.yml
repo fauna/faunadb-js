@@ -37,7 +37,7 @@ commands:
 
       - run:
           name: Install dependencies
-          command: yarn
+          command: npm ci
 
       - save_cache:
           paths:
@@ -51,11 +51,11 @@ commands:
 
       - run:
           name: Test webpack build
-          command: yarn wp
+          command: npm run wp
 
       - run:
           name: Run Tests
-          command: yarn test
+          command: npm run test
 
 jobs:
   core-stable-10:
