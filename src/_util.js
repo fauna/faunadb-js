@@ -250,7 +250,7 @@ function getNodeRuntimeEnv() {
     },
     {
       name: 'Mongo Stitch',
-      check: () => typeof global.StitchError === 'function',
+      check: () => typeof crossGlobal.StitchError === 'function',
     },
     {
       name: 'Render',
@@ -432,7 +432,17 @@ function mergeObjects(obj1, obj2) {
   return obj3
 }
 
+var crossGlobal =
+  typeof window !== 'undefined'
+    ? window
+    : typeof globalThis !== 'undefined'
+    ? globalThis
+    : typeof global !== 'undefined'
+    ? global
+    : self
+
 module.exports = {
+  crossGlobal: crossGlobal,
   mergeObjects: mergeObjects,
   formatUrl: formatUrl,
   querystringify: querystringify,

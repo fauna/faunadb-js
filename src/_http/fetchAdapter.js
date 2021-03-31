@@ -218,9 +218,9 @@ function resolveFetch(fetchOverride) {
     return fetchOverride
   }
 
-  if (typeof global.fetch === 'function') {
+  if (typeof util.crossGlobal.fetch === 'function') {
     // NB. Rebinding to global is needed for Safari
-    return global.fetch.bind(global)
+    return util.crossGlobal.fetch.bind(global)
   }
 
   return require('cross-fetch')
