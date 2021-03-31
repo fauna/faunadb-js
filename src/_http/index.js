@@ -1,6 +1,5 @@
 'use strict'
 import http2 from 'http2'
-import os from 'os'
 import packageJson from '../../package.json'
 import {
   getBrowserDetails,
@@ -129,16 +128,29 @@ function getDefaultHeaders() {
   var driverEnv = {
     driver: ['javascript', packageJson.version].join('-'),
   }
+  var isServiceWorker
 
-  if (isNodeEnv()) {
-    driverEnv.runtime = ['nodejs', process.version].join('-')
-    driverEnv.env = getNodeRuntimeEnv()
-    driverEnv.os = [os.platform(), os.release()].join('-')
-  } else {
-    driverEnv.runtime = getBrowserDetails()
-    driverEnv.env = 'unknown'
-    driverEnv.os = getBrowserOsDetails()
+  try {
+    // eslint-disable-next-line no-undef
+    isServiceWorker = global instanceof ServiceWorkerGlobalScope
+  } catch (error) {
+    isServiceWorker = false
   }
+
+  try {
+    if (isNodeEnv()) {
+      driverEnv.runtime = ['nodejs', process.version].join('-')
+      driverEnv.env = getNodeRuntimeEnv()
+      var os = require('os')
+      driverEnv.os = [os.platform(), os.release()].join('-')
+    } else if (isServiceWorker) {
+      driverEnv.runtime = 'Service Worker'
+    } else {
+      driverEnv.runtime = getBrowserDetails()
+      driverEnv.env = 'browser'
+      driverEnv.os = getBrowserOsDetails()
+    }
+  } catch (_) {}
 
   var headers = {
     'X-FaunaDB-API-Version': packageJson.apiVersion,

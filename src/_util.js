@@ -249,17 +249,6 @@ export function getNodeRuntimeEnv() {
         process.env.ORYX_ENV_TYPE === 'AppService',
     },
     {
-      name: 'Worker',
-      check: () => {
-        try {
-          // eslint-disable-next-line no-undef
-          return global instanceof ServiceWorkerGlobalScope
-        } catch (error) {
-          return false
-        }
-      },
-    },
-    {
       name: 'Mongo Stitch',
       check: () => typeof global.StitchError === 'function',
     },
