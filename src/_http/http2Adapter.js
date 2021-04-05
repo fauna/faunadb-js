@@ -56,12 +56,13 @@ Http2Adapter.prototype._resolveSession = function(origin, sessionKey) {
         .connect(origin)
         .once('error', cleanupSession)
         .once('goaway', cleanupSession),
-      timeoutHandle: null,
+      idleTimer: null,
     }
   }
 
-  // Ensure that the session doesn't timeout while the request is in flight.
-  this._clearTimeout(sessionKey)
+  // We're about to make use of the session, so cancel the idle timer if it was
+  // going.
+  this._clearIdleTimer(sessionKey)
 
   return this._sessionMap[sessionKey]
 }
@@ -75,33 +76,36 @@ Http2Adapter.prototype._resolveSession = function(origin, sessionKey) {
  */
 Http2Adapter.prototype._cleanupSession = function(sessionKey) {
   if (this._sessionMap[sessionKey]) {
-    this._clearTimeout(sessionKey)
+    this._clearIdleTimer(sessionKey)
     this._sessionMap[sessionKey].session.close()
     delete this._sessionMap[sessionKey]
   }
 }
 
-Http2Adapter.prototype._clearTimeout = function(sessionKey) {
-  if (this._sessionMap[sessionKey].timeoutHandle) {
-    clearTimeout(this._sessionMap[sessionKey].timeoutHandle)
-    delete this._sessionMap[sessionKey].timeoutHandle
+Http2Adapter.prototype._clearIdleTimer = function(sessionKey) {
+  if (this._sessionMap[sessionKey].idleTimer) {
+    clearTimeout(this._sessionMap[sessionKey].idleTimer)
+    delete this._sessionMap[sessionKey].idleTimer
   }
 }
 
-Http2Adapter.prototype._refreshTimeout = function(sessionKey) {
-  this._clearTimeout(sessionKey)
+Http2Adapter.prototype._refreshIdleTimer = function(sessionKey) {
+  this._clearIdleTimer(sessionKey)
 
   var self = this
-  var cleanupSession = function() {
+  var idleCleanup = function() {
     if (self._sessionMap[sessionKey].activeRequests === 0) {
       self._cleanupSession(sessionKey)
     }
   }
 
-  this._sessionMap[sessionKey].timeoutHandle = setTimeout(
-    cleanupSession,
-    DESTROY_HTTP2_SESSION_TIME
-  )
+  // Start the idle timer iff we have no active requests.
+  if (this._sessionMap[sessionKey].activeRequests === 0) {
+    this._sessionMap[sessionKey].idleTimer = setTimeout(
+      idleCleanup,
+      DESTROY_HTTP2_SESSION_TIME
+    )
+  }
 }
 
 Http2Adapter.prototype._decrementActiveRequests = function(sessionKey) {
@@ -158,7 +162,7 @@ Http2Adapter.prototype.execute = function(options) {
 
       // Destroys http2 session after specified time of inactivity and
       // releases event loop.
-      self._refreshTimeout(sessionKey)
+      self._refreshIdleTimer(sessionKey)
 
       if (options.signal) {
         options.signal.removeEventListener('abort', onAbort)
