@@ -3,8 +3,8 @@ var http2 = require('http2')
 var errors = require('./errors')
 var util = require('../_util')
 
-// Destroy session after 1 minute of inactivity.
-var DESTROY_HTTP2_SESSION_TIME = 1000 * 60
+// Destroy session after 0.5 seconds of inactivity.
+var DESTROY_HTTP2_SESSION_TIME = 500
 var STREAM_PREFIX = 'stream::'
 
 /**
@@ -29,6 +29,10 @@ function Http2Adapter() {
   this._sessionMap = {}
 }
 
+Http2Adapter.prototype._sessionKey = function(origin, isStreaming) {
+  return isStreaming ? STREAM_PREFIX + origin : origin
+}
+
 /**
  * Resolves ClientHttp2Session to be reused across multiple requests.
  *
@@ -38,25 +42,26 @@ function Http2Adapter() {
  * ones for the purpose of reliability.
  * @returns {ClientHttp2Session} Http2 session.
  */
-Http2Adapter.prototype._resolveSessionFor = function(origin, isStreaming) {
-  var sessionKey = isStreaming ? STREAM_PREFIX + origin : origin
-
+Http2Adapter.prototype._resolveSession = function(origin, sessionKey) {
   if (!this._sessionMap[sessionKey]) {
     var self = this
-
-    var cleanup = function() {
-      self._cleanupSessionFor(origin, isStreaming)
+    var cleanupSession = function() {
+      self._cleanupSession(sessionKey)
     }
 
     // Initializing http2 session.
-    this._sessionMap[sessionKey] = http2
-      .connect(origin)
-      .once('error', cleanup)
-      .once('goaway', cleanup)
-      // Destroys http2 session after specified time of inactivity
-      // and releases event loop.
-      .setTimeout(DESTROY_HTTP2_SESSION_TIME, cleanup)
+    this._sessionMap[sessionKey] = {
+      activeRequests: 0,
+      session: http2
+        .connect(origin)
+        .once('error', cleanupSession)
+        .once('goaway', cleanupSession),
+      timeoutHandle: null,
+    }
   }
+
+  // Ensure that the session doesn't timeout while the request is in flight.
+  this._clearTimeout(sessionKey)
 
   return this._sessionMap[sessionKey]
 }
@@ -68,13 +73,43 @@ Http2Adapter.prototype._resolveSessionFor = function(origin, isStreaming) {
  * @param {?boolean} isStreaming Whether it's a streaming request.
  * @returns {void}
  */
-Http2Adapter.prototype._cleanupSessionFor = function(origin, isStreaming) {
-  var sessionKey = isStreaming ? STREAM_PREFIX + origin : origin
-
+Http2Adapter.prototype._cleanupSession = function(sessionKey) {
   if (this._sessionMap[sessionKey]) {
-    this._sessionMap[sessionKey].close()
+    this._clearTimeout(sessionKey)
+    this._sessionMap[sessionKey].session.close()
     delete this._sessionMap[sessionKey]
   }
+}
+
+Http2Adapter.prototype._clearTimeout = function(sessionKey) {
+  if (this._sessionMap[sessionKey].timeoutHandle) {
+    clearTimeout(this._sessionMap[sessionKey].timeoutHandle)
+    delete this._sessionMap[sessionKey].timeoutHandle
+  }
+}
+
+Http2Adapter.prototype._refreshTimeout = function(sessionKey) {
+  this._clearTimeout(sessionKey)
+
+  var self = this
+  var cleanupSession = function() {
+    if (self._sessionMap[sessionKey].activeRequests === 0) {
+      self._cleanupSession(sessionKey)
+    }
+  }
+
+  this._sessionMap[sessionKey].timeoutHandle = setTimeout(
+    cleanupSession,
+    DESTROY_HTTP2_SESSION_TIME
+  )
+}
+
+Http2Adapter.prototype._decrementActiveRequests = function(sessionKey) {
+  --this._sessionMap[sessionKey].activeRequests
+}
+
+Http2Adapter.prototype._incrementActiveRequests = function(sessionKey) {
+  ++this._sessionMap[sessionKey].activeRequests
 }
 
 /**
@@ -95,6 +130,7 @@ Http2Adapter.prototype._cleanupSessionFor = function(origin, isStreaming) {
 Http2Adapter.prototype.execute = function(options) {
   var self = this
   var isStreaming = options.streamConsumer != null
+  var sessionKey = this._sessionKey(options.origin, isStreaming)
 
   return new Promise(function(resolvePromise, rejectPromise) {
     var isPromiseSettled = false
@@ -118,6 +154,12 @@ Http2Adapter.prototype.execute = function(options) {
     }
 
     var cleanup = function() {
+      self._decrementActiveRequests(sessionKey)
+
+      // Destroys http2 session after specified time of inactivity and
+      // releases event loop.
+      self._refreshTimeout(sessionKey)
+
       if (options.signal) {
         options.signal.removeEventListener('abort', onAbort)
       }
@@ -195,12 +237,13 @@ Http2Adapter.prototype.execute = function(options) {
         [http2.constants.HTTP2_HEADER_PATH]: pathname,
         [http2.constants.HTTP2_HEADER_METHOD]: options.method,
       })
-      var session = self._resolveSessionFor(options.origin, isStreaming)
+      var session = self._resolveSession(options.origin, sessionKey).session
       var request = session
         .request(requestHeaders)
         .setEncoding('utf8')
         .on('error', onError)
         .on('response', onResponse)
+      self._incrementActiveRequests(sessionKey)
 
       // Set up timeout only if no signal provided.
       if (!options.signal && options.timeout) {
@@ -217,7 +260,7 @@ Http2Adapter.prototype.execute = function(options) {
 
       request.end()
     } catch (error) {
-      self._cleanupSessionFor(options.origin, isStreaming)
+      self._cleanupSession(sessionKey)
       rejectOrOnError(error)
     }
   })
