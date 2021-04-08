@@ -212,6 +212,23 @@ describe('Client', () => {
     )
   })
 
+  test('http2 session released', async () => {
+    const http2SessionIdleTime = 500
+    const client = util.getClient({
+      http2SessionIdleTime: http2SessionIdleTime,
+    })
+
+    await client.query(query.Now())
+
+    const internalSessionMap = client._http._adapter._sessionMap
+
+    expect(Object.keys(internalSessionMap).length).toBe(1)
+
+    await new Promise(resolve => setTimeout(resolve, http2SessionIdleTime + 1))
+
+    expect(Object.keys(internalSessionMap).length).toBe(0)
+  })
+
   test('Unauthorized error has the proper fields', async () => {
     const client = new Client({ secret: 'bad-key' })
 
