@@ -124,12 +124,18 @@ function getDefaultHeaders() {
     driver: ['javascript', packageJson.version].join('-'),
   }
 
-  var isServiceWorker
+  var isServiceWorker, isCloudflareWorker
 
   try {
     isServiceWorker = global instanceof ServiceWorkerGlobalScope
   } catch (error) {
     isServiceWorker = false
+  }
+  
+  try {
+    isCloudflareWorker = global instanceof CloudflareWorker
+  } catch (error) {
+    isCloudflareWorker = false
   }
 
   try {
@@ -140,6 +146,8 @@ function getDefaultHeaders() {
       driverEnv.os = [os.platform(), os.release()].join('-')
     } else if (isServiceWorker) {
       driverEnv.runtime = 'Service Worker'
+    } else if (isCloudflareWorker) {
+      driverEnv.runtime = 'Cloudflare Worker'
     } else {
       driverEnv.runtime = util.getBrowserDetails()
       driverEnv.env = 'browser'
