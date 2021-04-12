@@ -155,9 +155,21 @@ var values = require('./values')
  * @param {?fetch} options.fetch
  *   a fetch compatible [API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) for making a request
  * @param {?number} options.queryTimeout
- *   Sets the maximum amount of time (in milliseconds) for query execution on the server,
+ *   Sets the maximum amount of time (in milliseconds) for query execution on the server
+ * @param {?number} options.http2SessionIdleTime
+ *   Sets the maximum amount of time (in milliseconds) an HTTP2 session may live
+ *   when there's no activity. Only applicable for NodeJS environment (when http2 module is used), 500 by default,
+ *   can be configured via FAUNADB_HTTP2_SESSION_IDLE_TIME environment variable.
  */
 function Client(options) {
+  var http2SessionIdleTimeEnv = parseInt(
+    util.getEnvVariable('FAUNADB_HTTP2_SESSION_IDLE_TIME'),
+    10
+  )
+  var http2SessionIdleTimeDefault = !isNaN(http2SessionIdleTimeEnv)
+    ? http2SessionIdleTimeEnv
+    : 500
+
   options = util.applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
@@ -169,6 +181,7 @@ function Client(options) {
     headers: {},
     fetch: undefined,
     queryTimeout: null,
+    http2SessionIdleTime: http2SessionIdleTimeDefault,
   })
 
   this._observer = options.observer
