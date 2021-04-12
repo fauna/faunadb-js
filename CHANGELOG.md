@@ -1,3 +1,8 @@
+## 4.2.0
+
+- Implement inactivity timeout for HTTP2 session
+- Cloudflare navigator object fix
+
 ## 4.1.3
 
 - Revert X-Query-Timeout improvement (will be introduced in a major release)
