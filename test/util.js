@@ -160,6 +160,12 @@ function simulateBrowser() {
   global.navigator = { userAgent: '' } // mock browser navigator
 }
 
+function delay(time) {
+  return new Promise(resolve => {
+    setTimeout(resolve, time)
+  })
+}
+
 module.exports = {
   testConfig: testConfig,
   getCfg: getCfg,
@@ -172,4 +178,5 @@ module.exports = {
   unwrapExpr: unwrapExpr,
   randomString: randomString,
   simulateBrowser: simulateBrowser,
+  delay: delay,
 }
