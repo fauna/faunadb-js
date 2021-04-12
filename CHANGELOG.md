@@ -1,7 +1,9 @@
 ## 4.2.0
 
-- Implement inactivity timeout for HTTP2 session
-- Cloudflare navigator object fix
+- Improve HTTP2 session timeout handling
+- Add the `FAUNADB_HTTP2_SESSION_IDLE_TIME` environment variable  
+  to specify the default HTTP2 session timeout period
+- Implement a fix for the lack of a `navigator` object in Cloudflare Workers
 
 ## 4.1.3
 
