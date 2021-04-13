@@ -23,9 +23,11 @@ jobs:
         with:
           project: DRV
           issuetype: Bug
-          summary: GITHUB ISSUE ${{issue.id}} ${{ issue.title }}
-          description: ${{issue.url}} \r\n ${{issue.body}}
-          fields: '{"title": "ISSUE ${{issue.id}}", "labels": ["github"], "components": ["JavaScript Driver"]}'
+          # summary: GITHUB ISSUE ${{issue.id}} ${{ issue.title }}
+          summary: Summary test
+          # description: ${{issue.url}} \r\n ${{issue.body}}
+          description: desc test
+          fields: '{"title": "title test", "labels": ["github"], "components": ["JavaScript Driver"]}'
 
       - name: Set triage state
         uses: atlassian/gajira-transition@master
