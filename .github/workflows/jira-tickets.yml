@@ -23,17 +23,15 @@ jobs:
         with:
           project: DRV
           issuetype: Bug
-          # summary: GITHUB ISSUE ${{issue.id}} ${{ issue.title }}
-          summary: Summary test
-          # description: ${{issue.url}} \r\n ${{issue.body}}
-          description: desc test
-          fields: '{"state": "TRIAGE", "labels": ["github"], "components": [{ "name": "JavaScript Driver" }]}'
+          summary: GITHUB ISSUE \#${{issue.id}} ${{ issue.title }}
+          description: ${{issue.url}} \r\n\r\n ${{issue.body}}
+          fields: '{labels": ["github"], "components": [{ "name": "JavaScript Driver" }]}'
 
-      # - name: Set triage state
-      #   uses: atlassian/gajira-transition@master
-      #   with:
-      #     issue: ${{ steps.create.outputs.issue }}
-      #     transition: "TRIAGE"
+      - name: Set triage state
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: ${{ steps.create.outputs.issue }}
+          transition: "TRIAGE"
 
       - name: Log created issue
         run: echo "Issue ${{ steps.create.outputs.issue }} was created"
