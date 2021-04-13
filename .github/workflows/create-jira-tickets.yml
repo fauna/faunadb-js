@@ -1,4 +1,4 @@
-name: JIRA tickets
+name: Create JIRA tickets
 
 on:
   issues:
@@ -22,9 +22,9 @@ jobs:
         with:
           project: DRV
           issuetype: Bug
-          summary: GITHUB ISSUE \#${{issue.id}} ${{ issue.title }}
-          description: ${{issue.url}} \r\n\r\n ${{issue.body}}
-          fields: '{labels": ["github"], "components": [{ "name": "JavaScript Driver" }]}'
+          summary: "GITHUB ISSUE #${{github.event.issue.number}} ${{github.event.issue.title}}"
+          description: "${{github.event.issue.url}} \n\n ${{github.event.issue.body}}"
+          fields: '{"labels": ["github"], "components": [{ "name": "JavaScript Driver" }]}'
 
       - name: Set triage state
         uses: atlassian/gajira-transition@master
@@ -32,5 +32,11 @@ jobs:
           issue: ${{ steps.create.outputs.issue }}
           transition: "TRIAGE"
 
-      - name: Log created issue
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          issue-number: 1
+          body: Internal ticket number is ${{steps.create.outputs.issue}}
+
+      - name: Created issue
         run: echo "Issue ${{ steps.create.outputs.issue }} was created"
