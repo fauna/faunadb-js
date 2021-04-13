@@ -71,6 +71,10 @@ Http2Adapter.prototype._resolveSessionFor = function(origin, isStreaming) {
   var setInactivityTimeout = function() {
     clearInactivityTimeout()
 
+    if (self._http2SessionIdleTime === Infinity) {
+      return
+    }
+
     var onTimeout = function() {
       timerId = null
 
@@ -82,11 +86,17 @@ Http2Adapter.prototype._resolveSessionFor = function(origin, isStreaming) {
     timerId = setTimeout(onTimeout, self._http2SessionIdleTime)
   }
 
+  var session = http2
+    .connect(origin)
+    .once('error', cleanup)
+    .once('goaway', cleanup)
   var sessionInterface = {
-    session: http2
-      .connect(origin)
-      .once('error', cleanup)
-      .once('goaway', cleanup),
+    session: session,
+
+    destroy: function destroy() {
+      clearInactivityTimeout()
+      session.destroy()
+    },
 
     onRequestStart: function onRequestStart() {
       ++ongoingRequests
@@ -96,8 +106,9 @@ Http2Adapter.prototype._resolveSessionFor = function(origin, isStreaming) {
     onRequestEnd: function onRequestEnd() {
       --ongoingRequests
 
-      // Set inactivity timer only if there are no ongoing requests.
-      if (ongoingRequests === 0) {
+      // Set inactivity timer only if there are no ongoing requests and
+      // the session hasn't been destroyed.
+      if (ongoingRequests === 0 && !session.destroyed) {
         setInactivityTimeout()
       }
     },
@@ -277,6 +288,19 @@ Http2Adapter.prototype.execute = function(options) {
       rejectOrOnError(error)
     }
   })
+}
+
+/**
+ * Destroys all the sessions and resets the session map.
+ *
+ * @returns {void}
+ */
+Http2Adapter.prototype.close = function() {
+  Object.values(this._sessionMap).forEach(function(sessionInterface) {
+    sessionInterface.destroy()
+  })
+
+  this._sessionMap = {}
 }
 
 module.exports = Http2Adapter

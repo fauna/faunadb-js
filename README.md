@@ -242,6 +242,42 @@ const client = new faunadb.Client({
 })
 ```
 
+#### Termination
+
+For NodeJS, the Fauna Client uses HTTP2 sessions that hold the Event Loop and prevent proper
+termination which can be crucial for some kind of applications like scripts or CLIs. To address this issue,
+`http2SessionIdleTime` has been introduced and controls how much time an HTTP2 session may live
+if there's no ongoing activity. It's 500ms by default meaning the event loop will be released after 500ms
+since the very last request. In order to gain the full advantage of HTTP2 protocol,
+`http2SessionIdleTime` can be configured to the greater amount of time or even `Infinity`
+to not automatically destroy the session but reuse it during the whole Fauna Client's lifespan.
+It comes with some pitfalls - the termination of Fauna Client is shifted to the developer
+as the event loop will be held until `Client#close` method is called manually:
+
+```javascript
+// sample.js (run it with "node sample.js" command)
+const { Client, query: Q } = require('faunadb')
+
+async function main() {
+  const client = new Client({
+    secret: 'YOUR_FAUNADB_SECRET',
+    http2SessionIdleTime: Infinity,
+    //                    ^^^ Use custom numeric value, either Infinity or positive integer
+  })
+  const output = await client.query(Q.Add(1, 1))
+
+  console.log(output)
+
+  client.close()
+  //     ^^^ If it's not called the script won't be terminated properly
+}
+
+main().catch(console.error)
+```
+
+With this in mind, make sure you call the `Client#close` method if you want to control
+underlying HTTP2 session lifetime via `http2SessionIdleTime` parameter.
+
 ## Known issues
 
 ### Using with Cloudflare Workers

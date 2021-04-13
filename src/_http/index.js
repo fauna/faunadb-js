@@ -62,6 +62,17 @@ HttpClient.prototype.syncLastTxnTime = function(time) {
 }
 
 /**
+ * Cleanups the held resources.
+ *
+ * @returns {void}
+ */
+HttpClient.prototype.close = function() {
+  if (this._adapter.close) {
+    this._adapter.close()
+  }
+}
+
+/**
  * Executes an HTTP request.
  *
  * @param {?object} options Request parameters.
