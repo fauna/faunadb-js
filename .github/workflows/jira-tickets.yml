@@ -1,8 +1,9 @@
 name: JIRA tickets
 
 on:
-  issues:
-    types: [opened]
+  push
+  # issues:
+  #   types: [opened]
 
 jobs:
   create_ticket_from_issue:
