@@ -2,7 +2,7 @@ name: JIRA tickets
 
 on:
   issues:
-    types: [opened]
+    types: [opened, reopened]
 
 jobs:
   create_ticket_from_issue:
