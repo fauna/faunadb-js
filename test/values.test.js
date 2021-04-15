@@ -83,7 +83,7 @@ describe('Values', () => {
   })
 
   test('date', () => {
-    var test_date = new FaunaDate(new Date(1970, 0, 1))
+    var test_date = new FaunaDate(new Date(Date.UTC(1970, 0, 1)))
     var test_date_json = '{"@date":"1970-01-01"}'
     expect(json.toJSON(test_date)).toEqual(test_date_json)
     expect(json.parseJSON(test_date_json)).toEqual(test_date)
@@ -188,8 +188,8 @@ describe('Values', () => {
   })
 
   var assertPrint = function(value, expected) {
-    expect(expected).toEqual(util.inspect(value, { depth: null }))
-    expect(expected).toEqual(value.toString())
+    expect(util.inspect(value, { depth: null })).toEqual(expected)
+    expect(value.toString()).toEqual(expected)
   }
 
   test('allow collections with schema names', () => {
@@ -406,11 +406,28 @@ describe('Values', () => {
       ),
       'Query(Lambda(["x", "y"], If(GT(Var("x"), Var("y")), "x > y", "x <= y")))'
     )
+    // Simple Select query
     assertPrint(
       new Query(
         q.Lambda('ref', q.Select(['data', 'name'], q.Get(q.Var('ref'))))
       ),
       'Query(Lambda("ref", Select(["data", "name"], Get(Var("ref")))))'
+    )
+
+    // Select with a default
+    assertPrint(
+      new Query(
+        q.Lambda('ref', q.Select(['data', 'name'], q.Get(q.Var('ref')), true))
+      ),
+      'Query(Lambda("ref", Select(["data", "name"], Get(Var("ref")), true)))'
+    )
+
+    // Select with null as a default default
+    assertPrint(
+      new Query(
+        q.Lambda('ref', q.Select(['data', 'name'], q.Get(q.Var('ref')), null))
+      ),
+      'Query(Lambda("ref", Select(["data", "name"], Get(Var("ref")), null)))'
     )
 
     //returns object
@@ -563,6 +580,73 @@ describe('Values', () => {
         )
       ),
       'Query(Foreach([1, 2, 3], Lambda("i", Equals(0, Modulo(Var("i"), 2)))))'
+    )
+
+    // zero arity functions.
+    assertPrint(new Query(q.Now()), 'Query(Now())')
+    assertPrint(new Query(q.Identity()), 'Query(Identity())')
+    assertPrint(new Query(q.Keys()), 'Query(Keys())')
+    assertPrint(new Query(q.Tokens()), 'Query(Tokens())')
+    assertPrint(new Query(q.AccessProviders()), 'Query(AccessProviders())')
+    assertPrint(new Query(q.Collections()), 'Query(Collections())')
+    assertPrint(new Query(q.Databases()), 'Query(Databases())')
+    assertPrint(new Query(q.Indexes()), 'Query(Indexes())')
+    assertPrint(new Query(q.Functions()), 'Query(Functions())')
+    assertPrint(new Query(q.Roles()), 'Query(Roles())')
+    assertPrint(new Query(q.NewId()), 'Query(NewId())')
+  })
+
+  test('pretty print Merge', () => {
+    assertPrint(
+      new Query(
+        q.Merge(q.Select('data', q.Var('doc')), {
+          id: q.Select(['ref', 'id'], q.Var('doc')),
+        })
+      ),
+      'Query(Merge(Select("data", Var("doc")), {id: Select(["ref", "id"], Var("doc"))}))'
+    )
+
+    assertPrint(
+      new Query(
+        q.Merge(
+          q.Select('data', q.Var('doc')),
+          {
+            id: q.Select(['ref', 'id'], q.Var('doc')),
+          },
+          q.Lambda(['key', 'a', 'b'], q.Var('a'))
+        )
+      ),
+      'Query(Merge(Select("data", Var("doc")), {id: Select(["ref", "id"], Var("doc"))}, Lambda(["key", "a", "b"], Var("a"))))'
+    )
+  })
+
+  test('pretty print Join', () => {
+    assertPrint(
+      new Query(
+        q.Join(
+          q.Match(
+            q.Index('spellbooks_by_owner'),
+            q.Ref(q.Collection('characters'), '181388642114077184')
+          ),
+          q.Index('spells_by_spellbook')
+        )
+      ),
+      'Query(Join(Match(Index("spellbooks_by_owner"), Ref(Collection("characters"), "181388642114077184")), Index("spells_by_spellbook")))'
+    )
+    assertPrint(
+      new Query(
+        q.Join(
+          q.Match(
+            q.Index('spellbooks_by_owner'),
+            q.Ref(q.Collection('characters'), '181388642114077184')
+          ),
+          q.Lambda(
+            'spellbook',
+            q.Match(q.Index('spells_by_spellbook'), q.Var('spellbook'))
+          )
+        )
+      ),
+      'Query(Join(Match(Index("spellbooks_by_owner"), Ref(Collection("characters"), "181388642114077184")), Lambda("spellbook", Match(Index("spells_by_spellbook"), Var("spellbook")))))'
     )
   })
 

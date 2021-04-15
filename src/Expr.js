@@ -19,6 +19,10 @@ Expr.prototype.toJSON = function() {
   return this.raw
 }
 
+Expr.prototype.toFQL = function() {
+  return exprToString(this.raw)
+}
+
 var varArgsFunctions = [
   'Do',
   'Call',
@@ -217,6 +221,24 @@ var exprToString = function(expr, caller) {
 
   if ('object' in expr) return printObject(expr['object'])
 
+  if ('merge' in expr) {
+    if (expr.lambda) {
+      return (
+        'Merge(' +
+        exprToString(expr.merge) +
+        ', ' +
+        exprToString(expr.with) +
+        ', ' +
+        exprToString(expr.lambda) +
+        ')'
+      )
+    }
+
+    return (
+      'Merge(' + exprToString(expr.merge) + ', ' + exprToString(expr.with) + ')'
+    )
+  }
+
   if ('lambda' in expr) {
     return (
       'Lambda(' +
@@ -271,12 +293,13 @@ var exprToString = function(expr, caller) {
   var fn = keys[0]
   fn = convertToCamelCase(fn)
 
-  var args = keys.map(function(k) {
-    var v = expr[k]
-    return exprToString(v, fn)
-  })
-
-  args = args.join(', ')
+  // The filter prevents zero arity functions from having a null argument
+  // This only works under the assumptions
+  // that there are no functions where a single 'null' argument makes sense.
+  var args = keys
+    .filter(k => expr[k] !== null || keys.length > 1)
+    .map(k => exprToString(expr[k], fn))
+    .join(', ')
 
   return fn + '(' + args + ')'
 }

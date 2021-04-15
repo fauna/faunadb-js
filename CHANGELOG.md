@@ -1,3 +1,61 @@
+## 4.2.0
+
+- Improve HTTP2 session timeout handling
+- Add the `FAUNADB_HTTP2_SESSION_IDLE_TIME` environment variable  
+  to specify the default HTTP2 session timeout period
+- Implement a fix for the lack of a `navigator` object in Cloudflare Workers
+
+## 4.1.3
+
+- Revert X-Query-Timeout improvement (will be introduced in a major release)
+- Revert http2 session idle time (will be changed to a manual handling by a 'close' method in a major release)
+
+## 4.1.2
+
+- Expose API version as a Client's static property
+- Fix Stream API type definition (TypeScript)
+- Always pass X-Query-Timeout
+- Combine timeout & queryTimeout
+- Set http2 session idle time
+- Omit the port value if it's falsy
+- Expr to FQL logic fixes
+
+## 4.1.1
+
+- Fallback to HTTP1 in case old NodeJS version doesn't support it
+
+## 4.1.0
+
+- Add runtime env headers
+- Enhance isNodeJS recognition
+- Add `observer` option for `client.query`
+- Add NodeJS HTTP2 support
+
+## 4.0.3
+
+- Fix build for webpack
+
+## 4.0.2
+
+- Use AbortController polyfill
+
+## 4.0.1
+
+- Fix null in zero-argument functions for toFQL stringification
+- Fix http request timeout not passed to `fetch` function
+- Fix stream `end` event shallowed for NodeJS
+- Improve Typescript definitions
+- Add exp.toFQL
+- Reduce web bundle size
+
+## 4.0.0
+
+- Adds AccessProvider() support for authenticating with external auth providers (ex. Auth0, Okta)
+- Adds beta support for event streaming
+- Adds new FQL functions: CreateAccessProvider(), AccessProviders(), AccessProvider(), CurrentIdentity(), HasCurrentIdentity(), CurrentToken(), and HasCurrentToken()
+- Deprecates Identity() function in favor of CurrentIdentity()
+- Deprecates HasIdentity() in favor of HasCurrentIdentity()
+
 ## 3.0.0
 
 - Added an alias of the Contains function called ContainsPath, and deprecated the Contains function.

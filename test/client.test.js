@@ -5,7 +5,6 @@ var query = require('../src/query')
 var util = require('./util')
 var Client = require('../src/Client')
 var json = require('../src/_json')
-
 var client
 
 describe('Client', () => {
@@ -25,6 +24,15 @@ describe('Client', () => {
     return client.ping('node').then(function(res) {
       expect(res).toEqual('Scope node is OK')
     })
+  })
+
+  test("omits the port value if it's falsy", () => {
+    const client = new Client({
+      secret: 'FAKED',
+      port: 0,
+    })
+
+    expect(client._http._baseUrl.endsWith(':0')).toBeFalsy()
   })
 
   test('paginates', () => {
@@ -83,17 +91,34 @@ describe('Client', () => {
     )
   })
 
+  test('query observer', async () => {
+    var clientObserver = jest.fn()
+    var queryObserver = jest.fn()
+    var client = util.getClient({ observer: clientObserver })
+
+    await client.query(query.Now(), {
+      observer: queryObserver,
+    })
+    expect(clientObserver).toBeCalled()
+    expect(queryObserver).toBeCalled()
+  })
+
   test('keeps connection alive', () => {
     var aliveClient = util.getClient({ keepAlive: true })
-    var p1 = expect(aliveClient._http._keepAliveEnabledAgent).not.toEqual(
-      undefined
-    )
-    var notAliveClient = util.getClient({ keepAlive: false })
-    var p2 = expect(notAliveClient._http._keepAliveEnabledAgent).toEqual(
-      undefined
-    )
 
-    return Promise.all([p1, p2])
+    // Keep alive agent is only applicable for fetch-backed HttpClient
+    if (aliveClient._http.type !== 'fetch') {
+      return
+    }
+
+    var notAliveClient = util.getClient({ keepAlive: false })
+
+    expect(aliveClient._http._adapter._keepAliveEnabledAgent).not.toEqual(
+      undefined
+    )
+    expect(notAliveClient._http._adapter._keepAliveEnabledAgent).toEqual(
+      undefined
+    )
   })
 
   test('sets authorization header per query', async function() {
@@ -130,30 +155,17 @@ describe('Client', () => {
     expect(fetch).toBeCalled()
   })
 
-  test('instantiate client using default http timeout', async () => {
-    const mockedFetch = mockFetch()
-    const clientWithTimeout = new Client({
-      fetch: mockedFetch,
-    })
-
-    await clientWithTimeout.query(query.Databases())
-
-    expect(mockedFetch).toBeCalledTimes(1)
-    expect(mockedFetch.mock.calls[0][1].timeout).toEqual(60 * 1000)
-  })
-
   test('instantiate client using custom http timeout', async () => {
-    const customTimeout = 10
-    const mockedFetch = mockFetch()
+    const customTimeout = 3
+    const mockedFetch = mockFetch({}, true)
     const clientWithTimeout = new Client({
       timeout: customTimeout,
       fetch: mockedFetch,
     })
 
-    await clientWithTimeout.query(query.Databases())
-
-    expect(mockedFetch).toBeCalledTimes(1)
-    expect(mockedFetch.mock.calls[0][1].timeout).toEqual(customTimeout * 1000)
+    return expect(clientWithTimeout.query(query.Databases())).rejects.toThrow(
+      'Request aborted due to timeout'
+    )
   })
 
   test('instantiate client using default queryTimeout', async () => {
@@ -200,6 +212,23 @@ describe('Client', () => {
     )
   })
 
+  test('http2 session released', async () => {
+    const http2SessionIdleTime = 500
+    const client = util.getClient({
+      http2SessionIdleTime: http2SessionIdleTime,
+    })
+
+    await client.query(query.Now())
+
+    const internalSessionMap = client._http._adapter._sessionMap
+
+    expect(Object.keys(internalSessionMap).length).toBe(1)
+
+    await new Promise(resolve => setTimeout(resolve, http2SessionIdleTime + 1))
+
+    expect(Object.keys(internalSessionMap).length).toBe(0)
+  })
+
   test('Unauthorized error has the proper fields', async () => {
     const client = new Client({ secret: 'bad-key' })
 
@@ -233,6 +262,32 @@ describe('Client', () => {
     expect(response.message).toEqual(errors[0].code)
     expect(response.description).toEqual(errors[0].description)
   })
+
+  test('default headers has been applied', async () => {
+    const mockedFetch = mockFetch()
+    const clientWithDefaultTimeout = new Client({
+      fetch: mockedFetch,
+    })
+
+    await clientWithDefaultTimeout.query(query.Databases())
+
+    expect(mockedFetch).toBeCalledTimes(1)
+    expect(
+      mockedFetch.mock.calls[0][1].headers['X-FaunaDB-API-Version']
+    ).toBeDefined()
+
+    const driverEnvHeader = mockedFetch.mock.calls[0][1].headers['X-Driver-Env']
+    const requiredKeys = [
+      'driver',
+      'driverVersion',
+      'languageVersion',
+      'env',
+      'os',
+    ]
+    expect(
+      requiredKeys.every(key => driverEnvHeader.includes(key))
+    ).toBeDefined()
+  })
 })
 
 function assertHeader(headers, name) {
@@ -244,9 +299,36 @@ function createDocument() {
   return client.query(query.Create(query.Collection('my_collection'), {}))
 }
 
-function mockFetch(content = {}) {
-  return jest.fn().mockResolvedValue({
-    headers: new Set(),
-    text: () => Promise.resolve(JSON.stringify(content)),
+function mockFetch(content = {}, simulateTimeout) {
+  return jest.fn().mockImplementation((_, opts) => {
+    return new Promise((resolve, reject) => {
+      if (!simulateTimeout) {
+        return resolve({
+          headers: new Set(),
+          text: () => Promise.resolve(JSON.stringify(content)),
+        })
+      }
+
+      if (!opts || !opts.signal) {
+        return
+      }
+
+      const onAbort = () => {
+        opts.signal.removeEventListener('abort', onAbort)
+
+        // Fake AbortError emitted by fetch when the signal is provided
+        // and AbortController#abort is called.
+        const abortError = new (class extends Error {
+          constructor() {
+            super()
+            this.name = 'AbortError'
+          }
+        })()
+
+        reject(abortError)
+      }
+
+      opts.signal.addEventListener('abort', onAbort)
+    })
   })
 }

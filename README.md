@@ -11,9 +11,9 @@ A Javascript driver for [FaunaDB](https://fauna.com).
 [View reference JSDocs here](https://fauna.github.com/faunadb-js).
 
 See the [FaunaDB Documentation](https://docs.fauna.com/) and
-[Tutorials](https://docs.fauna.com/fauna/current/howto/) for guides and
-a complete database [API
-reference](https://docs.fauna.com/fauna/current/reference/queryapi/).
+[Tutorials](https://docs.fauna.com/fauna/current/tutorials/crud) for
+guides and a complete database [API
+reference](https://docs.fauna.com/fauna/current/api/fql/).
 
 ## Supported Runtimes
 
@@ -55,8 +55,8 @@ The minified version of the driver can also be used via CDN:
 
 ### Use
 
-The [tutorials](https://docs.fauna.com/fauna/current/howto/) in the
-FaunaDB documentation contain other driver-specific examples.
+The [tutorials](https://docs.fauna.com/fauna/current/tutorials/crud) in
+the FaunaDB documentation contain other driver-specific examples.
 
 #### Connecting from the browser
 
@@ -82,7 +82,7 @@ To get up and running quickly, below is a full example for connecting from the b
     q.ToDate('2018-06-06')
   )
   .then(function (res) { console.log('Result:', res) })
-  a.catch(function (err) { console.log('Error:', err) })
+  .catch(function (err) { console.log('Error:', err) })
 </script>
 </html>
 ```
@@ -129,7 +129,8 @@ createP.then(function(response) {
 #### Pagination Helpers
 
 This driver contains helpers to provide a simpler API for consuming paged
-responses from FaunaDB. See the [Paginate Function Reference](https://docs.fauna.com/fauna/current/reference/queryapi/read/paginate)
+responses from FaunaDB. See the [Paginate function
+reference](https://docs.fauna.com/fauna/current/api/fql/functions/paginate)
 for a description of paged responses.
 
 Using the helper to page over sets lets the driver handle cursoring and
@@ -241,6 +242,33 @@ const client = new faunadb.Client({
 })
 ```
 
+## Known issues
+
+### Using with Cloudflare Workers
+
+Cloudflare Workers have neither XMLHttpRequest nor fetch in the global scope.
+Therefore, the `cross-fetch` package is unable to inject its own `fetch()` function, and throws an error.
+The `fetch()` function is injected via a closure, so the workaround would be to pass
+the fetch objects when initiating the FaunaDB client config. Cloudflare Workers also
+doesn't support the use of an AbortController, which terminates requests as well as streams.
+Here is a workaround:
+
+```javascript
+const c = new faunadb.Client({
+  secret: 'your secret',
+  fetch: (url, params) => {
+    const signal = params.signal
+    delete params.signal
+    const abortPromise = new Promise(resolve => {
+      if (signal) {
+        signal.onabort = resolve
+      }
+    })
+    return Promise.race([abortPromise, fetch(url, params)])
+  },
+})
+```
+
 ## Client Development
 
 Run `yarn` to install dependencies.
@@ -261,7 +289,11 @@ FAUNA_DOMAIN=localhost
 FAUNA_SCHEME=http
 FAUNA_PORT=8443
 FAUNA_ROOT_KEY=secret
+AUTH_0_URI=https://{TENANT}.auth0.com/
+AUTH_0_TOKEN=auth0 token
 ```
+
+[Guide for Auth0](https://auth0.com/docs/tokens/management-api-access-tokens/create-and-authorize-a-machine-to-machine-application)
 
 - `yarn test`: This will run tests against the current version of Node.js.
   [nvm](https://github.com/creationix/nvm) is useful for managing multiple
@@ -274,8 +306,8 @@ database created for this purpose, rather than your account's root key. This
 will make cleanup of test databases as easy as removing the parent database.
 
 See the [FaunaDB Multitenancy
-Tutorial](https://docs.fauna.com/fauna/current/howto/multitenant) for
-more information about nested databases.
+Tutorial](https://docs.fauna.com/fauna/current/tutorials/multitenant)
+for more information about nested databases.
 
 Alternatively, tests can be run via a Docker container with
 `FAUNA_ROOT_KEY="your-cloud-secret" make docker-test` (an alternate
@@ -336,7 +368,7 @@ npm install /path/to/tarball
 
 ## License
 
-Copyright 2019 [Fauna, Inc.](https://fauna.com/)
+Copyright 2021 [Fauna, Inc.](https://fauna.com/)
 
 Licensed under the Mozilla Public License, Version 2.0 (the "License"); you may
 not use this software except in compliance with the License. You may obtain a

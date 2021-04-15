@@ -1,4 +1,4 @@
-export default class RequestResult {
+export default class RequestResult<T extends object = object> {
   constructor(
     method: string,
     path: string,
@@ -6,7 +6,7 @@ export default class RequestResult {
     requestRaw: string,
     requestContent: object,
     responseRaw: string,
-    responseContent: object,
+    responseContent: T,
     statusCode: number,
     responseHeaders: object,
     startTime: Date,
@@ -19,7 +19,7 @@ export default class RequestResult {
   readonly requestRaw: string
   readonly requestContent: object
   readonly responseRaw: string
-  readonly responseContent: object
+  readonly responseContent: T
   readonly statusCode: number
   readonly responseHeaders: object
   readonly startTime: Date

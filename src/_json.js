@@ -16,39 +16,43 @@ function parseJSON(json) {
   return JSON.parse(json, json_parse)
 }
 
-/**
- * This function allow us to parse responses as streaming
- * currently, this is not allowed by Firefox only
- * https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+/*
+ * Parses a line-separated JSON stream. For backwards compatibility with
+ * concatenated JSON objects, it attempts to parse the received content as a
+ * JSON object. Failures should occur when partial or multiple line-separated
+ * JSON objects are received. Upon a parsing failure, attempt paring the
+ * received content as line-separated JSON objects.
+ *
+ * See https://en.wikipedia.org/wiki/JSON_streaming#Line-delimited_JSON
+ * See https://en.wikipedia.org/wiki/JSON_streaming#Concatenated_JSON
+ *
+ * @private
  */
-function parseJSONStreaming(json) {
-  var results = []
+function parseJSONStreaming(content) {
+  var values = []
 
   try {
-    results.push(parseJSON(json))
-  } catch (error) {
-    var position
-
-    /** NodeJS and Chrome Syntax error message */
-    if (error.message.indexOf('JSON.parse') > -1) {
-      var matchResult = error.message.match(/column ([0-9+]*)/)
-      position = matchResult[1] - 1
-      /** Firefox Syntax error message */
-    } else if (error.message.indexOf('Unexpected token') > -1) {
-      var matchResult = error.message.match(/at position ([0-9+]*)$/)
-      position = matchResult[1]
-    } else {
-      throw error
+    values.push(parseJSON(content))
+    content = '' // whole content parsed
+  } catch (err) {
+    while (true) {
+      var pos = content.indexOf('\n') + 1 // include \n
+      if (pos <= 0) {
+        break
+      }
+      var slice = content.slice(0, pos).trim()
+      if (slice.length > 0) {
+        // discards empty slices due to leading \n
+        values.push(parseJSON(slice))
+      }
+      content = content.slice(pos)
     }
-
-    var left = json.slice(0, position)
-    var right = json.slice(position)
-
-    results.push(parseJSONStreaming(left))
-    results.push(parseJSONStreaming(right))
   }
 
-  return results.flat()
+  return {
+    values: values,
+    buffer: content,
+  }
 }
 
 function json_parse(_, val) {

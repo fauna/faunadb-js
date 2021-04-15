@@ -1,6 +1,6 @@
 'use strict'
 
-var util = require('util')
+var util = require('./_util')
 
 /**
  * FaunaDB error types. Request errors can originate from the client (e.g. bad
@@ -160,6 +160,8 @@ FaunaHTTPError.raiseForStatusCode = function(requestResult) {
         throw new NotFound(requestResult)
       case 405:
         throw new MethodNotAllowed(requestResult)
+      case 429:
+        throw new TooManyRequests(requestResult)
       case 500:
         throw new InternalError(requestResult)
       case 503:
@@ -230,6 +232,18 @@ function MethodNotAllowed(requestResult) {
 }
 
 util.inherits(MethodNotAllowed, FaunaHTTPError)
+
+/**
+ * A HTTP 429 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+function TooManyRequests(requestResult) {
+  FaunaHTTPError.call(this, 'TooManyRequests', requestResult)
+}
+
+util.inherits(TooManyRequests, FaunaHTTPError)
 
 /**
  * A HTTP 500 error.
@@ -315,6 +329,7 @@ module.exports = {
   PermissionDenied: PermissionDenied,
   NotFound: NotFound,
   MethodNotAllowed: MethodNotAllowed,
+  TooManyRequests: TooManyRequests,
   InternalError: InternalError,
   UnavailableError: UnavailableError,
   StreamError: StreamError,

@@ -3,7 +3,7 @@
 const Client = require('../src/Client')
 const q = require('../src/query')
 const util = require('./util')
-const { BadRequest, UnavailableError } = require('../src/errors/')
+const { BadRequest } = require('../src/errors')
 
 let db, key, client, coll, doc, stream, window, fetch
 
@@ -113,7 +113,7 @@ describe('StreamAPI', () => {
       expect(() => stream.start()).toThrow(Error)
     })
 
-    test('wraps error events', async done => {
+    async function testErrorEvent(done, checkErrorCallback) {
       let role = await client.query(
         q.CreateRole({
           name: util.randomString('role'),
@@ -136,13 +136,29 @@ describe('StreamAPI', () => {
           await client.query(q.Update(doc.ref, {}))
         })
         .on('error', error => {
+          checkErrorCallback(error)
+          done()
+        })
+        .start()
+    }
+
+    test('wraps error events', async done => {
+      testErrorEvent(done, error => {
+        if (error.code && error.description) {
           expect(error.code).toEqual('permission denied')
           expect(error.description).toEqual(
             'Authorization lost during stream evaluation.'
           )
-          done()
-        })
-        .start()
+        }
+      })
+    })
+
+    test('wraps delegated error events if stream closed unexpectedly', async done => {
+      testErrorEvent(done, error => {
+        if (error instanceof TypeError) {
+          expect(error.message).toEqual('network error')
+        }
+      })
     })
 
     test('reports to client observer', done => {
@@ -172,7 +188,12 @@ describe('StreamAPI', () => {
 
     test('override fetch polyfill if possible', done => {
       global.fetch = () => Promise.reject(new Error('global fetch called'))
-      global.window = {} // deceive util.isNodeEnv()
+      util.simulateBrowser()
+
+      // Re-initiate the client in order to re-initiate underlying
+      // HttpClient's adapter and pull new fetch API from global.
+      const client = util.getClient()
+
       stream = client
         .stream(doc.ref)
         .on('error', error => {
@@ -183,13 +204,20 @@ describe('StreamAPI', () => {
     })
 
     test('report failure if no fetch compatible function is found', done => {
-      global.window = {} // deceive util.isNodeEnv()
+      util.simulateBrowser()
+
+      // Re-initiate the client in order to re-initiate underlying
+      // HttpClient's adapter and pull new fetch API from global.
+      const client = util.getClient({
+        secret: key.secret,
+      })
+
       stream = client
         .stream(doc.ref)
         .on('error', error => {
           expect(error.message).toEqual('streams not supported')
           expect(error.description).toMatch(
-            /Could not find a stream-compatible fetch function/
+            /Please, consider providing a Fetch API-compatible function/
           )
           done()
         })
@@ -197,7 +225,7 @@ describe('StreamAPI', () => {
     })
 
     test('report failure if failed to read a stream', done => {
-      global.window = {} // deceive util.isNodeEnv()
+      util.simulateBrowser()
       let client = util.getClient({
         // Mock the HTTP response and return a null body to force an error
         // during stream data read.
@@ -215,8 +243,33 @@ describe('StreamAPI', () => {
         .on('error', error => {
           expect(error.message).toEqual('streams not supported')
           expect(error.description).toMatch(
-            /Unexpected error during stream initialization/
+            /Please, consider providing a Fetch API-compatible function/
           )
+          done()
+        })
+        .start()
+    })
+
+    test('can listen to large events', done => {
+      var arr = []
+      for (let i = 0; i < 4096; i++) {
+        // at least 4KB
+        arr.push({ value: i.toString() })
+      }
+
+      stream = client
+        .stream(doc.ref)
+        .on('start', () => {
+          client.query(
+            q.Update(doc.ref, {
+              data: {
+                values: arr,
+              },
+            })
+          )
+        })
+        .on('version', evt => {
+          expect(evt.document.data.values).toEqual(arr)
           done()
         })
         .start()
@@ -280,6 +333,34 @@ describe('StreamAPI', () => {
           done()
         })
         .start()
+    })
+
+    test('close http2 session when the .close method is called', async () => {
+      const idleTime = 500
+      const client = util.getClient({
+        secret: key.secret,
+        http2SessionIdleTime: idleTime,
+      })
+
+      const assertActiveSessions = length =>
+        expect(Object.keys(client._http._adapter._sessionMap).length).toBe(
+          length
+        )
+
+      stream = client.stream.document(doc.ref).start()
+
+      await new Promise(resolve => {
+        stream.on('snapshot', () => resolve())
+      })
+      await util.delay(idleTime + 1)
+
+      assertActiveSessions(1)
+
+      stream.close()
+
+      await util.delay(idleTime + 1)
+
+      assertActiveSessions(0)
     })
   })
 })

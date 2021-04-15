@@ -4,10 +4,11 @@ var base64 = require('base64-js')
 var deprecate = require('util-deprecate')
 var errors = require('./errors')
 var Expr = require('./Expr')
-var util = require('util')
+var util = require('./_util')
+var nodeUtil = util.isNodeEnv() ? require('util') : null
 
-var customInspect = util && util.inspect && util.inspect.custom
-var stringify = (util && util.inspect) || JSON.stringify
+var customInspect = nodeUtil && nodeUtil.inspect.custom
+var stringify = nodeUtil ? nodeUtil.inspect : JSON.stringify
 
 /**
  * FaunaDB value types. Generally, these collections do not need to be instantiated

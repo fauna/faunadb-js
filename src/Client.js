@@ -1,5 +1,6 @@
 'use strict'
 
+var packageJson = require('../package.json')
 var PageHelper = require('./PageHelper')
 var RequestResult = require('./RequestResult')
 var errors = require('./errors')
@@ -154,9 +155,21 @@ var values = require('./values')
  * @param {?fetch} options.fetch
  *   a fetch compatible [API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) for making a request
  * @param {?number} options.queryTimeout
- *   Sets the maximum amount of time (in milliseconds) for query execution on the server,
+ *   Sets the maximum amount of time (in milliseconds) for query execution on the server
+ * @param {?number} options.http2SessionIdleTime
+ *   Sets the maximum amount of time (in milliseconds) an HTTP2 session may live
+ *   when there's no activity. Only applicable for NodeJS environment (when http2 module is used), 500 by default,
+ *   can be configured via FAUNADB_HTTP2_SESSION_IDLE_TIME environment variable.
  */
 function Client(options) {
+  var http2SessionIdleTimeEnv = parseInt(
+    util.getEnvVariable('FAUNADB_HTTP2_SESSION_IDLE_TIME'),
+    10
+  )
+  var http2SessionIdleTimeDefault = !isNaN(http2SessionIdleTimeEnv)
+    ? http2SessionIdleTimeEnv
+    : 500
+
   options = util.applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
@@ -168,12 +181,20 @@ function Client(options) {
     headers: {},
     fetch: undefined,
     queryTimeout: null,
+    http2SessionIdleTime: http2SessionIdleTimeDefault,
   })
 
   this._observer = options.observer
   this._http = new http.HttpClient(options)
   this.stream = stream.StreamAPI(this)
 }
+
+/**
+ * Current API version.
+ *
+ * @type {string}
+ */
+Client.apiVersion = packageJson.apiVersion
 
 /**
  * Executes a query via the FaunaDB Query API.
@@ -256,42 +277,52 @@ Client.prototype._execute = function(method, path, data, query, options) {
   var self = this
   var body =
     ['GET', 'HEAD'].indexOf(method) >= 0 ? undefined : JSON.stringify(data)
+
   return this._http
-    .execute(method, path, body, query, options)
-    .then(function(response) {
-      return response.text().then(function(responseText) {
-        var endTime = Date.now()
-        var responseObject = json.parseJSON(responseText)
-        var headers = http.responseHeadersAsObject(response)
-        var result = new RequestResult(
-          method,
-          path,
-          query,
-          body,
-          data,
-          responseText,
-          responseObject,
-          response.status,
-          headers,
-          startTime,
-          endTime
-        )
-        self._handleRequestResult(response, result)
-        return responseObject['resource']
+    .execute(
+      Object.assign({}, options, {
+        path: path,
+        query: query,
+        method: method,
+        body: body,
       })
+    )
+    .then(function(response) {
+      var endTime = Date.now()
+      var responseObject = json.parseJSON(response.body)
+      var result = new RequestResult(
+        method,
+        path,
+        query,
+        body,
+        data,
+        response.body,
+        responseObject,
+        response.status,
+        response.headers,
+        startTime,
+        endTime
+      )
+      self._handleRequestResult(response, result, options)
+
+      return responseObject['resource']
     })
 }
 
-Client.prototype._handleRequestResult = function(response, result) {
+Client.prototype._handleRequestResult = function(response, result, options) {
   var txnTimeHeaderKey = 'x-txn-time'
 
-  if (response.headers.has(txnTimeHeaderKey)) {
-    this.syncLastTxnTime(parseInt(response.headers.get(txnTimeHeaderKey), 10))
+  if (response.headers[txnTimeHeaderKey] != null) {
+    this.syncLastTxnTime(parseInt(response.headers[txnTimeHeaderKey], 10))
   }
 
-  if (this._observer !== null) {
-    this._observer(result, this)
-  }
+  var observers = [this._observer, options && options.observer]
+
+  observers.forEach(observer => {
+    if (typeof observer == 'function') {
+      observer(result, this)
+    }
+  })
 
   errors.FaunaHTTPError.raiseForStatusCode(result)
 }

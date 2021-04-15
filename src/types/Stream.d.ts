@@ -9,18 +9,16 @@ export interface Subscription<TEventHandlerMap> {
 
 type Handler<TEventType extends string, TEventData> = (
   data: TEventData,
-  event: { type: TEventType; txn: number; event: TEventData }
+  event: {
+    type: TEventType
+    event: TEventData
+    txn?: number
+  }
 ) => void
 
 export type SubscriptionEventHandlers = {
   start: Handler<'start', number>
-  error: Handler<
-    'error',
-    {
-      code: string
-      description: string
-    }
-  >
+  error: Handler<'error', unknown>
   version: Handler<
     'version',
     {

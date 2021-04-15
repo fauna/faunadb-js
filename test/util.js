@@ -18,24 +18,31 @@ var testConfig
 try {
   testConfig = require('../testConfig.json')
 } catch (err) {
-  if (
-    typeof env.FAUNA_DOMAIN === 'undefined' ||
-    typeof env.FAUNA_SCHEME === 'undefined' ||
-    typeof env.FAUNA_PORT === 'undefined' ||
-    typeof env.FAUNA_ROOT_KEY === 'undefined'
-  ) {
-    console.log(
-      'Environment variables not defined. Please create a config file or set env vars.'
-    )
-    process.exit()
-  }
-
   testConfig = {
     domain: env.FAUNA_DOMAIN,
     scheme: env.FAUNA_SCHEME,
     port: env.FAUNA_PORT,
     auth: env.FAUNA_ROOT_KEY,
+    auth0uri: env.AUTH_0_URI,
+    auth0clientId: env.AUTH_0_CLIENT_ID,
+    auth0clientSecret: env.AUTH_0_CLIENT_SECRET,
   }
+}
+
+var requiredConfigFields = [
+  'domain',
+  'scheme',
+  'auth',
+  'auth0uri',
+  'auth0clientId',
+  'auth0clientSecret',
+]
+var missedFields = requiredConfigFields.filter(key => !testConfig[key])
+if (missedFields.length) {
+  console.log(
+    `Environment variables (${missedFields}) not defined. Please create a config file or set env vars.`
+  )
+  process.exit()
 }
 
 function takeObjectKeys(object) {
@@ -131,7 +138,7 @@ beforeAll(() => {
     .query(query.CreateDatabase({ name: dbName }))
     .then(function() {
       return rootClient.query(
-        query.CreateKey({ database: Database(dbName), role: 'server' })
+        query.CreateKey({ database: Database(dbName), role: 'admin' })
       )
     })
     .then(function(key) {
@@ -148,7 +155,19 @@ afterAll(() => {
   return rootClient.query(query.Delete(dbRef))
 })
 
+function simulateBrowser() {
+  global.window = {} // deceive util.isNodeEnv()
+  global.navigator = { userAgent: '' } // mock browser navigator
+}
+
+function delay(time) {
+  return new Promise(resolve => {
+    setTimeout(resolve, time)
+  })
+}
+
 module.exports = {
+  testConfig: testConfig,
   getCfg: getCfg,
   getClient: getClient,
   assertRejected: assertRejected,
@@ -158,4 +177,6 @@ module.exports = {
   dbRef: dbRef,
   unwrapExpr: unwrapExpr,
   randomString: randomString,
+  simulateBrowser: simulateBrowser,
+  delay: delay,
 }
