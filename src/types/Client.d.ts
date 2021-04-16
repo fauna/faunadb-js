@@ -22,6 +22,7 @@ export interface ClientConfig {
   keepAlive?: boolean
   headers?: { [key: string]: string | number }
   fetch?: typeof fetch
+  http2SessionIdleTime?: number
 }
 
 export interface QueryOptions
@@ -46,5 +47,6 @@ export default class Client {
   query<T = object>(expr: ExprArg, options?: QueryOptions): Promise<T>
   paginate(expr: Expr, params?: object, options?: QueryOptions): PageHelper
   ping(scope?: string, timeout?: number): Promise<string>
+  close(opts?: { force?: boolean }): Promise<void>
   stream: StreamApi
 }

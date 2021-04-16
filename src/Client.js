@@ -158,17 +158,14 @@ var values = require('./values')
  *   Sets the maximum amount of time (in milliseconds) for query execution on the server
  * @param {?number} options.http2SessionIdleTime
  *   Sets the maximum amount of time (in milliseconds) an HTTP2 session may live
- *   when there's no activity. Only applicable for NodeJS environment (when http2 module is used), 500 by default,
- *   can be configured via FAUNADB_HTTP2_SESSION_IDLE_TIME environment variable.
+ *   when there's no activity. Must either be a non-negative integer, or Infinity to allow the
+ *   HTTP2 session to live indefinitely (use `Client#close` to manually terminate the client).
+ *   Only applicable for NodeJS environment (when http2 module is used). Default is 500ms;
+ *   can also be configured via the FAUNADB_HTTP2_SESSION_IDLE_TIME environment variable
+ *   which has the highest priority and overrides the option passed into the Client constructor.
  */
 function Client(options) {
-  var http2SessionIdleTimeEnv = parseInt(
-    util.getEnvVariable('FAUNADB_HTTP2_SESSION_IDLE_TIME'),
-    10
-  )
-  var http2SessionIdleTimeDefault = !isNaN(http2SessionIdleTimeEnv)
-    ? http2SessionIdleTimeEnv
-    : 500
+  var http2SessionIdleTime = getHttp2SessionIdleTime()
 
   options = util.applyDefaults(options, {
     domain: 'db.fauna.com',
@@ -181,8 +178,12 @@ function Client(options) {
     headers: {},
     fetch: undefined,
     queryTimeout: null,
-    http2SessionIdleTime: http2SessionIdleTimeDefault,
+    http2SessionIdleTime: http2SessionIdleTime.value,
   })
+
+  if (http2SessionIdleTime.shouldOverride) {
+    options.http2SessionIdleTime = http2SessionIdleTime.value
+  }
 
   this._observer = options.observer
   this._http = new http.HttpClient(options)
@@ -259,6 +260,24 @@ Client.prototype.syncLastTxnTime = function(time) {
   this._http.syncLastTxnTime(time)
 }
 
+/**
+ * Closes the client session and cleans up any held resources.
+ * By default, it will wait for any ongoing requests to complete on their own;
+ * streaming requests are terminated forcibly. Any subsequent requests will
+ * error after the .close method is called.
+ * Should be used at application termination in order to release any open resources
+ * and allow the process to terminate e.g. when the custom http2SessionIdleTime parameter is used.
+ *
+ * @param {?object} opts Close options.
+ * @param {?boolean} opts.force Specifying this property will force any ongoing
+ * requests to terminate instead of gracefully waiting until they complete.
+ * This may result in an ERR_HTTP2_STREAM_CANCEL error for NodeJS.
+ * @returns {Promise<void>}
+ */
+Client.prototype.close = function(opts) {
+  return this._http.close(opts)
+}
+
 Client.prototype._execute = function(method, path, data, query, options) {
   query = util.defaults(query, null)
 
@@ -325,6 +344,19 @@ Client.prototype._handleRequestResult = function(response, result, options) {
   })
 
   errors.FaunaHTTPError.raiseForStatusCode(result)
+}
+
+function getHttp2SessionIdleTime() {
+  var fromEnv = util.getEnvVariable('FAUNADB_HTTP2_SESSION_IDLE_TIME')
+  var parsed =
+    // Allow either "Infinity" or parsable integer string.
+    fromEnv === 'Infinity' ? Infinity : parseInt(fromEnv, 10)
+  var useEnvVar = !isNaN(parsed)
+
+  return {
+    shouldOverride: useEnvVar,
+    value: useEnvVar ? parsed : 500,
+  }
 }
 
 module.exports = Client

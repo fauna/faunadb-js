@@ -319,8 +319,23 @@ function StreamErrorEvent(event) {
 
 util.inherits(StreamErrorEvent, StreamError)
 
+/**
+ * An error thrown when attempting to operate on a closed Client instance.
+ *
+ * @param {string} message The error message.
+ * @param {?string} description The error description.
+ * @extends module:errors~FaunaError
+ * @constructor
+ */
+function ClientClosed(message, description) {
+  FaunaError.call(this, 'ClientClosed', message, description)
+}
+
+util.inherits(ClientClosed, FaunaError)
+
 module.exports = {
   FaunaError: FaunaError,
+  ClientClosed: ClientClosed,
   FaunaHTTPError: FaunaHTTPError,
   InvalidValue: InvalidValue,
   InvalidArity: InvalidArity,

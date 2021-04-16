@@ -15,6 +15,10 @@ describe('Client', () => {
     return client.query(query.CreateCollection({ name: 'my_collection' }))
   })
 
+  afterEach(() => {
+    util.clearBrowserSimulation()
+  })
+
   test('invalid key', () => {
     var badClient = util.getClient({ secret: { user: 'bad_key' } })
     return util.assertRejected(badClient.query(util.dbRef), errors.Unauthorized)
@@ -142,6 +146,97 @@ describe('Client', () => {
 
     return expect(resultWithoutOptions).toEqual(resultWithOptions)
   })
+
+  test('Client#close call on Http2Adapter-based Client', async () => {
+    const client = util.getClient({
+      http2SessionIdleTime: Infinity,
+    })
+
+    await client.ping()
+
+    expect(client._http._adapter._closed).toBe(false)
+
+    await client.close()
+
+    expect(client._http._adapter._closed).toBe(true)
+    expect(
+      Object.values(client._http._adapter._sessionMap).every(
+        ({ session }) => session.closed
+      )
+    ).toBe(true)
+
+    await expect(client.ping()).rejects.toThrow(
+      'The Client has already been closed'
+    )
+  })
+
+  test('Client#close call on Http2Adapter-based Client with force=true', async () => {
+    const client = util.getClient()
+
+    await expect(
+      Promise.all([
+        client.ping(),
+        client.close({
+          force: true,
+        }),
+      ])
+    ).rejects.toThrow(errors.ClientClosed)
+  })
+
+  test('Client#close call on FetchAdapter-based Client', async () => {
+    util.simulateBrowser()
+
+    const client = util.getClient()
+
+    await client.ping()
+
+    expect(client._http._adapter._closed).toBe(false)
+
+    await client.close()
+
+    expect(client._http._adapter._closed).toBe(true)
+    expect(client._http._adapter._pendingRequests.size === 0).toBe(true)
+
+    await expect(client.ping()).rejects.toThrow(
+      'The Client has already been closed'
+    )
+  })
+
+  test('Client#close call on FetchAdapter-based Client with force=true', async () => {
+    util.simulateBrowser()
+
+    const client = util.getClient()
+
+    await expect(
+      Promise.all([
+        client.ping(),
+        client.close({
+          force: true,
+        }),
+      ])
+    ).rejects.toThrow(errors.ClientClosed)
+  })
+
+  test(
+    'FetchAdapter-based Client gracefully waits for all requests' +
+      'to complete when .close is called',
+    async () => {
+      util.simulateBrowser()
+
+      const client = util.getClient()
+      const queryCount = 3
+
+      const issueQuery = () => client.query(query.Add(1, 1))
+
+      const tasks = [
+        ...Array.from({ length: queryCount }, issueQuery),
+        client.close(),
+      ]
+      const expected = [...Array(queryCount).fill(2), undefined]
+
+      await expect(Promise.all(tasks)).resolves.toEqual(expected)
+    }
+  )
 
   test('uses custom fetch', async function() {
     const fetch = jest.fn(() =>

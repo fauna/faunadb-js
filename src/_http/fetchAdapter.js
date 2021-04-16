@@ -23,7 +23,22 @@ function FetchAdapter(options) {
    * @type {string}
    */
   this.type = 'fetch'
+  /**
+   * Indicates whether the .close method has been called.
+   *
+   * @type {boolean}
+   * @private
+   */
+  this._closed = false
   this._fetch = util.resolveFetch(options.fetch)
+  /**
+   * A map that tracks ongoing requests to be able to cancel them when
+   * the .close method is called.
+   *
+   * @type {Map<Object, Object>}
+   * @private
+   */
+  this._pendingRequests = new Map()
 
   if (util.isNodeEnv() && options.keepAlive) {
     this._keepAliveEnabledAgent = new (options.isHttps
@@ -49,25 +64,60 @@ function FetchAdapter(options) {
  * @returns {Promise} Request result.
  */
 FetchAdapter.prototype.execute = function(options) {
-  var signal = options.signal
+  if (this._closed) {
+    return Promise.reject(
+      new faunaErrors.ClientClosed(
+        'The Client has already been closed',
+        'No subsequent requests can be issued after the .close method is called. ' +
+          'Consider creating a new Client instance'
+      )
+    )
+  }
+
+  var self = this
+  var timerId = null
+  var isStreaming = options.streamConsumer != null
   // Use timeout only if no signal provided
   var useTimeout = !options.signal && !!options.timeout
-  var timerId
+  var ctrl = new AbortController()
+  var pendingRequest = {
+    isStreaming: isStreaming,
+    isAbortedByClose: false,
+    // This callback can be set during the .close method call to be notified
+    // on request ending to resolve .close's Promise only after all of the requests complete.
+    onComplete: null,
+  }
 
-  var cleanup = function() {
+  self._pendingRequests.set(ctrl, pendingRequest)
+
+  var onComplete = function() {
+    self._pendingRequests.delete(ctrl)
+
+    if (options.signal) {
+      options.signal.removeEventListener('abort', onAbort)
+    }
+
+    if (pendingRequest.onComplete) {
+      pendingRequest.onComplete()
+    }
+  }
+
+  var onSettle = function() {
     if (timerId) {
       clearTimeout(timerId)
     }
   }
 
   var onResponse = function(response) {
-    cleanup()
+    onSettle()
 
     var headers = responseHeadersAsObject(response.headers)
-    var isStreaming = response.ok && options.streamConsumer != null
+    var processStream = isStreaming && response.ok
 
     // Regular request - return text content immediately.
-    if (!isStreaming) {
+    if (!processStream) {
+      onComplete()
+
       return response.text().then(function(content) {
         return {
           body: content,
@@ -77,7 +127,7 @@ FetchAdapter.prototype.execute = function(options) {
       })
     }
 
-    attachStreamConsumer(response, options.streamConsumer)
+    attachStreamConsumer(response, options.streamConsumer, onComplete)
 
     return {
       // Syntactic stream representation.
@@ -88,16 +138,36 @@ FetchAdapter.prototype.execute = function(options) {
   }
 
   var onError = function(error) {
-    cleanup()
+    onSettle()
+    onComplete()
 
-    return Promise.reject(remapFetchError(error, useTimeout))
+    return Promise.reject(
+      remapIfAbortError(error, function() {
+        if (!isStreaming && pendingRequest.isAbortedByClose) {
+          return new faunaErrors.ClientClosed(
+            'The request is aborted due to the Client#close ' +
+              'call with the force=true option'
+          )
+        }
+
+        return useTimeout ? new errors.TimeoutError() : new errors.AbortError()
+      })
+    )
+  }
+
+  var onAbort = function() {
+    ctrl.abort()
   }
 
   if (useTimeout) {
-    var ctrl = new AbortController()
+    timerId = setTimeout(function() {
+      timerId = null
+      ctrl.abort()
+    }, options.timeout)
+  }
 
-    signal = ctrl.signal
-    timerId = setTimeout(ctrl.abort.bind(ctrl), options.timeout)
+  if (options.signal) {
+    options.signal.addEventListener('abort', onAbort)
   }
 
   return this._fetch(
@@ -107,11 +177,50 @@ FetchAdapter.prototype.execute = function(options) {
       headers: options.headers,
       body: options.body,
       agent: this._keepAliveEnabledAgent,
-      signal: signal,
+      signal: ctrl.signal,
     }
   )
     .then(onResponse)
     .catch(onError)
+}
+
+/**
+ * Moves to the closed state, aborts streaming requests.
+ * Aborts non-streaming requests if force is true,
+ * waits until they complete otherwise.
+ *
+ * @param {?object} opts Close options.
+ * @param {?boolean} opts.force Whether to force resources clean up.
+ * @returns {Promise<void>}
+ */
+FetchAdapter.prototype.close = function(opts) {
+  opts = opts || {}
+
+  this._closed = true
+
+  var promises = []
+
+  var abortOrWait = function(pendingRequest, ctrl) {
+    var shouldAbort = pendingRequest.isStreaming || opts.force
+
+    if (shouldAbort) {
+      pendingRequest.isAbortedByClose = true
+
+      return ctrl.abort()
+    }
+
+    promises.push(
+      new Promise(function(resolve) {
+        pendingRequest.onComplete = resolve
+      })
+    )
+  }
+
+  this._pendingRequests.forEach(abortOrWait)
+
+  var noop = function() {}
+
+  return Promise.all(promises).then(noop)
 }
 
 /**
@@ -130,13 +239,15 @@ FetchAdapter.prototype.execute = function(options) {
  * Safari on iOS         10.3
  * Samsung Internet      6.0
  *
- * @param response Fetch response.
- * @param consumer StreamConsumer.
+ * @param {object} response Fetch response.
+ * @param {object} consumer StreamConsumer.
+ * @param {function} onComplete Callback fired when the stream ends or errors.
  * @private
  */
-function attachStreamConsumer(response, consumer) {
+function attachStreamConsumer(response, consumer, onComplete) {
   var onError = function(error) {
-    consumer.onError(remapFetchError(error))
+    onComplete()
+    consumer.onError(remapIfAbortError(error))
   }
 
   if (util.isNodeEnv()) {
@@ -144,6 +255,7 @@ function attachStreamConsumer(response, consumer) {
       .on('error', onError)
       .on('data', consumer.onData)
       .on('end', function() {
+        onComplete()
         // To simulate how browsers behave in case of "end" event.
         consumer.onError(new TypeError('network error'))
       })
@@ -168,6 +280,7 @@ function attachStreamConsumer(response, consumer) {
           return pump()
         }
 
+        onComplete()
         // In case a browser hasn't thrown the "network error" on stream's end
         // we need to force it in order to provide a way to handle stream's
         // ending.
@@ -186,22 +299,26 @@ function attachStreamConsumer(response, consumer) {
 }
 
 /**
- * Remaps fetch error to HttpClient's one for timeout and abort use-cases.
- * Thus HttpClient will expose the same errors.
+ * Remaps an AbortError thrown by fetch to HttpClient's one
+ * for timeout and abort use-cases.
  *
- * @param {object} error Error object.
- * @param {?boolean} useTimeout Whether timeout is specified.
- * @returns {object} Remapped or original error.
+ * @param {Error} error Error object.
+ * @param {?function} errorFactory A factory called to construct an abort error.
+ * @returns {Error} Remapped or original error.
  * @private
  */
-function remapFetchError(error, useTimeout) {
+function remapIfAbortError(error, errorFactory) {
   var isAbortError = error && error.name === 'AbortError'
 
   if (!isAbortError) {
     return error
   }
 
-  return useTimeout ? new errors.TimeoutError() : new errors.AbortError()
+  if (errorFactory) {
+    return errorFactory()
+  }
+
+  return new errors.AbortError()
 }
 
 /**

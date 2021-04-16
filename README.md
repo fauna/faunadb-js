@@ -242,6 +242,45 @@ const client = new faunadb.Client({
 })
 ```
 
+#### HTTP/2 Session Idle Time (Node.js only)
+
+When running on the Node.js platform, the Fauna client uses [HTTP/2 multiplexing](https://stackoverflow.com/questions/36517829/what-does-multiplexing-mean-in-http-2)
+to reuse the same session for many simultaneous requests. After all open requests
+have been resolved, the client will keep the session open for a period of time
+(500ms by default) to be reused for any new requests.
+
+The `http2SessionIdleTime` parameter may be used to control how long the HTTP/2
+session remains open while the connection is idle. To save on the overhead of
+closing and re-opening the session, set `http2SessionIdleTime` to a longer time
+--- or even `Infinity`, to keep the session alive indefinitely.
+
+While an HTTP/2 session is alive, the client will hold the Node.js event loop
+open; this prevents the process from terminating. Call `Client#close` to manually
+close the session and allow the process to terminate. This is particularly
+important if `http2SessionIdleTime` is long or `Infinity`:
+
+```javascript
+// sample.js (run it with "node sample.js" command)
+const { Client, query: Q } = require('faunadb')
+
+async function main() {
+  const client = new Client({
+    secret: 'YOUR_FAUNADB_SECRET',
+    http2SessionIdleTime: Infinity,
+    //                    ^^^ Infinity or non-negative integer
+  })
+  const output = await client.query(Q.Add(1, 1))
+
+  console.log(output)
+
+  client.close()
+  //     ^^^ If it's not called then the process won't terminate
+}
+
+main().catch(console.error)
+```
+
+
 ## Known issues
 
 ### Using with Cloudflare Workers

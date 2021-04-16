@@ -1,6 +1,7 @@
 'use strict'
 var http2 = require('http2')
 var errors = require('./errors')
+var faunaErrors = require('../errors')
 var util = require('../_util')
 
 var STREAM_PREFIX = 'stream::'
@@ -35,6 +36,13 @@ function Http2Adapter(options) {
    * @private
    */
   this._http2SessionIdleTime = options.http2SessionIdleTime
+  /**
+   * Indicates whether the .close method has been called.
+   *
+   * @type {boolean}
+   * @private
+   */
+  this._closed = false
 }
 
 /**
@@ -71,6 +79,10 @@ Http2Adapter.prototype._resolveSessionFor = function(origin, isStreaming) {
   var setInactivityTimeout = function() {
     clearInactivityTimeout()
 
+    if (self._http2SessionIdleTime === Infinity) {
+      return
+    }
+
     var onTimeout = function() {
       timerId = null
 
@@ -82,25 +94,47 @@ Http2Adapter.prototype._resolveSessionFor = function(origin, isStreaming) {
     timerId = setTimeout(onTimeout, self._http2SessionIdleTime)
   }
 
+  var close = function(force) {
+    clearInactivityTimeout()
+
+    var shouldDestroy = force || isStreaming
+
+    if (shouldDestroy) {
+      session.destroy()
+
+      return Promise.resolve()
+    }
+
+    return new Promise(function(resolve) {
+      session.close(resolve)
+    })
+  }
+
+  var onRequestStart = function() {
+    ++ongoingRequests
+    clearInactivityTimeout()
+  }
+
+  var onRequestEnd = function() {
+    --ongoingRequests
+
+    var noOngoingRequests = ongoingRequests === 0
+    var isSessionClosed = self._closed || session.closed || session.destroyed
+
+    if (noOngoingRequests && !isSessionClosed) {
+      setInactivityTimeout()
+    }
+  }
+
+  var session = http2
+    .connect(origin)
+    .once('error', cleanup)
+    .once('goaway', cleanup)
   var sessionInterface = {
-    session: http2
-      .connect(origin)
-      .once('error', cleanup)
-      .once('goaway', cleanup),
-
-    onRequestStart: function onRequestStart() {
-      ++ongoingRequests
-      clearInactivityTimeout()
-    },
-
-    onRequestEnd: function onRequestEnd() {
-      --ongoingRequests
-
-      // Set inactivity timer only if there are no ongoing requests.
-      if (ongoingRequests === 0) {
-        setInactivityTimeout()
-      }
-    },
+    session: session,
+    close: close,
+    onRequestStart: onRequestStart,
+    onRequestEnd: onRequestEnd,
   }
 
   this._sessionMap[sessionKey] = sessionInterface
@@ -140,6 +174,16 @@ Http2Adapter.prototype._cleanupSessionFor = function(origin, isStreaming) {
  * @returns {Promise} Request result.
  */
 Http2Adapter.prototype.execute = function(options) {
+  if (this._closed) {
+    return Promise.reject(
+      new faunaErrors.ClientClosed(
+        'The Client has already been closed',
+        'No subsequent requests can be issued after the .close method is called. ' +
+          'Consider creating a new Client instance'
+      )
+    )
+  }
+
   var self = this
   var isStreaming = options.streamConsumer != null
 
@@ -156,12 +200,14 @@ Http2Adapter.prototype.execute = function(options) {
     // we need to call streamConsumer.onError instead of reject function.
     // Possible scenario is aborting request when stream is already being consumed.
     var rejectOrOnError = function(error) {
+      var remapped = remapHttp2Error(error)
+
       if (isPromiseSettled && isStreaming) {
-        return options.streamConsumer.onError(error)
+        return options.streamConsumer.onError(remapped)
       }
 
       isPromiseSettled = true
-      rejectPromise(error)
+      rejectPromise(remapped)
     }
 
     var onSettled = function() {
@@ -219,9 +265,9 @@ Http2Adapter.prototype.execute = function(options) {
         }
 
         // Call .onError with TypeError only if the request hasn't been canceled
-        // in order to align on how FetchAdapter works - it throws the TypeError
-        // due to underlying fetch API mechanics.
-        if (!isCanceled) {
+        // and the Client hasn't been closed in order to align on how
+        // FetchAdapter works - it throws the TypeError due to underlying fetch API mechanics.
+        if (!isCanceled && !self._closed) {
           options.streamConsumer.onError(new TypeError('network error'))
         }
       }
@@ -277,6 +323,48 @@ Http2Adapter.prototype.execute = function(options) {
       rejectOrOnError(error)
     }
   })
+}
+
+/**
+ * Moves to the closed state, cleans up ongoing HTTP2 sessions if any.
+ *
+ * @param {?object} opts Close options.
+ * @param {?boolean} opts.force Whether to force resources clean up.
+ * @returns {Promise<void>}
+ */
+Http2Adapter.prototype.close = function(opts) {
+  opts = opts || {}
+
+  this._closed = true
+
+  var noop = function() {}
+
+  return Promise.all(
+    Object.values(this._sessionMap).map(function(sessionInterface) {
+      return sessionInterface.close(opts.force)
+    })
+  ).then(noop)
+}
+
+/**
+ * Remaps internal NodeJS error into ClientClosed one.
+ *
+ * @private
+ * @param {Error} error Error object.
+ * @returns {Error} Remapped error.
+ */
+function remapHttp2Error(error) {
+  var shouldRemap =
+    error.code === 'ERR_HTTP2_GOAWAY_SESSION' ||
+    error.code === 'ERR_HTTP2_STREAM_CANCEL'
+
+  if (shouldRemap) {
+    return new faunaErrors.ClientClosed(
+      'The request is aborted due to the Client#close call'
+    )
+  }
+
+  return error
 }
 
 module.exports = Http2Adapter

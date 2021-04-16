@@ -16,6 +16,7 @@ export module errors {
   }
 
   export class InvalidValue extends FaunaError {}
+  export class ClientClosed extends FaunaError {}
   export class FaunaHTTPError extends FaunaError {
     static raiseForStatusCode(requestResult: RequestResult<FaunaHttpErrorResponseContent>): void
 

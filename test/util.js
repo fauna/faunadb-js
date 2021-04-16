@@ -144,6 +144,11 @@ function simulateBrowser() {
   global.navigator = { userAgent: '' } // mock browser navigator
 }
 
+function clearBrowserSimulation() {
+  delete global.window
+  delete global.navigator
+}
+
 function delay(time) {
   return new Promise(resolve => {
     setTimeout(resolve, time)
@@ -162,5 +167,6 @@ module.exports = {
   unwrapExpr: unwrapExpr,
   randomString: randomString,
   simulateBrowser: simulateBrowser,
+  clearBrowserSimulation: clearBrowserSimulation,
   delay: delay,
 }
