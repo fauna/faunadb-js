@@ -35,7 +35,6 @@ describe('auth', () => {
         client_secret: util.testConfig.auth0clientSecret,
         audience: `${util.testConfig.auth0uri}api/v2/`,
       })
-      console.info('admin token received ', adminToken)
       headers.authorization = `Bearer ${adminToken}`
       await util.client().query(
         query.CreateRole({
@@ -48,7 +47,6 @@ describe('auth', () => {
           ],
         })
       )
-      console.info('role created')
       const provider = await util.client().query(
         query.CreateAccessProvider({
           name: providerName,
@@ -57,7 +55,6 @@ describe('auth', () => {
           roles: [query.Role(roleOneName)],
         })
       )
-      console.info('provider created', provider.audience)
 
       resource = await fetch(
         `${util.testConfig.auth0uri}api/v2/resource-servers`,
@@ -71,8 +68,6 @@ describe('auth', () => {
           }),
         }
       ).then(resp => resp.json())
-      console.info('resource created')
-      console.info(resource)
 
       authClient = await fetch(`${util.testConfig.auth0uri}api/v2/clients`, {
         method: 'POST',
@@ -87,7 +82,6 @@ describe('auth', () => {
           grant_types: ['client_credentials'],
         }),
       }).then(resp => resp.json())
-      console.info('authClient created', authClient.client_id)
 
       grants = await fetch(`${util.testConfig.auth0uri}api/v2/client-grants`, {
         method: 'POST',
@@ -99,7 +93,6 @@ describe('auth', () => {
           scope: [],
         }),
       }).then(resp => resp.json())
-      console.info('grants created')
 
       clientWithAuth0Token = util.getClient({
         secret: await getAuth0Token({
@@ -108,11 +101,9 @@ describe('auth', () => {
           audience: provider.audience,
         }),
       })
-      console.info('client with auth0 received')
-    }, 20 * 1000)
+    })
 
     test('auth0 setup', () => {
-      console.info(authClient)
       expect(authClient.error).toBeUndefined()
       expect(resource.error).toBeUndefined()
       expect(grants.error).toBeUndefined()
