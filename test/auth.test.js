@@ -35,6 +35,7 @@ describe('auth', () => {
         client_secret: util.testConfig.auth0clientSecret,
         audience: `${util.testConfig.auth0uri}api/v2/`,
       })
+      console.info('admin token received')
       headers.authorization = `Bearer ${adminToken}`
       await util.client().query(
         query.CreateRole({
@@ -47,7 +48,7 @@ describe('auth', () => {
           ],
         })
       )
-
+      console.info('role created')
       const provider = await util.client().query(
         query.CreateAccessProvider({
           name: providerName,
@@ -56,6 +57,7 @@ describe('auth', () => {
           roles: [query.Role(roleOneName)],
         })
       )
+      console.info('provider created')
 
       resource = await fetch(
         `${util.testConfig.auth0uri}api/v2/resource-servers`,
@@ -69,6 +71,7 @@ describe('auth', () => {
           }),
         }
       ).then(resp => resp.json())
+      console.info('resource created')
 
       authClient = await fetch(`${util.testConfig.auth0uri}api/v2/clients`, {
         method: 'POST',
@@ -83,6 +86,7 @@ describe('auth', () => {
           grant_types: ['client_credentials'],
         }),
       }).then(resp => resp.json())
+      console.info('authClient created')
 
       grants = await fetch(`${util.testConfig.auth0uri}api/v2/client-grants`, {
         method: 'POST',
@@ -94,6 +98,7 @@ describe('auth', () => {
           scope: [],
         }),
       }).then(resp => resp.json())
+      console.info('grants created')
 
       clientWithAuth0Token = util.getClient({
         secret: await getAuth0Token({
@@ -102,6 +107,7 @@ describe('auth', () => {
           audience: provider.audience,
         }),
       })
+      console.info('client with auth0 received')
     })
 
     test('auth0 setup', () => {
