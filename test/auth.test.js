@@ -72,6 +72,7 @@ describe('auth', () => {
         }
       ).then(resp => resp.json())
       console.info('resource created')
+      console.info(resource)
 
       authClient = await fetch(`${util.testConfig.auth0uri}api/v2/clients`, {
         method: 'POST',
