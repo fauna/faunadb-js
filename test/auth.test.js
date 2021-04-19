@@ -108,7 +108,7 @@ describe('auth', () => {
         }),
       })
       console.info('client with auth0 received')
-    })
+    }, 20 * 1000)
 
     test('auth0 setup', () => {
       expect(authClient.error).toBeUndefined()
