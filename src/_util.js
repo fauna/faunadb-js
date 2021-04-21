@@ -451,6 +451,12 @@ function mergeObjects(obj1, obj2) {
   return obj3
 }
 
+/**
+* globalThis - cross platform this, but IE doesn't support it
+* window - browser global context
+* global - nodejs global context
+* self - service worker global context
+*/
 var crossGlobal =
   typeof window !== 'undefined'
     ? window
