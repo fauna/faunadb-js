@@ -23,7 +23,7 @@ function FetchAdapter(options) {
    * @type {string}
    */
   this.type = 'fetch'
-  this._fetch = resolveFetch(options.fetch)
+  this._fetch = util.resolveFetch(options.fetch)
 
   if (util.isNodeEnv() && options.keepAlive) {
     this._keepAliveEnabledAgent = new (options.isHttps
@@ -202,28 +202,6 @@ function remapFetchError(error, useTimeout) {
   }
 
   return useTimeout ? new errors.TimeoutError() : new errors.AbortError()
-}
-
-/**
- * Resolves which Fetch API compatible function to use. If an override is
- * provided, returns the override. If no override and the global (window) has
- * "fetch" property, return the native fetch. Otherwise returns the cross-fetch polyfill.
- *
- * @param {?function} fetchOverride An Fetch API compatible function to use.
- * @returns {function} A Fetch API compatible function.
- * @private
- */
-function resolveFetch(fetchOverride) {
-  if (typeof fetchOverride === 'function') {
-    return fetchOverride
-  }
-
-  if (typeof global.fetch === 'function') {
-    // NB. Rebinding to global is needed for Safari
-    return global.fetch.bind(global)
-  }
-
-  return require('cross-fetch')
 }
 
 /**
