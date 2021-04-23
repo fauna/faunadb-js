@@ -29,7 +29,8 @@
     "test": "jest --env=node --verbose=false --forceExit ./test",
     "semantic-release": "semantic-release",
     "wp": "webpack",
-    "postinstall": "node ./tools/postinstall"
+    "postinstall": "node ./tools/printReleaseNotes",
+    "postupdate": "node ./tools/printReleaseNotes"
   },
   "types": "index.d.ts",
   "dependencies": {
