@@ -1,8 +1,8 @@
+'use strict'
+
 var packageJson = require('../package.json')
 var chalk = require('chalk')
 var boxen = require('boxen')
-
-;('use strict')
 
 /**
  * Inherit the prototype methods from one constructor into another.
