@@ -107,7 +107,7 @@ function Let(vars, expr) {
   } else {
     bindings = Object.keys(vars)
       .filter(function(k) {
-        return vars[k]
+        return vars[k] !== undefined
       })
       .map(function(k) {
         var b = {}
