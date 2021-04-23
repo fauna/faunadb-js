@@ -28,7 +28,8 @@
     "prettify": "prettier --write \"{src,test}/**/*.{js,ts}\"",
     "test": "jest --env=node --verbose=false --forceExit ./test",
     "semantic-release": "semantic-release",
-    "wp": "webpack"
+    "wp": "webpack",
+    "postinstall": "node ./tools/postinstall"
   },
   "types": "index.d.ts",
   "dependencies": {
