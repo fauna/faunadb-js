@@ -194,6 +194,7 @@ describe('query', () => {
 
   test('let/var', () => {
     return Promise.all([
+      assertQuery(query.Let({ x: 1, test: undefined }, query.Var('x')), 1),
       assertQuery(query.Let({ x: 1 }, query.Var('x')), 1),
       assertQuery(
         query.Let({ x: 1, y: 2 }, function(x, y) {
