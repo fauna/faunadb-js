@@ -495,7 +495,8 @@ function notifyAboutNewVersion() {
             ' version available ' +
             chalk.dim(packageJson.version) +
             chalk.reset(' → ') +
-            chalk.green(latestVersion),
+            chalk.green(latestVersion) +
+            `\nChangelog: https://github.com/${packageJson.repository}/blob/master/CHANGELOG.md`,
           { padding: 1, borderColor: 'yellow' }
         )
       )
