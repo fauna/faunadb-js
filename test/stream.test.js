@@ -350,7 +350,7 @@ describe('StreamAPI', () => {
           length
         )
 
-      stream = client.stream.document(doc.ref).start()
+      stream = streamApi.document(doc.ref).start()
 
       await new Promise(resolve => {
         stream.on('snapshot', () => resolve())
