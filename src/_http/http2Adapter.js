@@ -136,7 +136,7 @@ Http2Adapter.prototype._cleanupSessionFor = function(origin, isStreaming) {
  * @param {?string} options.body Request body utf8 string.
  * @params {?object} options.streamConsumer Stream consumer.
  * @param {?object} options.signal Abort signal object.
- * @param {?number} options.timeout Request timeout.
+ * @param {?number} options.queryTimeout Request timeout.
  * @returns {Promise} Request result.
  */
 Http2Adapter.prototype.execute = function(options) {
@@ -259,8 +259,8 @@ Http2Adapter.prototype.execute = function(options) {
       sessionInterface.onRequestStart()
 
       // Set up timeout only if no signal provided.
-      if (!options.signal && options.timeout) {
-        request.setTimeout(options.timeout, onTimeout)
+      if (!options.signal && options.queryTimeout) {
+        request.setTimeout(options.queryTimeout, onTimeout)
       }
 
       if (options.signal) {

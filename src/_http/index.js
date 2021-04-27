@@ -44,7 +44,6 @@ export default function HttpClient(options) {
   this._headers = Object.assign({}, options.headers, getDefaultHeaders())
   this._queryTimeout = options.queryTimeout
   this._lastSeen = null
-  this._timeout = Math.floor(options.timeout * 1000)
 }
 
 /**
@@ -116,7 +115,7 @@ HttpClient.prototype.execute = function(options) {
     headers: removeNullAndUndefinedValues(headers),
     body: options.body,
     signal: options.signal,
-    timeout: this._timeout,
+    queryTimeout: this._queryTimeout,
     streamConsumer: options.streamConsumer,
   })
 }
