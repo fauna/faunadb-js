@@ -154,7 +154,11 @@ import Var from 'faunadb/query/Var'
 
 ##### Overview
 
-faunadb-js from version 5.X.X support EcmaScript modules system which brings availability for bundle tools like webpack, rollup execute three-shake package and remove unused code, therefore bundle size would be smaller
+faunadb-js from version 5.X.X support EcmaScript modules system which brings availability for bundle tools like webpack, rollup execute three-shake package and remove unused code, therefore bundle size would be smaller. In additional to that, 5.X.X also has some breaking changes
+
+##### Use queryTimeout in flavor of timeout
+
+`timeout` option for `new Client` and `client.query` has been removed. use `queryTimeout`
 
 ##### Faunadb imports (TBD if this have to be public API)
 
