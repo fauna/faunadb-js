@@ -12,7 +12,7 @@ jobs:
     - name: Install dependencies
       run: npm ci
     - name: Generate bundle stats
-      run: npm run bundle:stats
+      run: npm run bundle:stats --if-present
     - name: Upload stats.json
       uses: actions/upload-artifact@v1
       with:
