@@ -350,6 +350,8 @@ describe('StreamAPI', () => {
           length
         )
 
+      const streamApi = new StreamApi({ client })
+
       stream = streamApi.document(doc.ref).start()
 
       await new Promise(resolve => {
