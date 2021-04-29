@@ -4,6 +4,7 @@ var errors = require('../src/errors')
 var values = require('../src/values')
 var query = require('../src/query')
 var util = require('./util')
+var Expr = require('../src/Expr')
 var Client = require('../src/Client')
 
 var Ref = query.Ref
@@ -267,6 +268,12 @@ describe('query', () => {
   test('object', () => {
     var obj = query.Object({ x: query.Let({ x: 1 }, query.Var('x')) })
     return assertQuery(obj, { x: 1 })
+  })
+
+  test('object with space in key to valid json', () => {
+    expect(() =>
+      JSON.parse(Expr.toString(query.Object({ 'test key': 1 })))
+    ).not.toThrow()
   })
 
   test('lambda', () => {
