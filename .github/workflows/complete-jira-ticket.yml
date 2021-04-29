@@ -1,0 +1,36 @@
+name: Complete JIRA ticket to DONE
+
+on:
+  issues:
+    types: [closed, deleted]
+
+jobs:
+  set_done_for_closed_issued:
+    name: Move JIRA ticket to DONE
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login
+        uses: atlassian/gajira-login@master
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Find comment with ticket number
+        uses: peter-evans/find-comment@v1
+        id: botComment
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body-includes: Internal ticket number is DRV-
+
+      - name: Parse ticket number
+        id: ticketNumber
+        uses: atlassian/gajira-find-issue-key@master
+        with:
+          string: ${{ steps.botComment.outputs.comment-body }}
+  
+      - name: Close ticket
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: ${{ steps.ticketNumber.outputs.issue }}
+          transition: "DONE"
