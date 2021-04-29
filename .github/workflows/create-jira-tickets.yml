@@ -52,7 +52,7 @@ jobs:
       - name: Create ticket
         id: create
         uses: atlassian/gajira-create@master
-        if: ${{ !steps.isOrgMember.outputs.result }}
+        if: ${{ steps.isOrgMember.outputs.result == 'false' }}
         with:
           project: DRV
           issuetype: ${{steps.event.outputs.ISSUE_TYPE}}
