@@ -28,7 +28,8 @@
     "prettify": "prettier --write \"{src,test}/**/*.{js,ts}\"",
     "test": "jest --env=node --verbose=false --forceExit ./test",
     "semantic-release": "semantic-release",
-    "wp": "webpack"
+    "wp": "webpack",
+    "load-test": "node ./tools/loadTest"
   },
   "types": "index.d.ts",
   "dependencies": {
@@ -55,7 +56,8 @@
     "semantic-release": "^17.1.2",
     "terser": "^4.3.9",
     "webpack": "^5.23.0",
-    "webpack-cli": "^4.5.0"
+    "webpack-cli": "^4.5.0",
+    "yargs": "^16.2.0"
   },
   "husky": {
     "hooks": {
