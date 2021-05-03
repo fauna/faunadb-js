@@ -67,6 +67,7 @@ var specialCases = {
   lt: 'LT',
   lte: 'LTE',
   ltrim: 'LTrim',
+  ngram: 'NGram',
   rtrim: 'RTrim',
   regexescape: 'RegexEscape',
   replacestr: 'ReplaceStr',
