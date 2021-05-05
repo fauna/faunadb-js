@@ -1,5 +1,6 @@
 var query = require('./src/query')
 var util = require('./src/_util')
+var parseJSON = require('./src/_json').parseJSON
 
 module.exports = util.mergeObjects(
   {
@@ -12,6 +13,7 @@ module.exports = util.mergeObjects(
     errors: require('./src/errors'),
     values: require('./src/values'),
     query: query,
+    parseJSON: parseJSON,
   },
   query
 )
