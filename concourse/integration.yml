@@ -1,0 +1,21 @@
+version: "3.3"
+
+services:
+  faunadb:
+    image: fauna/faunadb
+    container_name: faunadb
+    healthcheck:
+      test: ["CMD", "curl" ,"http://faunadb:8443/ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+
+  tests:
+    image: node:15.14.0-alpine3.10
+    container_name: mytests
+    depends_on:
+      - faunadb
+    volumes:
+      - "../:/tmp/app"
+    working_dir: "/tmp/app"
+    command: [sh, -c, "npm install && npm test"]
