@@ -1,9 +1,8 @@
 #!/bin/sh
 
-NPM_TOKEN="just_a_test"
+set -eou
 
-ls -la
-cd ./fauna-js-repository  || exit 1
+cd ./fauna-js-repository
 
 mkdir dist
 npm install
@@ -19,7 +18,7 @@ if [ "$PACKAGE_VERSION" \> "$NPM_LATEST_VERSION" ]
 then
   echo "Publishing a new version..."
   echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
-  # npm publish --dry-run
+  npm publish
   rm .npmrc
 else
   echo "NPM package already published on npm with version ${NPM_LATEST_VERSION}" 1>&2
