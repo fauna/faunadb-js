@@ -47,7 +47,6 @@ describe('auth', () => {
           ],
         })
       )
-
       const provider = await util.client().query(
         query.CreateAccessProvider({
           name: providerName,

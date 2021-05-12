@@ -8,7 +8,7 @@
 
 A Javascript driver for [FaunaDB](https://fauna.com).
 
-[View reference JSDocs here](https://fauna.github.com/faunadb-js).
+[View reference JSDocs here](https://fauna.github.io/faunadb-js).
 
 See the [FaunaDB Documentation](https://docs.fauna.com/) and
 [Tutorials](https://docs.fauna.com/fauna/current/tutorials/crud) for

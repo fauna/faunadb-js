@@ -388,7 +388,7 @@ describe('Values', () => {
 
     assertPrint(
       new Query(q.Lambda('_', q.Paginate(m, { size: 10, after: [20] }))),
-      'Query(Lambda("_", Paginate(Match(Index("idx")), {size: 10, after: [20]})))'
+      'Query(Lambda("_", Paginate(Match(Index("idx")), {"size": 10, "after": [20]})))'
     )
   })
 
@@ -438,7 +438,7 @@ describe('Values', () => {
           product: q.Multiply(q.Var('x'), q.Var('y')),
         })
       ),
-      'Query(Lambda(["x", "y"], {sum: Add(Var("x"), Var("y")), product: Multiply(Var("x"), Var("y"))}))'
+      'Query(Lambda(["x", "y"], {"sum": Add(Var("x"), Var("y")), "product": Multiply(Var("x"), Var("y"))}))'
     )
 
     //returns array
@@ -547,12 +547,12 @@ describe('Values', () => {
     //let expr
     assertPrint(
       new Query(q.Lambda('_', q.Let({ x: 10, y: 20 }, q.Var('x')))),
-      'Query(Lambda("_", Let([{x: 10}, {y: 20}], Var("x"))))'
+      'Query(Lambda("_", Let([{"x": 10}, {"y": 20}], Var("x"))))'
     )
 
     assertPrint(
       new Query(q.Lambda('_', q.Let([{ x: 10 }, { y: 20 }], q.Var('x')))),
-      'Query(Lambda("_", Let([{x: 10}, {y: 20}], Var("x"))))'
+      'Query(Lambda("_", Let([{"x": 10}, {"y": 20}], Var("x"))))'
     )
 
     // filter expr
@@ -603,7 +603,7 @@ describe('Values', () => {
           id: q.Select(['ref', 'id'], q.Var('doc')),
         })
       ),
-      'Query(Merge(Select("data", Var("doc")), {id: Select(["ref", "id"], Var("doc"))}))'
+      'Query(Merge(Select("data", Var("doc")), {"id": Select(["ref", "id"], Var("doc"))}))'
     )
 
     assertPrint(
@@ -616,7 +616,7 @@ describe('Values', () => {
           q.Lambda(['key', 'a', 'b'], q.Var('a'))
         )
       ),
-      'Query(Merge(Select("data", Var("doc")), {id: Select(["ref", "id"], Var("doc"))}, Lambda(["key", "a", "b"], Var("a"))))'
+      'Query(Merge(Select("data", Var("doc")), {"id": Select(["ref", "id"], Var("doc"))}, Lambda(["key", "a", "b"], Var("a"))))'
     )
   })
 
@@ -653,7 +653,7 @@ describe('Values', () => {
   test('pretty print Expr with primitive types', () => {
     assertPrint(
       new Query(q.Lambda('_', { x: true, y: false, z: 'str', w: 10 })),
-      'Query(Lambda("_", {x: true, y: false, z: "str", w: 10}))'
+      'Query(Lambda("_", {"x": true, "y": false, "z": "str", "w": 10}))'
     )
 
     assertPrint(
