@@ -24,13 +24,13 @@ jobs:
         run: |
           if [ ${{github.event.issue}} ]; then 
             echo "::set-output name=SUMMARY::GITHUB ISSUE #${{github.event.issue.number}} ${{github.event.issue.title}}"
-            echo "::set-output name=DESC::${{github.event.issue.url}} \n\n ${{github.event.issue.body}}"
+            echo "::set-output name=DESC::${{github.event.issue.html_url}} \n\n ${{github.event.issue.body}}"
             echo "::set-output name=ISSUE_TYPE::Bug"
             echo "::set-output name=LABEL::issue"
             echo "::set-output name=USER::${{github.event.issue.user.login}}"
           elif [ ${{github.event.pull_request}} ]; then 
             echo "::set-output name=SUMMARY::PR #${{github.event.pull_request.number}} ${{github.event.pull_request.title}}"
-            echo "::set-output name=DESC::${{github.event.pull_request.url}} \n\n ${{github.event.pull_request.body}}"
+            echo "::set-output name=DESC::${{github.event.pull_request.html_url}} \n\n ${{github.event.pull_request.body}}"
             echo "::set-output name=ISSUE_TYPE::Task"
             echo "::set-output name=LABEL::pr"
             echo "::set-output name=USER::${{github.event.pull_request.user.login}}"
