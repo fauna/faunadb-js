@@ -21,7 +21,7 @@ jobs:
         id: botComment
         with:
           issue-number: ${{ github.event.issue.number }}
-          body-includes: Internal ticket number is DRV-
+          body-includes: Internal ticket number is OSS-
 
       - name: Parse ticket number
         id: ticketNumber
