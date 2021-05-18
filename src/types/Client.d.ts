@@ -4,9 +4,9 @@ import Expr from './Expr'
 import PageHelper from './PageHelper'
 import { ExprArg } from './query'
 import RequestResult from './RequestResult'
-import { Subscription } from './Stream'
+import { Subscription, SubscriptionEventHandlers } from './Stream'
 
-type StreamEventFields = ['action', 'document', 'diff', 'prev']
+type StreamEventFields = 'action' | 'document' | 'diff' | 'prev'
 
 export interface ClientConfig {
   secret: string
@@ -29,15 +29,16 @@ export interface QueryOptions
     Pick<ClientConfig, 'secret' | 'queryTimeout' | 'fetch' | 'observer'>
   > {}
 
-type StreamFn = (
+type StreamFn<T> = (
   expr: Expr,
   options?: {
     fields?: StreamEventFields[]
   }
-) => Subscription
+) => Subscription<T>
 
-interface StreamApi extends StreamFn {
-  document: StreamFn
+interface StreamApi
+  extends StreamFn<Omit<SubscriptionEventHandlers, 'snapshot'>> {
+  document: StreamFn<SubscriptionEventHandlers>
 }
 
 export default class Client {
