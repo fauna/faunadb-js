@@ -8,26 +8,10 @@ var values = require('../src/values')
 var query = require('../src/query')
 var objectAssign = require('object-assign')
 var util = require('../src/_util')
+var testConfig = require('./config')
 
 var Database = query.Database
 var Value = values.Value
-
-var env = process.env
-
-var testConfig
-try {
-  testConfig = require('../testConfig.json')
-} catch (err) {
-  testConfig = {
-    domain: env.FAUNA_DOMAIN,
-    scheme: env.FAUNA_SCHEME,
-    port: env.FAUNA_PORT,
-    auth: env.FAUNA_ROOT_KEY,
-    auth0uri: env.AUTH_0_URI,
-    auth0clientId: env.AUTH_0_CLIENT_ID,
-    auth0clientSecret: env.AUTH_0_CLIENT_SECRET,
-  }
-}
 
 var requiredConfigFields = [
   'domain',
@@ -160,6 +144,12 @@ function simulateBrowser() {
   global.navigator = { userAgent: '' } // mock browser navigator
 }
 
+function delay(time) {
+  return new Promise(resolve => {
+    setTimeout(resolve, time)
+  })
+}
+
 module.exports = {
   testConfig: testConfig,
   getCfg: getCfg,
@@ -172,4 +162,5 @@ module.exports = {
   unwrapExpr: unwrapExpr,
   randomString: randomString,
   simulateBrowser: simulateBrowser,
+  delay: delay,
 }

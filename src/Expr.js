@@ -67,6 +67,7 @@ var specialCases = {
   lt: 'LT',
   lte: 'LTE',
   ltrim: 'LTrim',
+  ngram: 'NGram',
   rtrim: 'RTrim',
   regexescape: 'RegexEscape',
   replacestr: 'ReplaceStr',
@@ -101,7 +102,7 @@ function printObject(obj) {
     '{' +
     Object.keys(obj)
       .map(function(k) {
-        return k + ': ' + exprToString(obj[k])
+        return '"' + k + '"' + ': ' + exprToString(obj[k])
       })
       .join(', ') +
     '}'

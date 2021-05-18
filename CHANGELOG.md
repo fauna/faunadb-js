@@ -1,3 +1,10 @@
+## 4.2.0
+
+- Improve HTTP2 session timeout handling
+- Add the `FAUNADB_HTTP2_SESSION_IDLE_TIME` environment variable  
+  to specify the default HTTP2 session timeout period
+- Implement a fix for the lack of a `navigator` object in Cloudflare Workers
+
 ## 4.1.3
 
 - Revert X-Query-Timeout improvement (will be introduced in a major release)

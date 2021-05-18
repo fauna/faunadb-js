@@ -10,7 +10,7 @@ var STREAM_PREFIX = 'stream::'
  *
  * @constructor
  * @param {object} options Http2Adapter options.
- * @param {number} options.http2SessionIdleTime The time (in milliseconds) that 
+ * @param {number} options.http2SessionIdleTime The time (in milliseconds) that
  * an HTTP2 session may live when there's no activity.
  * @private
  */
@@ -206,7 +206,9 @@ Http2Adapter.prototype.execute = function(options) {
       }
 
       var onEnd = function() {
-        onSettled()
+        if (!isCanceled) {
+          onSettled()
+        }
 
         if (!processStream) {
           return resolve({

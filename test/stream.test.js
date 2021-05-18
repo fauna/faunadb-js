@@ -3,7 +3,7 @@
 const Client = require('../src/Client')
 const q = require('../src/query')
 const util = require('./util')
-const { BadRequest, UnavailableError } = require('../src/errors/')
+const { BadRequest } = require('../src/errors')
 
 let db, key, client, coll, doc, stream, window, fetch
 
@@ -333,6 +333,34 @@ describe('StreamAPI', () => {
           done()
         })
         .start()
+    })
+
+    test('close http2 session when the .close method is called', async () => {
+      const idleTime = 500
+      const client = util.getClient({
+        secret: key.secret,
+        http2SessionIdleTime: idleTime,
+      })
+
+      const assertActiveSessions = length =>
+        expect(Object.keys(client._http._adapter._sessionMap).length).toBe(
+          length
+        )
+
+      stream = client.stream.document(doc.ref).start()
+
+      await new Promise(resolve => {
+        stream.on('snapshot', () => resolve())
+      })
+      await util.delay(idleTime + 1)
+
+      assertActiveSessions(1)
+
+      stream.close()
+
+      await util.delay(idleTime + 1)
+
+      assertActiveSessions(0)
     })
   })
 })
