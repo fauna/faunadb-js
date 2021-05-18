@@ -4,6 +4,15 @@ var packageJson = require('../package.json')
 var chalk = require('chalk')
 var boxen = require('boxen')
 
+var crossGlobal =
+  typeof window !== 'undefined'
+    ? window
+    : typeof globalThis !== 'undefined'
+    ? globalThis
+    : typeof global !== 'undefined'
+    ? global
+    : self
+
 /**
  * Inherit the prototype methods from one constructor into another.
  * Source: https://github.com/kaelzhang/node-util-inherits
@@ -513,15 +522,6 @@ function notifyAboutNewVersion() {
 }
 
 notifyAboutNewVersion()
-
-var crossGlobal =
-  typeof window !== 'undefined'
-    ? window
-    : typeof globalThis !== 'undefined'
-    ? globalThis
-    : typeof global !== 'undefined'
-    ? global
-    : self
 
 module.exports = {
   crossGlobal: crossGlobal,
