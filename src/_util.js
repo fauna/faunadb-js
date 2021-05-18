@@ -1,5 +1,9 @@
 'use strict'
 
+var packageJson = require('../package.json')
+var chalk = require('chalk')
+var boxen = require('boxen')
+
 /**
  * Inherit the prototype methods from one constructor into another.
  * Source: https://github.com/kaelzhang/node-util-inherits
@@ -451,6 +455,65 @@ function mergeObjects(obj1, obj2) {
   return obj3
 }
 
+/**
+ * Resolves which Fetch API compatible function to use. If an override is
+ * provided, returns the override. If no override and the global (window) has
+ * "fetch" property, return the native fetch. Otherwise returns the cross-fetch polyfill.
+ *
+ * @param {?function} fetchOverride An Fetch API compatible function to use.
+ * @returns {function} A Fetch API compatible function.
+ * @private
+ */
+function resolveFetch(fetchOverride) {
+  if (typeof fetchOverride === 'function') {
+    return fetchOverride
+  }
+
+  if (typeof global.fetch === 'function') {
+    // NB. Rebinding to global is needed for Safari
+    return global.fetch.bind(global)
+  }
+
+  return require('cross-fetch')
+}
+
+function notifyAboutNewVersion() {
+  if (!isNodeEnv()) return
+  function checkAndNotify(latestVersion) {
+    var latest = latestVersion.split('.')
+    var current = packageJson.version.split('.')
+
+    var isNewVersionAvailable = latest.some(function(l, index) {
+      return l > current[index]
+    })
+
+    if (isNewVersionAvailable) {
+      console.info(
+        boxen(
+          'New ' +
+            packageJson.name +
+            ' version available ' +
+            chalk.dim(packageJson.version) +
+            chalk.reset(' → ') +
+            chalk.green(latestVersion) +
+            `\nChangelog: https://github.com/${packageJson.repository}/blob/master/CHANGELOG.md`,
+          { padding: 1, borderColor: 'yellow' }
+        )
+      )
+    }
+  }
+
+  resolveFetch()('https://registry.npmjs.org/' + packageJson.name)
+    .then(resp => resp.json())
+    .then(json => checkAndNotify(json['dist-tags'].latest))
+    .catch(err => {
+      console.error('Unable to check new driver version')
+      console.error(err)
+    })
+}
+
+notifyAboutNewVersion()
+
 module.exports = {
   mergeObjects: mergeObjects,
   formatUrl: formatUrl,
@@ -466,4 +529,5 @@ module.exports = {
   getBrowserDetails: getBrowserDetails,
   getBrowserOsDetails: getBrowserOsDetails,
   getNodeRuntimeEnv: getNodeRuntimeEnv,
+  resolveFetch: resolveFetch,
 }
