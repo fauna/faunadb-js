@@ -8,6 +8,8 @@ async function printReleaseNotes() {
     `https://api.github.com/repos/${repository}/releases/tags/${version}`
   ).then(resp => resp.json())
 
+  if (releaseInfo === undefined || releaseInfo.body === undefined) return
+
   const releaseNotes = releaseInfo.body
     .replace(/-/g, chalk.green(' - '))
     .replace(/\r\n/g, '\n')

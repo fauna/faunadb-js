@@ -1,3 +1,18 @@
+## 4.3.0
+
+- Implements Client#close method, allows Infinity for `http2SessionIdleTime` parameter
+- Adds missed tests for FQL queries
+- Fixes cross-platform global object
+- Notifies about new package version and shows release notes on install
+- Exposes parseJSON from utils
+- Adds `NGram` to special cases for snake_case to CamelCase conversion
+- Adds load tests
+- Automatically create Jira ticket on GitHub issue
+- Fixes handling of `Let` bindings when a key's value is undefined
+- Fixes JSON parsing of field names containing spaces
+- Updates GitHub link to .io instead of .com
+- Remaps 429 HTTP error to `TooManyRequests` error type
+
 ## 4.2.0
 
 - Improve HTTP2 session timeout handling

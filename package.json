@@ -1,6 +1,6 @@
 {
   "name": "faunadb",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "apiVersion": "4",
   "description": "FaunaDB Javascript driver for Node.JS and Browsers",
   "homepage": "https://fauna.com",
@@ -18,7 +18,8 @@
   "files": [
     "index.d.ts",
     "src/",
-    "dist/"
+    "dist/",
+    "tools/printReleaseNotes.js"
   ],
   "main": "index.js",
   "scripts": {
