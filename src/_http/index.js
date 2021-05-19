@@ -62,6 +62,17 @@ HttpClient.prototype.syncLastTxnTime = function(time) {
 }
 
 /**
+ * Cleans up any held resources.
+ *
+ * @param {?object} opts Close options.
+ * @param {?boolean} opts.force Whether to force resources clean up.
+ * @returns {Promise<void>}
+ */
+HttpClient.prototype.close = function(opts) {
+  return this._adapter.close(opts)
+}
+
+/**
  * Executes an HTTP request.
  *
  * @param {?object} options Request parameters.
