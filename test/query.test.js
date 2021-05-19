@@ -310,6 +310,12 @@ describe('query', () => {
       })
     )
 
+    expect(util.unwrapExpr(query.Lambda(query.Now()))).toEqual({
+      now: null,
+    })
+
+    expect(() => query.Lambda(123)).toThrow(errors.InvalidValue)
+
     return assertQuery(query.Map([[1, 2], [3, 4]], multi_args), [
       [2, 1],
       [4, 3],
@@ -3022,6 +3028,14 @@ describe('query', () => {
       expect(function() {
         query[fun].apply(null, new Array(arity))
       }).toThrow()
+    }
+  })
+
+  test('scoped queries', () => {
+    const scopedQueries = [query.Function, query.Index, query.Collection]
+
+    for (const q of scopedQueries) {
+      expect(util.unwrapExpr(q('name', 'scope')).scope).toEqual('scope')
     }
   })
 
