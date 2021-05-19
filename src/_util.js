@@ -4,6 +4,15 @@ var packageJson = require('../package.json')
 var chalk = require('chalk')
 var boxen = require('boxen')
 
+var crossGlobal =
+  typeof window !== 'undefined'
+    ? window
+    : typeof globalThis !== 'undefined'
+    ? globalThis
+    : typeof global !== 'undefined'
+    ? global
+    : self
+
 /**
  * Inherit the prototype methods from one constructor into another.
  * Source: https://github.com/kaelzhang/node-util-inherits
@@ -273,7 +282,7 @@ function getNodeRuntimeEnv() {
     },
     {
       name: 'Mongo Stitch',
-      check: () => typeof global.StitchError === 'function',
+      check: () => typeof crossGlobal.StitchError === 'function',
     },
     {
       name: 'Render',
@@ -469,9 +478,9 @@ function resolveFetch(fetchOverride) {
     return fetchOverride
   }
 
-  if (typeof global.fetch === 'function') {
+  if (typeof crossGlobal.fetch === 'function') {
     // NB. Rebinding to global is needed for Safari
-    return global.fetch.bind(global)
+    return crossGlobal.fetch.bind(crossGlobal)
   }
 
   return require('cross-fetch')
@@ -515,6 +524,7 @@ function notifyAboutNewVersion() {
 notifyAboutNewVersion()
 
 module.exports = {
+  crossGlobal: crossGlobal,
   mergeObjects: mergeObjects,
   formatUrl: formatUrl,
   querystringify: querystringify,
