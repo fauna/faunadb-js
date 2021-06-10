@@ -385,7 +385,7 @@ describe('Client', () => {
     ).toBeDefined()
   })
 
-  describe.only('notify about new version', () => {
+  describe('notify about new version', () => {
     beforeAll(() => {
       global.fetch = jest.fn().mockResolvedValue({
         json: () =>
