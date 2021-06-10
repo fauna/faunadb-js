@@ -23,6 +23,7 @@ export interface ClientConfig {
   headers?: { [key: string]: string | number }
   fetch?: typeof fetch
   http2SessionIdleTime?: number
+  notify_about_new_version?: boolean
 }
 
 export interface QueryOptions
