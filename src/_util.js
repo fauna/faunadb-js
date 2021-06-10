@@ -488,8 +488,8 @@ function resolveFetch(fetchOverride) {
 
 function notifyAboutNewVersion() {
   var isNotified
-  const checkAndNotify = notify_about_new_version => {
-    if (!isNodeEnv() || isNotified || !notify_about_new_version) return
+  const checkAndNotify = notifyAboutNewVersion => {
+    if (!isNodeEnv() || isNotified || !notifyAboutNewVersion) return
     function onResponse(latestVersion) {
       var isNewVersionAvailable = latestVersion > packageJson.version
       if (isNewVersionAvailable) {

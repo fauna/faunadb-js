@@ -445,7 +445,7 @@ describe('Client', () => {
     })
 
     test('disable checking', async () => {
-      new Client({ ...util.getCfg(), notify_about_new_version: false })
+      new Client({ ...util.getCfg(), notifyAboutNewVersion: false })
       await new Promise(resolve => {
         setTimeout(() => {
           expect(console.info).not.toBeCalled()
