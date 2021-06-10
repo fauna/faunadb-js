@@ -1,6 +1,6 @@
 'use strict'
 
-jest.spyOn(globalThis.console, 'info')
+jest.spyOn(global.console, 'info')
 var errors = require('../src/errors')
 var query = require('../src/query')
 var util = require('./util')
@@ -385,9 +385,9 @@ describe('Client', () => {
     ).toBeDefined()
   })
 
-  describe('notify about new version', () => {
+  describe.only('notify about new version', () => {
     beforeAll(() => {
-      globalThis.fetch = jest.fn().mockResolvedValue({
+      global.fetch = jest.fn().mockResolvedValue({
         json: () =>
           Promise.resolve({
             'dist-tags': {
@@ -427,7 +427,7 @@ describe('Client', () => {
     })
 
     test('do not print message if installed version is the latest one', async () => {
-      globalThis.fetch.mockResolvedValueOnce({
+      global.fetch.mockResolvedValueOnce({
         json: () =>
           Promise.resolve({
             'dist-tags': {
