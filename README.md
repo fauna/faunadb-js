@@ -167,7 +167,7 @@ helper
   })
 ```
 
-[See the JSDocs](https://fauna.github.com/faunadb-js/PageHelper.html) for
+[See the JSDocs](https://fauna.github.io/faunadb-js/PageHelper.html) for
 more information on the pagination helper.
 
 #### Timeouts
