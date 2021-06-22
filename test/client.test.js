@@ -173,14 +173,10 @@ describe('Client', () => {
   test('Client#close call on Http2Adapter-based Client with force=true', async () => {
     const client = util.getClient()
 
-    await expect(
-      Promise.all([
-        client.ping(),
-        client.close({
-          force: true,
-        }),
-      ])
-    ).rejects.toThrow(errors.ClientClosed)
+    await client.close({
+      force: true,
+    })
+    await expect(client.ping()).rejects.toThrow(errors.ClientClosed)
   })
 
   test('Client#close call on FetchAdapter-based Client', async () => {
