@@ -355,7 +355,7 @@ Http2Adapter.prototype.close = function(opts) {
  */
 function remapHttp2Error({ error, isClosed }) {
   var shouldRemap =
-    !isClosed &&
+    isClosed &&
     (error.code === 'ERR_HTTP2_GOAWAY_SESSION' ||
       error.code === 'ERR_HTTP2_STREAM_CANCEL')
 
