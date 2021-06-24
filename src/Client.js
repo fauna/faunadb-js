@@ -11,6 +11,8 @@ var stream = require('./stream')
 var util = require('./_util')
 var values = require('./values')
 
+var notifyAboutNewVersion = util.notifyAboutNewVersion()
+
 /**
  * The callback that will be executed after every completed request.
  *
@@ -163,6 +165,8 @@ var values = require('./values')
  *   Only applicable for NodeJS environment (when http2 module is used). Default is 500ms;
  *   can also be configured via the FAUNADB_HTTP2_SESSION_IDLE_TIME environment variable
  *   which has the highest priority and overrides the option passed into the Client constructor.
+ * @param {?boolean} options.notifyAboutNewVersion
+ *   Enabled by default. Will print a message to terminal if installed version is ahead the latest one
  */
 function Client(options) {
   var http2SessionIdleTime = getHttp2SessionIdleTime()
@@ -179,7 +183,9 @@ function Client(options) {
     fetch: undefined,
     queryTimeout: null,
     http2SessionIdleTime: http2SessionIdleTime.value,
+    notifyAboutNewVersion: true,
   })
+  notifyAboutNewVersion(options.notifyAboutNewVersion)
 
   if (http2SessionIdleTime.shouldOverride) {
     options.http2SessionIdleTime = http2SessionIdleTime.value
@@ -360,3 +366,6 @@ function getHttp2SessionIdleTime() {
 }
 
 module.exports = Client
+module.exports.resetNotifyAboutNewVersion = function() {
+  notifyAboutNewVersion = util.notifyAboutNewVersion()
+}

@@ -487,43 +487,42 @@ function resolveFetch(fetchOverride) {
 }
 
 function notifyAboutNewVersion() {
-  if (!isNodeEnv()) return
-  function checkAndNotify(latestVersion) {
-    var latest = latestVersion.split('.')
-    var current = packageJson.version.split('.')
-
-    var isNewVersionAvailable = latest.some(function(l, index) {
-      return l > current[index]
-    })
-
-    if (isNewVersionAvailable) {
-      console.info(
-        boxen(
-          'New ' +
-            packageJson.name +
-            ' version available ' +
-            chalk.dim(packageJson.version) +
-            chalk.reset(' → ') +
-            chalk.green(latestVersion) +
-            `\nChangelog: https://github.com/${packageJson.repository}/blob/master/CHANGELOG.md`,
-          { padding: 1, borderColor: 'yellow' }
+  var isNotified
+  const checkAndNotify = notifyAboutNewVersion => {
+    if (!isNodeEnv() || isNotified || !notifyAboutNewVersion) return
+    function onResponse(latestVersion) {
+      var isNewVersionAvailable = latestVersion > packageJson.version
+      if (isNewVersionAvailable) {
+        console.info(
+          boxen(
+            'New ' +
+              packageJson.name +
+              ' version available ' +
+              chalk.dim(packageJson.version) +
+              chalk.reset(' → ') +
+              chalk.green(latestVersion) +
+              `\nChangelog: https://github.com/${packageJson.repository}/blob/master/CHANGELOG.md`,
+            { padding: 1, borderColor: 'yellow' }
+          )
         )
-      )
+      }
     }
+
+    isNotified = true
+    resolveFetch()('https://registry.npmjs.org/' + packageJson.name)
+      .then(resp => resp.json())
+      .then(json => onResponse(json['dist-tags'].latest))
+      .catch(err => {
+        console.error('Unable to check new driver version')
+        console.error(err)
+      })
   }
 
-  resolveFetch()('https://registry.npmjs.org/' + packageJson.name)
-    .then(resp => resp.json())
-    .then(json => checkAndNotify(json['dist-tags'].latest))
-    .catch(err => {
-      console.error('Unable to check new driver version')
-      console.error(err)
-    })
+  return checkAndNotify
 }
 
-notifyAboutNewVersion()
-
 module.exports = {
+  notifyAboutNewVersion: notifyAboutNewVersion,
   crossGlobal: crossGlobal,
   mergeObjects: mergeObjects,
   formatUrl: formatUrl,

@@ -1,5 +1,6 @@
 'use strict'
 
+jest.spyOn(global.console, 'info')
 var errors = require('../src/errors')
 var query = require('../src/query')
 var util = require('./util')
@@ -382,6 +383,76 @@ describe('Client', () => {
     expect(
       requiredKeys.every(key => driverEnvHeader.includes(key))
     ).toBeDefined()
+  })
+
+  describe('notify about new version', () => {
+    beforeAll(() => {
+      global.fetch = jest.fn().mockResolvedValue({
+        json: () =>
+          Promise.resolve({
+            'dist-tags': {
+              latest: '999.999.999',
+            },
+          }),
+      })
+    })
+
+    beforeEach(() => {
+      console.info.mockClear()
+      Client.resetNotifyAboutNewVersion()
+    })
+
+    test('enabled by default', async () => {
+      new Client(util.getCfg())
+      await new Promise(resolve => {
+        setTimeout(() => {
+          expect(console.info.mock.calls[0][0]).toContain(
+            'New faunadb version available'
+          )
+          resolve()
+        }, 0)
+      })
+    })
+
+    test('print message only once', async () => {
+      new Client(util.getCfg())
+      new Client(util.getCfg())
+      new Client(util.getCfg())
+      await new Promise(resolve => {
+        setTimeout(() => {
+          expect(console.info).toBeCalledTimes(1)
+          resolve()
+        }, 0)
+      })
+    })
+
+    test('do not print message if installed version is the latest one', async () => {
+      global.fetch.mockResolvedValueOnce({
+        json: () =>
+          Promise.resolve({
+            'dist-tags': {
+              latest: '0.0.1',
+            },
+          }),
+      })
+      new Client(util.getCfg())
+      await new Promise(resolve => {
+        setTimeout(() => {
+          expect(console.info).not.toBeCalled()
+          resolve()
+        }, 0)
+      })
+    })
+
+    test('disable checking', async () => {
+      new Client({ ...util.getCfg(), notifyAboutNewVersion: false })
+      await new Promise(resolve => {
+        setTimeout(() => {
+          expect(console.info).not.toBeCalled()
+          resolve()
+        }, 0)
+      })
+    })
   })
 })
 
