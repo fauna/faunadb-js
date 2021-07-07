@@ -200,7 +200,7 @@ Http2Adapter.prototype.execute = function(options) {
     // we need to call streamConsumer.onError instead of reject function.
     // Possible scenario is aborting request when stream is already being consumed.
     var rejectOrOnError = function(error) {
-      var remapped = remapHttp2Error(error)
+      var remapped = remapHttp2Error({ error, isClosed: self._closed })
 
       if (isPromiseSettled && isStreaming) {
         return options.streamConsumer.onError(remapped)
@@ -353,10 +353,11 @@ Http2Adapter.prototype.close = function(opts) {
  * @param {Error} error Error object.
  * @returns {Error} Remapped error.
  */
-function remapHttp2Error(error) {
+function remapHttp2Error({ error, isClosed }) {
   var shouldRemap =
-    error.code === 'ERR_HTTP2_GOAWAY_SESSION' ||
-    error.code === 'ERR_HTTP2_STREAM_CANCEL'
+    isClosed &&
+    (error.code === 'ERR_HTTP2_GOAWAY_SESSION' ||
+      error.code === 'ERR_HTTP2_STREAM_CANCEL')
 
   if (shouldRemap) {
     return new faunaErrors.ClientClosed(
