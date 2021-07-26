@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/fauna/faunadb-js.svg?style=svg)](https://circleci.com/gh/fauna/faunadb-js)
 [![Npm Version](https://img.shields.io/npm/v/faunadb.svg?maxAge=21600)](https://www.npmjs.com/package/faunadb)
-[![License](https://img.shields.io/badge/license-MPL_2.0-blue.svg?maxAge=2592000)](https://raw.githubusercontent.com/fauna/faunadb-js/master/LICENSE)
+[![License](https://img.shields.io/badge/license-MPL_2.0-blue.svg?maxAge=2592000)](https://raw.githubusercontent.com/fauna/faunadb-js/main/LICENSE)
 
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
@@ -372,10 +372,10 @@ Normally, you would install the latest release of this package using `npm instal
 "faunadb": "^2.14.1"
 ```
 
-3. Instead of using a version from the npm registry, we'll want to point our `package.json` to the `master` branch of our GitHub repo. To do that, change the `^2.4.1` to `fauna/faunadb-js#master`.
+3. Instead of using a version from the npm registry, we'll want to point our `package.json` to the `main` branch of our GitHub repo. To do that, change the `^2.4.1` to `fauna/faunadb-js#main`.
 
 ```
-"faunadb": "fauna/faunadb-js#master"
+"faunadb": "fauna/faunadb-js#main"
 ```
 
 4. Update your `node_modules` by running `npm install` or `yarn`

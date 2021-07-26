@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Login
-        uses: atlassian/gajira-login@master
+        uses: atlassian/gajira-login@main
         env:
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
@@ -51,7 +51,7 @@ jobs:
 
       - name: Create ticket
         id: create
-        uses: atlassian/gajira-create@master
+        uses: atlassian/gajira-create@main
         if: ${{ steps.isOrgMember.outputs.result == 'false' }}
         with:
           project: DRV
@@ -62,7 +62,7 @@ jobs:
 
       - name: Set triage state
         if: ${{ steps.create.outputs.issue }}
-        uses: atlassian/gajira-transition@master
+        uses: atlassian/gajira-transition@main
         with:
           issue: ${{ steps.create.outputs.issue }}
           transition: "TRIAGE"

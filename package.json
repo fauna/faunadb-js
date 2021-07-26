@@ -81,7 +81,7 @@
   },
   "release": {
     "branches": [
-      "master"
+      "main"
     ]
   },
   "browser": {
