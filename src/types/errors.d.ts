@@ -29,7 +29,7 @@ export module errors {
     errors(): object
   }
 
-  export class InvalidArgument extends FaunaHTTPError {}
+  export class BadRequest extends FaunaHTTPError {}
   export class FunctionCallError extends FaunaHTTPError {}
   export class Unauthorized extends FaunaHTTPError {}
   export class PermissionDenied extends FaunaHTTPError {}

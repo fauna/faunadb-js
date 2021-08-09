@@ -18,7 +18,7 @@ var util = require('./_util')
  * @extends Error
  * @constructor
  */
-function FaunaError(name, message) {
+function FaunaError(name, message, description) {
   Error.call(this)
 
   /**
@@ -32,6 +32,12 @@ function FaunaError(name, message) {
    * @type {string}
    */
   this.message = message
+
+  /**
+   * Description for this exception.
+   * @type {string}
+   */
+  this.description = description
 }
 
 util.inherits(FaunaError, Error)
@@ -109,8 +115,10 @@ util.inherits(InvalidArity, FaunaError)
 function FaunaHTTPError(name, requestResult) {
   var response = requestResult.responseContent
   var errors = response.errors
-  var message = errors.length === 0 ? '(empty "errors")' : errors[0].description
-  FaunaError.call(this, name, message)
+  var message = errors.length === 0 ? '(empty "errors")' : errors[0].code
+  var description =
+    errors.length === 0 ? '(empty "errors")' : errors[0].description
+  FaunaError.call(this, name, message, description)
 
   /**
    * A wrapped {@link RequestResult} object, containing the request and response
@@ -154,7 +162,7 @@ FaunaHTTPError.raiseForStatusCode = function(requestResult) {
         ) {
           throw new ValidationError(requestResult)
         } else {
-          throw new InvalidArgument(requestResult)
+          throw new BadRequest(requestResult)
         }
       case 401:
         throw new Unauthorized(requestResult)
@@ -183,11 +191,11 @@ FaunaHTTPError.raiseForStatusCode = function(requestResult) {
  * @extends module:errors~FaunaHTTPError
  * @constructor
  */
-function InvalidArgument(requestResult) {
-  FaunaHTTPError.call(this, 'InvalidArgument', requestResult)
+function BadRequest(requestResult) {
+  FaunaHTTPError.call(this, 'BadRequest', requestResult)
 }
 
-util.inherits(InvalidArgument, FaunaHTTPError)
+util.inherits(BadRequest, FaunaHTTPError)
 
 function FunctionCallError(requestResult) {
   FaunaHTTPError.call(this, 'FunctionCallError', requestResult)
@@ -195,7 +203,7 @@ function FunctionCallError(requestResult) {
   const cause = requestResult.responseContent.errors[0].cause[0]
   this.code = cause.code
   this.position = cause.position
-  this.message = cause.description
+  this.description = cause.description
 }
 
 util.inherits(FunctionCallError, FaunaHTTPError)
@@ -206,7 +214,7 @@ function ValidationError(requestResult) {
   const failure = requestResult.responseContent.errors[0].failures[0]
   this.code = failure.code
   this.position = failure.field
-  this.message = failure.description
+  this.description = failure.description
 }
 util.inherits(ValidationError, FaunaHTTPError)
 
@@ -364,7 +372,7 @@ module.exports = {
   FaunaHTTPError: FaunaHTTPError,
   InvalidValue: InvalidValue,
   InvalidArity: InvalidArity,
-  InvalidArgument: InvalidArgument,
+  BadRequest: BadRequest,
   ValidationError: ValidationError,
   Unauthorized: Unauthorized,
   PermissionDenied: PermissionDenied,

@@ -2,7 +2,7 @@ const {
   ValidationError,
   FunctionCallError,
   FaunaHTTPError,
-  InvalidArgument,
+  BadRequest,
 } = require('../src/errors')
 
 const makeError = (statusCode, error) => ({
@@ -31,7 +31,7 @@ describe('Error', () => {
       expect(error).toBeInstanceOf(ValidationError)
       expect(error.position).toEqual(['issuer'])
       expect(error.code).toEqual('duplicate value')
-      expect(error.message).toEqual('Value is not unique.')
+      expect(error.description).toEqual('Value is not unique.')
     }
   })
 
@@ -55,11 +55,11 @@ describe('Error', () => {
       expect(error).toBeInstanceOf(FunctionCallError)
       expect(error.position).toEqual(['expr'])
       expect(error.code).toEqual('invalid argument')
-      expect(error.message).toEqual('Illegal division by zero.')
+      expect(error.description).toEqual('Illegal division by zero.')
     }
   })
 
-  test('InvalidArgument', () => {
+  test('BadRequest', () => {
     try {
       FaunaHTTPError.raiseForStatusCode(
         makeError(400, {
@@ -69,27 +69,10 @@ describe('Error', () => {
         })
       )
     } catch (error) {
-      expect(error).toBeInstanceOf(InvalidArgument)
+      expect(error).toBeInstanceOf(BadRequest)
       expect(error.position).toEqual(['params'])
       expect(error.code).toEqual('invalid argument')
-      expect(error.message).toEqual('Object expected, String provided.')
-    }
-  })
-
-  test('InvalidArgument', () => {
-    try {
-      FaunaHTTPError.raiseForStatusCode(
-        makeError(400, {
-          position: ['params'],
-          code: 'invalid argument',
-          description: 'Object expected, String provided.',
-        })
-      )
-    } catch (error) {
-      expect(error).toBeInstanceOf(InvalidArgument)
-      expect(error.position).toEqual(['params'])
-      expect(error.code).toEqual('invalid argument')
-      expect(error.message).toEqual('Object expected, String provided.')
+      expect(error.description).toEqual('Object expected, String provided.')
     }
   })
 })
