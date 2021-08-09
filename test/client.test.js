@@ -336,9 +336,11 @@ describe('Client', () => {
 
     expect(response.name).toBeDefined()
     expect(response.message).toBeDefined()
+    expect(response.description).toBeDefined()
 
     expect(response.name).toEqual('Unauthorized')
-    expect(response.message).toEqual(errors[0].description)
+    expect(response.message).toEqual(errors[0].message)
+    expect(response.description).toEqual(errors[0].description)
   })
 
   test('BadRequest error has the proper fields', async () => {
@@ -350,9 +352,11 @@ describe('Client', () => {
 
     expect(response.name).toBeDefined()
     expect(response.message).toBeDefined()
+    expect(response.description).toBeDefined()
 
     expect(response.name).toEqual('BadRequest')
-    expect(response.message).toEqual(errors[0].description)
+    expect(response.message).toEqual(errors[0].message)
+    expect(response.description).toEqual(errors[0].description)
   })
 
   test('default headers has been applied', async () => {
