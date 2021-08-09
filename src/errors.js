@@ -18,7 +18,7 @@ var util = require('./_util')
  * @extends Error
  * @constructor
  */
-function FaunaError(name, message, description) {
+function FaunaError(name, message) {
   Error.call(this)
 
   /**
@@ -32,12 +32,6 @@ function FaunaError(name, message, description) {
    * @type {string}
    */
   this.message = message
-
-  /**
-   * Description for this exception.
-   * @type {string}
-   */
-  this.description = description
 }
 
 util.inherits(FaunaError, Error)
@@ -115,10 +109,8 @@ util.inherits(InvalidArity, FaunaError)
 function FaunaHTTPError(name, requestResult) {
   var response = requestResult.responseContent
   var errors = response.errors
-  var message = errors.length === 0 ? '(empty "errors")' : errors[0].code
-  var description =
-    errors.length === 0 ? '(empty "errors")' : errors[0].description
-  FaunaError.call(this, name, message, description)
+  var message = errors.length === 0 ? '(empty "errors")' : errors[0].description
+  FaunaError.call(this, name, message)
 
   /**
    * A wrapped {@link RequestResult} object, containing the request and response
@@ -127,6 +119,10 @@ function FaunaHTTPError(name, requestResult) {
    * @type {RequestResult}
    */
   this.requestResult = requestResult
+
+  this.code = this.errors()[0].code
+  this.position = this.errors()[0].position || []
+  this.httpStatusCode = requestResult.statusCode
 }
 
 util.inherits(FaunaHTTPError, FaunaError)
@@ -151,7 +147,15 @@ FaunaHTTPError.raiseForStatusCode = function(requestResult) {
   if (code < 200 || code >= 300) {
     switch (code) {
       case 400:
-        throw new BadRequest(requestResult)
+        if (requestResult.responseContent.errors[0].code === 'call error') {
+          throw new FunctionCallError(requestResult)
+        } else if (
+          requestResult.responseContent.errors[0].code === 'validation failed'
+        ) {
+          throw new ValidationError(requestResult)
+        } else {
+          throw new InvalidArgument(requestResult)
+        }
       case 401:
         throw new Unauthorized(requestResult)
       case 403:
@@ -179,11 +183,32 @@ FaunaHTTPError.raiseForStatusCode = function(requestResult) {
  * @extends module:errors~FaunaHTTPError
  * @constructor
  */
-function BadRequest(requestResult) {
-  FaunaHTTPError.call(this, 'BadRequest', requestResult)
+function InvalidArgument(requestResult) {
+  FaunaHTTPError.call(this, 'InvalidArgument', requestResult)
 }
 
-util.inherits(BadRequest, FaunaHTTPError)
+util.inherits(InvalidArgument, FaunaHTTPError)
+
+function FunctionCallError(requestResult) {
+  FaunaHTTPError.call(this, 'FunctionCallError', requestResult)
+
+  const cause = requestResult.responseContent.errors[0].cause[0]
+  this.code = cause.code
+  this.position = cause.position
+  this.message = cause.description
+}
+
+util.inherits(FunctionCallError, FaunaHTTPError)
+
+function ValidationError(requestResult) {
+  FaunaHTTPError.call(this, 'ValidationError', requestResult)
+
+  const failure = requestResult.responseContent.errors[0].failures[0]
+  this.code = failure.code
+  this.position = failure.field
+  this.message = failure.description
+}
+util.inherits(ValidationError, FaunaHTTPError)
 
 /**
  * A HTTP 401 error.
@@ -339,7 +364,8 @@ module.exports = {
   FaunaHTTPError: FaunaHTTPError,
   InvalidValue: InvalidValue,
   InvalidArity: InvalidArity,
-  BadRequest: BadRequest,
+  InvalidArgument: InvalidArgument,
+  ValidationError: ValidationError,
   Unauthorized: Unauthorized,
   PermissionDenied: PermissionDenied,
   NotFound: NotFound,
@@ -347,6 +373,7 @@ module.exports = {
   TooManyRequests: TooManyRequests,
   InternalError: InternalError,
   UnavailableError: UnavailableError,
+  FunctionCallError: FunctionCallError,
   StreamError: StreamError,
   StreamsNotSupported: StreamsNotSupported,
   StreamErrorEvent: StreamErrorEvent,

@@ -23,10 +23,14 @@ export module errors {
     constructor(name: string, requestResult: RequestResult<FaunaHttpErrorResponseContent>)
 
     requestResult: RequestResult<FaunaHttpErrorResponseContent>
+    code: string
+    position: string[]
+    httpStatusCode: number
     errors(): object
   }
 
-  export class BadRequest extends FaunaHTTPError {}
+  export class InvalidArgument extends FaunaHTTPError {}
+  export class FunctionCallError extends FaunaHTTPError {}
   export class Unauthorized extends FaunaHTTPError {}
   export class PermissionDenied extends FaunaHTTPError {}
   export class NotFound extends FaunaHTTPError {}
