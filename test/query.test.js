@@ -975,7 +975,7 @@ describe('query', () => {
         })
       )
     } catch (err) {
-      expect(err).toBeInstanceOf(errors.BadRequest)
+      expect(err).toBeInstanceOf(errors.ValidationError)
     }
   })
 
@@ -1042,7 +1042,7 @@ describe('query', () => {
         })
       )
     } catch (err) {
-      expect(err).toBeInstanceOf(errors.BadRequest)
+      expect(err).toBeInstanceOf(errors.ValidationError)
     }
   })
 
