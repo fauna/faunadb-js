@@ -172,10 +172,14 @@ FaunaHTTPError.raiseForStatusCode = function(requestResult) {
         throw new NotFound(requestResult)
       case 405:
         throw new MethodNotAllowed(requestResult)
+      case 413:
+        throw new PayloadTooLarge(requestResult)
       case 429:
         throw new TooManyRequests(requestResult)
       case 500:
         throw new InternalError(requestResult)
+      case 502:
+        throw new BadGateway(requestResult)
       case 503:
         throw new UnavailableError(requestResult)
       default:
@@ -279,6 +283,30 @@ function TooManyRequests(requestResult) {
 util.inherits(TooManyRequests, FaunaHTTPError)
 
 /**
+ * A HTTP 413 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+function PayloadTooLarge(requestResult) {
+  FaunaHTTPError.call(this, 'PayloadTooLarge', requestResult)
+}
+
+util.inherits(PayloadTooLarge, FaunaHTTPError)
+
+/**
+ * A HTTP 502 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+function BadGateway(requestResult) {
+  FaunaHTTPError.call(this, 'BadGateway', requestResult)
+}
+
+util.inherits(BadGateway, FaunaHTTPError)
+
+/**
  * A HTTP 500 error.
  * @param {RequestResult} requestResult
  * @extends module:errors~FaunaHTTPError
@@ -373,6 +401,7 @@ module.exports = {
   InvalidValue: InvalidValue,
   InvalidArity: InvalidArity,
   BadRequest: BadRequest,
+  PayloadTooLarge: PayloadTooLarge,
   ValidationError: ValidationError,
   Unauthorized: Unauthorized,
   PermissionDenied: PermissionDenied,
