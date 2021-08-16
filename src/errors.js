@@ -176,6 +176,8 @@ FaunaHTTPError.raiseForStatusCode = function(requestResult) {
         throw new PayloadTooLarge(requestResult)
       case 429:
         throw new TooManyRequests(requestResult)
+      case 440:
+        throw new ProcessingTimeLimitExceeded(requestResult)
       case 500:
         throw new InternalError(requestResult)
       case 502:
@@ -305,6 +307,18 @@ function BadGateway(requestResult) {
 }
 
 util.inherits(BadGateway, FaunaHTTPError)
+
+/**
+ * A HTTP 440 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+function ProcessingTimeLimitExceeded(requestResult) {
+  FaunaHTTPError.call(this, 'ProcessingTimeLimitExceeded', requestResult)
+}
+
+util.inherits(ProcessingTimeLimitExceeded, FaunaHTTPError)
 
 /**
  * A HTTP 500 error.
