@@ -1903,7 +1903,7 @@ describe('query', () => {
     // TODO: can't make this query because 2.0 === 2
     // await assertQuery(query.Divide(2, 3, 5), 2/15)
     var p1 = assertQuery(query.Divide(2), 2)
-    var p2 = assertBadQuery(query.Divide(1, 0))
+    var p2 = assertBadQuery(query.Divide(1, 0), errors.InvalidArgumentError)
     return Promise.all([p1, p2])
   })
 
@@ -1926,7 +1926,7 @@ describe('query', () => {
     // This is (15 % 10) % 2
     var p2 = assertQuery(query.Modulo(15, 10, 2), 1)
     var p3 = assertQuery(query.Modulo(2), 2)
-    var p4 = assertBadQuery(query.Modulo(1, 0))
+    var p4 = assertBadQuery(query.Modulo(1, 0), errors.InvalidArgumentError)
     return Promise.all([p1, p2, p3, p4])
   })
 
@@ -2803,7 +2803,7 @@ describe('query', () => {
     try {
       await adminClient.query(query.Get(query.AccessProvider(badProviderName)))
     } catch (error) {
-      expect(error).toBeInstanceOf(errors.BadRequest)
+      expect(error).toBeInstanceOf(errors.InvalidReferenceError)
     }
   })
 
@@ -2883,7 +2883,8 @@ describe('query', () => {
 
       throw new Error('Should not reached here')
     } catch (err) {
-      expect(err).toBeInstanceOf(errors.BadRequest)
+      console.info(err)
+      expect(err).toBeInstanceOf(errors.MissingIdentityError)
     }
   })
 
