@@ -165,7 +165,7 @@ describe('query', () => {
   test('abort', () => {
     return util.assertRejected(
       client.query(query.Abort('abort message')),
-      errors.BadRequest
+      errors.TransactionAbortedError
     )
   })
 
@@ -461,7 +461,10 @@ describe('query', () => {
       6,
     ])
     // Fails for non-array.
-    var p2 = assertBadQuery(query.Prepend([1, 2], 'foo'))
+    var p2 = assertBadQuery(
+      query.Prepend([1, 2], 'foo'),
+      errors.InvalidArgumentError
+    )
 
     return Promise.all([p1, p2])
   })
@@ -469,7 +472,10 @@ describe('query', () => {
   test('append', () => {
     var p1 = assertQuery(query.Append([4, 5, 6], [1, 2, 3]), [1, 2, 3, 4, 5, 6])
     // Fails for non-array.
-    var p2 = assertBadQuery(query.Append([1, 2], 'foo'))
+    var p2 = assertBadQuery(
+      query.Append([1, 2], 'foo'),
+      errors.InvalidArgumentError
+    )
 
     return Promise.all([p1, p2])
   })
@@ -1816,19 +1822,19 @@ describe('query', () => {
     // Rejects arrays
     var queryThree = assertBadQuery(
       query.ContainsField(['band'], obj),
-      errors.BadRequest
+      errors.InvalidArgumentError
     )
 
     // Rejects objects
     var queryFour = assertBadQuery(
       query.ContainsField({ members: { trey: 'guitar', mike: 'bass' } }, obj),
-      errors.BadRequest
+      errors.InvalidArgumentError
     )
 
     // Rejects numbers
     var queryFive = assertBadQuery(
       query.ContainsField(10, obj),
-      errors.BadRequest
+      errors.InvalidArgumentError
     )
 
     return Promise.all([queryOne, queryTwo, queryThree, queryFour, queryFive])

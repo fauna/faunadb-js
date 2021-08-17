@@ -230,7 +230,7 @@ var ErrorCodeMap = {
 }
 
 Object.keys(ErrorCodeMap).forEach(code => {
-  if (typeof code === 'string') {
+  if (typeof ErrorCodeMap[code] === 'string') {
     Errors[ErrorCodeMap[code]] = errorClassFactory(ErrorCodeMap[code])
   } else {
     Errors[ErrorCodeMap[code].name] = ErrorCodeMap[code]
@@ -249,16 +249,19 @@ function errorClassFactory(name) {
 function getQueryError(requestResult) {
   const errors = requestResult.responseContent.errors
   const errorCode = errors[0].code
-  const errorName = ErrorCodeMap[errorCode]
+  const ErrorFn =
+    typeof ErrorCodeMap[errorCode] === 'string'
+      ? Errors[ErrorCodeMap[errorCode]]
+      : ErrorCodeMap[errorCode]
   if (errors.length === 0 || !errorCode) {
     return new BadRequest(requestResult)
   }
 
-  if (!errorName || !Errors[errorName]) {
+  if (!ErrorFn) {
     return new FaunaHTTPError('UnknownError', requestResult)
   }
 
-  return new Errors[errorName](requestResult)
+  return new ErrorFn(requestResult)
 }
 
 function FunctionCallError(requestResult) {
