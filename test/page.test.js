@@ -220,6 +220,25 @@ describe('page', () => {
       })
   })
 
+  test('honors size with map/filter', () => {
+    var i = 0
+    var numPages = 20
+    var pageSize = NUM_INSTANCES / numPages
+
+    var page = new PageHelper(client, query.Match(indexRef), { size: pageSize })
+    return page
+      .map(ref => ref)
+      .filter(_ => true)
+      .each(function(item) {
+        // Note that this relies on numPages being a factor of NUM_INSTANCES
+        expect(item.length).toEqual(pageSize)
+        i += 1
+      })
+      .then(function() {
+        expect(i).toEqual(numPages)
+      })
+  })
+
   test('honors ts', () => {
     var page = new PageHelper(client, query.Match(tsIndexRef))
     var p1 = page.each(function(item) {
