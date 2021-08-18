@@ -3,7 +3,7 @@
 const Client = require('../src/Client')
 const q = require('../src/query')
 const util = require('./util')
-const { BadRequest } = require('../src/errors')
+const { BadRequest, InvalidArgumentError } = require('../src/errors')
 
 let db, key, client, coll, doc, stream, window, fetch
 
@@ -102,7 +102,7 @@ describe('StreamAPI', () => {
       stream = client
         .stream('invalid stream')
         .on('error', err => {
-          expect(err).toBeInstanceOf(BadRequest)
+          expect(err).toBeInstanceOf(InvalidArgumentError)
           done()
         })
         .start()

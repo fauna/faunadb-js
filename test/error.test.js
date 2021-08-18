@@ -2,7 +2,7 @@ const {
   ValidationError,
   FunctionCallError,
   FaunaHTTPError,
-  BadRequest,
+  InvalidArgumentError,
 } = require('../src/errors')
 
 const makeError = (statusCode, error) => ({
@@ -59,7 +59,7 @@ describe('Error', () => {
     }
   })
 
-  test('BadRequest', () => {
+  test('InvalidArgumentError', () => {
     try {
       FaunaHTTPError.raiseForStatusCode(
         makeError(400, {
@@ -69,7 +69,7 @@ describe('Error', () => {
         })
       )
     } catch (error) {
-      expect(error).toBeInstanceOf(BadRequest)
+      expect(error).toBeInstanceOf(InvalidArgumentError)
       expect(error.position).toEqual(['params'])
       expect(error.code).toEqual('invalid argument')
       expect(error.description).toEqual('Object expected, String provided.')

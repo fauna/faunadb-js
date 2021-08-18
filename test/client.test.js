@@ -354,7 +354,7 @@ describe('Client', () => {
     expect(response.message).toBeDefined()
     expect(response.description).toBeDefined()
 
-    expect(response.name).toEqual('BadRequest')
+    expect(response.name).toEqual('InvalidArgumentError')
     expect(response.message).toEqual(errors[0].code)
     expect(response.description).toEqual(errors[0].description)
   })
