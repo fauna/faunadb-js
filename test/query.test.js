@@ -56,7 +56,6 @@ describe('query', () => {
           .query(
             query.CreateIndex({
               name: 'widgets_by_n',
-              active: true,
               source: collectionRef,
               terms: [{ field: ['data', 'n'] }],
             })
@@ -689,7 +688,6 @@ describe('query', () => {
               name: 'reduce_idx',
               source: cls.ref,
               values: [{ field: ['data', 'value'] }],
-              active: true,
             })
           )
           .then(function(index) {
@@ -1241,7 +1239,6 @@ describe('query', () => {
               name: 'range_idx',
               source: cls.ref,
               values: [{ field: ['data', 'value'] }],
-              active: true,
             })
           )
           .then(function(index) {
@@ -1805,9 +1802,9 @@ describe('query', () => {
   })
 
   test('contains_value scalar types', async () => {
-    assertBadQuery(query.ContainsValue('a', 'abc'), errors.BadRequest)
-    assertBadQuery(query.ContainsValue(true, true), errors.BadRequest)
-    assertBadQuery(query.ContainsValue(1, 123), errors.BadRequest)
+    assertBadQuery(query.ContainsValue('a', 'abc'), errors.InvalidArgumentError)
+    assertBadQuery(query.ContainsValue(true, true), errors.InvalidArgumentError)
+    assertBadQuery(query.ContainsValue(1, 123), errors.InvalidArgumentError)
   })
 
   test('contains_field', () => {
@@ -1986,7 +1983,6 @@ describe('query', () => {
               name: 'math_collection_index',
               source: coll.ref,
               values: [{ field: ['data', 'value'] }],
-              active: true,
             })
           )
           .then(function(index) {
@@ -2071,7 +2067,6 @@ describe('query', () => {
           query.CreateIndex({
             name: indexName,
             source: query.Collection(collName),
-            active: true,
             terms: [{ field: ['data', 'foo'] }],
             values: [{ field: ['data', 'value'] }],
           })
@@ -2305,7 +2300,6 @@ describe('query', () => {
         return client.query(
           query.CreateIndex({
             name: indexName,
-            active: true,
             source: query.Collection(collName),
             values: [{ field: ['data', 'key'] }, { field: ['data', 'value'] }],
           })
@@ -2496,7 +2490,6 @@ describe('query', () => {
                 query.CreateCollection({ name: 'a_collection' }),
                 query.CreateIndex({
                   name: 'a_index',
-                  active: true,
                   source: query.Ref('collections'),
                 }),
                 query.CreateFunction({
@@ -2889,7 +2882,6 @@ describe('query', () => {
 
       throw new Error('Should not reached here')
     } catch (err) {
-      console.info(err)
       expect(err).toBeInstanceOf(errors.MissingIdentityError)
     }
   })
