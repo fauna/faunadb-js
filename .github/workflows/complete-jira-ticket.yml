@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Login
-        uses: atlassian/gajira-login@main
+        uses: atlassian/gajira-login@master
         env:
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
@@ -25,12 +25,12 @@ jobs:
 
       - name: Parse ticket number
         id: ticketNumber
-        uses: atlassian/gajira-find-issue-key@main
+        uses: atlassian/gajira-find-issue-key@master
         with:
           string: ${{ steps.botComment.outputs.comment-body }}
   
       - name: Close ticket
-        uses: atlassian/gajira-transition@main
+        uses: atlassian/gajira-transition@master
         with:
           issue: ${{ steps.ticketNumber.outputs.issue }}
           transition: "DONE"
