@@ -242,55 +242,81 @@ function getNodeRuntimeEnv() {
   var runtimeEnvs = [
     {
       name: 'Netlify',
-      check: () => process.env.hasOwnProperty('NETLIFY_IMAGES_CDN_DOMAIN'),
+      check: function() {
+        return process.env.hasOwnProperty('NETLIFY_IMAGES_CDN_DOMAIN')
+      },
     },
     {
       name: 'Vercel',
-      check: () => process.env.hasOwnProperty('VERCEL'),
+      check: function() {
+        return process.env.hasOwnProperty('VERCEL')
+      },
     },
     {
       name: 'Heroku',
-      check: () =>
-        process.env.hasOwnProperty('PATH') &&
-        process.env.PATH.indexOf('.heroku') !== -1,
+      check: function() {
+        return (
+          process.env.hasOwnProperty('PATH') &&
+          process.env.PATH.indexOf('.heroku') !== -1
+        )
+      },
     },
     {
       name: 'AWS Lambda',
-      check: () => process.env.hasOwnProperty('AWS_LAMBDA_FUNCTION_VERSION'),
+      check: function() {
+        return process.env.hasOwnProperty('AWS_LAMBDA_FUNCTION_VERSION')
+      },
     },
     {
       name: 'GCP Cloud Functions',
-      check: () =>
-        process.env.hasOwnProperty('_') &&
-        process.env._.indexOf('google') !== -1,
+      check: function() {
+        return (
+          process.env.hasOwnProperty('_') &&
+          process.env._.indexOf('google') !== -1
+        )
+      },
     },
     {
       name: 'GCP Compute Instances',
-      check: () => process.env.hasOwnProperty('GOOGLE_CLOUD_PROJECT'),
+      check: function() {
+        return process.env.hasOwnProperty('GOOGLE_CLOUD_PROJECT')
+      },
     },
     {
       name: 'Azure Cloud Functions',
-      check: () =>
-        process.env.hasOwnProperty('WEBSITE_FUNCTIONS_AZUREMONITOR_CATEGORIES'),
+      check: function() {
+        return process.env.hasOwnProperty(
+          'WEBSITE_FUNCTIONS_AZUREMONITOR_CATEGORIES'
+        )
+      },
     },
     {
       name: 'Azure Compute',
-      check: () =>
-        process.env.hasOwnProperty('ORYX_ENV_TYPE') &&
-        process.env.hasOwnProperty('WEBSITE_INSTANCE_ID') &&
-        process.env.ORYX_ENV_TYPE === 'AppService',
+      check: function() {
+        return (
+          process.env.hasOwnProperty('ORYX_ENV_TYPE') &&
+          process.env.hasOwnProperty('WEBSITE_INSTANCE_ID') &&
+          process.env.ORYX_ENV_TYPE === 'AppService'
+        )
+      },
     },
     {
       name: 'Mongo Stitch',
-      check: () => typeof crossGlobal.StitchError === 'function',
+      check: function() {
+        return typeof crossGlobal.StitchError === 'function'
+      },
     },
     {
       name: 'Render',
-      check: () => process.env.hasOwnProperty('RENDER_SERVICE_ID'),
+      check: function() {
+        return process.env.hasOwnProperty('RENDER_SERVICE_ID')
+      },
     },
     {
       name: 'Begin',
-      check: () => process.env.hasOwnProperty('BEGIN_DATA_SCOPE_ID'),
+      check: function() {
+        return process.env.hasOwnProperty('BEGIN_DATA_SCOPE_ID')
+      },
     },
   ]
   var detectedEnv = runtimeEnvs.find(env => env.check())
