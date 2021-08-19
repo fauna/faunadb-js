@@ -33,4 +33,5 @@ export module errors {
   export class MethodNotAllowed extends FaunaHTTPError {}
   export class InternalError extends FaunaHTTPError {}
   export class UnavailableError extends FaunaHTTPError {}
+  export class TooManyRequests extends FaunaHTTPError {}
 }
