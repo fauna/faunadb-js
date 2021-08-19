@@ -29,7 +29,9 @@ export interface ClientConfig {
 export interface QueryOptions
   extends Partial<
     Pick<ClientConfig, 'secret' | 'queryTimeout' | 'fetch' | 'observer'>
-  > {}
+  > {
+    signal: AbortSignal
+  }
 
 type StreamFn<T> = (
   expr: Expr,
