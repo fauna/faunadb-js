@@ -1,3 +1,11 @@
+## 4.4.0
+
+- Improve types (errors.pargeJSON, errors.TooManyRequests, `signal` for client.query options)
+- Fix false positive cases for ClientClosed error
+- Option to disable checking driver version (new Client({notifyAboutNewVersion: false}))
+- Fix PageHelper honors size with map/filter
+- Fix module issue for `Vitessedge`
+
 ## 4.3.0
 
 - Implements Client#close method, allows Infinity for `http2SessionIdleTime` parameter
