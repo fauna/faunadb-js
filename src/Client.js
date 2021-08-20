@@ -165,7 +165,7 @@ var notifyAboutNewVersion = util.notifyAboutNewVersion()
  *   Only applicable for NodeJS environment (when http2 module is used). Default is 500ms;
  *   can also be configured via the FAUNADB_HTTP2_SESSION_IDLE_TIME environment variable
  *   which has the highest priority and overrides the option passed into the Client constructor.
- * @param {?boolean} options.notifyAboutNewVersion
+ * @param {?boolean} options.checkNewVersion
  *   Enabled by default. Will print a message to terminal if installed version is ahead the latest one
  */
 function Client(options) {
@@ -183,9 +183,9 @@ function Client(options) {
     fetch: undefined,
     queryTimeout: null,
     http2SessionIdleTime: http2SessionIdleTime.value,
-    notifyAboutNewVersion: true,
+    checkNewVersion: true,
   })
-  notifyAboutNewVersion(options.notifyAboutNewVersion)
+  notifyAboutNewVersion(options.checkNewVersion)
 
   if (http2SessionIdleTime.shouldOverride) {
     options.http2SessionIdleTime = http2SessionIdleTime.value
