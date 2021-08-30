@@ -38,7 +38,7 @@ jobs:
       - task: browserify-and-npm-publish
         file: fauna-js-repository/concourse/tasks/browserify-and-npm-publish.yml
         params:
-          NPM_TOKEN: ((fauna/npm.token))
+          NPM_TOKEN: ((npm_token))
 
       - task: publish-docs
         file: fauna-js-repository/concourse/tasks/publish-docs.yml
