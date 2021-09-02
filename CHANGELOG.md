@@ -1,3 +1,7 @@
+## 4.4.1
+
+- Make `signal` property of `client.query` optional
+
 ## 4.4.0
 
 - Improve types (errors.pargeJSON, errors.TooManyRequests, `signal` for client.query options)
