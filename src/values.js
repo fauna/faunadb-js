@@ -34,9 +34,9 @@ var stringify = nodeUtil ? nodeUtil.inspect : JSON.stringify
  */
 function Value() {}
 
-Value.prototype._isFaunaValue = true
-
 util.inherits(Value, Expr)
+
+Value.prototype._isFaunaValue = true
 
 /**
  * FaunaDB ref.
@@ -60,9 +60,9 @@ function Ref(id, collection, database) {
   if (database) this.value['database'] = database
 }
 
-Ref.prototype._isFaunaRef = true
-
 util.inherits(Ref, Value)
+
+Ref.prototype._isFaunaRef = true
 
 /**
  * Gets the collection part out of the Ref.
