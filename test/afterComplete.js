@@ -1,5 +1,6 @@
 const query = require('../src/query')
 const Client = require('../src/Client')
+const util = require('../src/_util')
 const testConfig = require('./config')
 
 function takeObjectKeys(object) {
