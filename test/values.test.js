@@ -9,6 +9,7 @@ var q = require('../src/query')
 
 var FaunaDate = values.FaunaDate,
   FaunaTime = values.FaunaTime,
+  Value = values.Value,
   Ref = values.Ref,
   SetRef = values.SetRef,
   Bytes = values.Bytes,
@@ -686,5 +687,19 @@ describe('Values', () => {
       new Query({ lambda: 'X', expr: { var: 'X' }, api_version: '3' }),
       'Query(Lambda("X", Var("X")))'
     )
+  })
+
+  test('type helpers', () => {
+    var expr = new Expr()
+    var value = new Value()
+
+    expect(expr._isFaunaExpr).toEqual(true)
+
+    expect(value._isFaunaExpr).toEqual(true)
+    expect(value._isFaunaValue).toEqual(true)
+
+    expect(ref._isFaunaExpr).toEqual(true)
+    expect(ref._isFaunaValue).toEqual(true)
+    expect(ref._isFaunaRef).toEqual(true)
   })
 })
