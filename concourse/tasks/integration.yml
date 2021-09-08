@@ -43,4 +43,4 @@ services:
 
   test-16:
     <<: *test
-    image: 16.8.0-alpine
+    image: node:16.8.0-alpine3.13
