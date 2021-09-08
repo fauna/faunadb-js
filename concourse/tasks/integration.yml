@@ -1,7 +1,7 @@
 version: "3.3"
 
-x-base-test: 
-  &base-test
+x-test: 
+  &test
   environment:
     - FAUNA_ROOT_KEY
     - FAUNA_DOMAIN
@@ -30,5 +30,5 @@ services:
       retries: 30
 
   tests-15:
-    <<: *base-test
+    <<: *test
     image: node:15.14.0-alpine3.10
