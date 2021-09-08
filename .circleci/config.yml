@@ -94,6 +94,78 @@ jobs:
       - build_and_test:
           node_version: 11
 
+  core-stable-12:
+    executor:
+      name: core
+      node_version: 12
+      version: stable
+    steps:
+      - build_and_test:
+          node_version: 12
+
+  core-nightly-12:
+    executor:
+      name: core
+      node_version: 12
+      version: nightly
+    steps:
+      - build_and_test:
+          node_version: 12
+
+  core-stable-14:
+    executor:
+      name: core
+      node_version: 14
+      version: stable
+    steps:
+      - build_and_test:
+          node_version: 14
+
+  core-nightly-14:
+    executor:
+      name: core
+      node_version: 14
+      version: nightly
+    steps:
+      - build_and_test:
+          node_version: 14
+
+  core-stable-15:
+    executor:
+      name: core
+      node_version: 15
+      version: stable
+    steps:
+      - build_and_test:
+          node_version: 15
+
+  core-nightly-15:
+    executor:
+      name: core
+      node_version: 15
+      version: nightly
+    steps:
+      - build_and_test:
+          node_version: 15
+
+  core-stable-16:
+    executor:
+      name: core
+      node_version: 16
+      version: stable
+    steps:
+      - build_and_test:
+          node_version: 16
+
+  core-nightly-16:
+    executor:
+      name: core
+      node_version: 16
+      version: nightly
+    steps:
+      - build_and_test:
+          node_version: 16
+
 workflows:
   version: 2
   build_and_test:
@@ -106,3 +178,21 @@ workflows:
           context: faunadb-drivers
       - core-nightly-11:
           context: faunadb-drivers
+      - core-stable-12:
+          context: faunadb-drivers
+      - core-nightly-12:
+          context: faunadb-drivers
+      - core-stable-14:
+          context: faunadb-drivers
+      - core-nightly-14:
+          context: faunadb-drivers
+      - core-stable-15:
+          context: faunadb-drivers
+      - core-nightly-15:
+          context: faunadb-drivers
+      - core-stable-16:
+          context: faunadb-drivers
+      - core-nightly-16:
+          context: faunadb-drivers
+
+
