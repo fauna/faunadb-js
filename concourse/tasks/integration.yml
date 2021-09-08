@@ -29,7 +29,7 @@ services:
       timeout: 3s
       retries: 30
 
-  tests-10:
+  test-10:
     <<: *test
     image: node:10.24.1-alpine3.11
 
