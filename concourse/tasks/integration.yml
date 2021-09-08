@@ -1,5 +1,22 @@
 version: "3.3"
 
+tests: &default
+  environment:
+    - FAUNA_ROOT_KEY
+    - FAUNA_DOMAIN
+    - FAUNA_SCHEME
+    - FAUNA_PORT
+    - AUTH_0_URI
+    - AUTH_0_CLIENT_ID
+    - AUTH_0_CLIENT_SECRET
+  container_name: mytests
+  depends_on:
+    - faunadb
+  volumes:
+    - "../../:/tmp/app"
+  working_dir: "/tmp/app"
+  command: [sh, -c, "npm install && npm test"]
+
 services:
   faunadb:
     image: fauna/faunadb
@@ -9,23 +26,6 @@ services:
       interval: 1s
       timeout: 3s
       retries: 30
-
-  tests: &default
-    environment:
-      - FAUNA_ROOT_KEY
-      - FAUNA_DOMAIN
-      - FAUNA_SCHEME
-      - FAUNA_PORT
-      - AUTH_0_URI
-      - AUTH_0_CLIENT_ID
-      - AUTH_0_CLIENT_SECRET
-    container_name: mytests
-    depends_on:
-      - faunadb
-    volumes:
-      - "../../:/tmp/app"
-    working_dir: "/tmp/app"
-    command: [sh, -c, "npm install && npm test"]
 
   tests-15:
     <<: *default
