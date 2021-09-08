@@ -24,7 +24,7 @@ run:
     - -ceu
     - |
       # start containers
-      docker-compose -f fauna-js-repository/concourse/tasks/integration.yml run tests
+      docker-compose -f fauna-js-repository/concourse/tasks/integration.yml run tests-15
       # stop and remove containers
       docker-compose -f fauna-js-repository/concourse/tasks/integration.yml down
       # remove volumes
