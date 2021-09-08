@@ -39,7 +39,7 @@ services:
 
   test-14:
     <<: *test
-    image: 14.17.6-alpine
+    image: node:14.17.6-alpine3.13
 
   test-16:
     <<: *test
