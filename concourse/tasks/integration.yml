@@ -29,6 +29,18 @@ services:
       timeout: 3s
       retries: 30
 
-  tests-15:
+  tests-10:
     <<: *test
-    image: node:15.14.0-alpine3.10
+    image: node:10.24.1-alpine3.11
+
+  test-12:
+    <<: *test
+    image: node:12.22.6-alpine3.13
+
+  test-14:
+    <<: *test
+    image: 14.17.6-alpine3.13
+
+  test-16:
+    <<: *test
+    image: 16.8.0-alpine3.13
