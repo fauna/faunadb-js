@@ -57,6 +57,7 @@ var varArgsFunctions = [
 
 var specialCases = {
   containsstrregex: 'ContainsStrRegex',
+  containsstr: 'ContainsStr',
   endswith: 'EndsWith',
   findstr: 'FindStr',
   findstrregex: 'FindStrRegex',
