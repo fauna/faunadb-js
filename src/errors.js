@@ -20,6 +20,7 @@ var util = require('./_util')
  */
 function FaunaError(name, message, description) {
   Error.call(this)
+  Error.captureStackTrace(this, this.constructor)
 
   /**
    * Name of this exception.
