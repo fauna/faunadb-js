@@ -5,14 +5,14 @@ resources:
     icon: github
     source:
       uri: https://github.com/fauna/faunadb-js.git
-      branch: main
+      branch: v5
 
   - name: fauna-js-repository-docs
     type: git
     icon: github
     source:
       uri: https://github.com/fauna/faunadb-js.git
-      branch: gh-pages
+      branch: gh-pages-v5
 
 jobs:
   - name: release
@@ -23,7 +23,7 @@ jobs:
       - get: fauna-js-repository-docs
 
       - task: integration-tests
-        file: fauna-js-repository/concourse/tasks/integration-tests.yml
+        file: fauna-js-repository/concourse/tasks/ integration-tests.yml
         privileged: true
         params:
           FAUNA_ROOT_KEY: ((fauna.secret))
