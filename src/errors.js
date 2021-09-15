@@ -168,6 +168,8 @@ FaunaHTTPError.raiseForStatusCode = function(requestResult) {
         throw new NotFound(requestResult)
       case 405:
         throw new MethodNotAllowed(requestResult)
+      case 409:
+        throw new Conflict(requestResult)
       case 413:
         throw new PayloadTooLarge(requestResult)
       case 429:
@@ -349,6 +351,18 @@ function MethodNotAllowed(requestResult) {
 }
 
 util.inherits(MethodNotAllowed, FaunaHTTPError)
+
+/**
+ * A HTTP 409 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+function Conflict(requestResult) {
+  FaunaHTTPError.call(this, 'Conflict', requestResult)
+}
+
+util.inherits(Conflict, FaunaHTTPError)
 
 /**
  * A HTTP 429 error.
