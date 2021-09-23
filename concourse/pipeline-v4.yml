@@ -5,7 +5,7 @@ resources:
     icon: github
     source:
       uri: https://github.com/fauna/faunadb-js.git
-      branch: main
+      branch: v4
 
   - name: fauna-js-repository-docs
     type: git
