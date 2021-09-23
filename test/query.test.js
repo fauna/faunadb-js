@@ -1401,7 +1401,7 @@ describe('query', () => {
   })
 
   test('containsstr', () => {
-    expect(fauna.Expr.toString(fauna.query.ContainsStr('ABC', 'A'))).toEqual(
+    expect(Expr.toString(query.ContainsStr('ABC', 'A'))).toEqual(
       'ContainsStr("ABC", "A")'
     )
     return Promise.all([
