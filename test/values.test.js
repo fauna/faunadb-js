@@ -394,6 +394,11 @@ describe('Values', () => {
 
   test('pretty print Query', () => {
     assertPrint(
+      new Query(q.ContainsStr('ABC', 'A')),
+      'Query(ContainsStr("ABC", "A"))'
+    )
+
+    assertPrint(
       new Query(q.Lambda('x', q.Var('x'))),
       'Query(Lambda("x", Var("x")))'
     )

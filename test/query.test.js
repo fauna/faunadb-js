@@ -1401,9 +1401,6 @@ describe('query', () => {
   })
 
   test('containsstr', () => {
-    expect(Expr.toString(query.ContainsStr('ABC', 'A'))).toEqual(
-      'ContainsStr("ABC", "A")'
-    )
     return Promise.all([
       assertQuery(query.ContainsStr('ABC', 'A'), true),
       assertQuery(query.ContainsStr('ABC', 'D'), false),
