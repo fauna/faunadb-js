@@ -134,11 +134,6 @@ beforeAll(() => {
     })
 })
 
-afterAll(() => {
-  // disable line below to prevent db cleanup after the test
-  return rootClient.query(query.Delete(dbRef))
-})
-
 function simulateBrowser() {
   global.window = {} // deceive util.isNodeEnv()
   global.navigator = { userAgent: '' } // mock browser navigator

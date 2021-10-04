@@ -38,6 +38,7 @@ describe('query', () => {
     const rootClient = util.rootClient
     const cfg = util.getCfg()
     const dbRef = await rootClient.query(util.dbRef).then(pluckRef)
+
     const serverKey = await rootClient.query(
       query.CreateKey({ database: dbRef, role: 'server' })
     )

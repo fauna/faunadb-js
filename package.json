@@ -28,6 +28,7 @@
     "browserify-min": "browserify index.js --standalone faunadb | terser -c -m --keep-fnames --keep-classnames -o dist/faunadb-min.js",
     "prettify": "prettier --write \"{src,test}/**/*.{js,ts}\"",
     "test": "jest --env=node --verbose=false --forceExit ./test",
+    "posttest": "node ./test/afterComplete",
     "semantic-release": "semantic-release",
     "wp": "webpack",
     "postinstall": "node ./tools/printReleaseNotes",
