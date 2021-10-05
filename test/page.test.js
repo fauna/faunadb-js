@@ -292,7 +292,6 @@ describe('page', () => {
         expect('ts' in value).toBeTruthy()
         expect('action' in value).toBeTruthy()
         expect('document' in value).toBeTruthy()
-        expect('instance' in value).toBeTruthy()
         expect('data' in value).toBeTruthy()
       })
     })
