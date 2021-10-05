@@ -193,10 +193,10 @@ PageHelper.prototype._consumePages = function(lambda, reverse) {
   return function(page) {
     var data = []
     page.data.forEach(function(item) {
-      if (item.document) {
+      if (item && item.document) {
         item.instance = item.document
       }
-      if (item.value && item.value.document) {
+      if (item && item.value && item.value.document) {
         item.value.instance = item.value.document
       }
       data.push(item)
