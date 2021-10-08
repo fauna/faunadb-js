@@ -264,6 +264,7 @@ PageHelper.prototype._clone = function() {
     _faunaFunctions: { value: this._faunaFunctions },
     before: { value: this.before },
     after: { value: this.after },
+    params: { value: this.params },
   })
 }
 

@@ -63,4 +63,5 @@ export module errors {
   export class MoveDatabaseError extends FaunaHTTPError {}
   export class RecoveryFailedError extends FaunaHTTPError {}
   export class FeatureNotAvailableError extends FaunaHTTPError {}
+  export class TooManyRequests extends FaunaHTTPError {}
 }
