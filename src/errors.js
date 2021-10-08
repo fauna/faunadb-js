@@ -131,6 +131,10 @@ function FaunaHTTPError(name, requestResult) {
    * @type {RequestResult}
    */
   this.requestResult = requestResult
+
+  this.code = this.errors()[0].code
+  this.position = this.errors()[0].position || []
+  this.httpStatusCode = requestResult.statusCode
 }
 
 util.inherits(FaunaHTTPError, FaunaError)
@@ -155,7 +159,7 @@ FaunaHTTPError.raiseForStatusCode = function(requestResult) {
   if (code < 200 || code >= 300) {
     switch (code) {
       case 400:
-        throw new BadRequest(requestResult)
+        throw getQueryError(requestResult)
       case 401:
         throw new Unauthorized(requestResult)
       case 403:
@@ -164,10 +168,18 @@ FaunaHTTPError.raiseForStatusCode = function(requestResult) {
         throw new NotFound(requestResult)
       case 405:
         throw new MethodNotAllowed(requestResult)
+      case 409:
+        throw new Conflict(requestResult)
+      case 413:
+        throw new PayloadTooLarge(requestResult)
       case 429:
         throw new TooManyRequests(requestResult)
+      case 440:
+        throw new ProcessingTimeLimitExceeded(requestResult)
       case 500:
         throw new InternalError(requestResult)
+      case 502:
+        throw new BadGateway(requestResult)
       case 503:
         throw new UnavailableError(requestResult)
       default:
@@ -176,18 +188,108 @@ FaunaHTTPError.raiseForStatusCode = function(requestResult) {
   }
 }
 
-/**
- * A HTTP 400 error.
- *
- * @param {RequestResult} requestResult
- * @extends module:errors~FaunaHTTPError
- * @constructor
- */
-function BadRequest(requestResult) {
-  FaunaHTTPError.call(this, 'BadRequest', requestResult)
+var Errors = {
+  FaunaError: FaunaError,
+  ClientClosed: ClientClosed,
+  FaunaHTTPError: FaunaHTTPError,
+  InvalidValue: InvalidValue,
+  InvalidArity: InvalidArity,
+  BadRequest: BadRequest,
+  PayloadTooLarge: PayloadTooLarge,
+  ValidationError: ValidationError,
+  Unauthorized: Unauthorized,
+  PermissionDenied: PermissionDenied,
+  NotFound: NotFound,
+  MethodNotAllowed: MethodNotAllowed,
+  TooManyRequests: TooManyRequests,
+  InternalError: InternalError,
+  UnavailableError: UnavailableError,
+  FunctionCallError: FunctionCallError,
+  StreamError: StreamError,
+  StreamsNotSupported: StreamsNotSupported,
+  StreamErrorEvent: StreamErrorEvent,
 }
 
-util.inherits(BadRequest, FaunaHTTPError)
+var ErrorCodeMap = {
+  'invalid argument': 'InvalidArgumentError',
+  'call error': FunctionCallError,
+  'invalid expression': 'InvalidExpressionError',
+  'invalid url parameter': 'InvalidUrlParameterError',
+  'schema not found': 'SchemaNotFoundError',
+  'transaction aborted': 'TransactionAbortedError',
+  'invalid write time': 'InvalidWriteTimeError',
+  'invalid ref': 'InvalidReferenceError',
+  'missing identity': 'MissingIdentityError',
+  'invalid scope': 'InvalidScopeError',
+  'invalid token': 'InvalidTokenError',
+  'stack overflow': 'StackOverflowError',
+  'authentication failed': 'AuthenticationFailedError',
+  'value not found': 'ValueNotFoundError',
+  'instance not found': 'InstanceNotFound',
+  'instance already exists': 'InstanceAlreadyExistsError',
+  'validation failed': ValidationError,
+  'instance not unique': 'InstanceNotUniqueError',
+  'invalid object in container': 'InvalidObjectInContainerError',
+  'move database error': 'MoveDatabaseError',
+  'recovery failed': 'RecoveryFailedError',
+  'feature not available': 'FeatureNotAvailableError',
+}
+
+Object.keys(ErrorCodeMap).forEach(code => {
+  if (typeof ErrorCodeMap[code] === 'string') {
+    Errors[ErrorCodeMap[code]] = errorClassFactory(ErrorCodeMap[code])
+  } else {
+    Errors[ErrorCodeMap[code].name] = ErrorCodeMap[code]
+  }
+})
+
+function errorClassFactory(name) {
+  function ErrorClass(requestResult) {
+    FaunaHTTPError.call(this, name, requestResult)
+  }
+  util.inherits(ErrorClass, FaunaHTTPError)
+
+  return ErrorClass
+}
+
+function getQueryError(requestResult) {
+  const errors = requestResult.responseContent.errors
+  const errorCode = errors[0].code
+  const ErrorFn =
+    typeof ErrorCodeMap[errorCode] === 'string'
+      ? Errors[ErrorCodeMap[errorCode]]
+      : ErrorCodeMap[errorCode]
+  if (errors.length === 0 || !errorCode) {
+    return new BadRequest(requestResult)
+  }
+
+  if (!ErrorFn) {
+    return new FaunaHTTPError('UnknownError', requestResult)
+  }
+
+  return new ErrorFn(requestResult)
+}
+
+function FunctionCallError(requestResult) {
+  FaunaHTTPError.call(this, 'FunctionCallError', requestResult)
+
+  const cause = requestResult.responseContent.errors[0].cause[0]
+  this.code = cause.code
+  this.position = cause.position
+  this.description = cause.description
+}
+
+util.inherits(FunctionCallError, FaunaHTTPError)
+
+function ValidationError(requestResult) {
+  FaunaHTTPError.call(this, 'ValidationError', requestResult)
+
+  const failure = requestResult.responseContent.errors[0].failures[0]
+  this.code = failure.code
+  this.position = failure.field
+  this.description = failure.description
+}
+util.inherits(ValidationError, FaunaHTTPError)
 
 /**
  * A HTTP 401 error.
@@ -226,6 +328,19 @@ function NotFound(requestResult) {
 util.inherits(NotFound, FaunaHTTPError)
 
 /**
+ * A HTTP 400 error.
+ *
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+function BadRequest(requestResult) {
+  FaunaHTTPError.call(this, 'BadRequest', requestResult)
+}
+
+util.inherits(BadRequest, FaunaHTTPError)
+
+/**
  * A HTTP 405 error.
  * @param {RequestResult} requestResult
  * @extends module:errors~FaunaHTTPError
@@ -238,6 +353,18 @@ function MethodNotAllowed(requestResult) {
 util.inherits(MethodNotAllowed, FaunaHTTPError)
 
 /**
+ * A HTTP 409 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+function Conflict(requestResult) {
+  FaunaHTTPError.call(this, 'Conflict', requestResult)
+}
+
+util.inherits(Conflict, FaunaHTTPError)
+
+/**
  * A HTTP 429 error.
  * @param {RequestResult} requestResult
  * @extends module:errors~FaunaHTTPError
@@ -248,6 +375,42 @@ function TooManyRequests(requestResult) {
 }
 
 util.inherits(TooManyRequests, FaunaHTTPError)
+
+/**
+ * A HTTP 413 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+function PayloadTooLarge(requestResult) {
+  FaunaHTTPError.call(this, 'PayloadTooLarge', requestResult)
+}
+
+util.inherits(PayloadTooLarge, FaunaHTTPError)
+
+/**
+ * A HTTP 502 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+function BadGateway(requestResult) {
+  FaunaHTTPError.call(this, 'BadGateway', requestResult)
+}
+
+util.inherits(BadGateway, FaunaHTTPError)
+
+/**
+ * A HTTP 440 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+function ProcessingTimeLimitExceeded(requestResult) {
+  FaunaHTTPError.call(this, 'ProcessingTimeLimitExceeded', requestResult)
+}
+
+util.inherits(ProcessingTimeLimitExceeded, FaunaHTTPError)
 
 /**
  * A HTTP 500 error.
@@ -337,21 +500,4 @@ function ClientClosed(message, description) {
 
 util.inherits(ClientClosed, FaunaError)
 
-module.exports = {
-  FaunaError: FaunaError,
-  ClientClosed: ClientClosed,
-  FaunaHTTPError: FaunaHTTPError,
-  InvalidValue: InvalidValue,
-  InvalidArity: InvalidArity,
-  BadRequest: BadRequest,
-  Unauthorized: Unauthorized,
-  PermissionDenied: PermissionDenied,
-  NotFound: NotFound,
-  MethodNotAllowed: MethodNotAllowed,
-  TooManyRequests: TooManyRequests,
-  InternalError: InternalError,
-  UnavailableError: UnavailableError,
-  StreamError: StreamError,
-  StreamsNotSupported: StreamsNotSupported,
-  StreamErrorEvent: StreamErrorEvent,
-}
+module.exports = Errors

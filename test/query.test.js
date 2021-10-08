@@ -38,6 +38,7 @@ describe('query', () => {
     const rootClient = util.rootClient
     const cfg = util.getCfg()
     const dbRef = await rootClient.query(util.dbRef).then(pluckRef)
+
     const serverKey = await rootClient.query(
       query.CreateKey({ database: dbRef, role: 'server' })
     )
@@ -56,7 +57,6 @@ describe('query', () => {
           .query(
             query.CreateIndex({
               name: 'widgets_by_n',
-              active: true,
               source: collectionRef,
               terms: [{ field: ['data', 'n'] }],
             })
@@ -165,7 +165,7 @@ describe('query', () => {
   test('abort', () => {
     return util.assertRejected(
       client.query(query.Abort('abort message')),
-      errors.BadRequest
+      errors.TransactionAbortedError
     )
   })
 
@@ -461,7 +461,10 @@ describe('query', () => {
       6,
     ])
     // Fails for non-array.
-    var p2 = assertBadQuery(query.Prepend([1, 2], 'foo'))
+    var p2 = assertBadQuery(
+      query.Prepend([1, 2], 'foo'),
+      errors.InvalidArgumentError
+    )
 
     return Promise.all([p1, p2])
   })
@@ -469,7 +472,10 @@ describe('query', () => {
   test('append', () => {
     var p1 = assertQuery(query.Append([4, 5, 6], [1, 2, 3]), [1, 2, 3, 4, 5, 6])
     // Fails for non-array.
-    var p2 = assertBadQuery(query.Append([1, 2], 'foo'))
+    var p2 = assertBadQuery(
+      query.Append([1, 2], 'foo'),
+      errors.InvalidArgumentError
+    )
 
     return Promise.all([p1, p2])
   })
@@ -683,7 +689,6 @@ describe('query', () => {
               name: 'reduce_idx',
               source: cls.ref,
               values: [{ field: ['data', 'value'] }],
-              active: true,
             })
           )
           .then(function(index) {
@@ -975,7 +980,7 @@ describe('query', () => {
         })
       )
     } catch (err) {
-      expect(err).toBeInstanceOf(errors.BadRequest)
+      expect(err).toBeInstanceOf(errors.ValidationError)
     }
   })
 
@@ -1009,7 +1014,7 @@ describe('query', () => {
         })
       )
     } catch (err) {
-      expect(err).toBeInstanceOf(errors.BadRequest)
+      expect(err).toBeInstanceOf(errors.ValidationError)
     }
   })
 
@@ -1042,7 +1047,7 @@ describe('query', () => {
         })
       )
     } catch (err) {
-      expect(err).toBeInstanceOf(errors.BadRequest)
+      expect(err).toBeInstanceOf(errors.ValidationError)
     }
   })
 
@@ -1076,7 +1081,7 @@ describe('query', () => {
         })
       )
     } catch (err) {
-      expect(err).toBeInstanceOf(errors.BadRequest)
+      expect(err).toBeInstanceOf(errors.ValidationError)
     }
   })
 
@@ -1235,7 +1240,6 @@ describe('query', () => {
               name: 'range_idx',
               source: cls.ref,
               values: [{ field: ['data', 'value'] }],
-              active: true,
             })
           )
           .then(function(index) {
@@ -1799,9 +1803,9 @@ describe('query', () => {
   })
 
   test('contains_value scalar types', async () => {
-    assertBadQuery(query.ContainsValue('a', 'abc'), errors.BadRequest)
-    assertBadQuery(query.ContainsValue(true, true), errors.BadRequest)
-    assertBadQuery(query.ContainsValue(1, 123), errors.BadRequest)
+    assertBadQuery(query.ContainsValue('a', 'abc'), errors.InvalidArgumentError)
+    assertBadQuery(query.ContainsValue(true, true), errors.InvalidArgumentError)
+    assertBadQuery(query.ContainsValue(1, 123), errors.InvalidArgumentError)
   })
 
   test('contains_field', () => {
@@ -1816,19 +1820,19 @@ describe('query', () => {
     // Rejects arrays
     var queryThree = assertBadQuery(
       query.ContainsField(['band'], obj),
-      errors.BadRequest
+      errors.InvalidArgumentError
     )
 
     // Rejects objects
     var queryFour = assertBadQuery(
       query.ContainsField({ members: { trey: 'guitar', mike: 'bass' } }, obj),
-      errors.BadRequest
+      errors.InvalidArgumentError
     )
 
     // Rejects numbers
     var queryFive = assertBadQuery(
       query.ContainsField(10, obj),
-      errors.BadRequest
+      errors.InvalidArgumentError
     )
 
     return Promise.all([queryOne, queryTwo, queryThree, queryFour, queryFive])
@@ -1903,7 +1907,7 @@ describe('query', () => {
     // TODO: can't make this query because 2.0 === 2
     // await assertQuery(query.Divide(2, 3, 5), 2/15)
     var p1 = assertQuery(query.Divide(2), 2)
-    var p2 = assertBadQuery(query.Divide(1, 0))
+    var p2 = assertBadQuery(query.Divide(1, 0), errors.InvalidArgumentError)
     return Promise.all([p1, p2])
   })
 
@@ -1926,7 +1930,7 @@ describe('query', () => {
     // This is (15 % 10) % 2
     var p2 = assertQuery(query.Modulo(15, 10, 2), 1)
     var p3 = assertQuery(query.Modulo(2), 2)
-    var p4 = assertBadQuery(query.Modulo(1, 0))
+    var p4 = assertBadQuery(query.Modulo(1, 0), errors.InvalidArgumentError)
     return Promise.all([p1, p2, p3, p4])
   })
 
@@ -1980,7 +1984,6 @@ describe('query', () => {
               name: 'math_collection_index',
               source: coll.ref,
               values: [{ field: ['data', 'value'] }],
-              active: true,
             })
           )
           .then(function(index) {
@@ -2065,7 +2068,6 @@ describe('query', () => {
           query.CreateIndex({
             name: indexName,
             source: query.Collection(collName),
-            active: true,
             terms: [{ field: ['data', 'foo'] }],
             values: [{ field: ['data', 'value'] }],
           })
@@ -2299,7 +2301,6 @@ describe('query', () => {
         return client.query(
           query.CreateIndex({
             name: indexName,
-            active: true,
             source: query.Collection(collName),
             values: [{ field: ['data', 'key'] }, { field: ['data', 'value'] }],
           })
@@ -2490,7 +2491,6 @@ describe('query', () => {
                 query.CreateCollection({ name: 'a_collection' }),
                 query.CreateIndex({
                   name: 'a_index',
-                  active: true,
                   source: query.Ref('collections'),
                 }),
                 query.CreateFunction({
@@ -2803,7 +2803,7 @@ describe('query', () => {
     try {
       await adminClient.query(query.Get(query.AccessProvider(badProviderName)))
     } catch (error) {
-      expect(error).toBeInstanceOf(errors.BadRequest)
+      expect(error).toBeInstanceOf(errors.InvalidReferenceError)
     }
   })
 
@@ -2883,7 +2883,7 @@ describe('query', () => {
 
       throw new Error('Should not reached here')
     } catch (err) {
-      expect(err).toBeInstanceOf(errors.BadRequest)
+      expect(err).toBeInstanceOf(errors.MissingIdentityError)
     }
   })
 
