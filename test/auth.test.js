@@ -21,7 +21,7 @@ describe('auth', () => {
         .then(resp => resp.json())
         .then(data => data.access_token)
     }
-    const providerName = util.randomString('provider_')
+    const providerName = util.randomString('js_driver_')
     const roleOneName = util.randomString('role_one_')
 
     let resource
