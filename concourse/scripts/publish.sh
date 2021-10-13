@@ -12,6 +12,7 @@ echo "Latest version in npm: $NPM_LATEST_VERSION"
 if [ "$PACKAGE_VERSION" \> "$NPM_LATEST_VERSION" ]
 then
   mkdir dist
+  mkdir slack-message
   npm install
   npm run browserify
   npm run browserify-min
