@@ -1,7 +1,6 @@
 #!/bin/sh
 
 set -eou
-mkdir slack-message
 
 cd ./fauna-js-repository
 
