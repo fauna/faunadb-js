@@ -1,5 +1,16 @@
 ---
+resource_types:
+  - name: slack-notification
+    type: docker-image
+    source:
+      repository: cfcommunity/slack-notification-resource
+
 resources:
+  - name: notify
+    type: slack-notification
+    source:
+      url: ((slack-webhook))
+
   - name: fauna-js-repository
     type: git
     icon: github
@@ -19,6 +30,10 @@ jobs:
   - name: release
     serial: true
     public: false
+    on_success:
+      put: notify
+      params:
+        text_file: fauna-js-repository/slack-message
     plan:
       - get: fauna-js-repository
       - get: fauna-js-repository-docs

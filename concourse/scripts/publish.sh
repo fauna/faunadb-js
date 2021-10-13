@@ -20,7 +20,9 @@ then
   echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
   npm publish
   rm .npmrc
+  echo "faunadb-js@$PACKAGE_VERSION publushed to npm" > slack-message
 else
+echo "NPM package already published on npm with version ${NPM_LATEST_VERSION}. Update version, please" > slack-message
   echo "NPM package already published on npm with version ${NPM_LATEST_VERSION}" 1>&2
   exit 1
 fi
