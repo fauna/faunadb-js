@@ -1,9 +1,9 @@
 #!/bin/sh
 
 set -eou
+mkdir slack-message
 
 cd ./fauna-js-repository
-mkdir slack-message
 
 PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
 NPM_LATEST_VERSION=$(npm view faunadb version)
@@ -21,12 +21,13 @@ then
   echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
   # npm publish
   # rm .npmrc
-  cd ..
-  echo "faunadb-js@$PACKAGE_VERSION publushed to npm" > slack-message/publish
+
+  echo "faunadb-js@$PACKAGE_VERSION published to npm" > ../slack-message/publish
 else
-  cd ..
-  cat > slack-message/publish <<EOF
-faunadb-js@$PACKAGE_VERSION already published to npm
-EOF
-  # exit 1
+  cd ./slack-message
+  result=${PWD##*/}
+  printf '%s\n' "${PWD##*/}"
+  echo "faunadb-js@${NPM_LATEST_VERSION} package has been already published" > ../slack-message/publish
+  echo "faunadb-js@${NPM_LATEST_VERSION} package has been already published" 1>&2
+  exit 1
 fi

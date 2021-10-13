@@ -57,20 +57,7 @@ jobs:
         on_failure:
           put: notify
           params:
-            text: js release failed
-        
-      - task: consume-the-file
-        config:
-          platform: linux
-          image_resource:
-            type: registry-image
-            source: { repository: busybox }
-          inputs:
-            - name: slack-message
-          run:
-            path: cat
-            args:
-               - ./slack-message/publish
+            text_file: slack-message/publish
 
 
       # - task: publish-docs
