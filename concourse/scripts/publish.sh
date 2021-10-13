@@ -21,8 +21,10 @@ then
   echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
   # npm publish
   # rm .npmrc
+  cd ..
   echo "faunadb-js@$PACKAGE_VERSION publushed to npm" > slack-message/publish
 else
+  cd ..
   cat > slack-message/publish <<EOF
 faunadb-js@$PACKAGE_VERSION already published to npm
 EOF

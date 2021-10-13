@@ -59,15 +59,18 @@ jobs:
           params:
             text: js release failed
         
-      - task: debug-output
+      - task: consume-the-file
         config:
           platform: linux
-          inputs: 
+          image_resource:
+            type: registry-image
+            source: { repository: busybox }
+          inputs:
             - name: slack-message
           run:
-            path: sh
-            args: 
-              - cd ./slack-message; ls -la; cat ./publish
+            path: cat
+            args:
+               - ./slack-message/publish
 
 
       # - task: publish-docs
