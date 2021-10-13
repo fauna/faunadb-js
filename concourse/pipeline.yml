@@ -55,11 +55,11 @@ jobs:
         on_success:
           put: notify
           params:
-            text_file: slack-message
+            text_file: slack-message/publish
         on_failure:
           put: notify
           params:
-            text_file: slack-message
+            text_file: slack-message/publish
 
       # - task: publish-docs
       #   file: fauna-js-repository/concourse/tasks/publish-docs.yml
