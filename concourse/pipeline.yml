@@ -57,7 +57,18 @@ jobs:
         on_failure:
           put: notify
           params:
-            text_file: slack-message/publish
+            text: js release failed
+        
+      - task: debug-output
+        config:
+          platform: linux
+          inputs: 
+            - name: slack-message
+          run:
+            path: sh
+            args: 
+              - cd ./slack-message; ls -la; cat ./publish
+
 
       # - task: publish-docs
       #   file: fauna-js-repository/concourse/tasks/publish-docs.yml

@@ -26,5 +26,5 @@ else
   cat > slack-message/publish <<EOF
 faunadb-js@$PACKAGE_VERSION already published to npm
 EOF
-  exit 1
+  # exit 1
 fi
