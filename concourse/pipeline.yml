@@ -50,8 +50,6 @@ jobs:
         file: fauna-js-repository/concourse/tasks/browserify-and-npm-publish.yml
         params:
           NPM_TOKEN: ((npm_token))
-        outputs:
-          - name: slack_message
         on_success:
           put: notify
           params:
