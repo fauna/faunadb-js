@@ -30,14 +30,6 @@ jobs:
   - name: release
     serial: true
     public: false
-    on_success:
-      put: notify
-      params:
-        text_file: fauna-js-repository/slack-message
-    on_failure:
-      put: notify
-      params:
-        text_file: fauna-js-repository/slack-message
     plan:
       - get: fauna-js-repository
       - get: fauna-js-repository-docs
@@ -58,6 +50,16 @@ jobs:
         file: fauna-js-repository/concourse/tasks/browserify-and-npm-publish.yml
         params:
           NPM_TOKEN: ((npm_token))
+        outputs:
+          - name: slack_message
+        on_success:
+          put: notify
+          params:
+            text_file: slack-message
+        on_failure:
+          put: notify
+          params:
+            text_file: slack-message
 
       # - task: publish-docs
       #   file: fauna-js-repository/concourse/tasks/publish-docs.yml
