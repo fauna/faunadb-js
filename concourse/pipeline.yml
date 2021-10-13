@@ -16,7 +16,7 @@ resources:
     icon: github
     source:
       uri: https://github.com/fauna/faunadb-js.git
-      branch: FE-1667_slack_notification
+      branch: main
 
   - name: fauna-js-repository-docs
     type: git
