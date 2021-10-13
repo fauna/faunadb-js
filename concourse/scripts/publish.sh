@@ -23,7 +23,7 @@ then
   # rm .npmrc
   echo "faunadb-js@$PACKAGE_VERSION publushed to npm" > slack-message/publish
 else
-  cat > notify_message/message <<EOF
+  cat > slack-message/publish <<EOF
 faunadb-js@$PACKAGE_VERSION already published to npm
 EOF
   exit 1
