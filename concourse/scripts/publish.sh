@@ -3,6 +3,7 @@
 set -eou
 
 cd ./fauna-js-repository
+mkdir slack-message
 
 PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
 NPM_LATEST_VERSION=$(npm view faunadb version)
@@ -12,7 +13,6 @@ echo "Latest version in npm: $NPM_LATEST_VERSION"
 if [ "$PACKAGE_VERSION" \> "$NPM_LATEST_VERSION" ]
 then
   mkdir dist
-  mkdir slack-message
   npm install
   npm run browserify
   npm run browserify-min
@@ -23,10 +23,9 @@ then
   # rm .npmrc
   echo "faunadb-js@$PACKAGE_VERSION publushed to npm" > slack-message/publish
 else
-  cd ./slack-message
   result=${PWD##*/}
   printf '%s\n' "${PWD##*/}"
-  echo "NPM package already published on npm with version ${NPM_LATEST_VERSION}. Update version, please" > publish
+  echo "NPM package already published on npm with version ${NPM_LATEST_VERSION}. Update version, please" > slack-message/publish
   echo "NPM package already published on npm with version ${NPM_LATEST_VERSION}" 1>&2
   exit 1
 fi
