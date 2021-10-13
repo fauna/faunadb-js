@@ -24,7 +24,6 @@ then
 
   echo "faunadb-js@$PACKAGE_VERSION published to npm" > ../slack-message/publish
 else
-  cd ./slack-message
   result=${PWD##*/}
   printf '%s\n' "${PWD##*/}"
   echo "faunadb-js@${NPM_LATEST_VERSION} package has been already published" > ../slack-message/publish
