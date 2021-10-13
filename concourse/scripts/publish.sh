@@ -23,9 +23,8 @@ then
   # rm .npmrc
   echo "faunadb-js@$PACKAGE_VERSION publushed to npm" > slack-message/publish
 else
-  result=${PWD##*/}
-  printf '%s\n' "${PWD##*/}"
-  echo "NPM package already published on npm with version ${NPM_LATEST_VERSION}. Update version, please" > slack-message/publish
-  echo "NPM package already published on npm with version ${NPM_LATEST_VERSION}" 1>&2
+  cat > notify_message/message <<EOF
+faunadb-js@$PACKAGE_VERSION already published to npm
+EOF
   exit 1
 fi
