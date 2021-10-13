@@ -25,8 +25,7 @@ then
 else
   result=${PWD##*/}
   printf '%s\n' "${PWD##*/}"
-  echo "NPM package already published on npm with version ${NPM_LATEST_VERSION}. Update version, please" > slack-message/publish
-  cat slack-message
+  echo "NPM package already published on npm with version ${NPM_LATEST_VERSION}. Update version, please" > ./fauna-js-repository/slack-message/publish
   echo "NPM package already published on npm with version ${NPM_LATEST_VERSION}" 1>&2
   exit 1
 fi
