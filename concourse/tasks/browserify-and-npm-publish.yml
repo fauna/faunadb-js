@@ -12,5 +12,8 @@ params:
 inputs:
   - name: fauna-js-repository
 
+outputs:
+  - name: slack-message
+
 run:
   path: ./fauna-js-repository/concourse/scripts/publish.sh
