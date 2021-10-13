@@ -18,13 +18,11 @@ then
 
   echo "Publishing a new version..."
   echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
-  # npm publish
-  # rm .npmrc
+  npm publish
+  rm .npmrc
 
   echo "faunadb-js@$PACKAGE_VERSION published to npm" > ../slack-message/publish
 else
-  result=${PWD##*/}
-  printf '%s\n' "${PWD##*/}"
   echo "faunadb-js@${NPM_LATEST_VERSION} package has been already published" > ../slack-message/publish
   echo "faunadb-js@${NPM_LATEST_VERSION} package has been already published" 1>&2
   exit 1
