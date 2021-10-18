@@ -149,7 +149,6 @@ var notifyAboutNewVersion = util.notifyAboutNewVersion()
  * @param {?number} options.port
  *   Port of the FaunaDB server.
  * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://app.fauna.com/documentation/intro/security))
- * @param {?number} options.timeout Read timeout in seconds.
  * @param {?Client~observerCallback} options.observer
  *   Callback that will be called after every completed request.
  * @param {?boolean} options.keepAlive
@@ -176,7 +175,6 @@ function Client(options) {
     scheme: 'https',
     port: null,
     secret: null,
-    timeout: 60,
     observer: null,
     keepAlive: true,
     headers: {},

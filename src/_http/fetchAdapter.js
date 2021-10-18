@@ -60,7 +60,7 @@ function FetchAdapter(options) {
  * @param {?string} options.body Request body utf8 string.
  * @params {?object} options.streamConsumer Stream consumer.
  * @param {?object} options.signal Abort signal object.
- * @param {?number} options.timeout Request timeout.
+ * @param {?number} options.queryTimeout Request timeout.
  * @returns {Promise} Request result.
  */
 FetchAdapter.prototype.execute = function(options) {
@@ -78,7 +78,7 @@ FetchAdapter.prototype.execute = function(options) {
   var timerId = null
   var isStreaming = options.streamConsumer != null
   // Use timeout only if no signal provided
-  var useTimeout = !options.signal && !!options.timeout
+  var useTimeout = !options.signal && !!options.queryTimeout
   var ctrl = new AbortController()
   var pendingRequest = {
     isStreaming: isStreaming,
@@ -163,7 +163,7 @@ FetchAdapter.prototype.execute = function(options) {
     timerId = setTimeout(function() {
       timerId = null
       ctrl.abort()
-    }, options.timeout)
+    }, options.queryTimeout)
   }
 
   if (options.signal) {
