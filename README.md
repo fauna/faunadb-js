@@ -172,21 +172,9 @@ more information on the pagination helper.
 
 #### Timeouts
 
-The client can be configured to handle timeouts in two different ways:
+The client can be configured to handle timeout by setting a `queryTimeout` on the client (or passing the value to the client's `.query()` method directly)
 
-1. Add a `timeout` field to the `options` block when instantiating the client
-2. By setting a `queryTimeout` on the client (or passing the value to the client's `.query()` method directly)
-
-The first option (i.e. `timeout`) represents a HTTP timeout on the client side. Defined in seconds, the client will wait the specified period before timing out if it has yet to receive a response.
-
-```javascript
-const client = new faunadb.Client({
-  secret: 'YOUR_FAUNADB_SECRET',
-  timeout: 100,
-})
-```
-
-On the other hand, using the client's `queryTimeout` dictates how long FaunaDB will process the request on the server before timing out if it hasn't finished running the operation. This can be done in two different ways:
+Using the client's `queryTimeout` dictates how long FaunaDB will process the request on the server before timing out if it hasn't finished running the operation. This can be done in two different ways:
 
 ```javascript
 // 1. Setting the value when instantiating a new client
@@ -279,7 +267,6 @@ async function main() {
 
 main().catch(console.error)
 ```
-
 
 ## Known issues
 

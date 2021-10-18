@@ -13,7 +13,6 @@ export interface ClientConfig {
   domain?: string
   scheme?: 'http' | 'https'
   port?: number
-  timeout?: number
   queryTimeout?: number
   observer?: <T extends object = object>(
     res: RequestResult<T | errors.FaunaHTTPError>,
