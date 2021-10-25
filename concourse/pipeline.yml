@@ -46,8 +46,8 @@ jobs:
           AUTH_0_CLIENT_ID: ((fauna/auth0/client.id))
           AUTH_0_CLIENT_SECRET: ((fauna/auth0/client.secret))
 
-      - task: browserify-and-npm-publish
-        file: fauna-js-repository/concourse/tasks/browserify-and-npm-publish.yml
+      - task: build-and-npm-publish
+        file: fauna-js-repository/concourse/tasks/build-and-npm-publish.yml
         params:
           NPM_TOKEN: ((npm_token))
         on_success:

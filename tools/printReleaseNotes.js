@@ -1,7 +1,7 @@
 const { version, repository, name } = require('../package.json')
-const { resolveFetch } = require('../src/_util')
-const boxen = require('boxen')
-const chalk = require('chalk')
+import boxen from 'boxen'
+import chalk from 'chalk'
+import { resolveFetch } from '../src/_util'
 
 async function printReleaseNotes() {
   const releaseInfo = await resolveFetch()(

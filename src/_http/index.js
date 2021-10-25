@@ -1,8 +1,13 @@
 'use strict'
-var packageJson = require('../../package.json')
-const { getBrowserOsDetails } = require('../_util')
-var util = require('../_util')
-var errors = require('./errors')
+import http2 from 'http2'
+import packageJson from '../../package.json'
+import {
+  getBrowserDetails,
+  getBrowserOsDetails,
+  getNodeRuntimeEnv,
+  isNodeEnv,
+  removeNullAndUndefinedValues,
+} from '../_util'
 
 /**
  * The driver's internal HTTP client.
@@ -21,7 +26,7 @@ function HttpClient(options) {
 
   // HTTP2 adapter is applicable only if it's NodeJS env and
   // no fetch API override provided (to preserve backward-compatibility).
-  var useHttp2Adapter = !options.fetch && util.isNodeEnv() && isHttp2Supported()
+  var useHttp2Adapter = !options.fetch && isNodeEnv() && http2
 
   this._adapter = useHttp2Adapter
     ? new (require('./http2Adapter'))({
@@ -116,7 +121,7 @@ HttpClient.prototype.execute = function(options) {
     path: options.path || '/',
     query: options.query,
     method: options.method || 'GET',
-    headers: util.removeNullAndUndefinedValues(headers),
+    headers: removeNullAndUndefinedValues(headers),
     body: options.body,
     signal: options.signal,
     queryTimeout: this._queryTimeout,
@@ -137,21 +142,22 @@ function getDefaultHeaders() {
   var isServiceWorker
 
   try {
+    // eslint-disable-next-line no-undef
     isServiceWorker = global instanceof ServiceWorkerGlobalScope
   } catch (error) {
     isServiceWorker = false
   }
 
   try {
-    if (util.isNodeEnv()) {
+    if (isNodeEnv()) {
       driverEnv.runtime = ['nodejs', process.version].join('-')
-      driverEnv.env = util.getNodeRuntimeEnv()
+      driverEnv.env = getNodeRuntimeEnv()
       var os = require('os')
       driverEnv.os = [os.platform(), os.release()].join('-')
     } else if (isServiceWorker) {
       driverEnv.runtime = 'Service Worker'
     } else {
-      driverEnv.runtime = util.getBrowserDetails()
+      driverEnv.runtime = getBrowserDetails()
       driverEnv.env = 'browser'
       driverEnv.os = getBrowserOsDetails()
     }
@@ -162,26 +168,10 @@ function getDefaultHeaders() {
   }
 
   // TODO: api cors must be enabled to accept header X-Driver-Env
-  if (util.isNodeEnv()) {
+  if (isNodeEnv()) {
     headers['X-Driver-Env'] = Object.keys(driverEnv)
       .map(key => [key, driverEnv[key].toLowerCase()].join('='))
       .join('; ')
   }
   return headers
-}
-
-function isHttp2Supported() {
-  try {
-    require('http2')
-
-    return true
-  } catch (_) {
-    return false
-  }
-}
-
-module.exports = {
-  HttpClient: HttpClient,
-  TimeoutError: errors.TimeoutError,
-  AbortError: errors.AbortError,
 }

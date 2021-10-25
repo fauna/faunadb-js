@@ -14,8 +14,7 @@ if [ "$PACKAGE_VERSION" \> "$NPM_LATEST_VERSION" ]
 then
   mkdir dist
   npm install
-  npm run browserify
-  npm run browserify-min
+  npm run build:package
   echo "Publishing a new version..."
   echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
   npm publish

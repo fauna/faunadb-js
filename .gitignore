@@ -114,3 +114,8 @@ dist
 testConfig.json
 doc/
 yarn.lock
+
+/cjs/
+/esm5/
+/query/
+*.DS_Store

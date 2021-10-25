@@ -22,8 +22,8 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local use.name "GitHub Action"
-      - name: Run browserify
-        run: npm run browserify
+      - name: Build
+        run: npm run build:package
       - name: Release new verion
         env:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}

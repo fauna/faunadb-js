@@ -1,8 +1,14 @@
 'use strict'
-require('abort-controller/polyfill')
-var util = require('../_util')
-var faunaErrors = require('../errors')
-var errors = require('./errors')
+import 'abort-controller/polyfill'
+import http from 'http'
+import https from 'https'
+import {
+  AbortError,
+  ClientClosed,
+  StreamsNotSupported,
+  TimeoutError,
+} from '../errors'
+import { formatUrl, isNodeEnv, resolveFetch } from '../_util'
 
 /**
  * Http client adapter built around fetch API.
@@ -14,7 +20,7 @@ var errors = require('./errors')
  * @param {?function} options.fetch Fetch compatible API.
  * @private
  */
-function FetchAdapter(options) {
+export default function FetchAdapter(options) {
   options = options || {}
 
   /**
@@ -30,7 +36,7 @@ function FetchAdapter(options) {
    * @private
    */
   this._closed = false
-  this._fetch = util.resolveFetch(options.fetch)
+  this._fetch = resolveFetch(options.fetch)
   /**
    * A map that tracks ongoing requests to be able to cancel them when
    * the .close method is called.
@@ -40,11 +46,10 @@ function FetchAdapter(options) {
    */
   this._pendingRequests = new Map()
 
-  if (util.isNodeEnv() && options.keepAlive) {
-    this._keepAliveEnabledAgent = new (options.isHttps
-      ? require('https')
-      : require('http')
-    ).Agent({ keepAlive: true })
+  if (isNodeEnv() && options.keepAlive) {
+    this._keepAliveEnabledAgent = new (options.isHttps ? https : http).Agent({
+      keepAlive: true,
+    })
   }
 }
 
@@ -66,7 +71,7 @@ function FetchAdapter(options) {
 FetchAdapter.prototype.execute = function(options) {
   if (this._closed) {
     return Promise.reject(
-      new faunaErrors.ClientClosed(
+      new ClientClosed(
         'The Client has already been closed',
         'No subsequent requests can be issued after the .close method is called. ' +
           'Consider creating a new Client instance'
@@ -144,13 +149,13 @@ FetchAdapter.prototype.execute = function(options) {
     return Promise.reject(
       remapIfAbortError(error, function() {
         if (!isStreaming && pendingRequest.isAbortedByClose) {
-          return new faunaErrors.ClientClosed(
+          return new ClientClosed(
             'The request is aborted due to the Client#close ' +
               'call with the force=true option'
           )
         }
 
-        return useTimeout ? new errors.TimeoutError() : new errors.AbortError()
+        return useTimeout ? new TimeoutError() : new AbortError()
       })
     )
   }
@@ -170,16 +175,13 @@ FetchAdapter.prototype.execute = function(options) {
     options.signal.addEventListener('abort', onAbort)
   }
 
-  return this._fetch(
-    util.formatUrl(options.origin, options.path, options.query),
-    {
-      method: options.method,
-      headers: options.headers,
-      body: options.body,
-      agent: this._keepAliveEnabledAgent,
-      signal: ctrl.signal,
-    }
-  )
+  return this._fetch(formatUrl(options.origin, options.path, options.query), {
+    method: options.method,
+    headers: options.headers,
+    body: options.body,
+    agent: this._keepAliveEnabledAgent,
+    signal: ctrl.signal,
+  })
     .then(onResponse)
     .catch(onError)
 }
@@ -250,7 +252,7 @@ function attachStreamConsumer(response, consumer, onComplete) {
     consumer.onError(remapIfAbortError(error))
   }
 
-  if (util.isNodeEnv()) {
+  if (isNodeEnv()) {
     response.body
       .on('error', onError)
       .on('data', consumer.onData)
@@ -290,7 +292,7 @@ function attachStreamConsumer(response, consumer, onComplete) {
 
     pump().catch(onError)
   } catch (err) {
-    throw new faunaErrors.StreamsNotSupported(
+    throw new StreamsNotSupported(
       'Please, consider providing a Fetch API-compatible function ' +
         'with streamable response bodies. ' +
         err
@@ -318,7 +320,7 @@ function remapIfAbortError(error, errorFactory) {
     return errorFactory()
   }
 
-  return new errors.AbortError()
+  return new AbortError()
 }
 
 /**
@@ -340,5 +342,3 @@ function responseHeadersAsObject(headers) {
 
   return result
 }
-
-module.exports = FetchAdapter
