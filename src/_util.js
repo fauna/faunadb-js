@@ -3,6 +3,7 @@
 
 import boxen from 'boxen'
 import chalk from 'chalk'
+import crossFetch from 'cross-fetch'
 import packageJson from '../package.json'
 
 var crossGlobal =
@@ -505,12 +506,12 @@ export function resolveFetch(fetchOverride) {
     return fetchOverride
   }
 
-  if (typeof crossGlobal.fetch === 'function') {
+  if (typeof global.fetch === 'function') {
     // NB. Rebinding to global is needed for Safari
-    return crossGlobal.fetch.bind(crossGlobal)
+    return global.fetch.bind(global)
   }
 
-  return require('cross-fetch')
+  return crossFetch
 }
 
 export function notifyAboutNewVersion() {

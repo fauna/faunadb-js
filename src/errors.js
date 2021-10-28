@@ -188,88 +188,6 @@ FaunaHTTPError.raiseForStatusCode = function(requestResult) {
   }
 }
 
-var Errors = {
-  FaunaError: FaunaError,
-  ClientClosed: ClientClosed,
-  FaunaHTTPError: FaunaHTTPError,
-  InvalidValue: InvalidValue,
-  InvalidArity: InvalidArity,
-  BadRequest: BadRequest,
-  PayloadTooLarge: PayloadTooLarge,
-  ValidationError: ValidationError,
-  Unauthorized: Unauthorized,
-  PermissionDenied: PermissionDenied,
-  NotFound: NotFound,
-  MethodNotAllowed: MethodNotAllowed,
-  TooManyRequests: TooManyRequests,
-  InternalError: InternalError,
-  UnavailableError: UnavailableError,
-  FunctionCallError: FunctionCallError,
-  StreamError: StreamError,
-  StreamsNotSupported: StreamsNotSupported,
-  StreamErrorEvent: StreamErrorEvent,
-}
-
-var ErrorCodeMap = {
-  'invalid argument': 'InvalidArgumentError',
-  'call error': FunctionCallError,
-  'invalid expression': 'InvalidExpressionError',
-  'invalid url parameter': 'InvalidUrlParameterError',
-  'schema not found': 'SchemaNotFoundError',
-  'transaction aborted': 'TransactionAbortedError',
-  'invalid write time': 'InvalidWriteTimeError',
-  'invalid ref': 'InvalidReferenceError',
-  'missing identity': 'MissingIdentityError',
-  'invalid scope': 'InvalidScopeError',
-  'invalid token': 'InvalidTokenError',
-  'stack overflow': 'StackOverflowError',
-  'authentication failed': 'AuthenticationFailedError',
-  'value not found': 'ValueNotFoundError',
-  'instance not found': 'InstanceNotFound',
-  'instance already exists': 'InstanceAlreadyExistsError',
-  'validation failed': ValidationError,
-  'instance not unique': 'InstanceNotUniqueError',
-  'invalid object in container': 'InvalidObjectInContainerError',
-  'move database error': 'MoveDatabaseError',
-  'recovery failed': 'RecoveryFailedError',
-  'feature not available': 'FeatureNotAvailableError',
-}
-
-Object.keys(ErrorCodeMap).forEach(code => {
-  if (typeof ErrorCodeMap[code] === 'string') {
-    Errors[ErrorCodeMap[code]] = errorClassFactory(ErrorCodeMap[code])
-  } else {
-    Errors[ErrorCodeMap[code].name] = ErrorCodeMap[code]
-  }
-})
-
-export function errorClassFactory(name) {
-  function ErrorClass(requestResult) {
-    FaunaHTTPError.call(this, name, requestResult)
-  }
-  inherits(ErrorClass, FaunaHTTPError)
-
-  return ErrorClass
-}
-
-export function getQueryError(requestResult) {
-  const errors = requestResult.responseContent.errors
-  const errorCode = errors[0].code
-  const ErrorFn =
-    typeof ErrorCodeMap[errorCode] === 'string'
-      ? Errors[ErrorCodeMap[errorCode]]
-      : ErrorCodeMap[errorCode]
-  if (errors.length === 0 || !errorCode) {
-    return new BadRequest(requestResult)
-  }
-
-  if (!ErrorFn) {
-    return new FaunaHTTPError('UnknownError', requestResult)
-  }
-
-  return new ErrorFn(requestResult)
-}
-
 export function FunctionCallError(requestResult) {
   FaunaHTTPError.call(this, 'FunctionCallError', requestResult)
 
@@ -499,3 +417,119 @@ export function ClientClosed(message, description) {
 }
 
 inherits(ClientClosed, FaunaError)
+
+/**
+ * Thrown by HttpClient when request hits specified timeout.
+ *
+ * @param {?string} message
+ * @extends Error
+ * @constructor
+ */
+export function TimeoutError(message) {
+  Error.call(this)
+
+  this.message = message || 'Request aborted due to timeout'
+  this.isTimeoutError = true
+}
+
+inherits(TimeoutError, Error)
+
+/**
+ * Thrown by HttpClient when request is aborted via Signal interface.
+ *
+ * @param {?string} message
+ * @extends Error
+ * @constructor
+ */
+export function AbortError(message) {
+  Error.call(this)
+
+  this.message = message || 'Request aborted'
+  this.isAbortError = true
+}
+
+inherits(AbortError, Error)
+
+var ErrorCodeMap = {
+  'invalid argument': 'InvalidArgumentError',
+  'call error': FunctionCallError,
+  'invalid expression': 'InvalidExpressionError',
+  'invalid url parameter': 'InvalidUrlParameterError',
+  'schema not found': 'SchemaNotFoundError',
+  'transaction aborted': 'TransactionAbortedError',
+  'invalid write time': 'InvalidWriteTimeError',
+  'invalid ref': 'InvalidReferenceError',
+  'missing identity': 'MissingIdentityError',
+  'invalid scope': 'InvalidScopeError',
+  'invalid token': 'InvalidTokenError',
+  'stack overflow': 'StackOverflowError',
+  'authentication failed': 'AuthenticationFailedError',
+  'value not found': 'ValueNotFoundError',
+  'instance not found': 'InstanceNotFound',
+  'instance already exists': 'InstanceAlreadyExistsError',
+  'validation failed': ValidationError,
+  'instance not unique': 'InstanceNotUniqueError',
+  'invalid object in container': 'InvalidObjectInContainerError',
+  'move database error': 'MoveDatabaseError',
+  'recovery failed': 'RecoveryFailedError',
+  'feature not available': 'FeatureNotAvailableError',
+}
+
+var Errors = {
+  FaunaError: FaunaError,
+  ClientClosed: ClientClosed,
+  FaunaHTTPError: FaunaHTTPError,
+  InvalidValue: InvalidValue,
+  InvalidArity: InvalidArity,
+  BadRequest: BadRequest,
+  PayloadTooLarge: PayloadTooLarge,
+  ValidationError: ValidationError,
+  Unauthorized: Unauthorized,
+  PermissionDenied: PermissionDenied,
+  NotFound: NotFound,
+  MethodNotAllowed: MethodNotAllowed,
+  TooManyRequests: TooManyRequests,
+  InternalError: InternalError,
+  UnavailableError: UnavailableError,
+  FunctionCallError: FunctionCallError,
+  StreamError: StreamError,
+  StreamsNotSupported: StreamsNotSupported,
+  StreamErrorEvent: StreamErrorEvent,
+}
+
+export function getQueryError(requestResult) {
+  const errors = requestResult.responseContent.errors
+  const errorCode = errors[0].code
+  const ErrorFn =
+    typeof ErrorCodeMap[errorCode] === 'string'
+      ? Errors[ErrorCodeMap[errorCode]]
+      : ErrorCodeMap[errorCode]
+  if (errors.length === 0 || !errorCode) {
+    return new BadRequest(requestResult)
+  }
+
+  if (!ErrorFn) {
+    return new FaunaHTTPError('UnknownError', requestResult)
+  }
+
+  return new ErrorFn(requestResult)
+}
+
+Object.keys(ErrorCodeMap).forEach(code => {
+  if (typeof ErrorCodeMap[code] === 'string') {
+    Errors[ErrorCodeMap[code]] = errorClassFactory(ErrorCodeMap[code])
+  } else {
+    Errors[ErrorCodeMap[code].name] = ErrorCodeMap[code]
+  }
+})
+
+export function errorClassFactory(name) {
+  function ErrorClass(requestResult) {
+    FaunaHTTPError.call(this, name, requestResult)
+  }
+  inherits(ErrorClass, FaunaHTTPError)
+
+  return ErrorClass
+}
+
+export default Errors

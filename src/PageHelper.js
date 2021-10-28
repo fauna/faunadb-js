@@ -49,7 +49,7 @@ import Paginate from './query/Paginate'
  * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://app.fauna.com/documentation/intro/security))
  * @constructor
  */
-export function PageHelper(client, set, params, options) {
+export default function PageHelper(client, set, params, options) {
   if (params === undefined) {
     params = {}
   }

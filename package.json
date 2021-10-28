@@ -22,7 +22,7 @@
     "cjs/",
     "esm5/",
     "query/",
-    "tools/printReleaseNotes.mjs"
+    "tools/printReleaseNotes.js"
   ],
   "main": "./cjs/index.js",
   "module": "./esm5/index.js",

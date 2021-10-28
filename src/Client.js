@@ -366,5 +366,5 @@ function getHttp2SessionIdleTime() {
 }
 
 export const resetNotifyAboutNewVersion = function() {
-  notifyAboutNewVersion = notifyAboutNewVersion()
+  notifyIfNewVersion = notifyAboutNewVersion()
 }

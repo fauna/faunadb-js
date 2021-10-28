@@ -8,6 +8,8 @@ import {
   isNodeEnv,
   removeNullAndUndefinedValues,
 } from '../_util'
+import FetchAdapter from './fetchAdapter'
+import Http2Adapter from './http2Adapter'
 
 /**
  * The driver's internal HTTP client.
@@ -16,7 +18,7 @@ import {
  * @param {Object} options Same as the {@link Client} options.
  * @private
  */
-function HttpClient(options) {
+export default function HttpClient(options) {
   var isHttps = options.scheme === 'https'
 
   // If the port is a falsy value - replace it with default one.
@@ -29,14 +31,15 @@ function HttpClient(options) {
   var useHttp2Adapter = !options.fetch && isNodeEnv() && http2
 
   this._adapter = useHttp2Adapter
-    ? new (require('./http2Adapter'))({
+    ? new Http2Adapter({
         http2SessionIdleTime: options.http2SessionIdleTime,
       })
-    : new (require('./fetchAdapter'))({
+    : new FetchAdapter({
         isHttps: isHttps,
         fetch: options.fetch,
         keepAlive: options.keepAlive,
       })
+
   this._baseUrl = options.scheme + '://' + options.domain + ':' + options.port
   this._secret = options.secret
   this._headers = Object.assign({}, options.headers, getDefaultHeaders())
