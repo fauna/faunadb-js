@@ -1,8 +1,8 @@
 'use strict'
+import errors from '../src/errors'
 import * as q from '../src/query'
 import { StreamApi } from '../src/stream'
 import * as util from './util'
-import errors from '../src/errors'
 let db, key, client, coll, doc, stream, window, fetch, streamApi
 
 describe('StreamAPI', () => {
@@ -125,7 +125,8 @@ describe('StreamAPI', () => {
         })
       )
       let key = await client.query(q.CreateKey({ role: role.ref }))
-      const streamApi = new StreamApi({ client })
+      const streamClient = util.getClient({ secret: key.secret })
+      const streamApi = new StreamApi({ client: streamClient })
 
       stream = streamApi
         .document(doc.ref)
