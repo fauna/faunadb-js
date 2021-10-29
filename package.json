@@ -61,7 +61,7 @@
     "build:cjs": "cross-env BABEL_ENV=cjs npx babel src -d ./cjs",
     "build:esm5": "cross-env BABEL_ENV=esm npx babel src -d ./esm5",
     "build:package": "npm-run-all build:clean build:browser build:cjs build:esm5",
-    "postbuild:package": "node --experimental-json-modules tools/postBuildPackage.js",
+    "postbuild:package": "node tools/cjs/postBuildPackage.js",
     "posttest": "node --experimental-specifier-resolution=node ./test/afterComplete",
     "semantic-release": "semantic-release",
     "wp": "webpack",
