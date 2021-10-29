@@ -1,8 +1,7 @@
 'use strict'
-var http2 = require('http2')
-var errors = require('./errors')
-var faunaErrors = require('../errors')
-var util = require('../_util')
+import http2 from 'http2'
+import { AbortError, ClientClosed, TimeoutError } from '../errors'
+import { querystringify } from '../_util'
 
 var STREAM_PREFIX = 'stream::'
 
@@ -15,7 +14,7 @@ var STREAM_PREFIX = 'stream::'
  * an HTTP2 session may live when there's no activity.
  * @private
  */
-function Http2Adapter(options) {
+export default function Http2Adapter(options) {
   /**
    * Identifies a type of adapter.
    *
@@ -176,7 +175,7 @@ Http2Adapter.prototype._cleanupSessionFor = function(origin, isStreaming) {
 Http2Adapter.prototype.execute = function(options) {
   if (this._closed) {
     return Promise.reject(
-      new faunaErrors.ClientClosed(
+      new ClientClosed(
         'The Client has already been closed',
         'No subsequent requests can be issued after the .close method is called. ' +
           'Consider creating a new Client instance'
@@ -227,14 +226,14 @@ Http2Adapter.prototype.execute = function(options) {
       isCanceled = true
       onSettled()
       request.close(http2.constants.NGHTTP2_CANCEL)
-      rejectOrOnError(new errors.AbortError())
+      rejectOrOnError(new AbortError())
     }
 
     var onTimeout = function() {
       isCanceled = true
       onSettled()
       request.close(http2.constants.NGHTTP2_CANCEL)
-      rejectOrOnError(new errors.TimeoutError())
+      rejectOrOnError(new TimeoutError())
     }
 
     var onResponse = function(responseHeaders) {
@@ -287,7 +286,7 @@ Http2Adapter.prototype.execute = function(options) {
     try {
       var pathname =
         (options.path[0] === '/' ? options.path : '/' + options.path) +
-        util.querystringify(options.query, '?')
+        querystringify(options.query, '?')
       var requestHeaders = Object.assign({}, options.headers, {
         [http2.constants.HTTP2_HEADER_PATH]: pathname,
         [http2.constants.HTTP2_HEADER_METHOD]: options.method,
@@ -360,12 +359,10 @@ function remapHttp2Error({ error, isClosed }) {
       error.code === 'ERR_HTTP2_STREAM_CANCEL')
 
   if (shouldRemap) {
-    return new faunaErrors.ClientClosed(
+    return new ClientClosed(
       'The request is aborted due to the Client#close call'
     )
   }
 
   return error
 }
-
-module.exports = Http2Adapter

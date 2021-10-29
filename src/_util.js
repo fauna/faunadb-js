@@ -1,8 +1,10 @@
+/*global globalThis*/
 'use strict'
 
-var packageJson = require('../package.json')
-var chalk = require('chalk')
-var boxen = require('boxen')
+import boxen from 'boxen'
+import chalk from 'chalk'
+import crossFetch from 'cross-fetch'
+import packageJson from '../package.json'
 
 var crossGlobal =
   typeof window !== 'undefined'
@@ -20,7 +22,7 @@ var crossGlobal =
  * @param {function} superCtor Constructor function to inherit prototype from.
  * @private
  */
-function inherits(ctor, superCtor) {
+export function inherits(ctor, superCtor) {
   if (ctor === undefined || ctor === null) {
     throw new TypeError(
       'The constructor to "inherits" must not be null or undefined'
@@ -54,7 +56,7 @@ function inherits(ctor, superCtor) {
  * Determines if the current environment is a NodeJS environment.
  * @private
  */
-function isNodeEnv() {
+export function isNodeEnv() {
   return (
     typeof window === 'undefined' &&
     typeof process !== 'undefined' &&
@@ -70,7 +72,7 @@ function isNodeEnv() {
  * @return {void|string} Returns requested env variable or void.
  * @private
  */
-function getEnvVariable(envKey) {
+export function getEnvVariable(envKey) {
   var areEnvVarsAvailable = !!(
     typeof process !== 'undefined' &&
     process &&
@@ -86,7 +88,7 @@ function getEnvVariable(envKey) {
  * JavaScript Client Detection
  * @private
  */
-function getBrowserDetails() {
+export function getBrowserDetails() {
   var browser = navigator.appName
   var browserVersion = '' + parseFloat(navigator.appVersion)
   var nameOffset, verOffset, ix
@@ -168,7 +170,7 @@ function getBrowserDetails() {
   return [browser, browserVersion].join('-')
 }
 
-function getBrowserOsDetails() {
+export function getBrowserOsDetails() {
   var os = 'unknown'
   var clientStrings = [
     { s: 'Windows 10', r: /(Windows 10.0|Windows NT 10.0)/ },
@@ -238,7 +240,7 @@ function getBrowserOsDetails() {
  * For checking process.env always use `hasOwnProperty`
  * Some providers could throw an error when trying to access env variables that does not exists
  * @private */
-function getNodeRuntimeEnv() {
+export function getNodeRuntimeEnv() {
   var runtimeEnvs = [
     {
       name: 'Netlify',
@@ -330,7 +332,7 @@ function getNodeRuntimeEnv() {
  * @param {any} def The default value.
  * @private
  */
-function defaults(obj, def) {
+export function defaults(obj, def) {
   if (obj === undefined) {
     return def
   } else {
@@ -345,7 +347,7 @@ function defaults(obj, def) {
  * A default value of `undefined` is used to indicate that the option must be provided.
  * @private
  */
-function applyDefaults(provided, defaults) {
+export function applyDefaults(provided, defaults) {
   var out = {}
 
   for (var providedKey in provided) {
@@ -368,7 +370,7 @@ function applyDefaults(provided, defaults) {
  * Returns a new object without any keys where the value would be null or undefined.
  * @private
  * */
-function removeNullAndUndefinedValues(object) {
+export function removeNullAndUndefinedValues(object) {
   var res = {}
   for (var key in object) {
     var val = object[key]
@@ -383,7 +385,7 @@ function removeNullAndUndefinedValues(object) {
  * Returns a new object without any keys where the value would be undefined.
  * @private
  * */
-function removeUndefinedValues(object) {
+export function removeUndefinedValues(object) {
   var res = {}
   for (var key in object) {
     var val = object[key]
@@ -398,11 +400,11 @@ function removeUndefinedValues(object) {
  * Returns a boolean stating if the given object has a given property
  * @private
  * */
-function checkInstanceHasProperty(obj, prop) {
+export function checkInstanceHasProperty(obj, prop) {
   return typeof obj === 'object' && obj !== null && Boolean(obj[prop])
 }
 
-function formatUrl(base, path, query) {
+export function formatUrl(base, path, query) {
   query = typeof query === 'object' ? querystringify(query) : query
   return [
     base,
@@ -419,7 +421,7 @@ function formatUrl(base, path, query) {
  * @returns {String}
  * @api public
  */
-function querystringify(obj, prefix) {
+export function querystringify(obj, prefix) {
   prefix = prefix || ''
 
   var pairs = [],
@@ -465,7 +467,7 @@ function querystringify(obj, prefix) {
  * @returns {String|Null} The encoded string.
  * @api private
  */
-function encode(input) {
+export function encode(input) {
   try {
     return encodeURIComponent(input)
   } catch (e) {
@@ -479,7 +481,7 @@ function encode(input) {
  * @param obj2
  * @returns obj3 a new object based on obj1 and obj2
  */
-function mergeObjects(obj1, obj2) {
+export function mergeObjects(obj1, obj2) {
   var obj3 = {}
   for (var attrname in obj1) {
     obj3[attrname] = obj1[attrname]
@@ -499,20 +501,20 @@ function mergeObjects(obj1, obj2) {
  * @returns {function} A Fetch API compatible function.
  * @private
  */
-function resolveFetch(fetchOverride) {
+export function resolveFetch(fetchOverride) {
   if (typeof fetchOverride === 'function') {
     return fetchOverride
   }
 
-  if (typeof crossGlobal.fetch === 'function') {
+  if (typeof global.fetch === 'function') {
     // NB. Rebinding to global is needed for Safari
-    return crossGlobal.fetch.bind(crossGlobal)
+    return global.fetch.bind(global)
   }
 
-  return require('cross-fetch')
+  return crossFetch
 }
 
-function notifyAboutNewVersion() {
+export function notifyAboutNewVersion() {
   var isNotified
   const checkAndNotify = checkNewVersion => {
     if (!isNodeEnv() || isNotified || !checkNewVersion) return
@@ -545,24 +547,4 @@ function notifyAboutNewVersion() {
   }
 
   return checkAndNotify
-}
-
-module.exports = {
-  notifyAboutNewVersion: notifyAboutNewVersion,
-  crossGlobal: crossGlobal,
-  mergeObjects: mergeObjects,
-  formatUrl: formatUrl,
-  querystringify: querystringify,
-  inherits: inherits,
-  isNodeEnv: isNodeEnv,
-  getEnvVariable: getEnvVariable,
-  defaults: defaults,
-  applyDefaults: applyDefaults,
-  removeNullAndUndefinedValues: removeNullAndUndefinedValues,
-  removeUndefinedValues: removeUndefinedValues,
-  checkInstanceHasProperty: checkInstanceHasProperty,
-  getBrowserDetails: getBrowserDetails,
-  getBrowserOsDetails: getBrowserOsDetails,
-  getNodeRuntimeEnv: getNodeRuntimeEnv,
-  resolveFetch: resolveFetch,
 }

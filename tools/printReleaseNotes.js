@@ -1,10 +1,10 @@
 const { version, repository, name } = require('../package.json')
-const { resolveFetch } = require('../src/_util')
 const boxen = require('boxen')
 const chalk = require('chalk')
+const crossFetch = require('cross-fetch')
 
 async function printReleaseNotes() {
-  const releaseInfo = await resolveFetch()(
+  const releaseInfo = await crossFetch(
     `https://api.github.com/repos/${repository}/releases/tags/${version}`
   ).then(resp => resp.json())
 

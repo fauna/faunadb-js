@@ -1,11 +1,11 @@
 'use strict'
 
 jest.spyOn(global.console, 'info')
-var errors = require('../src/errors')
-var query = require('../src/query')
-var util = require('./util')
-var Client = require('../src/Client')
-var json = require('../src/_json')
+import Client, { resetNotifyAboutNewVersion } from '../src/Client'
+import * as errors from '../src/errors'
+import * as query from '../src/query'
+import * as json from '../src/_json'
+import * as util from './util'
 var client
 
 describe('Client', () => {
@@ -399,7 +399,7 @@ describe('Client', () => {
 
     beforeEach(() => {
       console.info.mockClear()
-      Client.resetNotifyAboutNewVersion()
+      resetNotifyAboutNewVersion()
     })
 
     test('enabled by default', async () => {

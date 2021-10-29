@@ -1,8 +1,8 @@
-const query = require('../src/query')
-const Client = require('../src/Client')
-const util = require('../src/_util')
+const query = require('../cjs/query')
+const Client = require('../cjs/Client')
+const util = require('../cjs/_util')
 const testConfig = require('./config')
-const errors = require('../src/errors')
+const errors = require('../cjs/errors')
 
 function takeObjectKeys(object) {
   var out = {}
@@ -13,7 +13,7 @@ function takeObjectKeys(object) {
   return out
 }
 
-const rootClient = new Client(
+const rootClient = new Client.default(
   Object.assign(
     { secret: testConfig.auth },
     util.removeUndefinedValues(

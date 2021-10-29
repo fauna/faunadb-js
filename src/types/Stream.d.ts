@@ -1,3 +1,18 @@
+import Expr from './Expr'
+
+type StreamEventFields = ['action', 'document', 'diff', 'prev']
+
+type StreamFn = (
+  expr: Expr,
+  options?: {
+    fields?: StreamEventFields[]
+  }
+) => Subscription
+
+export interface StreamApi extends StreamFn {
+  document: StreamFn
+}
+
 export interface Subscription<TEventHandlerMap> {
   on: <T extends keyof TEventHandlerMap>(
     type: T,

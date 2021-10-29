@@ -4,9 +4,6 @@ import Expr from './Expr'
 import PageHelper from './PageHelper'
 import { ExprArg } from './query'
 import RequestResult from './RequestResult'
-import { Subscription, SubscriptionEventHandlers } from './Stream'
-
-type StreamEventFields = 'action' | 'document' | 'diff' | 'prev'
 
 export interface ClientConfig {
   secret: string
@@ -32,17 +29,6 @@ export interface QueryOptions
     signal?: AbortSignal
   }
 
-type StreamFn<T> = (
-  expr: Expr,
-  options?: {
-    fields?: StreamEventFields[]
-  }
-) => Subscription<T>
-
-interface StreamApi
-  extends StreamFn<Omit<SubscriptionEventHandlers, 'snapshot'>> {
-  document: StreamFn<SubscriptionEventHandlers>
-}
 
 export default class Client {
   constructor(opts?: ClientConfig)
@@ -50,5 +36,4 @@ export default class Client {
   paginate(expr: Expr, params?: object, options?: QueryOptions): PageHelper
   ping(scope?: string, timeout?: number): Promise<string>
   close(opts?: { force?: boolean }): Promise<void>
-  stream: StreamApi
 }

@@ -1,17 +1,23 @@
 'use strict'
 
-var packageJson = require('../package.json')
-var PageHelper = require('./PageHelper')
-var RequestResult = require('./RequestResult')
-var errors = require('./errors')
-var http = require('./_http')
-var json = require('./_json')
-var query = require('./query')
-var stream = require('./stream')
-var util = require('./_util')
-var values = require('./values')
+import packageJson from '../package.json'
+import { FaunaHTTPError } from './errors'
+import PageHelper from './PageHelper'
+import { wrap } from './query/common'
+import RequestResult from './RequestResult'
+import { Ref } from './values'
+import HttpClient from './_http'
+import { parseJSON } from './_json'
+import {
+  applyDefaults,
+  checkInstanceHasProperty,
+  defaults,
+  getEnvVariable,
+  notifyAboutNewVersion,
+  removeUndefinedValues,
+} from './_util'
 
-var notifyAboutNewVersion = util.notifyAboutNewVersion()
+var notifyIfNewVersion = notifyAboutNewVersion()
 
 /**
  * The callback that will be executed after every completed request.
@@ -167,10 +173,10 @@ var notifyAboutNewVersion = util.notifyAboutNewVersion()
  * @param {?boolean} options.checkNewVersion
  *   Enabled by default. Prints a message to the terminal when a newer driver is available.
  */
-function Client(options) {
+export default function Client(options) {
   var http2SessionIdleTime = getHttp2SessionIdleTime()
 
-  options = util.applyDefaults(options, {
+  options = applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
     port: null,
@@ -183,15 +189,14 @@ function Client(options) {
     http2SessionIdleTime: http2SessionIdleTime.value,
     checkNewVersion: true,
   })
-  notifyAboutNewVersion(options.checkNewVersion)
+  notifyIfNewVersion(options.checkNewVersion)
 
   if (http2SessionIdleTime.shouldOverride) {
     options.http2SessionIdleTime = http2SessionIdleTime.value
   }
 
   this._observer = options.observer
-  this._http = new http.HttpClient(options)
-  this.stream = stream.StreamAPI(this)
+  this._http = new HttpClient(options)
 }
 
 /**
@@ -213,7 +218,7 @@ Client.apiVersion = packageJson.apiVersion
  * @return {external:Promise<Object>} FaunaDB response object.
  */
 Client.prototype.query = function(expression, options) {
-  return this._execute('POST', '', query.wrap(expression), null, options)
+  return this._execute('POST', '', wrap(expression), null, options)
 }
 
 /**
@@ -229,8 +234,8 @@ Client.prototype.query = function(expression, options) {
  * @returns {PageHelper} A PageHelper that wraps the provided expression.
  */
 Client.prototype.paginate = function(expression, params, options) {
-  params = util.defaults(params, {})
-  options = util.defaults(options, {})
+  params = defaults(params, {})
+  options = defaults(options, {})
 
   return new PageHelper(this, expression, params, options)
 }
@@ -283,17 +288,14 @@ Client.prototype.close = function(opts) {
 }
 
 Client.prototype._execute = function(method, path, data, query, options) {
-  query = util.defaults(query, null)
+  query = defaults(query, null)
 
-  if (
-    path instanceof values.Ref ||
-    util.checkInstanceHasProperty(path, '_isFaunaRef')
-  ) {
+  if (path instanceof Ref || checkInstanceHasProperty(path, '_isFaunaRef')) {
     path = path.value
   }
 
   if (query !== null) {
-    query = util.removeUndefinedValues(query)
+    query = removeUndefinedValues(query)
   }
 
   var startTime = Date.now()
@@ -312,7 +314,7 @@ Client.prototype._execute = function(method, path, data, query, options) {
     )
     .then(function(response) {
       var endTime = Date.now()
-      var responseObject = json.parseJSON(response.body)
+      var responseObject = parseJSON(response.body)
       var result = new RequestResult(
         method,
         path,
@@ -347,11 +349,11 @@ Client.prototype._handleRequestResult = function(response, result, options) {
     }
   })
 
-  errors.FaunaHTTPError.raiseForStatusCode(result)
+  FaunaHTTPError.raiseForStatusCode(result)
 }
 
 function getHttp2SessionIdleTime() {
-  var fromEnv = util.getEnvVariable('FAUNADB_HTTP2_SESSION_IDLE_TIME')
+  var fromEnv = getEnvVariable('FAUNADB_HTTP2_SESSION_IDLE_TIME')
   var parsed =
     // Allow either "Infinity" or parsable integer string.
     fromEnv === 'Infinity' ? Infinity : parseInt(fromEnv, 10)
@@ -363,7 +365,6 @@ function getHttp2SessionIdleTime() {
   }
 }
 
-module.exports = Client
-module.exports.resetNotifyAboutNewVersion = function() {
-  notifyAboutNewVersion = util.notifyAboutNewVersion()
+export const resetNotifyAboutNewVersion = function() {
+  notifyIfNewVersion = notifyAboutNewVersion()
 }

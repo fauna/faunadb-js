@@ -1,6 +1,6 @@
 'use strict'
 
-var util = require('./_util')
+import { inherits } from './_util'
 
 /**
  * FaunaDB error types. Request errors can originate from the client (e.g. bad
@@ -18,7 +18,7 @@ var util = require('./_util')
  * @extends Error
  * @constructor
  */
-function FaunaError(name, message, description) {
+export function FaunaError(name, message, description) {
   Error.call(this)
 
   if (Error.captureStackTrace) {
@@ -44,7 +44,7 @@ function FaunaError(name, message, description) {
   this.description = description
 }
 
-util.inherits(FaunaError, Error)
+inherits(FaunaError, Error)
 
 /**
  * Exception thrown by this client library when an invalid
@@ -53,11 +53,11 @@ util.inherits(FaunaError, Error)
  * @extends module:errors~FaunaError
  * @constructor
  */
-function InvalidValue(message) {
+export function InvalidValue(message) {
   FaunaError.call(this, 'InvalidValue', message)
 }
 
-util.inherits(InvalidValue, FaunaError)
+inherits(InvalidValue, FaunaError)
 
 /**
  * Exception thrown by this client library when an invalid
@@ -66,7 +66,7 @@ util.inherits(InvalidValue, FaunaError)
  * @extends module:errors~FaunaError
  * @constructor
  */
-function InvalidArity(min, max, actual, callerFunc) {
+export function InvalidArity(min, max, actual, callerFunc) {
   var arityInfo = `${callerFunc} function requires ${messageForArity(
     min,
     max
@@ -106,7 +106,7 @@ function InvalidArity(min, max, actual, callerFunc) {
   }
 }
 
-util.inherits(InvalidArity, FaunaError)
+inherits(InvalidArity, FaunaError)
 
 /**
  * Base exception type for errors returned by the FaunaDB server.
@@ -116,7 +116,7 @@ util.inherits(InvalidArity, FaunaError)
  * @extends module:errors~FaunaError
  * @constructor
  */
-function FaunaHTTPError(name, requestResult) {
+export function FaunaHTTPError(name, requestResult) {
   var response = requestResult.responseContent
   var errors = response.errors
   var message = errors.length === 0 ? '(empty "errors")' : errors[0].code
@@ -137,7 +137,7 @@ function FaunaHTTPError(name, requestResult) {
   this.httpStatusCode = requestResult.statusCode
 }
 
-util.inherits(FaunaHTTPError, FaunaError)
+inherits(FaunaHTTPError, FaunaError)
 
 /**
  * Convenience method to return the errors from the response object.
@@ -188,27 +188,267 @@ FaunaHTTPError.raiseForStatusCode = function(requestResult) {
   }
 }
 
-var Errors = {
-  FaunaError: FaunaError,
-  ClientClosed: ClientClosed,
-  FaunaHTTPError: FaunaHTTPError,
-  InvalidValue: InvalidValue,
-  InvalidArity: InvalidArity,
-  BadRequest: BadRequest,
-  PayloadTooLarge: PayloadTooLarge,
-  ValidationError: ValidationError,
-  Unauthorized: Unauthorized,
-  PermissionDenied: PermissionDenied,
-  NotFound: NotFound,
-  MethodNotAllowed: MethodNotAllowed,
-  TooManyRequests: TooManyRequests,
-  InternalError: InternalError,
-  UnavailableError: UnavailableError,
-  FunctionCallError: FunctionCallError,
-  StreamError: StreamError,
-  StreamsNotSupported: StreamsNotSupported,
-  StreamErrorEvent: StreamErrorEvent,
+export function FunctionCallError(requestResult) {
+  FaunaHTTPError.call(this, 'FunctionCallError', requestResult)
+
+  const cause = requestResult.responseContent.errors[0].cause[0]
+  this.code = cause.code
+  this.position = cause.position
+  this.description = cause.description
 }
+
+inherits(FunctionCallError, FaunaHTTPError)
+
+export function ValidationError(requestResult) {
+  FaunaHTTPError.call(this, 'ValidationError', requestResult)
+
+  const failure = requestResult.responseContent.errors[0].failures[0]
+  this.code = failure.code
+  this.position = failure.field
+  this.description = failure.description
+}
+inherits(ValidationError, FaunaHTTPError)
+
+/**
+ * A HTTP 401 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+export function Unauthorized(requestResult) {
+  FaunaHTTPError.call(this, 'Unauthorized', requestResult)
+}
+
+inherits(Unauthorized, FaunaHTTPError)
+
+/**
+ * A HTTP 403 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+export function PermissionDenied(requestResult) {
+  FaunaHTTPError.call(this, 'PermissionDenied', requestResult)
+}
+
+inherits(PermissionDenied, FaunaHTTPError)
+
+/**
+ * A HTTP 404 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+export function NotFound(requestResult) {
+  FaunaHTTPError.call(this, 'NotFound', requestResult)
+}
+
+inherits(NotFound, FaunaHTTPError)
+
+/**
+ * A HTTP 400 error.
+ *
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+export function BadRequest(requestResult) {
+  FaunaHTTPError.call(this, 'BadRequest', requestResult)
+}
+
+inherits(BadRequest, FaunaHTTPError)
+
+/**
+ * A HTTP 405 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+export function MethodNotAllowed(requestResult) {
+  FaunaHTTPError.call(this, 'MethodNotAllowed', requestResult)
+}
+
+inherits(MethodNotAllowed, FaunaHTTPError)
+
+/**
+ * A HTTP 409 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+export function Conflict(requestResult) {
+  FaunaHTTPError.call(this, 'Conflict', requestResult)
+}
+
+inherits(Conflict, FaunaHTTPError)
+
+/**
+ * A HTTP 429 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+export function TooManyRequests(requestResult) {
+  FaunaHTTPError.call(this, 'TooManyRequests', requestResult)
+}
+
+inherits(TooManyRequests, FaunaHTTPError)
+
+/**
+ * A HTTP 413 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+export function PayloadTooLarge(requestResult) {
+  FaunaHTTPError.call(this, 'PayloadTooLarge', requestResult)
+}
+
+inherits(PayloadTooLarge, FaunaHTTPError)
+
+/**
+ * A HTTP 502 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+export function BadGateway(requestResult) {
+  FaunaHTTPError.call(this, 'BadGateway', requestResult)
+}
+
+inherits(BadGateway, FaunaHTTPError)
+
+/**
+ * A HTTP 440 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+export function ProcessingTimeLimitExceeded(requestResult) {
+  FaunaHTTPError.call(this, 'ProcessingTimeLimitExceeded', requestResult)
+}
+
+inherits(ProcessingTimeLimitExceeded, FaunaHTTPError)
+
+/**
+ * A HTTP 500 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+export function InternalError(requestResult) {
+  FaunaHTTPError.call(this, 'InternalError', requestResult)
+}
+
+inherits(InternalError, FaunaHTTPError)
+
+/**
+ * A HTTP 503 error.
+ * @param {RequestResult} requestResult
+ * @extends module:errors~FaunaHTTPError
+ * @constructor
+ */
+export function UnavailableError(requestResult) {
+  FaunaHTTPError.call(this, 'UnavailableError', requestResult)
+}
+
+inherits(UnavailableError, FaunaHTTPError)
+
+/**
+ * The base exception type for all stream related errors.
+ *
+ * @constructor
+ * @param {string} name The error class name.
+ * @param {string} message The error message.
+ * @param {string} description The error detailed description.
+ * @extends module:errors~FaunaError
+ */
+export function StreamError(name, message, description) {
+  FaunaError.call(this, name, message, description)
+}
+
+inherits(StreamError, FaunaError)
+
+/**
+ * An error thrown by the client when streams are not supported by the current
+ * platform.
+ *
+ * @constructor
+ * @param {string} description The error description.
+ * @extends module:errors~StreamError
+ */
+export function StreamsNotSupported(description) {
+  FaunaError.call(
+    this,
+    'StreamsNotSupported',
+    'streams not supported',
+    description
+  )
+}
+
+inherits(StreamsNotSupported, StreamError)
+
+/**
+ * An Error thrown by the server when something wrong happened with the
+ * subscribed stream.
+ * @constructor
+ * @param {Object} event The error event.
+ * @property {Object} event The error event.
+ * @extends module:errors~StreamError
+ */
+export function StreamErrorEvent(event) {
+  var error = event.data || {}
+  FaunaError.call(this, 'StreamErrorEvent', error.code, error.description)
+  this.event = event
+}
+
+inherits(StreamErrorEvent, StreamError)
+
+/**
+ * An error thrown when attempting to operate on a closed Client instance.
+ *
+ * @param {string} message The error message.
+ * @param {?string} description The error description.
+ * @extends module:errors~FaunaError
+ * @constructor
+ */
+export function ClientClosed(message, description) {
+  FaunaError.call(this, 'ClientClosed', message, description)
+}
+
+inherits(ClientClosed, FaunaError)
+
+/**
+ * Thrown by HttpClient when request hits specified timeout.
+ *
+ * @param {?string} message
+ * @extends Error
+ * @constructor
+ */
+export function TimeoutError(message) {
+  Error.call(this)
+
+  this.message = message || 'Request aborted due to timeout'
+  this.isTimeoutError = true
+}
+
+inherits(TimeoutError, Error)
+
+/**
+ * Thrown by HttpClient when request is aborted via Signal interface.
+ *
+ * @param {?string} message
+ * @extends Error
+ * @constructor
+ */
+export function AbortError(message) {
+  Error.call(this)
+
+  this.message = message || 'Request aborted'
+  this.isAbortError = true
+}
+
+inherits(AbortError, Error)
 
 var ErrorCodeMap = {
   'invalid argument': 'InvalidArgumentError',
@@ -235,24 +475,29 @@ var ErrorCodeMap = {
   'feature not available': 'FeatureNotAvailableError',
 }
 
-Object.keys(ErrorCodeMap).forEach(code => {
-  if (typeof ErrorCodeMap[code] === 'string') {
-    Errors[ErrorCodeMap[code]] = errorClassFactory(ErrorCodeMap[code])
-  } else {
-    Errors[ErrorCodeMap[code].name] = ErrorCodeMap[code]
-  }
-})
-
-function errorClassFactory(name) {
-  function ErrorClass(requestResult) {
-    FaunaHTTPError.call(this, name, requestResult)
-  }
-  util.inherits(ErrorClass, FaunaHTTPError)
-
-  return ErrorClass
+var Errors = {
+  FaunaError: FaunaError,
+  ClientClosed: ClientClosed,
+  FaunaHTTPError: FaunaHTTPError,
+  InvalidValue: InvalidValue,
+  InvalidArity: InvalidArity,
+  BadRequest: BadRequest,
+  PayloadTooLarge: PayloadTooLarge,
+  ValidationError: ValidationError,
+  Unauthorized: Unauthorized,
+  PermissionDenied: PermissionDenied,
+  NotFound: NotFound,
+  MethodNotAllowed: MethodNotAllowed,
+  TooManyRequests: TooManyRequests,
+  InternalError: InternalError,
+  UnavailableError: UnavailableError,
+  FunctionCallError: FunctionCallError,
+  StreamError: StreamError,
+  StreamsNotSupported: StreamsNotSupported,
+  StreamErrorEvent: StreamErrorEvent,
 }
 
-function getQueryError(requestResult) {
+export function getQueryError(requestResult) {
   const errors = requestResult.responseContent.errors
   const errorCode = errors[0].code
   const ErrorFn =
@@ -270,234 +515,21 @@ function getQueryError(requestResult) {
   return new ErrorFn(requestResult)
 }
 
-function FunctionCallError(requestResult) {
-  FaunaHTTPError.call(this, 'FunctionCallError', requestResult)
+Object.keys(ErrorCodeMap).forEach(code => {
+  if (typeof ErrorCodeMap[code] === 'string') {
+    Errors[ErrorCodeMap[code]] = errorClassFactory(ErrorCodeMap[code])
+  } else {
+    Errors[ErrorCodeMap[code].name] = ErrorCodeMap[code]
+  }
+})
 
-  const cause = requestResult.responseContent.errors[0].cause[0]
-  this.code = cause.code
-  this.position = cause.position
-  this.description = cause.description
+export function errorClassFactory(name) {
+  function ErrorClass(requestResult) {
+    FaunaHTTPError.call(this, name, requestResult)
+  }
+  inherits(ErrorClass, FaunaHTTPError)
+
+  return ErrorClass
 }
 
-util.inherits(FunctionCallError, FaunaHTTPError)
-
-function ValidationError(requestResult) {
-  FaunaHTTPError.call(this, 'ValidationError', requestResult)
-
-  const failure = requestResult.responseContent.errors[0].failures[0]
-  this.code = failure.code
-  this.position = failure.field
-  this.description = failure.description
-}
-util.inherits(ValidationError, FaunaHTTPError)
-
-/**
- * A HTTP 401 error.
- * @param {RequestResult} requestResult
- * @extends module:errors~FaunaHTTPError
- * @constructor
- */
-function Unauthorized(requestResult) {
-  FaunaHTTPError.call(this, 'Unauthorized', requestResult)
-}
-
-util.inherits(Unauthorized, FaunaHTTPError)
-
-/**
- * A HTTP 403 error.
- * @param {RequestResult} requestResult
- * @extends module:errors~FaunaHTTPError
- * @constructor
- */
-function PermissionDenied(requestResult) {
-  FaunaHTTPError.call(this, 'PermissionDenied', requestResult)
-}
-
-util.inherits(PermissionDenied, FaunaHTTPError)
-
-/**
- * A HTTP 404 error.
- * @param {RequestResult} requestResult
- * @extends module:errors~FaunaHTTPError
- * @constructor
- */
-function NotFound(requestResult) {
-  FaunaHTTPError.call(this, 'NotFound', requestResult)
-}
-
-util.inherits(NotFound, FaunaHTTPError)
-
-/**
- * A HTTP 400 error.
- *
- * @param {RequestResult} requestResult
- * @extends module:errors~FaunaHTTPError
- * @constructor
- */
-function BadRequest(requestResult) {
-  FaunaHTTPError.call(this, 'BadRequest', requestResult)
-}
-
-util.inherits(BadRequest, FaunaHTTPError)
-
-/**
- * A HTTP 405 error.
- * @param {RequestResult} requestResult
- * @extends module:errors~FaunaHTTPError
- * @constructor
- */
-function MethodNotAllowed(requestResult) {
-  FaunaHTTPError.call(this, 'MethodNotAllowed', requestResult)
-}
-
-util.inherits(MethodNotAllowed, FaunaHTTPError)
-
-/**
- * A HTTP 409 error.
- * @param {RequestResult} requestResult
- * @extends module:errors~FaunaHTTPError
- * @constructor
- */
-function Conflict(requestResult) {
-  FaunaHTTPError.call(this, 'Conflict', requestResult)
-}
-
-util.inherits(Conflict, FaunaHTTPError)
-
-/**
- * A HTTP 429 error.
- * @param {RequestResult} requestResult
- * @extends module:errors~FaunaHTTPError
- * @constructor
- */
-function TooManyRequests(requestResult) {
-  FaunaHTTPError.call(this, 'TooManyRequests', requestResult)
-}
-
-util.inherits(TooManyRequests, FaunaHTTPError)
-
-/**
- * A HTTP 413 error.
- * @param {RequestResult} requestResult
- * @extends module:errors~FaunaHTTPError
- * @constructor
- */
-function PayloadTooLarge(requestResult) {
-  FaunaHTTPError.call(this, 'PayloadTooLarge', requestResult)
-}
-
-util.inherits(PayloadTooLarge, FaunaHTTPError)
-
-/**
- * A HTTP 502 error.
- * @param {RequestResult} requestResult
- * @extends module:errors~FaunaHTTPError
- * @constructor
- */
-function BadGateway(requestResult) {
-  FaunaHTTPError.call(this, 'BadGateway', requestResult)
-}
-
-util.inherits(BadGateway, FaunaHTTPError)
-
-/**
- * A HTTP 440 error.
- * @param {RequestResult} requestResult
- * @extends module:errors~FaunaHTTPError
- * @constructor
- */
-function ProcessingTimeLimitExceeded(requestResult) {
-  FaunaHTTPError.call(this, 'ProcessingTimeLimitExceeded', requestResult)
-}
-
-util.inherits(ProcessingTimeLimitExceeded, FaunaHTTPError)
-
-/**
- * A HTTP 500 error.
- * @param {RequestResult} requestResult
- * @extends module:errors~FaunaHTTPError
- * @constructor
- */
-function InternalError(requestResult) {
-  FaunaHTTPError.call(this, 'InternalError', requestResult)
-}
-
-util.inherits(InternalError, FaunaHTTPError)
-
-/**
- * A HTTP 503 error.
- * @param {RequestResult} requestResult
- * @extends module:errors~FaunaHTTPError
- * @constructor
- */
-function UnavailableError(requestResult) {
-  FaunaHTTPError.call(this, 'UnavailableError', requestResult)
-}
-
-util.inherits(UnavailableError, FaunaHTTPError)
-
-/**
- * The base exception type for all stream related errors.
- *
- * @constructor
- * @param {string} name The error class name.
- * @param {string} message The error message.
- * @param {string} description The error detailed description.
- * @extends module:errors~FaunaError
- */
-function StreamError(name, message, description) {
-  FaunaError.call(this, name, message, description)
-}
-
-util.inherits(StreamError, FaunaError)
-
-/**
- * An error thrown by the client when streams are not supported by the current
- * platform.
- *
- * @constructor
- * @param {string} description The error description.
- * @extends module:errors~StreamError
- */
-function StreamsNotSupported(description) {
-  FaunaError.call(
-    this,
-    'StreamsNotSupported',
-    'streams not supported',
-    description
-  )
-}
-
-util.inherits(StreamsNotSupported, StreamError)
-
-/**
- * An Error thrown by the server when something wrong happened with the
- * subscribed stream.
- * @constructor
- * @param {Object} event The error event.
- * @property {Object} event The error event.
- * @extends module:errors~StreamError
- */
-function StreamErrorEvent(event) {
-  var error = event.data || {}
-  FaunaError.call(this, 'StreamErrorEvent', error.code, error.description)
-  this.event = event
-}
-
-util.inherits(StreamErrorEvent, StreamError)
-
-/**
- * An error thrown when attempting to operate on a closed Client instance.
- *
- * @param {string} message The error message.
- * @param {?string} description The error description.
- * @extends module:errors~FaunaError
- * @constructor
- */
-function ClientClosed(message, description) {
-  FaunaError.call(this, 'ClientClosed', message, description)
-}
-
-util.inherits(ClientClosed, FaunaError)
-
-module.exports = Errors
+export default Errors

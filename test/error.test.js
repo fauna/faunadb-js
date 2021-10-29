@@ -69,7 +69,7 @@ describe('Error', () => {
         })
       )
     } catch (error) {
-      expect(error).toBeInstanceOf(InvalidArgumentError)
+      expect(error.name).toEqual('InvalidArgumentError')
       expect(error.position).toEqual(['params'])
       expect(error.code).toEqual('invalid argument')
       expect(error.description).toEqual('Object expected, String provided.')
