@@ -170,6 +170,41 @@ const faunadb = require('faunadb')
 + const { logger, showRequestResult } = faunadb
 ```
 
+### Exceptions handling
+
+With the 5.0.0 release, child classes of the base FaunaError class now exist.
+Each class corresponds to an error code from Fauna.
+Inspect the [`errors.js`](https://github.com/fauna/faunadb-js/blob/dcf8c4eece22b344b0a64c76a192634bd747e234/src/errors.js)
+file for more information on how it is implemented.
+
+The following example demonstrates the methods that you can access from the exception object:
+
+```
+import { Client, TransactionAbortedError, AuthenticationFailedError } from 'faunadb'
+
+const client = new Client()
+
+async function run() {
+  try {
+    await client.query()
+  } catch(error) {
+    if(error instanceof TransactionAbortedError) {
+      console.error({
+        code: error.code,
+        position: e.position,
+        msg: e.message
+      })
+      return
+    }
+
+    if(error instanceof AuthenticationFailedError) {
+      console.error('invalid creds')
+    }
+  }
+}
+run()
+```
+
 ##### Import query functions
 
 All query functions has been removed from main package and hosted under sub-module `faunadb/query`.
