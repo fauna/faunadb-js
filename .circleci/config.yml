@@ -13,7 +13,7 @@ executors:
     docker:
       - image: circleci/node:<<parameters.node_version>>
 
-      - image: fauna/faunadb
+      - image: gcr.io/faunadb-cloud/faunadb/enterprise:latest
         name: core
 
     environment:
