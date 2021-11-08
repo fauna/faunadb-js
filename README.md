@@ -427,33 +427,6 @@ async function main() {
 main().catch(console.error)
 ```
 
-## Known issues
-
-### Using with Cloudflare Workers
-
-Cloudflare Workers have neither XMLHttpRequest nor fetch in the global scope.
-Therefore, the `cross-fetch` package is unable to inject its own `fetch()` function, and throws an error.
-The `fetch()` function is injected via a closure, so the workaround would be to pass
-the fetch objects when initiating the FaunaDB client config. Cloudflare Workers also
-doesn't support the use of an AbortController, which terminates requests as well as streams.
-Here is a workaround:
-
-```javascript
-const c = new faunadb.Client({
-  secret: 'your secret',
-  fetch: (url, params) => {
-    const signal = params.signal
-    delete params.signal
-    const abortPromise = new Promise(resolve => {
-      if (signal) {
-        signal.onabort = resolve
-      }
-    })
-    return Promise.race([abortPromise, fetch(url, params)])
-  },
-})
-```
-
 ## Client Development
 
 Run `yarn` to install dependencies.
@@ -515,10 +488,10 @@ Normally, you would install the latest release of this package using `npm instal
 2. If you have already installed this driver, you should see the following in your list of dependencies. If not, add it.
 
 ```
-"faunadb": "^5.0.0-preview.1"
+"faunadb": "^5.0.0"
 ```
 
-3. Instead of using a version from the npm registry, we'll want to point our `package.json` to the `main` branch of our GitHub repo. To do that, change the `^5.0.0-preview.1` to `fauna/faunadb-js#main`.
+3. Instead of using a version from the npm registry, we'll want to point our `package.json` to the `main` branch of our GitHub repo. To do that, change the `^5.0.0` to `fauna/faunadb-js#main`.
 
 ```
 "faunadb": "fauna/faunadb-js#v5"
