@@ -192,8 +192,7 @@ async function run() {
       console.error({
         code: error.code,
         position: e.position,
-        msg: e.message,
-        httpStatusCode: e.httpStatusCode
+        msg: e.message
       })
       return
     }
