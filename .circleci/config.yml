@@ -15,6 +15,9 @@ executors:
 
       - image: gcr.io/faunadb-cloud/faunadb/enterprise:latest
         name: core
+        auth:
+          username: _json_key
+          password: $GCR_KEY
 
     environment:
       FAUNA_ROOT_KEY: secret

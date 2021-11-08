@@ -21,7 +21,7 @@ x-test:
 
 services:
   faunadb:
-    image: fauna/faunadb
+    image: gcr.io/faunadb-cloud/faunadb/enterprise:latest
     container_name: faunadb
     healthcheck:
       test: ["CMD", "curl" ,"http://faunadb:8443/ping"]
