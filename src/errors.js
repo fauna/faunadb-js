@@ -217,6 +217,8 @@ inherits(ValidationError, FaunaHTTPError)
  */
 export function Unauthorized(requestResult) {
   FaunaHTTPError.call(this, 'Unauthorized', requestResult)
+  this.message = this.message +=
+    '. Check that endpoint, schema, port and secret are correct during client’s instantiation'
 }
 
 inherits(Unauthorized, FaunaHTTPError)
