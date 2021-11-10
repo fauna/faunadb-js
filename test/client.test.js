@@ -340,7 +340,7 @@ describe('Client', () => {
 
     expect(response.name).toEqual('Unauthorized')
     expect(response.message).toEqual(
-      'Unauthorized: unauthorized. Check that endpoint, schema, port and secret are correct during client’s instantiation'
+      'unauthorized. Check that endpoint, schema, port and secret are correct during client’s instantiation'
     )
     expect(response.description).toEqual(errors[0].description)
   })
