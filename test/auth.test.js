@@ -124,26 +124,24 @@ describe('auth', () => {
     })
 
     afterAll(() => {
-      return Promise.all([
-        fetch(
-          `${util.testConfig.auth0uri}api/v2/resource-servers/${resource.id}`,
-          {
-            headers,
-            method: 'DELETE',
-          }
-        ),
-        fetch(
-          `${util.testConfig.auth0uri}api/v2/clients/${authClient.client_id}`,
-          {
-            headers,
-            method: 'DELETE',
-          }
-        ),
-        fetch(`${util.testConfig.auth0uri}api/v2/client-grants/${grants.id}`, {
+      function removeAuth0(path) {
+        return fetch(`${util.testConfig.auth0uri}${path}`, {
           headers,
           method: 'DELETE',
-        }),
-      ])
+        }).then(async resp => ({
+          path,
+          status: resp.status,
+          text: await resp.text(),
+        }))
+      }
+
+      return Promise.allSettled([
+        removeAuth0(`api/v2/resource-servers/${resource.id}`),
+        removeAuth0(`api/v2/clients/${authClient.client_id}`),
+        removeAuth0(`api/v2/client-grants/${grants.id}`),
+      ]).then(result => {
+        console.info('RESULT auth0 afterAll: ', result)
+      })
     })
   })
 })
