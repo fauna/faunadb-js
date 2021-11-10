@@ -44,7 +44,7 @@ function FetchAdapter(options) {
     this._keepAliveEnabledAgent = new (options.isHttps
       ? require('https')
       : require('http')
-    ).Agent({ keepAlive: true })
+    ).Agent({ keepAlive: true, timeout: 3000 })
   }
 }
 
