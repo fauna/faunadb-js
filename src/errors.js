@@ -197,6 +197,8 @@ util.inherits(BadRequest, FaunaHTTPError)
  */
 function Unauthorized(requestResult) {
   FaunaHTTPError.call(this, 'Unauthorized', requestResult)
+  this.message = this.message +=
+    '. Check that endpoint, schema, port and secret are correct during client’s instantiation'
 }
 
 util.inherits(Unauthorized, FaunaHTTPError)
