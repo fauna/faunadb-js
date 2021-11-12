@@ -156,6 +156,7 @@ describe('auth', () => {
     })
 
     afterAll(async () => {
+      console.info('AFTER ALL')
       // Must run one by one. Otherwise, auth0 returns RateLimit error
       await auth0Request({
         endpoint: `api/v2/resource-servers/${resource.id}`,

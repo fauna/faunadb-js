@@ -172,27 +172,27 @@ workflows:
     jobs:
       - core-stable-10:
           context: faunadb-drivers
-      - core-nightly-10:
-          context: faunadb-drivers
-      - core-stable-11:
-          context: faunadb-drivers
-      - core-nightly-11:
-          context: faunadb-drivers
-      - core-stable-12:
-          context: faunadb-drivers
-      - core-nightly-12:
-          context: faunadb-drivers
-      - core-stable-14:
-          context: faunadb-drivers
-      - core-nightly-14:
-          context: faunadb-drivers
-      - core-stable-15:
-          context: faunadb-drivers
-      - core-nightly-15:
-          context: faunadb-drivers
-      - core-stable-16:
-          context: faunadb-drivers
-      - core-nightly-16:
-          context: faunadb-drivers
+      # - core-nightly-10:
+      #     context: faunadb-drivers
+      # - core-stable-11:
+      #     context: faunadb-drivers
+      # - core-nightly-11:
+      #     context: faunadb-drivers
+      # - core-stable-12:
+      #     context: faunadb-drivers
+      # - core-nightly-12:
+      #     context: faunadb-drivers
+      # - core-stable-14:
+      #     context: faunadb-drivers
+      # - core-nightly-14:
+      #     context: faunadb-drivers
+      # - core-stable-15:
+      #     context: faunadb-drivers
+      # - core-nightly-15:
+      #     context: faunadb-drivers
+      # - core-stable-16:
+      #     context: faunadb-drivers
+      # - core-nightly-16:
+      #     context: faunadb-drivers
 
 
