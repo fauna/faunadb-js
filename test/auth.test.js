@@ -39,6 +39,8 @@ async function auth0Request({ endpoint, body, method = 'POST', attempt = 1 }) {
 
   const data = await response.json()
 
+  console.info(endpoint, data)
+
   if (data.errorCode === tooManyEntitiesErrorCode) {
     console.info('Too many entities', endpoint)
     await sleepRandom()
@@ -68,6 +70,10 @@ describe('auth', () => {
     let authClient
     let grants
     let clientWithAuth0Token
+
+    beforeEach(() => {
+      jest.setTimeout(100000)
+    })
 
     beforeAll(async () => {
       const adminToken = await getAuth0Token({
@@ -136,14 +142,12 @@ describe('auth', () => {
     })
 
     test('auth0 setup', () => {
-      jest.setTimeout(testTimeout)
       expect(authClient.error).toBeUndefined()
       expect(resource.error).toBeUndefined()
       expect(grants.error).toBeUndefined()
     })
 
     test('should have read access for Roles', async () => {
-      jest.setTimeout(testTimeout)
       const res = await clientWithAuth0Token.query(
         query.Get(query.Role(roleOneName))
       )
@@ -151,7 +155,6 @@ describe('auth', () => {
     })
 
     test("shouldn't have write access for Roles", async () => {
-      jest.setTimeout(testTimeout)
       const res = await clientWithAuth0Token
         .query(query.CreateRole({ name: `permission_deny${roleOneName}` }))
         .catch(err => err)
