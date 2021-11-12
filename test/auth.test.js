@@ -13,7 +13,7 @@ const maxAttempts = 10
 
 async function sleepRandom() {
   const max = 10
-  const min = 2
+  const min = 1
   const timeout = Math.floor(Math.random() * (max - min + 1) + min) * 1000
   console.info(`Sleep ${timeout}`)
   await new Promise(resolve => setTimeout(resolve, timeout))
@@ -68,10 +68,6 @@ describe('auth', () => {
     let authClient
     let grants
     let clientWithAuth0Token
-
-    beforeEach(() => {
-      jest.setTimeout(100000)
-    })
 
     beforeAll(async () => {
       const adminToken = await getAuth0Token({
