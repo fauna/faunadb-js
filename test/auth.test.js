@@ -30,14 +30,14 @@ async function auth0Request({ endpoint, body, method = 'POST', attempt = 1 }) {
   })
 
   if (response.status === rateLimitCode) {
-    console.info('Rate limit', endpoint)
+    console.info('Rate limit', method, endpoint)
     await sleepRandom()
     return auth0Request({ endpoint, body, method, attempt: attempt + 1 })
   }
 
   const data = await response.json()
 
-  console.info(endpoint, data)
+  console.info({ endpoint, method, data })
 
   if (data.errorCode === tooManyEntitiesErrorCode) {
     console.info('Too many entities', endpoint)
