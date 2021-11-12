@@ -52,7 +52,7 @@
   "scripts": {
     "doc": "jsdoc -c ./jsdoc.json",
     "prettify": "prettier --write \"{src,test}/**/*.{js,ts}\"",
-    "test": "jest --env=node --verbose=true --forceExit ./test",
+    "test": "jest --env=node --testTimeout 150000 --verbose=true --forceExit ./test",
     "bundle:analyze": "webpack --env analyze",
     "bundle:stats": "webpack --env analyze --env stats",
     "bundle:diff": "node tools/bundleDiff.js",

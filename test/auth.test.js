@@ -11,8 +11,6 @@ const rateLimitCode = 429
 const tooManyEntitiesErrorCode = 'too_many_entities'
 const maxAttempts = 10
 
-const testTimeout = 110 * 1000
-
 async function sleepRandom() {
   const max = 10
   const min = 2
@@ -161,21 +159,20 @@ describe('auth', () => {
       expect(res).toBeInstanceOf(errors.PermissionDenied)
     })
 
-    afterAll(() => {
-      return Promise.all([
-        auth0Request({
-          endpoint: `api/v2/resource-servers/${resource.id}`,
-          method: 'DELETE',
-        }),
-        auth0Request({
-          endpoint: `api/v2/clients/${authClient.client_id}`,
-          method: 'DELETE',
-        }),
-        auth0Request({
-          endpoint: `api/v2/client-grants/${grants.id}`,
-          method: 'DELETE',
-        }),
-      ])
+    afterAll(async () => {
+      // Must run one by one. Otherwise, auth0 returns RateLimit error
+      await auth0Request({
+        endpoint: `api/v2/resource-servers/${resource.id}`,
+        method: 'DELETE',
+      })
+      await auth0Request({
+        endpoint: `api/v2/clients/${authClient.client_id}`,
+        method: 'DELETE',
+      })
+      await auth0Request({
+        endpoint: `api/v2/client-grants/${grants.id}`,
+        method: 'DELETE',
+      })
     })
   })
 })
