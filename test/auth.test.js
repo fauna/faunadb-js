@@ -26,7 +26,7 @@ async function auth0Request({ endpoint, body, method = 'POST', attempt = 1 }) {
   const response = await fetch(`${util.testConfig.auth0uri}${endpoint}`, {
     method,
     headers,
-    body: JSON.stringify(body),
+    ...(body && { body: JSON.stringify(body) }),
   })
 
   if (response.status === rateLimitCode) {
@@ -35,16 +35,18 @@ async function auth0Request({ endpoint, body, method = 'POST', attempt = 1 }) {
     return auth0Request({ endpoint, body, method, attempt: attempt + 1 })
   }
 
-  const data = await response.json()
+  if (method !== 'DELETE') {
+    const data = await response.json()
 
-  console.info({ endpoint, method, data })
+    console.info({ endpoint, method, data })
 
-  if (data.errorCode === tooManyEntitiesErrorCode) {
-    console.info('Too many entities', endpoint)
-    await sleepRandom()
-    return auth0Request({ endpoint, body, method })
+    if (data.errorCode === tooManyEntitiesErrorCode) {
+      console.info('Too many entities', endpoint)
+      await sleepRandom()
+      return auth0Request({ endpoint, body, method })
+    }
+    return data
   }
-  return data
 }
 
 async function getAuth0Token(params) {
@@ -63,6 +65,7 @@ describe('auth', () => {
   describe('AccessProvider Auth0', () => {
     const providerName = util.randomString('js_driver_')
     const roleOneName = util.randomString('role_one_')
+    console.info({ providerName })
 
     let resource
     let authClient
@@ -135,6 +138,25 @@ describe('auth', () => {
       clientWithAuth0Token = util.getClient({ secret })
     })
 
+    afterAll(async done => {
+      console.info('AFTER ALL')
+      // Must run one by one. Otherwise, auth0 returns RateLimit error
+      await auth0Request({
+        endpoint: `api/v2/resource-servers/${resource.id}`,
+        method: 'DELETE',
+      })
+      await auth0Request({
+        endpoint: `api/v2/clients/${authClient.client_id}`,
+        method: 'DELETE',
+      })
+      await auth0Request({
+        endpoint: `api/v2/client-grants/${grants.id}`,
+        method: 'DELETE',
+      })
+      done()
+      console.info('AFTER ALL DONE')
+    })
+
     test('auth0 setup', () => {
       expect(authClient.error).toBeUndefined()
       expect(resource.error).toBeUndefined()
@@ -153,23 +175,6 @@ describe('auth', () => {
         .query(query.CreateRole({ name: `permission_deny${roleOneName}` }))
         .catch(err => err)
       expect(res).toBeInstanceOf(errors.PermissionDenied)
-    })
-
-    afterAll(async () => {
-      console.info('AFTER ALL')
-      // Must run one by one. Otherwise, auth0 returns RateLimit error
-      await auth0Request({
-        endpoint: `api/v2/resource-servers/${resource.id}`,
-        method: 'DELETE',
-      })
-      await auth0Request({
-        endpoint: `api/v2/clients/${authClient.client_id}`,
-        method: 'DELETE',
-      })
-      await auth0Request({
-        endpoint: `api/v2/client-grants/${grants.id}`,
-        method: 'DELETE',
-      })
     })
   })
 })
