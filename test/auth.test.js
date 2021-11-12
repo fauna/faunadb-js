@@ -1,26 +1,65 @@
 import fetch from 'cross-fetch'
+import * as errors from '../src/errors'
 import * as query from '../src/query'
 import * as util from './util'
-import * as errors from '../src/errors'
+
+const headers = {
+  'Content-Type': 'application/json',
+}
+
+const rateLimitCode = 429
+const tooManyEntitiesErrorCode = 'too_many_entities'
+const maxAttempts = 10
+
+function sleepRandom() {
+  const max = 5
+  const min = 1
+  const timeout = Math.floor(Math.random() * (max - min + 1) + min) * 1000
+  console.info(`Sleep ${timeout}`)
+  return new Promise(resolve => setTimeout(resolve, timeout))
+}
+
+async function auth0Request({ endpoint, body, method = 'POST', attempt = 1 }) {
+  if (attempt === maxAttempts) {
+    throw new Error('Max attempt reached')
+  }
+  const response = await fetch(`${util.testConfig.auth0uri}${endpoint}`, {
+    method,
+    headers,
+    body: JSON.stringify(body),
+  })
+
+  const status = response.status
+  if (response.status === rateLimitCode) {
+    console.info('Rate limit', endpoint)
+    await sleepRandom()
+    return auth0Request({ endpoint, body, method, attempt: attempt + 1 })
+  }
+
+  const data = await response.json()
+
+  if (data.errorCode === tooManyEntitiesErrorCode) {
+    console.info('Too many entities', endpoint)
+    await sleepRandom()
+    return auth0Request({ endpoint, body, method })
+  }
+  return data
+}
+
+async function getAuth0Token(params) {
+  const data = await auth0Request({
+    endpoint: 'oauth/token',
+    body: {
+      ...params,
+      grant_type: 'client_credentials',
+    },
+  })
+
+  return data.access_token
+}
 
 describe('auth', () => {
   describe('AccessProvider Auth0', () => {
-    const headers = {
-      'Content-Type': 'application/json',
-    }
-
-    function getAuth0Token(params) {
-      return fetch(`${util.testConfig.auth0uri}oauth/token`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          ...params,
-          grant_type: 'client_credentials',
-        }),
-      })
-        .then(resp => resp.json())
-        .then(data => data.access_token)
-    }
     const providerName = util.randomString('js_driver_')
     const roleOneName = util.randomString('role_one_')
 
@@ -56,23 +95,18 @@ describe('auth', () => {
         })
       )
 
-      resource = await fetch(
-        `${util.testConfig.auth0uri}api/v2/resource-servers`,
-        {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({
-            name: providerName,
-            identifier: provider.audience,
-            signing_alg: 'RS256',
-          }),
-        }
-      ).then(resp => resp.json())
+      resource = await auth0Request({
+        endpoint: 'api/v2/resource-servers',
+        body: {
+          name: providerName,
+          identifier: provider.audience,
+          signing_alg: 'RS256',
+        },
+      })
 
-      authClient = await fetch(`${util.testConfig.auth0uri}api/v2/clients`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
+      authClient = await auth0Request({
+        endpoint: 'api/v2/clients',
+        body: {
           name: providerName,
           app_type: 'non_interactive',
           is_first_party: true,
@@ -80,27 +114,24 @@ describe('auth', () => {
           jwt_configuration: { alg: 'RS256', lifetime_in_seconds: 36000 },
           token_endpoint_auth_method: 'client_secret_post',
           grant_types: ['client_credentials'],
-        }),
-      }).then(resp => resp.json())
+        },
+      })
 
-      grants = await fetch(`${util.testConfig.auth0uri}api/v2/client-grants`, {
-        method: 'POST',
-        json: true,
-        headers,
-        body: JSON.stringify({
+      grants = await auth0Request({
+        endpoint: 'api/v2/client-grants',
+        body: {
           audience: provider.audience,
           client_id: authClient.client_id,
           scope: [],
-        }),
-      }).then(resp => resp.json())
-
-      clientWithAuth0Token = util.getClient({
-        secret: await getAuth0Token({
-          client_id: authClient.client_id,
-          client_secret: authClient.client_secret,
-          audience: provider.audience,
-        }),
+        },
       })
+
+      const secret = await getAuth0Token({
+        client_id: authClient.client_id,
+        client_secret: authClient.client_secret,
+        audience: provider.audience,
+      })
+      clientWithAuth0Token = util.getClient({ secret })
     })
 
     test('auth0 setup', () => {
@@ -124,24 +155,20 @@ describe('auth', () => {
     })
 
     afterAll(() => {
-      function removeAuth0(path) {
-        return fetch(`${util.testConfig.auth0uri}${path}`, {
-          headers,
+      return Promise.all([
+        auth0Request({
+          endpoint: `api/v2/resource-servers/${resource.id}`,
           method: 'DELETE',
-        }).then(async resp => ({
-          path,
-          status: resp.status,
-          text: await resp.text(),
-        }))
-      }
-
-      return Promise.allSettled([
-        removeAuth0(`api/v2/resource-servers/${resource.id}`),
-        removeAuth0(`api/v2/clients/${authClient.client_id}`),
-        removeAuth0(`api/v2/client-grants/${grants.id}`),
-      ]).then(result => {
-        console.info('RESULT auth0 afterAll: ', result)
-      })
+        }),
+        auth0Request({
+          endpoint: `api/v2/clients/${authClient.client_id}`,
+          method: 'DELETE',
+        }),
+        auth0Request({
+          endpoint: `api/v2/client-grants/${grants.id}`,
+          method: 'DELETE',
+        }),
+      ])
     })
   })
 })
