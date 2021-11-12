@@ -11,9 +11,11 @@ const rateLimitCode = 429
 const tooManyEntitiesErrorCode = 'too_many_entities'
 const maxAttempts = 10
 
+const testTimeout = 110 * 1000
+
 async function sleepRandom() {
-  const max = 5
-  const min = 1
+  const max = 10
+  const min = 2
   const timeout = Math.floor(Math.random() * (max - min + 1) + min) * 1000
   console.info(`Sleep ${timeout}`)
   await new Promise(resolve => setTimeout(resolve, timeout))
@@ -135,25 +137,37 @@ describe('auth', () => {
       clientWithAuth0Token = util.getClient({ secret })
     })
 
-    test('auth0 setup', () => {
-      expect(authClient.error).toBeUndefined()
-      expect(resource.error).toBeUndefined()
-      expect(grants.error).toBeUndefined()
-    })
+    test(
+      'auth0 setup',
+      () => {
+        expect(authClient.error).toBeUndefined()
+        expect(resource.error).toBeUndefined()
+        expect(grants.error).toBeUndefined()
+      },
+      testTimeout
+    )
 
-    test('should have read access for Roles', async () => {
-      const res = await clientWithAuth0Token.query(
-        query.Get(query.Role(roleOneName))
-      )
-      expect(res.name).toEqual(roleOneName)
-    })
+    test(
+      'should have read access for Roles',
+      async () => {
+        const res = await clientWithAuth0Token.query(
+          query.Get(query.Role(roleOneName))
+        )
+        expect(res.name).toEqual(roleOneName)
+      },
+      testTimeout
+    )
 
-    test("shouldn't have write access for Roles", async () => {
-      const res = await clientWithAuth0Token
-        .query(query.CreateRole({ name: `permission_deny${roleOneName}` }))
-        .catch(err => err)
-      expect(res).toBeInstanceOf(errors.PermissionDenied)
-    })
+    test(
+      "shouldn't have write access for Roles",
+      async () => {
+        const res = await clientWithAuth0Token
+          .query(query.CreateRole({ name: `permission_deny${roleOneName}` }))
+          .catch(err => err)
+        expect(res).toBeInstanceOf(errors.PermissionDenied)
+      },
+      testTimeout
+    )
 
     afterAll(() => {
       return Promise.all([
