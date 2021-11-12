@@ -11,17 +11,17 @@ const rateLimitCode = 429
 const tooManyEntitiesErrorCode = 'too_many_entities'
 const maxAttempts = 10
 
-function sleepRandom() {
+async function sleepRandom() {
   const max = 5
   const min = 1
   const timeout = Math.floor(Math.random() * (max - min + 1) + min) * 1000
   console.info(`Sleep ${timeout}`)
-  return new Promise(resolve => setTimeout(resolve, timeout))
+  await new Promise(resolve => setTimeout(resolve, timeout))
 }
 
 async function auth0Request({ endpoint, body, method = 'POST', attempt = 1 }) {
   if (attempt === maxAttempts) {
-    throw new Error('Max attempt reached')
+    return Promise.reject(new Error('Max attempt reached'))
   }
   const response = await fetch(`${util.testConfig.auth0uri}${endpoint}`, {
     method,
@@ -29,7 +29,6 @@ async function auth0Request({ endpoint, body, method = 'POST', attempt = 1 }) {
     body: JSON.stringify(body),
   })
 
-  const status = response.status
   if (response.status === rateLimitCode) {
     console.info('Rate limit', endpoint)
     await sleepRandom()
@@ -37,6 +36,8 @@ async function auth0Request({ endpoint, body, method = 'POST', attempt = 1 }) {
   }
 
   const data = await response.json()
+
+  console.info(endpoint, data)
 
   if (data.errorCode === tooManyEntitiesErrorCode) {
     console.info('Too many entities', endpoint)
