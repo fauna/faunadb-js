@@ -39,8 +39,6 @@ async function auth0Request({ endpoint, body, method = 'POST', attempt = 1 }) {
 
   const data = await response.json()
 
-  console.info(endpoint, data)
-
   if (data.errorCode === tooManyEntitiesErrorCode) {
     console.info('Too many entities', endpoint)
     await sleepRandom()
@@ -137,37 +135,28 @@ describe('auth', () => {
       clientWithAuth0Token = util.getClient({ secret })
     })
 
-    test(
-      'auth0 setup',
-      () => {
-        expect(authClient.error).toBeUndefined()
-        expect(resource.error).toBeUndefined()
-        expect(grants.error).toBeUndefined()
-      },
-      testTimeout
-    )
+    test('auth0 setup', () => {
+      jest.setTimeout(testTimeout)
+      expect(authClient.error).toBeUndefined()
+      expect(resource.error).toBeUndefined()
+      expect(grants.error).toBeUndefined()
+    })
 
-    test(
-      'should have read access for Roles',
-      async () => {
-        const res = await clientWithAuth0Token.query(
-          query.Get(query.Role(roleOneName))
-        )
-        expect(res.name).toEqual(roleOneName)
-      },
-      testTimeout
-    )
+    test('should have read access for Roles', async () => {
+      jest.setTimeout(testTimeout)
+      const res = await clientWithAuth0Token.query(
+        query.Get(query.Role(roleOneName))
+      )
+      expect(res.name).toEqual(roleOneName)
+    })
 
-    test(
-      "shouldn't have write access for Roles",
-      async () => {
-        const res = await clientWithAuth0Token
-          .query(query.CreateRole({ name: `permission_deny${roleOneName}` }))
-          .catch(err => err)
-        expect(res).toBeInstanceOf(errors.PermissionDenied)
-      },
-      testTimeout
-    )
+    test("shouldn't have write access for Roles", async () => {
+      jest.setTimeout(testTimeout)
+      const res = await clientWithAuth0Token
+        .query(query.CreateRole({ name: `permission_deny${roleOneName}` }))
+        .catch(err => err)
+      expect(res).toBeInstanceOf(errors.PermissionDenied)
+    })
 
     afterAll(() => {
       return Promise.all([
