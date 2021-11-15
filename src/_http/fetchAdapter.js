@@ -49,6 +49,7 @@ export default function FetchAdapter(options) {
   if (isNodeEnv() && options.keepAlive) {
     this._keepAliveEnabledAgent = new (options.isHttps ? https : http).Agent({
       keepAlive: true,
+      timeout: 3000,
     })
   }
 }
