@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>Documentation Class: StreamError</title>
+	<title>Documentation Class: AbortError</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -33,14 +33,14 @@
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="module-clientLogger.html">clientLogger</a></li><li><a href="module-errors.html">errors</a></li><li><a href="module-query.html">query</a></li><li><a href="module-stream.html">stream</a></li><li><a href="module-values.html">values</a></li>
+					<li><a href="module-clientLogger.html">clientLogger</a></li><li><a href="module-errors.html">errors</a></li><li><a href="module-stream.html">stream</a></li><li><a href="module-values.html">values</a></li>
 				</ul>
 			</li>
 			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="Client.html">Client</a></li><li><a href="Expr.html">Expr</a></li><li><a href="module-errors-BadRequest.html">errors~BadRequest</a></li><li><a href="module-errors-ClientClosed.html">errors~ClientClosed</a></li><li><a href="module-errors-FaunaError.html">errors~FaunaError</a></li><li><a href="module-errors-FaunaHTTPError.html">errors~FaunaHTTPError</a></li><li><a href="module-errors-InternalError.html">errors~InternalError</a></li><li><a href="module-errors-InvalidArity.html">errors~InvalidArity</a></li><li><a href="module-errors-InvalidValue.html">errors~InvalidValue</a></li><li><a href="module-errors-MethodNotAllowed.html">errors~MethodNotAllowed</a></li><li><a href="module-errors-NotFound.html">errors~NotFound</a></li><li><a href="module-errors-PermissionDenied.html">errors~PermissionDenied</a></li><li><a href="module-errors-StreamError.html">errors~StreamError</a></li><li><a href="module-errors-StreamErrorEvent.html">errors~StreamErrorEvent</a></li><li><a href="module-errors-StreamsNotSupported.html">errors~StreamsNotSupported</a></li><li><a href="module-errors-TooManyRequests.html">errors~TooManyRequests</a></li><li><a href="module-errors-Unauthorized.html">errors~Unauthorized</a></li><li><a href="module-errors-UnavailableError.html">errors~UnavailableError</a></li><li><a href="module-stream-Subscription.html">stream~Subscription</a></li><li><a href="module-values-Bytes.html">values~Bytes</a></li><li><a href="module-values-FaunaDate.html">values~FaunaDate</a></li><li><a href="module-values-FaunaTime.html">values~FaunaTime</a></li><li><a href="module-values-Query.html">values~Query</a></li><li><a href="module-values-Ref.html">values~Ref</a></li><li><a href="module-values-SetRef.html">values~SetRef</a></li><li><a href="module-values-Value.html">values~Value</a></li><li><a href="PageHelper.html">PageHelper</a></li><li><a href="RequestResult.html">RequestResult</a></li>
+					<li><a href="module.exports.html">module.exports</a></li><li><a href="module-errors.AbortError.html">errors.AbortError</a></li><li><a href="module-errors.BadGateway.html">errors.BadGateway</a></li><li><a href="module-errors.BadRequest.html">errors.BadRequest</a></li><li><a href="module-errors.ClientClosed.html">errors.ClientClosed</a></li><li><a href="module-errors.Conflict.html">errors.Conflict</a></li><li><a href="module-errors.FaunaError.html">errors.FaunaError</a></li><li><a href="module-errors.FaunaHTTPError.html">errors.FaunaHTTPError</a></li><li><a href="module-errors.InternalError.html">errors.InternalError</a></li><li><a href="module-errors.InvalidArity.html">errors.InvalidArity</a></li><li><a href="module-errors.InvalidValue.html">errors.InvalidValue</a></li><li><a href="module-errors.MethodNotAllowed.html">errors.MethodNotAllowed</a></li><li><a href="module-errors.NotFound.html">errors.NotFound</a></li><li><a href="module-errors.PayloadTooLarge.html">errors.PayloadTooLarge</a></li><li><a href="module-errors.PermissionDenied.html">errors.PermissionDenied</a></li><li><a href="module-errors.ProcessingTimeLimitExceeded.html">errors.ProcessingTimeLimitExceeded</a></li><li><a href="module-errors.StreamError.html">errors.StreamError</a></li><li><a href="module-errors.StreamErrorEvent.html">errors.StreamErrorEvent</a></li><li><a href="module-errors.StreamsNotSupported.html">errors.StreamsNotSupported</a></li><li><a href="module-errors.TimeoutError.html">errors.TimeoutError</a></li><li><a href="module-errors.TooManyRequests.html">errors.TooManyRequests</a></li><li><a href="module-errors.Unauthorized.html">errors.Unauthorized</a></li><li><a href="module-errors.UnavailableError.html">errors.UnavailableError</a></li><li><a href="module-stream-Subscription.html">stream~Subscription</a></li><li><a href="module-values.Bytes.html">values.Bytes</a></li><li><a href="module-values.FaunaDate.html">values.FaunaDate</a></li><li><a href="module-values.FaunaTime.html">values.FaunaTime</a></li><li><a href="module-values.Query.html">values.Query</a></li><li><a href="module-values.Ref.html">values.Ref</a></li><li><a href="module-values.SetRef.html">values.SetRef</a></li><li><a href="module-values.Value.html">values.Value</a></li>
 				</ul>
 			</li>
 			
@@ -54,7 +54,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu ">
-					<li><a href="global.html#encode">encode</a></li><li><a href="global.html#mergeObjects">mergeObjects</a></li><li><a href="global.html#querystringify">querystringify</a></li>
+					<li><a href="global.html#encode">encode</a></li><li><a href="global.html#endTime">endTime</a></li><li><a href="global.html#mergeObjects">mergeObjects</a></li><li><a href="global.html#method">method</a></li><li><a href="global.html#path">path</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#querystringify">querystringify</a></li><li><a href="global.html#requestContent">requestContent</a></li><li><a href="global.html#requestRaw">requestRaw</a></li><li><a href="global.html#responseContent">responseContent</a></li><li><a href="global.html#responseHeaders">responseHeaders</a></li><li><a href="global.html#responseRaw">responseRaw</a></li><li><a href="global.html#startTime">startTime</a></li><li><a href="global.html#statusCode">statusCode</a></li>
 				</ul>
 			</li>
 			
@@ -86,15 +86,15 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: StreamError</h1>
+	<h1 class="page-title">Class: AbortError</h1>
 <section>
 
 <header>
     
         <h2>
-            <span class="ancestors"><a href="module-errors.html">errors</a>~</span>
+            <span class="ancestors"><a href="module-errors.html">errors</a>.</span>
         
-        StreamError
+        AbortError
         </h2>
         
     
@@ -107,7 +107,7 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="StreamError"><span class="type-signature"></span>new StreamError(name, message, description)</h4>
+    <h4 class="name" id="AbortError"><span class="type-signature"></span>new AbortError(message)</h4>
     
     
 </dt>
@@ -115,7 +115,7 @@
 
     
     <div class="description">
-        <p>The base exception type for all stream related errors.</p>
+        <p>Thrown by HttpClient when request is aborted via Signal interface.</p>
     </div>
     
 
@@ -138,6 +138,8 @@
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
         
 
@@ -146,30 +148,6 @@
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The error class name.</p></td>
-        </tr>
-
     
 
         <tr>
@@ -188,34 +166,20 @@
             </td>
 
             
-
-            
-
-            <td class="description last"><p>The error message.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>description</code></td>
-            
-
-            <td class="type">
-            
+                <td class="attributes">
                 
-<span class="param-type">string</span>
 
+                
+                    &lt;nullable><br>
+                
 
-
-            
-            </td>
-
-            
-
+                
+                </td>
             
 
-            <td class="description last"><p>The error detailed description.</p></td>
+            
+
+            <td class="description last"></td>
         </tr>
 
     
@@ -289,7 +253,7 @@
 
 
     <ul>
-        <li><a href="module-errors-FaunaError.html">module:errors~FaunaError</a></li>
+        <li>Error</li>
     </ul>
 
 
@@ -303,250 +267,6 @@
 
     
 
-    
-        <h3 class="subsection-title">Members</h3>
-
-        <dl>
-            
-<hr>
-<dt class="name" id="description">
-    <h4 id="description"><span class="type-signature"></span>description<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Description for this exception.</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="module-errors-FaunaError.html#description">module:errors~FaunaError#description</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="message">
-    <h4 id="message"><span class="type-signature"></span>message<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Message for this exception.</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="module-errors-FaunaError.html#message">module:errors~FaunaError#message</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="name">
-    <h4 id="name"><span class="type-signature"></span>name<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        <p>Name of this exception.</p>
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="module-errors-FaunaError.html#name">module:errors~FaunaError#name</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        </dl>
     
 
     
@@ -598,7 +318,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on 2021-09-03T11:54:02+00:00
+		on 2021-11-17T21:54:21+00:00
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

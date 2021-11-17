@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>Documentation Module: stream</title>
+	<title>Documentation Class: FaunaTime</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,10 +86,17 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Module: stream</h1>
+	<h1 class="page-title">Class: FaunaTime</h1>
 <section>
 
 <header>
+    
+        <h2>
+            <span class="ancestors"><a href="module-values.html">values</a>.</span>
+        
+        FaunaTime
+        </h2>
+        
     
 </header>
 
@@ -98,108 +105,30 @@
     <div class="container-overview">
     
         
-
-        
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Classes</h3>
-
-        <dl>
-            <dt><a href="module-stream-Subscription.html">Subscription</a></dt>
-            <dd></dd>
-        </dl>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Type Definitions</h3>
-
-        <dl>
-                
 <hr>
-<dt class="name" id="~Options">
-    <h4 id="~Options">Options</h4>
-
+<dt>
+    <h4 class="name" id="FaunaTime"><span class="type-signature"></span>new FaunaTime(value)</h4>
+    
     
 </dt>
 <dd>
+
+    
+    <div class="description">
+        <p>FaunaDB time. See the <a href="https://app.fauna.com/documentation/reference/queryapi#special-type">docs</a>.</p>
+    </div>
     
 
     
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">Object</span>
 
-
-
-            </li>
-        </ul>
     
 
     
-<dl class="details">
     
+        <h5>Parameters:</h5>
+        
 
-    <h5 class="subsection-title">Properties:</h5>
-
-    <dl>
-
-<table class="props table table-striped">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -209,11 +138,7 @@
         <th>Type</th>
 
         
-        <th>Argument</th>
-        
 
-        
-        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -225,13 +150,16 @@
 
         <tr>
             
-                <td class="name"><code>fields</code></td>
+                <td class="name"><code>value</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;string></span>
+<span class="param-type">string</span>
+|
+
+<span class="param-type">Date</span>
 
 
 
@@ -239,38 +167,20 @@
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    ['action', 'document', 'diff', 'prev']
-                
-                </td>
-            
 
-            <td class="description last"><p>The fields event fields to opt-in during stream subscription. Possible
-options:</p>
-<ul>
-<li>'action': The action type</li>
-<li>'document': The document's data</li>
-<li>'diff': The difference between 'document' and 'prev'</li>
-<li>'prev': The event's previous data</li>
-</ul></td>
+            <td class="description last"><p>If a Date, this is converted to a string.</p></td>
         </tr>
 
     
     </tbody>
 </table>
-</dl>
 
+    
+
+    
+<dl class="details">
     
 
 	
@@ -308,11 +218,50 @@ options:</p>
 	
 </dl>
 
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 </dd>
 
-            </dl>
+    
+    </div>
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li>module:values~Value</li>
+    </ul>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
     
 
     
