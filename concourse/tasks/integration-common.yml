@@ -16,4 +16,4 @@ services:
     volumes:
       - "../../:/tmp/app"
     working_dir: "/tmp/app"
-    command: [sh, -c, "npm install && npm test"]
+    command: [sh, -c, "npm install && npm run build:package && npm test"]
