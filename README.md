@@ -521,7 +521,7 @@ Normally, you would install the latest release of this package using `npm instal
 3. Instead of using a version from the npm registry, we'll want to point our `package.json` to the `main` branch of our GitHub repo. To do that, change the `^5.0.0-preview.1` to `fauna/faunadb-js#main`.
 
 ```
-"faunadb": "fauna/faunadb-js#main"
+"faunadb": "fauna/faunadb-js#v5"
 ```
 
 4. Update your `node_modules` by running `npm install` or `yarn`
@@ -541,11 +541,13 @@ cd faunadb-js
 code package.json
 ```
 
-3. Change the `version` to be semantic. For example, `3.0.0-beta`.
+3. Change the `version` to be semantic. For example, `5.0.0-beta`.
 
-4. Run `npm pack`. This creates a tarball at the root of your project directory which represents the image sent to the NPM registry when publishing.
+4. Run `npm run build:package`
 
-5. In another project, you can now install the beta from the local image you just created by running:
+5. Run `npm pack`. This creates a tarball at the root of your project directory which represents the image sent to the NPM registry when publishing.
+
+6. In another project, you can now install the beta from the local image you just created by running:
 
 ```bash
 npm install /path/to/tarball
