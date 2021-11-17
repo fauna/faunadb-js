@@ -45,6 +45,7 @@ jobs:
           AUTH_0_URI: ((fauna/auth0.uri))
           AUTH_0_CLIENT_ID: ((fauna/auth0/client.id))
           AUTH_0_CLIENT_SECRET: ((fauna/auth0/client.secret))
+          FAUNA_REPO_PASSWORD: ((gcr-key))
 
       - task: build-and-npm-publish
         file: fauna-js-repository/concourse/tasks/build-and-npm-publish.yml
