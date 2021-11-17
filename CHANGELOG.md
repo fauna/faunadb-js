@@ -1,3 +1,8 @@
+## 5.0.0-preview
+
+- Supports fauna database API v5
+- Implemented new driver exception hierarchy
+
 ## 4.4.1
 
 - Make `signal` property of `client.query` optional

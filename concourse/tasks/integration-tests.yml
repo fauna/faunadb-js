@@ -13,6 +13,7 @@ params:
   AUTH_0_URI:
   AUTH_0_CLIENT_ID:
   AUTH_0_CLIENT_SECRET:
+  FAUNA_REPO_PASSWORD:
 
 inputs:
   - name: fauna-js-repository
@@ -23,6 +24,7 @@ run:
     - bash
     - -ceu
     - |
+      docker login -u _json_key -p "$FAUNA_REPO_PASSWORD" https://gcr.io > /dev/null 2>&1
       # start containers
       docker-compose -f fauna-js-repository/concourse/tasks/integration.yml run test-10
       docker-compose -f fauna-js-repository/concourse/tasks/integration.yml run test-12

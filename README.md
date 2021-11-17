@@ -170,6 +170,42 @@ const faunadb = require('faunadb')
 + const { logger, showRequestResult } = faunadb
 ```
 
+### Exceptions handling
+
+With the 5.0.0 release, child classes of the base FaunaError class now exist.
+Each class corresponds to an error code from Fauna.
+Inspect the [`errors.js`](https://github.com/fauna/faunadb-js/blob/dcf8c4eece22b344b0a64c76a192634bd747e234/src/errors.js)
+file for more information on how it is implemented.
+
+The following example demonstrates the methods that you can access from the exception object:
+
+```
+import { Client, TransactionAbortedError, AuthenticationFailedError } from 'faunadb'
+
+const client = new Client()
+
+async function run() {
+  try {
+    await client.query()
+  } catch(error) {
+    if(error instanceof TransactionAbortedError) {
+      console.error({
+        code: error.code,
+        position: e.position,
+        msg: e.message,
+        httpStatusCode: e.httpStatusCode
+      })
+      return
+    }
+
+    if(error instanceof AuthenticationFailedError) {
+      console.error('invalid creds')
+    }
+  }
+}
+run()
+```
+
 ##### Import query functions
 
 All query functions has been removed from main package and hosted under sub-module `faunadb/query`.
@@ -479,10 +515,10 @@ Normally, you would install the latest release of this package using `npm instal
 2. If you have already installed this driver, you should see the following in your list of dependencies. If not, add it.
 
 ```
-"faunadb": "^2.14.1"
+"faunadb": "^5.0.0-preview.1"
 ```
 
-3. Instead of using a version from the npm registry, we'll want to point our `package.json` to the `main` branch of our GitHub repo. To do that, change the `^2.4.1` to `fauna/faunadb-js#main`.
+3. Instead of using a version from the npm registry, we'll want to point our `package.json` to the `main` branch of our GitHub repo. To do that, change the `^5.0.0-preview.1` to `fauna/faunadb-js#main`.
 
 ```
 "faunadb": "fauna/faunadb-js#main"
