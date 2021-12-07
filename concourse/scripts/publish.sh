@@ -17,7 +17,7 @@ then
   npm run build:package
   echo "Publishing a new version..."
   echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
-  npm publish --tag beta
+  npm publish
   rm .npmrc
   echo "faunadb-js@$PACKAGE_VERSION published to npm" > ../slack-message/publish
 else
