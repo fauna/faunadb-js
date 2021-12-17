@@ -408,9 +408,7 @@ describe('Client', () => {
       new Client(util.getCfg())
       await new Promise(resolve => {
         setTimeout(() => {
-          expect(console.info.mock.calls[0]).not.toContain(
-            'New faunadb version available'
-          )
+          expect(console.info.mock.calls[0]).toBeUndefined();
           resolve()
         }, 0)
       })
