@@ -166,7 +166,8 @@ var notifyAboutNewVersion = util.notifyAboutNewVersion()
  *   can also be configured via the FAUNADB_HTTP2_SESSION_IDLE_TIME environment variable
  *   which has the highest priority and overrides the option passed into the Client constructor.
  * @param {?boolean} options.checkNewVersion
- *   Enabled by default. Prints a message to the terminal when a newer driver is available.
+ *   Prints a message to the terminal when a newer driver is available.
+ *   Disabled by default. Prints error to console when internet connection is unavailable.
  */
 function Client(options) {
   var http2SessionIdleTime = getHttp2SessionIdleTime()
@@ -183,7 +184,7 @@ function Client(options) {
     fetch: undefined,
     queryTimeout: null,
     http2SessionIdleTime: http2SessionIdleTime.value,
-    checkNewVersion: true,
+    checkNewVersion: false,
   })
   notifyAboutNewVersion(options.checkNewVersion)
 
