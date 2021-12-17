@@ -404,11 +404,11 @@ describe('Client', () => {
       resetNotifyAboutNewVersion()
     })
 
-    test('enabled by default', async () => {
+    test('disabled by default', async () => {
       new Client(util.getCfg())
       await new Promise(resolve => {
         setTimeout(() => {
-          expect(console.info.mock.calls[0][0]).toContain(
+          expect(console.info.mock.calls[0][0]).not.toContain(
             'New faunadb version available'
           )
           resolve()
@@ -416,13 +416,13 @@ describe('Client', () => {
       })
     })
 
-    test('print message only once', async () => {
+    test('do not print message by default', async () => {
       new Client(util.getCfg())
       new Client(util.getCfg())
       new Client(util.getCfg())
       await new Promise(resolve => {
         setTimeout(() => {
-          expect(console.info).toBeCalledTimes(1)
+          expect(console.info).toBeCalledTimes(0)
           resolve()
         }, 0)
       })
