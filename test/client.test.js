@@ -414,6 +414,21 @@ describe('Client', () => {
       })
     })
 
+
+    test('enabled through options', async () => {
+      const config = util.getCfg()
+      config.checkNewVersion = true
+      new Client(config)
+      await new Promise(resolve => {
+        setTimeout(() => {
+          expect(console.info.mock.calls[0][0]).toContain(
+            'New faunadb version available'
+          );
+          resolve()
+        }, 0)
+      })
+    })
+
     test('do not print message by default', async () => {
       new Client(util.getCfg())
       new Client(util.getCfg())
