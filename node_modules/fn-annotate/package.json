@@ -1,0 +1,46 @@
+{
+  "name": "fn-annotate",
+  "version": "1.2.0",
+  "description": "Get the argument names of a JavaScript function",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/index --harmony"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "jshintConfig": {
+    "laxcomma": true,
+    "eqeqeq": true,
+    "newcap": true,
+    "undef": true,
+    "node": true,
+    "mocha": true,
+    "esnext": true,
+    "noyield": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aantthony/annotate.git"
+  },
+  "keywords": [
+    "annotate",
+    "arguments",
+    "function",
+    "reflection",
+    "annotation"
+  ],
+  "author": "Anthony Foster <git@af.id.au>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aantthony/annotate/issues"
+  },
+  "homepage": "https://github.com/aantthony/annotate#readme",
+  "devDependencies": {
+    "expect": "^1.6.0",
+    "mocha": "^2.2.5"
+  },
+  "directories": {
+    "test": "test"
+  }
+}
