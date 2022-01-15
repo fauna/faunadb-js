@@ -89,7 +89,7 @@ To get up and running quickly, below is a full example for connecting from the b
 #### Requiring the Driver
 
 ```javascript
-var faunadb = require('faunadb'),
+var faunadb = require('faunadb')
 var query = require('faunadb/query')
 ```
 
