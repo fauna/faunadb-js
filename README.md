@@ -80,7 +80,7 @@ To get up and running quickly, below is a full example for connecting from the b
   client.query(
     faunadb.query.ToDate('2018-06-06')
   )
-  .then((res) { console.log('Result:', res) })
+  .then(function (res) { console.log('Result:', res) })
   .catch(function (err) { console.log('Error:', err) })
 </script>
 </html>
