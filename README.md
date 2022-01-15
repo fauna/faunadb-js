@@ -90,7 +90,7 @@ To get up and running quickly, below is a full example for connecting from the b
 
 ```javascript
 var faunadb = require('faunadb'),
-var query = require('faunadb/query)
+var query = require('faunadb/query')
 ```
 
 The `faunadb/query` module contains all of the functions to create FaunaDB Query expressions.
