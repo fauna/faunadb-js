@@ -1,6 +1,6 @@
 import Expr from './Expr'
 
-type StreamEventFields = ['action', 'document', 'diff', 'prev']
+type StreamEventFields = ['action', 'document', 'diff', 'prev', 'index']
 
 type StreamFn = (
   expr: Expr,
@@ -41,6 +41,14 @@ export type SubscriptionEventHandlers = {
       document?: object
       diff?: object
       prev?: object
+    }
+  >
+  set: Handler<
+    'set',
+    {
+      action: 'add' | 'remove'
+      document?: object
+      index?: object
     }
   >
   history_rewrite: Handler<

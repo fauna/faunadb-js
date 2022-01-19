@@ -19,7 +19,7 @@ import RequestResult from './RequestResult'
 import { parseJSON, parseJSONStreaming } from './_json'
 import { applyDefaults } from './_util'
 
-var DefaultEvents = ['start', 'error', 'version', 'history_rewrite']
+var DefaultEvents = ['start', 'error', 'version', 'history_rewrite', 'set']
 var DocumentStreamEvents = DefaultEvents.concat(['snapshot'])
 
 /**
