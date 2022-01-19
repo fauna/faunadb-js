@@ -362,4 +362,34 @@ describe('StreamAPI', () => {
       assertActiveSessions(0)
     })
   })
+
+  describe('set', () => {
+    test('can listen to set adds', done => {
+      stream = client.stream(q.Documents(coll.ref))
+        .on('start', () => {
+          client.query(
+            q.Create(coll.ref, {
+              data: { name: "foo" }
+            })
+          )
+        })
+        .on('set', event => {
+          expect(event.action).toEqual('add')
+          done()
+        })
+        .start()
+    })
+
+    test('can listen to set removes', done => {
+      stream = client.stream(q.Documents(coll.ref))
+        .on('start', () => {
+          client.query(q.Delete(doc.ref))
+        })
+        .on('set', event => {
+          expect(event.action).toEqual('remove')
+          done()
+        })
+        .start()
+    })
+  })
 })
