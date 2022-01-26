@@ -33,7 +33,7 @@ commands:
 
       - restore_cache:
           keys:
-            - v1-deps-<<parameters.node_version>>-{{ checksum "yarn.lock" }}
+            - v1-deps-<<parameters.node_version>>-{{ checksum "package-lock.json" }}
 
       - run:
           name: Install dependencies
@@ -42,7 +42,7 @@ commands:
       - save_cache:
           paths:
             - node_modules
-          key: v1-deps-<<parameters.node_version>>-{{ checksum "yarn.lock" }}
+          key: v1-deps-<<parameters.node_version>>-{{ checksum "package-lock.json" }}
 
       - run:
           name: Wait FaunaDB init
