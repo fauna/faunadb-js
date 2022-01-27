@@ -11,8 +11,6 @@ var stream = require('./stream')
 var util = require('./_util')
 var values = require('./values')
 
-var notifyAboutNewVersion = util.notifyAboutNewVersion()
-
 /**
  * The callback that will be executed after every completed request.
  *
@@ -183,9 +181,8 @@ function Client(options) {
     fetch: undefined,
     queryTimeout: null,
     http2SessionIdleTime: http2SessionIdleTime.value,
-    checkNewVersion: true,
+    checkNewVersion: false,
   })
-  notifyAboutNewVersion(options.checkNewVersion)
 
   if (http2SessionIdleTime.shouldOverride) {
     options.http2SessionIdleTime = http2SessionIdleTime.value
@@ -366,6 +363,3 @@ function getHttp2SessionIdleTime() {
 }
 
 module.exports = Client
-module.exports.resetNotifyAboutNewVersion = function() {
-  notifyAboutNewVersion = util.notifyAboutNewVersion()
-}

@@ -1,4 +1,4 @@
-# FaunaDB Javascript Driver
+# FaunaDB JavaScript Driver
 
 [![CircleCI](https://circleci.com/gh/fauna/faunadb-js.svg?style=svg)](https://circleci.com/gh/fauna/faunadb-js)
 [![Npm Version](https://img.shields.io/npm/v/faunadb.svg?maxAge=21600)](https://www.npmjs.com/package/faunadb)
@@ -6,7 +6,7 @@
 
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
-A Javascript driver for [FaunaDB](https://fauna.com).
+A JavaScript driver for [FaunaDB](https://fauna.com).
 
 [View reference JSDocs here](https://fauna.github.io/faunadb-js).
 
@@ -19,9 +19,10 @@ reference](https://docs.fauna.com/fauna/current/api/fql/).
 
 This Driver supports and is tested on:
 
-- Node.js
-  - LTS
-  - Stable
+- Node.js [*Current*, *Active LTS*, and *Maintenance LTS* releases](https://nodejs.org/en/about/releases/)
+  - *Current* - v17
+  - *Active LTS* - currently v16
+  - *Maintenance LTS* - v12 and v14 
 - Chrome
 - Firefox
 - Safari
