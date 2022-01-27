@@ -13,7 +13,7 @@ executors:
     docker:
       - image: circleci/node:<<parameters.node_version>>
 
-      - image: gcr.io/faunadb-cloud/faunadb/enterprise:latest
+      - image: gcr.io/faunadb-cloud/faunadb/core/nightly:latest
         name: core
         auth:
           username: _json_key
