@@ -1,13 +1,14 @@
 ## 4.4.2
-- Fix changelog path
-- Fix stack trace capture
-- Test updates
-- Fix `ContainsStr`
-- Fix `isFaunaValue` and `isFaunaRef` properties
-- Improve `Expr` type declaration to include `toFQL()`
-- Improve `PageHelper`
-- Improve unauthorized error message
-- Security improvements
+- Fix changelog path [#534]
+- Fix stack trace capture [#536]
+- Test updates [#527]
+- Fix `ContainsStr` [#537]
+- Fix `isFaunaValue` and `isFaunaRef` properties [#529]
+- Improve `Expr` type declaration to include `toFQL()` [#544]
+- Improve `PageHelper` [#543]
+- Improve unauthorized error message [#557]
+- Fix Auth0 [#558]
+- Security improvements [#600]
 
 ## 4.4.1
 
