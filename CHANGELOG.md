@@ -1,3 +1,14 @@
+## 4.4.2
+- Fix changelog path
+- Fix stack trace capture
+- Test updates
+- Fix `ContainsStr`
+- Fix `isFaunaValue` and `isFaunaRef` properties
+- Improve `Expr` type declaration to include `toFQL()`
+- Improve `PageHelper`
+- Improve unauthorized error message
+- Security improvements
+
 ## 4.4.1
 
 - Make `signal` property of `client.query` optional
