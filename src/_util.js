@@ -512,43 +512,7 @@ function resolveFetch(fetchOverride) {
   return require('cross-fetch')
 }
 
-function notifyAboutNewVersion() {
-  var isNotified
-  const checkAndNotify = checkNewVersion => {
-    if (!isNodeEnv() || isNotified || !checkNewVersion) return
-    function onResponse(latestVersion) {
-      var isNewVersionAvailable = latestVersion > packageJson.version
-      if (isNewVersionAvailable) {
-        console.info(
-          boxen(
-            'New ' +
-              packageJson.name +
-              ' version available ' +
-              chalk.dim(packageJson.version) +
-              chalk.reset(' → ') +
-              chalk.green(latestVersion) +
-              `\nChangelog: https://github.com/fauna/faunadb-js/blob/main/CHANGELOG.md`,
-            { padding: 1, borderColor: 'yellow' }
-          )
-        )
-      }
-    }
-
-    isNotified = true
-    resolveFetch()('https://registry.npmjs.org/' + packageJson.name)
-      .then(resp => resp.json())
-      .then(json => onResponse(json['dist-tags'].latest))
-      .catch(err => {
-        console.error('Unable to check new driver version')
-        console.error(err)
-      })
-  }
-
-  return checkAndNotify
-}
-
 module.exports = {
-  notifyAboutNewVersion: notifyAboutNewVersion,
   crossGlobal: crossGlobal,
   mergeObjects: mergeObjects,
   formatUrl: formatUrl,
