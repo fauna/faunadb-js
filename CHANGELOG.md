@@ -1,5 +1,5 @@
 ## 4.4.2
-- Upgraded Dependencies to address security concerns [#600](https://github.com/fauna/faunadb-js/pull/600)
+- Upgrade dependencies to address security concerns [#600](https://github.com/fauna/faunadb-js/pull/600)
 - Fix Auth0 [#558](https://github.com/fauna/faunadb-js/pull/558)
 - Fix `isFaunaValue` and `isFaunaRef` properties [#529](https://github.com/fauna/faunadb-js/pull/529)
 - Fix stack trace capture [#536](https://github.com/fauna/faunadb-js/pull/536)
