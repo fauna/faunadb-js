@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Value</title>
+    <title>JSDoc: Source: clientLogger.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,149 +17,138 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Value</h1>
+    <h1 class="page-title">Source: clientLogger.js</h1>
 
     
 
 
 
-
-<section>
-
-<header>
     
-        <h2><span class="attribs"><span class="type-signature">(abstract) </span></span>
-            <span class="ancestors"><a href="module-values.html">values</a>~</span>Value<span class="signature">()</span><span class="type-signature"></span></h2>
-        
-    
-</header>
-
-<article>
-    <div class="container-overview">
-    
-        
-
-    
-
-    
-    <h4 class="name" id="Value"><span class="type-signature">(abstract) </span>new Value<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Base type for FaunaDB value objects.</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="values.js.html">values.js</a>, <a href="values.js.html#line35">line 35</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    </div>
-
-    
-        <h3 class="subsection-title">Extends</h3>
-
-        
-
-
-    <ul>
-        <li><a href="Expr.html">Expr</a></li>
-    </ul>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
+
+var json = require('./_json')
+
+/**
+ * Functions to assist with debug logging.
+ * @module clientLogger
+ */
+
+/**
+ * A user provided log line handler.
+ *
+ * @callback loggerCallback
+ * @param {string} logged
+ */
+
+/**
+ * Function that can be the `observer` for a {@link Client}.
+ * Will call `loggerFunction` with a string representation of each {@link RequestResult}.
+ *
+ * An example logging string:
+ * ```plain
+ * Fauna POST /
+ * Request JSON: {
+ *   "data": ...
+ * }
+ * Response headers: {
+ *    "x-faunadb-host": ...,
+ *    "x-faunadb-build": ...,
+ *    "connection": "close",
+ *    "content-length": ...,
+ *    "content-type": "application/json;charset=utf-8"
+ *  }
+ * Response JSON: {
+ *    "resource": {
+ *      "ref": { ... },
+ *      "class": { ... },
+ *      "ts": ...
+ *    }
+ *  }
+ * Response (201): Network latency 13ms
+ * ```
+ *
+ * @param {loggerCallback} loggerFunction
+ * @return {Client~observerCallback}
+ * @example
+ * var client = new Client({
+ *   ... other options ...
+ *   observer: logger(console.log)
+ * })
+ * client.ping() // Logs the request and response.
+ */
+function logger(loggerFunction) {
+  return function(requestResult, client) {
+    return loggerFunction(showRequestResult(requestResult), client)
+  }
+}
+
+/**
+ * Convenience function used by {@link logger} to transform a {@link RequestResult}
+ * to a string for logging.
+ * @param {RequestResult} requestResult
+ * @returns {string} string to be logged.
+ */
+function showRequestResult(requestResult) {
+  var query = requestResult.query,
+    method = requestResult.method,
+    path = requestResult.path,
+    requestContent = requestResult.requestContent,
+    responseHeaders = requestResult.responseHeaders,
+    responseContent = requestResult.responseContent,
+    statusCode = requestResult.statusCode,
+    timeTaken = requestResult.timeTaken
+
+  var out = ''
+
+  function log(str) {
+    out = out + str
+  }
+
+  log('Fauna ' + method + ' /' + path + _queryString(query) + '\n')
+  if (requestContent != null) {
+    log('  Request JSON: ' + _showJSON(requestContent) + '\n')
+  }
+  log('  Response headers: ' + _showJSON(responseHeaders) + '\n')
+  log('  Response JSON: ' + _showJSON(responseContent) + '\n')
+  log('  Response (' + statusCode + '): Network latency ' + timeTaken + 'ms\n')
+
+  return out
+}
+
+function _indent(str) {
+  var indentStr = '  '
+  return str.split('\n').join('\n' + indentStr)
+}
+
+function _showJSON(object) {
+  return _indent(json.toJSON(object, true))
+}
+
+function _queryString(query) {
+  if (query == null) {
+    return ''
+  }
+
+  var keys = Object.keys(query)
+  if (keys.length === 0) {
+    return ''
+  }
+
+  var pairs = keys.map(function(key) {
+    return key + '=' + query[key]
+  })
+  return '?' + pairs.join('&amp;')
+}
+
+module.exports = {
+  logger: logger,
+  showRequestResult: showRequestResult,
+}
+</code></pre>
+        </article>
+    </section>
 
 
 
