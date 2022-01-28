@@ -1,12 +1,12 @@
 ## 4.4.2
-- Upgraded Dependencies to address security concerns [#600] (https://github.com/fauna/faunadb-js/pull/600)
-- Fix Auth0 [#558] (https://github.com/fauna/faunadb-js/pull/558)
-- Fix `isFaunaValue` and `isFaunaRef` properties [#529] (https://github.com/fauna/faunadb-js/pull/529)
-- Fix stack trace capture [#536] (https://github.com/fauna/faunadb-js/pull/536)
-- Fix `ContainsStr` to render as string [#537] (https://github.com/fauna/faunadb-js/pull/537)
-- Improve `Expr` type declaration to include `toFQL()` [#544] (https://github.com/fauna/faunadb-js/pull/544)
-- Improve `PageHelper` [#543] (https://github.com/fauna/faunadb-js/pull/543)
-- Improve unauthorized error message clarity [#557] (https://github.com/fauna/faunadb-js/pull/557)
+- Upgraded Dependencies to address security concerns [#600](https://github.com/fauna/faunadb-js/pull/600)
+- Fix Auth0 [#558](https://github.com/fauna/faunadb-js/pull/558)
+- Fix `isFaunaValue` and `isFaunaRef` properties [#529](https://github.com/fauna/faunadb-js/pull/529)
+- Fix stack trace capture [#536](https://github.com/fauna/faunadb-js/pull/536)
+- Fix `ContainsStr` to render as string [#537](https://github.com/fauna/faunadb-js/pull/537)
+- Improve `Expr` type declaration to include `toFQL()` [#544](https://github.com/fauna/faunadb-js/pull/544)
+- Improve `PageHelper` [#543](https://github.com/fauna/faunadb-js/pull/543)
+- Improve unauthorized error message clarity [#557](https://github.com/fauna/faunadb-js/pull/557)
 
 ## 4.4.1
 
