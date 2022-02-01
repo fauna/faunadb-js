@@ -1,3 +1,6 @@
+## 4.5.0
+- Add set-streaming feature support [#589](https://github.com/fauna/faunadb-js/pull/589)
+
 ## 4.4.2
 - Upgrade dependencies to address security concerns [#600](https://github.com/fauna/faunadb-js/pull/600)
 - Fix Auth0 [#558](https://github.com/fauna/faunadb-js/pull/558)
