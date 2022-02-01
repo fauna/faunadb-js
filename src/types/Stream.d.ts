@@ -28,6 +28,14 @@ export type SubscriptionEventHandlers = {
       prev?: object
     }
   >
+  set: Handler<
+    'set',
+    {
+      action: 'add' | 'remove'
+      document?: object
+      index?: object
+    }
+  >
   history_rewrite: Handler<
     'history_rewrite',
     {

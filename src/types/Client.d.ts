@@ -6,7 +6,7 @@ import { ExprArg } from './query'
 import RequestResult from './RequestResult'
 import { Subscription, SubscriptionEventHandlers } from './Stream'
 
-type StreamEventFields = 'action' | 'document' | 'diff' | 'prev'
+type StreamEventFields = 'action' | 'document' | 'diff' | 'prev' | 'index'
 
 export interface ClientConfig {
   secret: string

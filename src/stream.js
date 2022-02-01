@@ -19,7 +19,7 @@ var http = require('./_http')
 var q = require('./query')
 var util = require('./_util')
 
-var DefaultEvents = ['start', 'error', 'version', 'history_rewrite']
+var DefaultEvents = ['start', 'error', 'version', 'history_rewrite', 'set']
 var DocumentStreamEvents = DefaultEvents.concat(['snapshot'])
 
 /**
@@ -285,13 +285,14 @@ EventDispatcher.prototype.dispatch = function(event) {
 
 /**
  * @typedef {Object} Options
- * @property {string[]} [fields=['action', 'document', 'diff', 'prev']]
+ * @property {string[]} [fields=['action', 'document', 'diff', 'prev', 'index']]
  *   The fields event fields to opt-in during stream subscription. Possible
  *   options:
  *   * 'action': The action type
  *   * 'document': The document's data
  *   * 'diff': The difference between 'document' and 'prev'
  *   * 'prev': The event's previous data
+ *   * 'index': The event's source index, if a set event
  */
 
 /**
