@@ -143,6 +143,9 @@ workflows:
     #     * Current on 2022-04-19
     #     * Active LTS on 2022-10-25
     #     * Maintenance LTS on 2023-10-18
+    filters:
+      ignore:
+        - gh-pages
     jobs:
       # Stable path
       - core-stable-12:
