@@ -3,5 +3,4 @@ jobs:
   build:
     branches:
       ignore: gh-pages
-  steps:
-  
+    steps:
