@@ -4,3 +4,4 @@ workflows:
     filters:
       ignore:
         - gh-pages
+    jobs:
