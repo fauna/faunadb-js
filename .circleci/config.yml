@@ -147,31 +147,55 @@ workflows:
       # Stable path
       - core-stable-12:
           context: faunadb-drivers
+          filters:
+            branches:
+              ignore: gh-pages
       - core-stable-14:
           context: faunadb-drivers
           requires:
             - core-stable-12
+          filters:
+            branches:
+              ignore: gh-pages
       - core-stable-16:
           context: faunadb-drivers
           requires:
             - core-stable-14
+          filters:
+            branches:
+              ignore: gh-pages
       - core-stable-17:
           context: faunadb-drivers
           requires:
             - core-stable-16
+          filters:
+            branches:
+              ignore: gh-pages
 
       # Nightly path
       - core-nightly-12:
           context: faunadb-drivers
+          filters:
+            branches:
+              ignore: gh-pages
       - core-nightly-14:
           context: faunadb-drivers
           requires:
             - core-nightly-12
+          filters:
+            branches:
+              ignore: gh-pages
       - core-nightly-16:
           context: faunadb-drivers
           requires:
             - core-nightly-14
+          filters:
+            branches:
+              ignore: gh-pages
       - core-nightly-17:
           context: faunadb-drivers
           requires:
             - core-nightly-16
+          filters:
+            branches:
+              ignore: gh-pages
