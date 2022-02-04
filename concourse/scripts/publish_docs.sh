@@ -43,5 +43,31 @@ cp -R ../doc/* ./
 git config --global user.email "nobody@concourse-ci.org"
 git config --global user.name "Fauna, Inc"
 
+echo "================================="
+echo "Updating CircleCI to Ignore Build"
+echo "================================="
+
+mkdir .circleci
+cat > config.yml <<- "EOF"
+# No-op workflow for `gh-pages` branch
+version: 2.1
+
+jobs:
+  no-op:
+    docker:
+      - image: circleci/gh-pages
+    steps:
+      - checkout
+
+workflows:
+  no-op:
+    jobs:
+      - no-op:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
+EOF
+
 git add -A
 git commit -m "Update docs to version: $PACKAGE_VERSION"
