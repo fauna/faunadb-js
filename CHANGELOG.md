@@ -1,3 +1,7 @@
+## 4.5.2
+- Fix documentation pipeline bug [#615](https://github.com/fauna/faunadb-js/pull/615)
+- Fix webpack custom module bug [#614](https://github.com/fauna/faunadb-js/pull/614)
+
 ## 4.5.1
 - Address dependency security vulnerabilities [#606](https://github.com/fauna/faunadb-js/pull/606)
 - Improve deployment pipeline [#612](https://github.com/fauna/faunadb-js/pull/612)
