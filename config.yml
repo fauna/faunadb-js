@@ -1,0 +1,18 @@
+# No-op workflow for `gh-pages` branch
+version: 2.1
+
+jobs:
+  no-op:
+    docker:
+      - image: circleci/gh-pages
+    steps:
+      - checkout
+
+workflows:
+  no-op:
+    jobs:
+      - no-op:
+          filters:
+            branches:
+              ignore:
+                - gh-pages
