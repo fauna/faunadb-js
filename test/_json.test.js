@@ -22,7 +22,7 @@ describe('parseJSONStreaming', () => {
     expect(buffer).toEqual(`{"baz`)
   })
 
-  test.only('ignore leading new line', () => {
+  test('ignore leading new line', () => {
     const jsonText = `\r\n{"foo": "bar"}\r\n{"baz`
     const { values, buffer } = parseJSONStreaming(jsonText)
     expect(values).toEqual([{ foo: 'bar' }])

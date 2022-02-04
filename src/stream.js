@@ -11,7 +11,7 @@
 // visibility control. However, DO NOT change any internal state from outside of
 // its context as it'd most certainly lead to errors.
 
-require('abort-controller/polyfill')
+var { AbortController } = require('node-abort-controller')
 var RequestResult = require('./RequestResult')
 var errors = require('./errors')
 var json = require('./_json')
