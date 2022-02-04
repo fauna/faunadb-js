@@ -48,6 +48,7 @@ echo "Updating CircleCI to Ignore Build"
 echo "================================="
 
 mkdir .circleci
+cd .circleci
 cat > config.yml <<- "EOF"
 # No-op workflow for `gh-pages` branch
 version: 2.1
