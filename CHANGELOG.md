@@ -1,3 +1,7 @@
+## 4.5.1
+- Address dependency security vulnerabilities [#606](https://github.com/fauna/faunadb-js/pull/606)
+- Improve deployment pipeline [#612](https://github.com/fauna/faunadb-js/pull/612)
+
 ## 4.5.0
 - Add set-streaming feature support [#589](https://github.com/fauna/faunadb-js/pull/589)
 
