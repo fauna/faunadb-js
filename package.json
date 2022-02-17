@@ -22,6 +22,10 @@
     "tools/printReleaseNotes.js"
   ],
   "main": "index.js",
+  "exports": {
+    "require": "./index.js",
+    "default": "./dist/faunadb.js"
+  },
   "scripts": {
     "doc": "jsdoc -c ./jsdoc.json",
     "browserify": "browserify index.js --standalone faunadb -o dist/faunadb.js",
