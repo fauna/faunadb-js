@@ -310,6 +310,10 @@ Client.prototype._execute = function(method, path, data, query, options) {
       })
     )
     .then(function(response) {
+      if(response.status >= 400) {
+        throw new Error(`[HttpError ${response.status}] ${response.body}`)
+      }
+    
       var endTime = Date.now()
       var responseObject = json.parseJSON(response.body)
       var result = new RequestResult(
