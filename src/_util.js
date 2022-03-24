@@ -330,7 +330,7 @@ function getNodeRuntimeEnv() {
  * @param {any} def The default value.
  * @private
  */
-function defaults(obj, def) {
+function defaults(obj, def = { withFaunaMetrics: false }) {
   if (obj === undefined) {
     return def
   } else {
