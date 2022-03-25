@@ -41,7 +41,7 @@ describe('Client', () => {
   })
 
   test('returns query metrics if the flag is set', () => {
-    var client = util.getClient({ withFaunaMetrics: true })
+    var client = util.getClient({ metrics: true })
     const response = client.query(query.Add(1, 1))
     console.log(response)
   })

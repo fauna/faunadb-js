@@ -182,6 +182,7 @@ function Client(options) {
     queryTimeout: null,
     http2SessionIdleTime: http2SessionIdleTime.value,
     checkNewVersion: false,
+    metrics: false,
   })
 
   if (http2SessionIdleTime.shouldOverride) {
@@ -281,6 +282,22 @@ Client.prototype.close = function(opts) {
   return this._http.close(opts)
 }
 
+/**
+ * Executes a query via the FaunaDB Query API.
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi),
+ * and the query functions in this documentation.
+ * @param expression {module:query~ExprArg}
+ *   The query to execute. Created from {@link module:query} functions.
+ * @param {?Object} options
+ *   Object that configures the current query, overriding FaunaDB client options.
+ * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://app.fauna.com/documentation/intro/security))
+ * @return {external:Promise<Object>} An object containing the FaunaDB response object and the list of query metrics incurred by the request.
+ */
+Client.prototype.queryWithMetrics = function(expression, options) {
+  options = Object.assign({}, options, { withMetrics: true })
+  return this._execute('POST', '', query.wrap(expression), null, options)
+}
+
 Client.prototype._execute = function(method, path, data, query, options) {
   query = util.defaults(query, null)
 
@@ -327,10 +344,26 @@ Client.prototype._execute = function(method, path, data, query, options) {
       )
       self._handleRequestResult(response, result, options)
 
-      if (options?.withFaunaMetrics) {
+      const metricsHeaders = [
+        'x-query-bytes-in',
+        'x-query-bytes-out',
+        'x-query-time',
+        'x-read-ops',
+        'x-write-ops',
+        'x-compute-ops',
+        'x-storage-bytes-read',
+        'x-storage-bytes-write',
+        'x-txn-retries',
+      ]
+
+      if (options?.metrics) {
         return {
-          response: responseObject['resource'],
-          headers: response.headers,
+          value: responseObject['resource'],
+          metrics: Object.fromEntries(
+            Object.entries(response.headers).filter(([key]) =>
+              metricsHeaders.includes(key)
+            )
+          ),
         }
       } else {
         return responseObject['resource']
