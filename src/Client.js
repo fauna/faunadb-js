@@ -356,7 +356,7 @@ Client.prototype._execute = function(method, path, data, query, options) {
         'x-txn-retries'
       ]
 
-      if (options?.metrics) {
+      if (options && options.metrics) {
         return { 
           value: responseObject['resource'],
           metrics:  Object.fromEntries(
