@@ -182,6 +182,7 @@ function Client(options) {
     queryTimeout: null,
     http2SessionIdleTime: http2SessionIdleTime.value,
     checkNewVersion: false,
+    metrics: false,
   })
 
   if (http2SessionIdleTime.shouldOverride) {
@@ -327,10 +328,24 @@ Client.prototype._execute = function(method, path, data, query, options) {
       )
       self._handleRequestResult(response, result, options)
       
-      if (options.withFaunaMetrics) {
+      const metricsHeaders = [ 
+        'x-query-bytes-in', 
+        'x-query-bytes-out', 
+        'x-query-time', 
+        'x-read-ops', 
+        'x-write-ops', 
+        'x-compute-ops', 
+        'x-storage-bytes-read', 
+        'x-storage-bytes-write', 
+        'x-txn-retries'
+      ]
+
+      if (options?.metrics) {
         return { 
-          response: responseObject['resource'],
-          headers: response.headers
+          value: responseObject['resource'],
+          metrics:  Object.fromEntries(
+            Object.entries(response.headers).filter(([key]) => metricsHeaders.includes(key))
+          )
         }
       } else {
         return responseObject['resource']
