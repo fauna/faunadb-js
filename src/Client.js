@@ -326,11 +326,11 @@ Client.prototype._execute = function(method, path, data, query, options) {
         endTime
       )
       self._handleRequestResult(response, result, options)
-      
-      if (options.withFaunaMetrics) {
-        return { 
+
+      if (options?.withFaunaMetrics) {
+        return {
           response: responseObject['resource'],
-          headers: response.headers
+          headers: response.headers,
         }
       } else {
         return responseObject['resource']
