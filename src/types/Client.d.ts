@@ -24,14 +24,18 @@ export interface ClientConfig {
   fetch?: typeof fetch
   http2SessionIdleTime?: number
   checkNewVersion?: boolean
+  metrics?: boolean
 }
 
 export interface QueryOptions
   extends Partial<
-    Pick<ClientConfig, 'secret' | 'queryTimeout' | 'fetch' | 'observer'>
+    Pick<
+      ClientConfig,
+      'secret' | 'queryTimeout' | 'fetch' | 'observer' | 'metrics'
+    >
   > {
-    signal?: AbortSignal
-  }
+  signal?: AbortSignal
+}
 
 type StreamFn<T> = (
   expr: Expr,

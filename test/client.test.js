@@ -40,12 +40,6 @@ describe('Client', () => {
     expect(client._http._baseUrl.endsWith(':0')).toBeFalsy()
   })
 
-  test('returns query metrics if the flag is set', () => {
-    var client = util.getClient({ metrics: true })
-    const response = client.query(query.Add(1, 1))
-    console.log(response)
-  })
-
   test('paginates', () => {
     return createDocument().then(function(document) {
       return client.paginate(document.ref).each(function(page) {
