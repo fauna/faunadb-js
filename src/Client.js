@@ -293,7 +293,7 @@ Client.prototype.close = function(opts) {
  * @param {?Object} options
  *   Object that configures the current query, overriding FaunaDB client options.
  * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://app.fauna.com/documentation/intro/security))
- * @return {external:Promise<Object>} An object containing the FaunaDB response object and the list of query metrics incurred by the request.
+ * @return {external:Promise<Object>} {value, metrics} An object containing the FaunaDB response object and the list of query metrics incurred by the request.
  */
 Client.prototype.queryWithMetrics = function(expression, options) {
   options = Object.assign({}, this._globalQueryOptions, options, {
