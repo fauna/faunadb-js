@@ -294,7 +294,7 @@ Client.prototype.close = function(opts) {
  * @return {external:Promise<Object>} An object containing the FaunaDB response object and the list of query metrics incurred by the request.
  */
  Client.prototype.queryWithMetrics = function(expression, options) {
-  options = Object.assign({}, options, { withMetrics: true })
+  options = Object.assign({}, options, { metrics: true })
   return this._execute('POST', '', query.wrap(expression), null, options)
 }
 
