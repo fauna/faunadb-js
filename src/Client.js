@@ -361,11 +361,9 @@ Client.prototype._execute = function(method, path, data, query, options) {
       if (options && options.metrics) {
         return {
           value: responseObject['resource'],
-          metrics: Object.fromEntries(
-            Object.entries(response.headers).filter(([key]) =>
-              metricsHeaders.includes(key)
-            )
-          ),
+          metrics: Object.fromEntries(Array.from(Object.entries(response.headers)).
+            map(([ k,v ]) => [k, parseInt(v)]).
+            filter( ([k,v]) => metricsHeaders.includes(k) )),
         }
       } else {
         return responseObject['resource']

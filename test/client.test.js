@@ -98,12 +98,12 @@ describe('Client', () => {
 
   test('extract response headers from observer', () => {
     var assertResults = function(result) {
-      assertMetric(result.responseHeaders, 'x-read-ops')
-      assertMetric(result.responseHeaders, 'x-write-ops')
-      assertMetric(result.responseHeaders, 'x-storage-bytes-read')
-      assertMetric(result.responseHeaders, 'x-storage-bytes-write')
-      assertMetric(result.responseHeaders, 'x-query-bytes-in')
-      assertMetric(result.responseHeaders, 'x-query-bytes-out')
+      assertObserverStats(result.responseHeaders, 'x-read-ops')
+      assertObserverStats(result.responseHeaders, 'x-write-ops')
+      assertObserverStats(result.responseHeaders, 'x-storage-bytes-read')
+      assertObserverStats(result.responseHeaders, 'x-storage-bytes-write')
+      assertObserverStats(result.responseHeaders, 'x-query-bytes-in')
+      assertObserverStats(result.responseHeaders, 'x-query-bytes-out')
 
       expect(result.endTime).toBeGreaterThan(result.startTime)
     }
@@ -407,9 +407,14 @@ describe('Client', () => {
   })
 })
 
-function assertMetric(metrics, name) {
+function assertObserverStats(metrics, name) {
   expect(metrics[name]).not.toBeNull()
   expect(parseInt(metrics[name])).toBeGreaterThanOrEqual(0)
+}
+
+function assertMetric(metrics, name) {
+  expect(metrics[name]).not.toBeNull()
+  expect(metrics[name]).toBeGreaterThanOrEqual(0)
 }
 
 function createDocument() {
