@@ -40,6 +40,27 @@ describe('Client', () => {
     expect(client._http._baseUrl.endsWith(':0')).toBeFalsy()
   })
 
+  test('returns query metrics if the metrics flag is set', async () => {
+    var metricsClient = util.getClient({ metrics: true })
+    const response = await metricsClient.query(query.Add(1, 1))
+    assertMetric(response.metrics, 'x-read-ops')
+    assertMetric(response.metrics, 'x-write-ops')
+    assertMetric(response.metrics, 'x-storage-bytes-read')
+    assertMetric(response.metrics, 'x-storage-bytes-write')
+    assertMetric(response.metrics, 'x-query-bytes-in')
+    assertMetric(response.metrics, 'x-query-bytes-out')
+  })
+
+  test('returns query metrics if using the queryWithMetrics function', async () => {
+    const response = await client.queryWithMetrics(query.Add(1, 1))
+    assertMetric(response.metrics, 'x-read-ops')
+    assertMetric(response.metrics, 'x-write-ops')
+    assertMetric(response.metrics, 'x-storage-bytes-read')
+    assertMetric(response.metrics, 'x-storage-bytes-write')
+    assertMetric(response.metrics, 'x-query-bytes-in')
+    assertMetric(response.metrics, 'x-query-bytes-out')
+  })
+
   test('paginates', () => {
     return createDocument().then(function(document) {
       return client.paginate(document.ref).each(function(page) {
@@ -79,12 +100,12 @@ describe('Client', () => {
 
   test('extract response headers from observer', () => {
     var assertResults = function(result) {
-      assertHeader(result.responseHeaders, 'x-read-ops')
-      assertHeader(result.responseHeaders, 'x-write-ops')
-      assertHeader(result.responseHeaders, 'x-storage-bytes-read')
-      assertHeader(result.responseHeaders, 'x-storage-bytes-write')
-      assertHeader(result.responseHeaders, 'x-query-bytes-in')
-      assertHeader(result.responseHeaders, 'x-query-bytes-out')
+      assertMetric(result.responseHeaders, 'x-read-ops')
+      assertMetric(result.responseHeaders, 'x-write-ops')
+      assertMetric(result.responseHeaders, 'x-storage-bytes-read')
+      assertMetric(result.responseHeaders, 'x-storage-bytes-write')
+      assertMetric(result.responseHeaders, 'x-query-bytes-in')
+      assertMetric(result.responseHeaders, 'x-query-bytes-out')
 
       expect(result.endTime).toBeGreaterThan(result.startTime)
     }
@@ -388,9 +409,9 @@ describe('Client', () => {
   })
 })
 
-function assertHeader(headers, name) {
-  expect(headers[name]).not.toBeNull()
-  expect(parseInt(headers[name])).toBeGreaterThanOrEqual(0)
+function assertMetric(metrics, name) {
+  expect(metrics[name]).not.toBeNull()
+  expect(parseInt(metrics[name])).toBeGreaterThanOrEqual(0)
 }
 
 function createDocument() {

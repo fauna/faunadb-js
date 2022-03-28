@@ -192,6 +192,7 @@ function Client(options) {
   this._observer = options.observer
   this._http = new http.HttpClient(options)
   this.stream = stream.StreamAPI(this)
+  this.metrics = options.metrics
 }
 
 /**
@@ -356,7 +357,7 @@ Client.prototype._execute = function(method, path, data, query, options) {
         'x-txn-retries',
       ]
 
-      if (options?.metrics) {
+      if (self?.metrics || options?.metrics) {
         return {
           value: responseObject['resource'],
           metrics: Object.fromEntries(
