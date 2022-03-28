@@ -346,10 +346,10 @@ Client.prototype._execute = function(method, path, data, query, options) {
       self._handleRequestResult(response, result, options)
 
       const metricsHeaders = [
-        'x-compute-ops',
-        'x-byte-read-ops',
-        'x-byte-write-ops',
         'x-query-time',
+        'x-read-ops',
+        'x-write-ops',
+        'x-compute-ops',
         'x-txn-retries',
       ]
 
