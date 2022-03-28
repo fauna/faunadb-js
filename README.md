@@ -154,6 +154,7 @@ structured as follows:
   } // usage data
 }
 ```
+Metrics returned in the response will be of `Int` data type.
 #### Pagination Helpers
 
 This driver contains helpers to provide a simpler API for consuming paged
