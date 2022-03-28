@@ -59,6 +59,12 @@ describe('Client', () => {
     assertMetric(response.metrics, 'x-txn-retries')
   })
 
+  test('query metrics response has correct structure', async () => {
+    const response = await client.queryWithMetrics(query.Add(1, 1))
+    expect(Object.keys(response).sort()).
+      toEqual(['metrics', 'value'])
+  })
+
   test('paginates', () => {
     return createDocument().then(function(document) {
       return client.paginate(document.ref).each(function(page) {
