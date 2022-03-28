@@ -43,19 +43,19 @@ describe('Client', () => {
   test('returns query metrics if the metrics flag is set', async () => {
     var metricsClient = util.getClient({ metrics: true })
     const response = await metricsClient.query(query.Add(1, 1))
-    assertMetric(response.metrics, 'x-query-time')
-    assertMetric(response.metrics, 'x-read-ops')
-    assertMetric(response.metrics, 'x-write-ops')
     assertMetric(response.metrics, 'x-compute-ops')
+    assertMetric(response.metrics, 'x-byte-read-ops')
+    assertMetric(response.metrics, 'x-byte-write-ops')
+    assertMetric(response.metrics, 'x-query-time')
     assertMetric(response.metrics, 'x-txn-retries')
   })
 
   test('returns query metrics if using the queryWithMetrics function', async () => {
     const response = await client.queryWithMetrics(query.Add(1, 1))
-    assertMetric(response.metrics, 'x-query-time')
-    assertMetric(response.metrics, 'x-read-ops')
-    assertMetric(response.metrics, 'x-write-ops')
     assertMetric(response.metrics, 'x-compute-ops')
+    assertMetric(response.metrics, 'x-byte-read-ops')
+    assertMetric(response.metrics, 'x-byte-write-ops')
+    assertMetric(response.metrics, 'x-query-time')
     assertMetric(response.metrics, 'x-txn-retries')
   })
 
