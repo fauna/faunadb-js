@@ -165,6 +165,8 @@ var values = require('./values')
  *   which has the highest priority and overrides the option passed into the Client constructor.
  * @param {?boolean} options.checkNewVersion
  *   Enabled by default. Prints a message to the terminal when a newer driver is available.
+ * @param {?boolean} options.metrics
+ *   Disabled by default. Controls whether or not query metrics are returned.
  */
 function Client(options) {
   var http2SessionIdleTime = getHttp2SessionIdleTime()
