@@ -65,6 +65,11 @@ describe('Client', () => {
       toEqual(['metrics', 'value'])
   })
 
+  test('client with metrics returns expected value', async () => {
+    const response = await client.queryWithMetrics(query.Add(1, 1))
+    expect(response.value).toEqual(2)
+  })
+
   test('paginates', () => {
     return createDocument().then(function(document) {
       return client.paginate(document.ref).each(function(page) {
