@@ -62,7 +62,7 @@ interface MetricsResponse<T = object> {
 
 export default class Client {
   constructor(opts?: ClientConfig)
-  query<T = object>(expr: ExprArg, options?: QueryOptions): Promise<T>
+  query<T = object>(expr: ExprArg, options?: QueryOptions): Promise<T> | Promise<MetricsResponse<T>>
   queryWithMetrics<T = object>(
     expr: ExprArg,
     options?: QueryOptions
