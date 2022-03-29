@@ -127,6 +127,34 @@ createP.then(function(response) {
 `response` is a JSON object containing the FaunaDB response. See the JSDocs for
 `faunadb.Client`.
 
+The `:metrics` option is used during instantiation to create a client that also 
+returns usage information about the queries issued to FaunaDB.
+
+```javascript
+let client = new faunadb.Client({ 
+  secret: 'YOUR_FAUNADB_SECRET',
+  metrics: true 
+})
+```
+
+The `response` object is shaped differently for clients when the `:metrics` option
+is/not set. The default client setting returns the `response` body at root level. 
+When the client is configured to return `:metrics`, the `response` object is 
+structured as follows:
+
+```javascript
+{
+  value: { ... }, // structured response body
+  metrics: {
+    x-compute-ops: XX,
+    x-byte-read-ops: XX,
+    x-byte-write-ops: XX,
+    x-query-time: XX,
+    x-txn-retries: XX
+  } // usage data
+}
+```
+Metrics returned in the response will be of `Int` data type.
 #### Pagination Helpers
 
 This driver contains helpers to provide a simpler API for consuming paged

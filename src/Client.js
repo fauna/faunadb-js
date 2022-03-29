@@ -165,6 +165,8 @@ var values = require('./values')
  *   which has the highest priority and overrides the option passed into the Client constructor.
  * @param {?boolean} options.checkNewVersion
  *   Enabled by default. Prints a message to the terminal when a newer driver is available.
+ * @param {?boolean} options.metrics
+ *   Disabled by default. Controls whether or not query metrics are returned.
  */
 function Client(options) {
   var http2SessionIdleTime = getHttp2SessionIdleTime()
@@ -182,6 +184,7 @@ function Client(options) {
     queryTimeout: null,
     http2SessionIdleTime: http2SessionIdleTime.value,
     checkNewVersion: false,
+    metrics: false,
   })
 
   if (http2SessionIdleTime.shouldOverride) {
@@ -191,6 +194,7 @@ function Client(options) {
   this._observer = options.observer
   this._http = new http.HttpClient(options)
   this.stream = stream.StreamAPI(this)
+  this._globalQueryOptions = { metrics: options.metrics }
 }
 
 /**
@@ -212,6 +216,7 @@ Client.apiVersion = packageJson.apiVersion
  * @return {external:Promise<Object>} FaunaDB response object.
  */
 Client.prototype.query = function(expression, options) {
+  options = Object.assign({}, this._globalQueryOptions, options)
   return this._execute('POST', '', query.wrap(expression), null, options)
 }
 
@@ -281,6 +286,24 @@ Client.prototype.close = function(opts) {
   return this._http.close(opts)
 }
 
+/**
+ * Executes a query via the FaunaDB Query API.
+ * See the [docs](https://app.fauna.com/documentation/reference/queryapi),
+ * and the query functions in this documentation.
+ * @param expression {module:query~ExprArg}
+ *   The query to execute. Created from {@link module:query} functions.
+ * @param {?Object} options
+ *   Object that configures the current query, overriding FaunaDB client options.
+ * @param {?string} options.secret FaunaDB secret (see [Reference Documentation](https://app.fauna.com/documentation/intro/security))
+ * @return {external:Promise<Object>} {value, metrics} An object containing the FaunaDB response object and the list of query metrics incurred by the request.
+ */
+Client.prototype.queryWithMetrics = function(expression, options) {
+  options = Object.assign({}, this._globalQueryOptions, options, {
+    metrics: true,
+  })
+  return this._execute('POST', '', query.wrap(expression), null, options)
+}
+
 Client.prototype._execute = function(method, path, data, query, options) {
   query = util.defaults(query, null)
 
@@ -327,7 +350,24 @@ Client.prototype._execute = function(method, path, data, query, options) {
       )
       self._handleRequestResult(response, result, options)
 
-      return responseObject['resource']
+      const metricsHeaders = [
+        'x-compute-ops',
+        'x-byte-read-ops',
+        'x-byte-write-ops',
+        'x-query-time',
+        'x-txn-retries',
+      ]
+
+      if (options && options.metrics) {
+        return {
+          value: responseObject['resource'],
+          metrics: Object.fromEntries(Array.from(Object.entries(response.headers)).
+            filter( ([k,v]) => metricsHeaders.includes(k) ).
+            map(([ k,v ]) => [k, parseInt(v)])
+          )}
+      } else {
+        return responseObject['resource']
+      }
     })
 }
 
