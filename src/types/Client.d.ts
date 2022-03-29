@@ -49,9 +49,24 @@ interface StreamApi
   document: StreamFn<SubscriptionEventHandlers>
 }
 
+interface MetricsResponse<T = object> {
+  value: T
+  metrics: {
+    'x-compute-ops': number
+    'x-byte-read-ops': number
+    'x-byte-write-ops': number
+    'x-query-time': number
+    'x-txn-retries': number
+  }
+}
+
 export default class Client {
   constructor(opts?: ClientConfig)
   query<T = object>(expr: ExprArg, options?: QueryOptions): Promise<T>
+  queryWithMetrics<T = object>(
+    expr: ExprArg,
+    options?: QueryOptions
+  ): Promise<MetricsResponse<T>>
   paginate(expr: Expr, params?: object, options?: QueryOptions): PageHelper
   ping(scope?: string, timeout?: number): Promise<string>
   close(opts?: { force?: boolean }): Promise<void>
