@@ -1,3 +1,6 @@
+## 4.5.3
+- Enable the client to return metrics on queries [#625](https://github.com/fauna/faunadb-js/pull/625) [#628](https://github.com/fauna/faunadb-js/pull/628)
+
 ## 4.5.2
 - Fix documentation pipeline bug [#615](https://github.com/fauna/faunadb-js/pull/615)
 - Fix webpack custom module bug [#614](https://github.com/fauna/faunadb-js/pull/614)
