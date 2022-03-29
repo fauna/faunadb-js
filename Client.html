@@ -551,6 +551,39 @@ which has the highest priority and overrides the option passed into the Client c
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>metrics</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                    &lt;nullable><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Disabled by default. Controls whether or not query metrics are returned.</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -595,7 +628,7 @@ which has the highest priority and overrides the option passed into the Client c
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line169">line 169</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line171">line 171</a>
     </li></ul></dd>
     
 
@@ -699,7 +732,7 @@ which has the highest priority and overrides the option passed into the Client c
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line201">line 201</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line205">line 205</a>
     </li></ul></dd>
     
 
@@ -908,7 +941,7 @@ This may result in an ERR_HTTP2_STREAM_CANCEL error for NodeJS.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line280">line 280</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line285">line 285</a>
     </li></ul></dd>
     
 
@@ -1014,7 +1047,7 @@ This may result in an ERR_HTTP2_STREAM_CANCEL error for NodeJS.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line249">line 249</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line254">line 254</a>
     </li></ul></dd>
     
 
@@ -1309,7 +1342,7 @@ This provides a helpful API for paginating over FaunaDB responses.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line230">line 230</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line235">line 235</a>
     </li></ul></dd>
     
 
@@ -1419,7 +1452,7 @@ This provides a helpful API for paginating over FaunaDB responses.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line241">line 241</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line246">line 246</a>
     </li></ul></dd>
     
 
@@ -1684,7 +1717,7 @@ and the query functions in this documentation.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line214">line 214</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line218">line 218</a>
     </li></ul></dd>
     
 
@@ -1714,6 +1747,271 @@ and the query functions in this documentation.</p>
         
 <div class="param-desc">
     <p>FaunaDB response object.</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">external:Promise.&lt;Object></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="queryWithMetrics"><span class="type-signature"></span>queryWithMetrics<span class="signature">(expression, options<span class="signature-attributes">nullable</span>)</span><span class="type-signature"> &rarr; {external:Promise.&lt;Object>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Executes a query via the FaunaDB Query API.
+See the <a href="https://app.fauna.com/documentation/reference/queryapi">docs</a>,
+and the query functions in this documentation.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>expression</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-query.html#~ExprArg">module:query~ExprArg</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>The query to execute. Created from <a href="module-query.html">module:query</a> functions.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                    &lt;nullable><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Object that configures the current query, overriding FaunaDB client options.</p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>secret</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                    &lt;nullable><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>FaunaDB secret (see <a href="https://app.fauna.com/documentation/intro/security">Reference Documentation</a>)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line300">line 300</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>{value, metrics} An object containing the FaunaDB response object and the list of query metrics incurred by the request.</p>
 </div>
 
 
@@ -2175,7 +2473,7 @@ the future will cause transactions to stall.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line262">line 262</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line267">line 267</a>
     </li></ul></dd>
     
 
@@ -2368,7 +2666,7 @@ the future will cause transactions to stall.</p>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Fri Feb 04 2022 20:47:09 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Tue Mar 29 2022 19:40:35 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>
