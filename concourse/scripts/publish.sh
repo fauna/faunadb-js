@@ -23,5 +23,5 @@ then
 
   echo "faunadb-js@$PACKAGE_VERSION published to npm" > ../slack-message/publish
 else
-  npm deprecate faunadb-js@4.5.3 "4.5.3 is is deprecated as it contains a bug that changed the type returned by query for typescript users"
+  npm deprecate faunadb@4.5.3 "4.5.3 is is deprecated as it contains a bug that changed the type returned by query for typescript users"
 fi
