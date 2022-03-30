@@ -31,7 +31,7 @@ export interface QueryOptions
   extends Partial<
     Pick<
       ClientConfig,
-      'secret' | 'queryTimeout' | 'fetch' | 'observer' | 'metrics'
+      'secret' | 'queryTimeout' | 'fetch' | 'observer'
     >
   > {
   signal?: AbortSignal
