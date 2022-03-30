@@ -19,6 +19,7 @@ then
   echo "Publishing a new version..."
   echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
   npm publish
+  npm deprecate faunadb-js@4.5.3 "4.5.3 is is deprecated as it contains a bug that changed the type returned by query for typescript users"
   rm .npmrc
 
   echo "faunadb-js@$PACKAGE_VERSION published to npm" > ../slack-message/publish
