@@ -31,7 +31,7 @@ export interface QueryOptions
   extends Partial<
     Pick<
       ClientConfig,
-      'secret' | 'queryTimeout' | 'fetch' | 'observer' | 'metrics'
+      'secret' | 'queryTimeout' | 'fetch' | 'observer'
     >
   > {
   signal?: AbortSignal
@@ -62,7 +62,7 @@ interface MetricsResponse<T = object> {
 
 export default class Client {
   constructor(opts?: ClientConfig)
-  query<T = object>(expr: ExprArg, options?: QueryOptions): Promise<T> | Promise<MetricsResponse<T>>
+  query<T = object>(expr: ExprArg, options?: QueryOptions): Promise<T>
   queryWithMetrics<T = object>(
     expr: ExprArg,
     options?: QueryOptions

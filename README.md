@@ -137,10 +137,11 @@ let client = new faunadb.Client({
 })
 ```
 
-The `response` object is shaped differently for clients when the `metrics` option
-is/not set. The default client setting returns the `response` body at root level. 
-When the client is configured to return `metrics`, the `response` object is 
-structured as follows:
+#### Querying and Returning the metrics of your queries
+
+The `response` object is shaped differently for clients when calling `queryWithMetrics`;
+it includes the value of the response along with a metrics field giving data on ops,
+time, and transaction retires consumed by your query:
 
 ```javascript
 {

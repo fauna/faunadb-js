@@ -184,7 +184,6 @@ function Client(options) {
     queryTimeout: null,
     http2SessionIdleTime: http2SessionIdleTime.value,
     checkNewVersion: false,
-    metrics: false,
   })
 
   if (http2SessionIdleTime.shouldOverride) {
@@ -194,7 +193,6 @@ function Client(options) {
   this._observer = options.observer
   this._http = new http.HttpClient(options)
   this.stream = stream.StreamAPI(this)
-  this._globalQueryOptions = { metrics: options.metrics }
 }
 
 /**
@@ -298,13 +296,10 @@ Client.prototype.close = function(opts) {
  * @return {external:Promise<Object>} {value, metrics} An object containing the FaunaDB response object and the list of query metrics incurred by the request.
  */
 Client.prototype.queryWithMetrics = function(expression, options) {
-  options = Object.assign({}, this._globalQueryOptions, options, {
-    metrics: true,
-  })
-  return this._execute('POST', '', query.wrap(expression), null, options)
+  return this._execute('POST', '', query.wrap(expression), null, options, true)
 }
 
-Client.prototype._execute = function(method, path, data, query, options) {
+Client.prototype._execute = function(method, path, data, query, options, returnMetrics = false) {
   query = util.defaults(query, null)
 
   if (
@@ -358,7 +353,7 @@ Client.prototype._execute = function(method, path, data, query, options) {
         'x-txn-retries',
       ]
 
-      if (options && options.metrics) {
+      if (returnMetrics) {
         return {
           value: responseObject['resource'],
           metrics: Object.fromEntries(Array.from(Object.entries(response.headers)).
