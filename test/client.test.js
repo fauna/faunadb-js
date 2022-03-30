@@ -41,7 +41,7 @@ describe('Client', () => {
   })
 
   test('the client does not support a metrics flag', async () => {
-    expect(util.getClient({ metrics: true })).toThrow(new Error('the client does not support a metrics flag'))
+    expect(() => util.getClient({ metrics: true })).toThrow(new Error('the client does not support a metrics flag'))
   })
 
   test('query does not support a metrics flag', async () => {
