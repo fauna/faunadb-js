@@ -40,18 +40,20 @@ describe('Client', () => {
     expect(client._http._baseUrl.endsWith(':0')).toBeFalsy()
   })
 
-  test('returns query metrics if the metrics flag is set', async () => {
+  test('the client does not support a metrics flag', async () => {
     var metricsClient = util.getClient({ metrics: true })
     const response = await metricsClient.query(query.Add(1, 1))
-    assertMetric(response.metrics, 'x-compute-ops')
-    assertMetric(response.metrics, 'x-byte-read-ops')
-    assertMetric(response.metrics, 'x-byte-write-ops')
-    assertMetric(response.metrics, 'x-query-time')
-    assertMetric(response.metrics, 'x-txn-retries')
+    expect(response).toEqual(2)
   })
 
-  test('returns query metrics if using the queryWithMetrics function', async () => {
+  test('query does not support a metrics flag', async () => {
+    const response = await client.query(query.Add(1, 1))
+    expect(response).toEqual(2)
+  })
+
+  test('queryWithMetrics returns the metrics and the response value', async () => {
     const response = await client.queryWithMetrics(query.Add(1, 1))
+    expect(response.value).toEqual(2)
     assertMetric(response.metrics, 'x-compute-ops')
     assertMetric(response.metrics, 'x-byte-read-ops')
     assertMetric(response.metrics, 'x-byte-write-ops')
@@ -59,16 +61,12 @@ describe('Client', () => {
     assertMetric(response.metrics, 'x-txn-retries')
   })
 
-  test('query metrics response has correct structure', async () => {
+  test('queryWithMetrics returns the metrics', async () => {
     const response = await client.queryWithMetrics(query.Add(1, 1))
     expect(Object.keys(response).sort()).
       toEqual(['metrics', 'value'])
   })
 
-  test('client with metrics returns expected value', async () => {
-    const response = await client.queryWithMetrics(query.Add(1, 1))
-    expect(response.value).toEqual(2)
-  })
 
   test('paginates', () => {
     return createDocument().then(function(document) {

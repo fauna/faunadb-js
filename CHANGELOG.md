@@ -1,3 +1,6 @@
+## 4.5.4
+- Disable ability to configure a client and the query method from returning metrics when calling query - fixing bug introduced in 4.5.3 that breaks backward compatibility. Continue supporting queryWithMetrics. [#]().
+
 ## 4.5.3
 - Enable the client to return metrics on queries [#625](https://github.com/fauna/faunadb-js/pull/625) [#628](https://github.com/fauna/faunadb-js/pull/628)
 
