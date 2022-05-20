@@ -237,6 +237,12 @@ Http2Adapter.prototype.execute = function(options) {
       rejectOrOnError(new errors.TimeoutError())
     }
 
+    var onClose = function() {
+      isCanceled = true
+      onSettled()
+      rejectOrOnError(new errors.AbortError())
+    }
+
     var onResponse = function(responseHeaders) {
       var status = responseHeaders[http2.constants.HTTP2_HEADER_STATUS]
       var isOkStatus = status >= 200 && status < 400
@@ -301,6 +307,7 @@ Http2Adapter.prototype.execute = function(options) {
         .setEncoding('utf8')
         .on('error', onError)
         .on('response', onResponse)
+        .on('close', onClose)
 
       sessionInterface.onRequestStart()
 

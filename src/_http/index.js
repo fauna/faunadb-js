@@ -93,6 +93,7 @@ HttpClient.prototype.close = function(opts) {
  * @returns {Promise} The response promise.
  */
 HttpClient.prototype.execute = function(options) {
+  console.log('executing something')
   options = options || {}
 
   var invalidStreamConsumer =
