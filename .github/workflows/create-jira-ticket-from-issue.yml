@@ -1,0 +1,37 @@
+name: Create JIRA ticket for GH issue
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  create_ticket_from_issue:
+    name: Create JIRA ticket
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login
+        uses: atlassian/gajira-login@master
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Create
+        id: create
+        uses: atlassian/gajira-create@master
+        with:
+          project: FE
+          issuetype: Bug
+          summary: Issue ${{ github.event.issue.number }} ${{ github.event.issue.title }}
+          description: ${{ github.event.issue.html_url }}
+          fields: '{"labels": ["github", "issue", "dx-ops"], "components": [{ "name": "Fauna Shell" }]}'
+
+      - name: Comment
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: Internal ticket number is ${{ steps.create.outputs.issue }}
+
+      - name: Complete
+        if: ${{ steps.create.outputs.issue }}
+        run: echo "Issue ${{ steps.create.outputs.issue }} was created"
