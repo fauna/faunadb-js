@@ -238,9 +238,13 @@ Http2Adapter.prototype.execute = function(options) {
     }
 
     var onClose = function() {
-      isCanceled = true
-      onSettled()
-      rejectOrOnError(new errors.AbortError())
+      // See: https://nodejs.org/api/http2.html#event-close_1
+      if (request.rstCode === http2.constants.NGHTTP2_NO_ERROR
+          && request.state.remoteClose === 1) {
+        isCanceled = true
+        onSettled()
+        rejectOrOnError(new errors.AbortError())
+      }
     }
 
     var onResponse = function(responseHeaders) {
