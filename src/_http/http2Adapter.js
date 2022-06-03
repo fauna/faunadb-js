@@ -69,6 +69,14 @@ Http2Adapter.prototype._resolveSessionFor = function(origin, isStreaming) {
     self._cleanupSessionFor(origin, isStreaming)
   }
 
+  var cleanupError = function(error) {
+    self._cleanupSessionFor(origin, isStreaming, error)
+  }
+
+  var cleanupGoAway = function(errorCode) {
+    self._cleanupSessionFor(origin, isStreaming, undefined, errorCode)
+  }
+
   var clearInactivityTimeout = function() {
     if (timerId) {
       clearTimeout(timerId)
@@ -128,8 +136,8 @@ Http2Adapter.prototype._resolveSessionFor = function(origin, isStreaming) {
 
   var session = http2
     .connect(origin)
-    .once('error', cleanup)
-    .once('goaway', cleanup)
+    .once('error', cleanupError)
+    .once('goaway', cleanupGoAway)
   var sessionInterface = {
     session: session,
     close: close,
@@ -147,13 +155,21 @@ Http2Adapter.prototype._resolveSessionFor = function(origin, isStreaming) {
  *
  * @param {string} origin Request origin to connect to.
  * @param {?boolean} isStreaming Whether it's a streaming request.
+ * @param {?Error} the underlying Error causing this cleanup, present only if cleanup
+ * is due to an error
+ * @param {number} errorCode the error code causing the cleanup, present only if cleanup
+ * is due to a GOAWAY message being received.
  * @returns {void}
  */
-Http2Adapter.prototype._cleanupSessionFor = function(origin, isStreaming) {
+Http2Adapter.prototype._cleanupSessionFor = function(origin, isStreaming, error = undefined, errorCode = undefined) {
   var sessionKey = isStreaming ? STREAM_PREFIX + origin : origin
 
   if (this._sessionMap[sessionKey]) {
-    this._sessionMap[sessionKey].session.close()
+    if (error !== undefined || errorCode !== undefined) {
+      this._sessionMap[sessionKey].session.destroy(error, errorCode)
+    } else {
+      this._sessionMap[sessionKey].session.close()
+    }
     delete this._sessionMap[sessionKey]
   }
 }
@@ -237,16 +253,6 @@ Http2Adapter.prototype.execute = function(options) {
       rejectOrOnError(new errors.TimeoutError())
     }
 
-    var onClose = function() {
-      // See: https://nodejs.org/api/http2.html#event-close_1
-      if (request.rstCode === http2.constants.NGHTTP2_NO_ERROR
-          && request.state.remoteClose === 1) {
-        isCanceled = true
-        onSettled()
-        rejectOrOnError(new errors.AbortError())
-      }
-    }
-
     var onResponse = function(responseHeaders) {
       var status = responseHeaders[http2.constants.HTTP2_HEADER_STATUS]
       var isOkStatus = status >= 200 && status < 400
@@ -311,7 +317,6 @@ Http2Adapter.prototype.execute = function(options) {
         .setEncoding('utf8')
         .on('error', onError)
         .on('response', onResponse)
-        .on('close', onClose)
 
       sessionInterface.onRequestStart()
 
