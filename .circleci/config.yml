@@ -5,13 +5,13 @@ executors:
   core:
     parameters:
       node_version:
-        type: integer
+        type: string
       version:
         type: enum
         enum: ['stable', 'nightly']
     resource_class: large
     docker:
-      - image: circleci/node:<<parameters.node_version>>
+      - image: cimg/node:<<parameters.node_version>>
 
       - image: fauna/faunadb
         name: core
@@ -61,7 +61,7 @@ jobs:
   core-stable-14:
     executor:
       name: core
-      node_version: 14
+      node_version: '14.19'
       version: stable
     steps:
       - build_and_test:
@@ -70,7 +70,7 @@ jobs:
   core-nightly-14:
     executor:
       name: core
-      node_version: 14
+      node_version: '14.19'
       version: nightly
     steps:
       - build_and_test:
@@ -79,7 +79,7 @@ jobs:
   core-stable-16:
     executor:
       name: core
-      node_version: 16
+      node_version: '16.15'
       version: stable
     steps:
       - build_and_test:
@@ -88,7 +88,7 @@ jobs:
   core-nightly-16:
     executor:
       name: core
-      node_version: 16
+      node_version: '16.15'
       version: nightly
     steps:
       - build_and_test:
@@ -97,7 +97,7 @@ jobs:
   core-stable-18:
     executor:
       name: core
-      node_version: 18
+      node_version: '18.3'
       version: stable
     steps:
       - build_and_test:
@@ -106,7 +106,7 @@ jobs:
   core-nightly-18:
     executor:
       name: core
-      node_version: 18
+      node_version: '18.3'
       version: nightly
     steps:
       - build_and_test:
