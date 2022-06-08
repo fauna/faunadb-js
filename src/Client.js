@@ -168,6 +168,12 @@ var values = require('./values')
  *   Disabled by default. Controls whether or not query metrics are returned.
  */
 function Client(options) {
+  const http2SessionIdleTime = getHttp2SessionIdleTime(
+    options?.http2SessionIdleTime
+  )
+
+  if (options) options.http2SessionIdleTime = http2SessionIdleTime
+
   options = util.applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
@@ -179,13 +185,9 @@ function Client(options) {
     headers: {},
     fetch: undefined,
     queryTimeout: null,
-    http2SessionIdleTime: 500,
+    http2SessionIdleTime,
     checkNewVersion: false,
   })
-
-  options.http2SessionIdleTime = getHttp2SessionIdleTime(
-    options.http2SessionIdleTime
-  )
 
   this._observer = options.observer
   this._http = new http.HttpClient(options)
@@ -384,27 +386,32 @@ Client.prototype._handleRequestResult = function(response, result, options) {
 function getHttp2SessionIdleTime(configuredIdleTime) {
   const maxIdleTime = 5000
   const defaultIdleTime = 500
-
   const envIdleTime = util.getEnvVariable('FAUNADB_HTTP2_SESSION_IDLE_TIME')
 
-  const parsedEnv = parseInt(envIdleTime, 10)
-  const parsedConfig = parseInt(configuredIdleTime, 10)
-  var value = parsedEnv || parsedConfig || defaultIdleTime
-
-  const isGreaterThanMax = value > maxIdleTime
-  const isInfinity =
-    envIdleTime === 'Infinity' || configuredIdleTime === 'Infinity'
-
-  if (isGreaterThanMax)
-    console.warn(
-      `The value set for http2SessionIdleTime exceeds the maximum value of ${maxIdleTime} milliseconds.`
-    )
-  if (isInfinity)
-    console.warn(
-      `Infinity is no longer a supported value for http2SessionIdleTime. The maximum value is ${maxIdleTime} milliseconds.`
-    )
-
-  if (isInfinity || isGreaterThanMax) value = maxIdleTime
+  var value = defaultIdleTime
+  // attemp to set the idle time to the env value and then configured value
+  const values = [envIdleTime, configuredIdleTime]
+  for (let i = 0; i <= values.length; i++) {
+    const rawValue = values[i]
+    const parsedValue = parseInt(rawValue, 10)
+    const isNegative = parsedValue < 0
+    const isInfinity = rawValue === 'Infinity'
+    const isGreaterThanMax = parsedValue > maxIdleTime || isInfinity
+    // if we didn't get infinity or a positive integer move to the next value
+    if (isNegative) continue
+    if (!isInfinity && !parsedValue) continue
+    // if we did get something valid constrain it to the ceiling
+    value = parsedValue
+    if (isGreaterThanMax) {
+      value = maxIdleTime
+      console.warn(
+        `The value set for http2SessionIdleTime exceeds the maximum value of 
+        ${maxIdleTime} milliseconds. It will be set to ${maxIdleTime} milliseconds instead.`
+      )
+    }
+    
+    break
+  }
 
   return value
 }

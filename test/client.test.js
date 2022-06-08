@@ -9,14 +9,20 @@ var json = require('../src/_json')
 var client
 
 describe('Client', () => {
+  const env = process.env
+
   beforeAll(() => {
     // Hideous way to ensure that the client is initialized.
     client = util.client()
-
     return client.query(query.CreateCollection({ name: 'my_collection' }))
   })
 
+  beforeEach(() => {
+    process.env = { ...env }
+  })
+
   afterEach(() => {
+    process.env = env
     util.clearBrowserSimulation()
   })
 
@@ -413,14 +419,66 @@ describe('Client', () => {
   })
 
   test('http2SessionIdleTime env overrides client config', async () => {
-    const prevEnv = process.env.FAUNADB_HTTP2_SESSION_IDLE_TIME
+    var client
+    var internalIdleTime
+    const maxIdleTime = 5000
+    const defaultIdleTime = 500
+
     process.env.FAUNADB_HTTP2_SESSION_IDLE_TIME = '999'
-    const client = util.getClient({
+    client = util.getClient({
       http2SessionIdleTime: 2500,
     })
-    const internalIdleTime = client._http._adapter._http2SessionIdleTime
+    internalIdleTime = client._http._adapter._http2SessionIdleTime
     expect(internalIdleTime).toBe(999)
-    process.env.FAUNADB_HTTP2_SESSION_IDLE_TIME = prevEnv
+
+    process.env.FAUNADB_HTTP2_SESSION_IDLE_TIME = maxIdleTime + 1
+    client = util.getClient({
+      http2SessionIdleTime: 2500,
+    })
+    internalIdleTime = client._http._adapter._http2SessionIdleTime
+    expect(internalIdleTime).toBe(maxIdleTime)
+
+    process.env.FAUNADB_HTTP2_SESSION_IDLE_TIME = 'Infinity'
+    client = util.getClient({
+      http2SessionIdleTime: 2500,
+    })
+    internalIdleTime = client._http._adapter._http2SessionIdleTime
+    expect(internalIdleTime).toBe(maxIdleTime)
+
+    process.env.FAUNADB_HTTP2_SESSION_IDLE_TIME = 'Cat'
+    client = util.getClient({
+      http2SessionIdleTime: 2500,
+    })
+    internalIdleTime = client._http._adapter._http2SessionIdleTime
+    expect(internalIdleTime).toBe(2500)
+
+    process.env.FAUNADB_HTTP2_SESSION_IDLE_TIME = 'Cat'
+    client = util.getClient({
+      http2SessionIdleTime: "Cat",
+    })
+    internalIdleTime = client._http._adapter._http2SessionIdleTime
+    expect(internalIdleTime).toBe(defaultIdleTime)
+
+    process.env.FAUNADB_HTTP2_SESSION_IDLE_TIME = '-999'
+    client = util.getClient({
+      http2SessionIdleTime: 2500,
+    })
+    internalIdleTime = client._http._adapter._http2SessionIdleTime
+    expect(internalIdleTime).toBe(2500)
+
+    process.env.FAUNADB_HTTP2_SESSION_IDLE_TIME = '-999'
+    client = util.getClient({
+      http2SessionIdleTime: -999,
+    })
+    internalIdleTime = client._http._adapter._http2SessionIdleTime
+    expect(internalIdleTime).toBe(defaultIdleTime)
+
+    process.env.FAUNADB_HTTP2_SESSION_IDLE_TIME = '-999'
+    client = util.getClient({
+      http2SessionIdleTime: "Infinity",
+    })
+    internalIdleTime = client._http._adapter._http2SessionIdleTime
+    expect(internalIdleTime).toBe(maxIdleTime)
   })
 
   test('http2SessionIdleTime respects the max and default', async () => {
@@ -428,6 +486,7 @@ describe('Client', () => {
     var internalIdleTime
     const maxIdleTime = 5000
     const defaultIdleTime = 500
+    process.env.FAUNADB_HTTP2_SESSION_IDLE_TIME = undefined
 
     client = util.getClient({
       http2SessionIdleTime: 'Infinity',
@@ -460,6 +519,12 @@ describe('Client', () => {
     })
     internalIdleTime = client._http._adapter._http2SessionIdleTime
     expect(internalIdleTime).toBe(2500)
+
+    client = util.getClient({
+      http2SessionIdleTime: -2500,
+    })
+    internalIdleTime = client._http._adapter._http2SessionIdleTime
+    expect(internalIdleTime).toBe(defaultIdleTime)
   })
 })
 
