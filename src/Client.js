@@ -158,8 +158,7 @@ var values = require('./values')
  *   Sets the maximum amount of time (in milliseconds) for query execution on the server
  * @param {?number} options.http2SessionIdleTime
  *   Sets the maximum amount of time (in milliseconds) an HTTP2 session may live
- *   when there's no activity. Must either be a non-negative integer, or Infinity to allow the
- *   HTTP2 session to live indefinitely (use `Client#close` to manually terminate the client).
+ *   when there's no activity. Must either be a non-negative integer.
  *   Only applicable for NodeJS environment (when http2 module is used). Default is 500ms;
  *   can also be configured via the FAUNADB_HTTP2_SESSION_IDLE_TIME environment variable
  *   which has the highest priority and overrides the option passed into the Client constructor.
@@ -169,8 +168,6 @@ var values = require('./values')
  *   Disabled by default. Controls whether or not query metrics are returned.
  */
 function Client(options) {
-  var http2SessionIdleTime = getHttp2SessionIdleTime()
-
   options = util.applyDefaults(options, {
     domain: 'db.fauna.com',
     scheme: 'https',
@@ -182,13 +179,13 @@ function Client(options) {
     headers: {},
     fetch: undefined,
     queryTimeout: null,
-    http2SessionIdleTime: http2SessionIdleTime.value,
+    http2SessionIdleTime: 500,
     checkNewVersion: false,
   })
 
-  if (http2SessionIdleTime.shouldOverride) {
-    options.http2SessionIdleTime = http2SessionIdleTime.value
-  }
+  options.http2SessionIdleTime = getHttp2SessionIdleTime(
+    options.http2SessionIdleTime
+  )
 
   this._observer = options.observer
   this._http = new http.HttpClient(options)
@@ -299,7 +296,14 @@ Client.prototype.queryWithMetrics = function(expression, options) {
   return this._execute('POST', '', query.wrap(expression), null, options, true)
 }
 
-Client.prototype._execute = function(method, path, data, query, options, returnMetrics = false) {
+Client.prototype._execute = function(
+  method,
+  path,
+  data,
+  query,
+  options,
+  returnMetrics = false
+) {
   query = util.defaults(query, null)
 
   if (
@@ -356,10 +360,12 @@ Client.prototype._execute = function(method, path, data, query, options, returnM
       if (returnMetrics) {
         return {
           value: responseObject['resource'],
-          metrics: Object.fromEntries(Array.from(Object.entries(response.headers)).
-            filter( ([k,v]) => metricsHeaders.includes(k) ).
-            map(([ k,v ]) => [k, parseInt(v)])
-          )}
+          metrics: Object.fromEntries(
+            Array.from(Object.entries(response.headers))
+              .filter(([k, v]) => metricsHeaders.includes(k))
+              .map(([k, v]) => [k, parseInt(v)])
+          ),
+        }
       } else {
         return responseObject['resource']
       }
@@ -384,17 +390,32 @@ Client.prototype._handleRequestResult = function(response, result, options) {
   errors.FaunaHTTPError.raiseForStatusCode(result)
 }
 
-function getHttp2SessionIdleTime() {
-  var fromEnv = util.getEnvVariable('FAUNADB_HTTP2_SESSION_IDLE_TIME')
-  var parsed =
-    // Allow either "Infinity" or parsable integer string.
-    fromEnv === 'Infinity' ? Infinity : parseInt(fromEnv, 10)
-  var useEnvVar = !isNaN(parsed)
+function getHttp2SessionIdleTime(configuredIdleTime) {
+  const maxIdleTime = 5000
+  const defaultIdleTime = 500
 
-  return {
-    shouldOverride: useEnvVar,
-    value: useEnvVar ? parsed : 500,
-  }
+  const envIdleTime = util.getEnvVariable('FAUNADB_HTTP2_SESSION_IDLE_TIME')
+
+  const parsedEnv = parseInt(envIdleTime, 10)
+  const parsedConfig = parseInt(configuredIdleTime, 10)
+  var value = parsedEnv || parsedConfig || defaultIdleTime
+
+  const isGreaterThanMax = value > maxIdleTime
+  const isInfinity =
+    envIdleTime === 'Infinity' || configuredIdleTime === 'Infinity'
+
+  if (isGreaterThanMax)
+    console.warn(
+      `The value set for http2SessionIdleTime exceeds the maximum value of ${maxIdleTime} milliseconds.`
+    )
+  if (isInfinity)
+    console.warn(
+      `Infinity is no longer a supported value for http2SessionIdleTime. The maximum value is ${maxIdleTime} milliseconds.`
+    )
+
+  if (isInfinity || isGreaterThanMax) value = maxIdleTime
+
+  return value
 }
 
 module.exports = Client

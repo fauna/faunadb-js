@@ -19,10 +19,10 @@ reference](https://docs.fauna.com/fauna/current/api/fql/).
 
 This Driver supports and is tested on:
 
-- Node.js [*Current*, *Active LTS*, and *Maintenance LTS* releases](https://nodejs.org/en/about/releases/)
-  - *Current* - v17
-  - *Active LTS* - currently v16
-  - *Maintenance LTS* - v12 and v14 
+- Node.js [_Current_, _Active LTS_, and _Maintenance LTS_ releases](https://nodejs.org/en/about/releases/)
+  - _Current_ - v17
+  - _Active LTS_ - currently v16
+  - _Maintenance LTS_ - v12 and v14
 - Chrome
 - Firefox
 - Safari
@@ -127,13 +127,13 @@ createP.then(function(response) {
 `response` is a JSON object containing the FaunaDB response. See the JSDocs for
 `faunadb.Client`.
 
-The `metrics` option is used during instantiation to create a client that also 
+The `metrics` option is used during instantiation to create a client that also
 returns usage information about the queries issued to FaunaDB.
 
 ```javascript
-let client = new faunadb.Client({ 
+let client = new faunadb.Client({
   secret: 'YOUR_FAUNADB_SECRET',
-  metrics: true 
+  metrics: true,
 })
 ```
 
@@ -155,7 +155,9 @@ time, and transaction retires consumed by your query:
   } // usage data
 }
 ```
+
 Metrics returned in the response will be of `number` data type.
+
 #### Pagination Helpers
 
 This driver contains helpers to provide a simpler API for consuming paged
@@ -277,17 +279,17 @@ const client = new faunadb.Client({
 When running on the Node.js platform, the Fauna client uses [HTTP/2 multiplexing](https://stackoverflow.com/questions/36517829/what-does-multiplexing-mean-in-http-2)
 to reuse the same session for many simultaneous requests. After all open requests
 have been resolved, the client will keep the session open for a period of time
-(500ms by default) to be reused for any new requests.
+to be reused for any new requests.
 
 The `http2SessionIdleTime` parameter may be used to control how long the HTTP/2
 session remains open while the connection is idle. To save on the overhead of
-closing and re-opening the session, set `http2SessionIdleTime` to a longer time
---- or even `Infinity`, to keep the session alive indefinitely.
+closing and re-opening the session, set `http2SessionIdleTime` to a longer time.
+The default value is 500ms and the maximum value is 5000ms.
 
 While an HTTP/2 session is alive, the client will hold the Node.js event loop
 open; this prevents the process from terminating. Call `Client#close` to manually
 close the session and allow the process to terminate. This is particularly
-important if `http2SessionIdleTime` is long or `Infinity`:
+important if `http2SessionIdleTime` is long:
 
 ```javascript
 // sample.js (run it with "node sample.js" command)
@@ -296,8 +298,8 @@ const { Client, query: Q } = require('faunadb')
 async function main() {
   const client = new Client({
     secret: 'YOUR_FAUNADB_SECRET',
-    http2SessionIdleTime: Infinity,
-    //                    ^^^ Infinity or non-negative integer
+    http2SessionIdleTime: 1000,
+    //                    ^^^ Non-negative integer
   })
   const output = await client.query(Q.Add(1, 1))
 
@@ -309,7 +311,6 @@ async function main() {
 
 main().catch(console.error)
 ```
-
 
 ## Known issues
 

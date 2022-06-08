@@ -41,7 +41,9 @@ describe('Client', () => {
   })
 
   test('the client does not support a metrics flag', async () => {
-    expect(() => util.getClient({ metrics: true })).toThrow(new Error('No such option metrics'))
+    expect(() => util.getClient({ metrics: true })).toThrow(
+      new Error('No such option metrics')
+    )
   })
 
   test('query does not support a metrics flag', async () => {
@@ -61,10 +63,8 @@ describe('Client', () => {
 
   test('queryWithMetrics returns the metrics', async () => {
     const response = await client.queryWithMetrics(query.Add(1, 1))
-    expect(Object.keys(response).sort()).
-      toEqual(['metrics', 'value'])
+    expect(Object.keys(response).sort()).toEqual(['metrics', 'value'])
   })
-
 
   test('paginates', () => {
     return createDocument().then(function(document) {
@@ -176,7 +176,7 @@ describe('Client', () => {
 
   test('Client#close call on Http2Adapter-based Client', async () => {
     const client = util.getClient({
-      http2SessionIdleTime: Infinity,
+      http2SessionIdleTime: 5000,
     })
 
     await client.ping()
@@ -411,6 +411,56 @@ describe('Client', () => {
     expect(
       requiredKeys.every(key => driverEnvHeader.includes(key))
     ).toBeDefined()
+  })
+
+  test('http2SessionIdleTime env overrides client config', async () => {
+    const prevEnv = process.env.FAUNADB_HTTP2_SESSION_IDLE_TIME
+    process.env.FAUNADB_HTTP2_SESSION_IDLE_TIME = '999'
+    const client = util.getClient({
+      http2SessionIdleTime: 2500,
+    })
+    const internalIdleTime = client._http._adapter._http2SessionIdleTime
+    expect(internalIdleTime).toBe(999)
+    process.env.FAUNADB_HTTP2_SESSION_IDLE_TIME = prevEnv
+  })
+
+  test('http2SessionIdleTime respects the max and default', async () => {
+    var client
+    var internalIdleTime
+    const maxIdleTime = 5000
+    const defaultIdleTime = 500
+
+    client = util.getClient({
+      http2SessionIdleTime: 'Infinity',
+    })
+    internalIdleTime = client._http._adapter._http2SessionIdleTime
+    expect(internalIdleTime).toBe(maxIdleTime)
+
+    client = util.getClient({
+      http2SessionIdleTime: maxIdleTime + 1,
+    })
+    internalIdleTime = client._http._adapter._http2SessionIdleTime
+    expect(internalIdleTime).toBe(maxIdleTime)
+
+    client = util.getClient({})
+    internalIdleTime = client._http._adapter._http2SessionIdleTime
+    expect(internalIdleTime).toBe(defaultIdleTime)
+
+    client = util.getClient({ http2SessionIdleTime: null })
+    internalIdleTime = client._http._adapter._http2SessionIdleTime
+    expect(internalIdleTime).toBe(defaultIdleTime)
+
+    client = util.getClient({
+      http2SessionIdleTime: 'Cat',
+    })
+    internalIdleTime = client._http._adapter._http2SessionIdleTime
+    expect(internalIdleTime).toBe(defaultIdleTime)
+
+    client = util.getClient({
+      http2SessionIdleTime: 2500,
+    })
+    internalIdleTime = client._http._adapter._http2SessionIdleTime
+    expect(internalIdleTime).toBe(2500)
   })
 })
 
