@@ -19,10 +19,10 @@ reference](https://docs.fauna.com/fauna/current/api/fql/).
 
 This Driver supports and is tested on:
 
-- Node.js [_Current_, _Active LTS_, and _Maintenance LTS_ releases](https://nodejs.org/en/about/releases/)
-  - _Current_ - v17
-  - _Active LTS_ - currently v16
-  - _Maintenance LTS_ - v12 and v14
+- Node.js [*Current*, *Active LTS*, and *Maintenance LTS* releases](https://nodejs.org/en/about/releases/)
+  - *Current* - v17
+  - *Active LTS* - currently v16
+  - *Maintenance LTS* - v12 and v14
 - Chrome
 - Firefox
 - Safari
@@ -127,13 +127,13 @@ createP.then(function(response) {
 `response` is a JSON object containing the FaunaDB response. See the JSDocs for
 `faunadb.Client`.
 
-The `metrics` option is used during instantiation to create a client that also
+The `metrics` option is used during instantiation to create a client that also 
 returns usage information about the queries issued to FaunaDB.
 
 ```javascript
-let client = new faunadb.Client({
+let client = new faunadb.Client({ 
   secret: 'YOUR_FAUNADB_SECRET',
-  metrics: true,
+  metrics: true 
 })
 ```
 
@@ -279,7 +279,7 @@ const client = new faunadb.Client({
 When running on the Node.js platform, the Fauna client uses [HTTP/2 multiplexing](https://stackoverflow.com/questions/36517829/what-does-multiplexing-mean-in-http-2)
 to reuse the same session for many simultaneous requests. After all open requests
 have been resolved, the client will keep the session open for a period of time
-to be reused for any new requests.
+(500ms by default) to be reused for any new requests.
 
 The `http2SessionIdleTime` parameter may be used to control how long the HTTP/2
 session remains open while the connection is idle. To save on the overhead of

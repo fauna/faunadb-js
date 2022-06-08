@@ -296,14 +296,7 @@ Client.prototype.queryWithMetrics = function(expression, options) {
   return this._execute('POST', '', query.wrap(expression), null, options, true)
 }
 
-Client.prototype._execute = function(
-  method,
-  path,
-  data,
-  query,
-  options,
-  returnMetrics = false
-) {
+Client.prototype._execute = function(method, path, data, query, options, returnMetrics = false) {
   query = util.defaults(query, null)
 
   if (
@@ -360,12 +353,10 @@ Client.prototype._execute = function(
       if (returnMetrics) {
         return {
           value: responseObject['resource'],
-          metrics: Object.fromEntries(
-            Array.from(Object.entries(response.headers))
-              .filter(([k, v]) => metricsHeaders.includes(k))
-              .map(([k, v]) => [k, parseInt(v)])
-          ),
-        }
+          metrics: Object.fromEntries(Array.from(Object.entries(response.headers)).
+            filter( ([k,v]) => metricsHeaders.includes(k) ).
+            map(([ k,v ]) => [k, parseInt(v)])
+          )}
       } else {
         return responseObject['resource']
       }
