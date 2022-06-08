@@ -22,7 +22,7 @@ This Driver supports and is tested on:
 - Node.js [*Current*, *Active LTS*, and *Maintenance LTS* releases](https://nodejs.org/en/about/releases/)
   - *Current* - v17
   - *Active LTS* - currently v16
-  - *Maintenance LTS* - v12 and v14
+  - *Maintenance LTS* - v12 and v14 
 - Chrome
 - Firefox
 - Safari
