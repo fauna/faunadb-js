@@ -389,7 +389,7 @@ function getHttp2SessionIdleTime(configuredIdleTime) {
   const envIdleTime = util.getEnvVariable('FAUNADB_HTTP2_SESSION_IDLE_TIME')
 
   var value = defaultIdleTime
-  // attemp to set the idle time to the env value and then configured value
+  // attemp to set the idle time to the env value and then the configured value
   const values = [envIdleTime, configuredIdleTime]
   for (let i = 0; i <= values.length; i++) {
     const rawValue = values[i]
