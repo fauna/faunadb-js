@@ -168,8 +168,9 @@ var values = require('./values')
  *   Disabled by default. Controls whether or not query metrics are returned.
  */
 function Client(options) {
-  const configuredIdleTime = options ? options.http2SessionIdleTime : undefined
-  const http2SessionIdleTime = getHttp2SessionIdleTime(configuredIdleTime)
+  const http2SessionIdleTime = getHttp2SessionIdleTime(
+    options ? options.http2SessionIdleTime : undefined
+  )
 
   if (options) options.http2SessionIdleTime = http2SessionIdleTime
 
