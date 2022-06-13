@@ -273,6 +273,40 @@ describe('StreamAPI', () => {
         })
         .start()
     })
+
+    test('stays open beyond the value set for http2SessionIdleTime', async () => {
+      const idleTime = 1000
+      const client = util.getClient({
+        secret: key.secret,
+        http2SessionIdleTime: idleTime,
+      })
+      const oldTimestamp = doc.ts
+
+      const assertActiveSessions = length =>
+        expect(Object.keys(client._http._adapter._sessionMap).length).toBe(
+          length
+        )
+
+      stream = client.stream
+      .document(doc.ref)
+      .on('version', (event) => {
+        expect(event.action).toEqual("update")
+        expect(event.document.ts).toBeGreaterThan(oldTimestamp)
+      })
+      
+      stream.start()
+
+      await util.delay(idleTime + 500)
+      assertActiveSessions(1)
+
+      const { ts: newTimestamp } = await client.query(q.Update(doc.ref, {}))
+      expect(newTimestamp).toBeGreaterThan(oldTimestamp)
+
+      stream.close()
+
+      await util.delay(idleTime + 1)
+      assertActiveSessions(0)
+    })
   })
 
   describe('document', () => {
