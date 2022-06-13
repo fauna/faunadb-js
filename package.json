@@ -1,6 +1,6 @@
 {
   "name": "faunadb",
-  "version": "4.5.4",
+  "version": "4.6.0",
   "apiVersion": "4",
   "description": "FaunaDB Javascript driver for Node.JS and Browsers",
   "homepage": "https://fauna.com",

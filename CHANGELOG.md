@@ -1,3 +1,8 @@
+## 4.6.0
+- Enforce a maximum value of 5000 ms for the `http2SessionIdleTime` option [#642](https://github.com/fauna/faunadb-js/pull/642)
+- Add checks to `http2SessionIdleTime` so that sane defaults are used in case an invalid value is configured
+- Add the missing Native.ROLES type [#638](https://github.com/fauna/faunadb-js/pull/638)
+
 ## 4.5.4
 - Disable ability to configure a client and the query method from returning metrics when calling query - fixing bug introduced in 4.5.3 that breaks backward compatibility. Continue supporting queryWithMetrics. [#633](https://github.com/fauna/faunadb-js/pull/633).
 
