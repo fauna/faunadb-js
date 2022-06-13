@@ -275,6 +275,7 @@ describe('StreamAPI', () => {
     })
 
     test('stays open beyond the value set for http2SessionIdleTime', async () => {
+      let seen_event = false
       const idleTime = 1000
       const client = util.getClient({
         secret: key.secret,
@@ -290,10 +291,11 @@ describe('StreamAPI', () => {
       stream = client.stream
       .document(doc.ref)
       .on('version', (event) => {
+        seen_event = true
         expect(event.action).toEqual("update")
         expect(event.document.ts).toBeGreaterThan(oldTimestamp)
       })
-      
+
       stream.start()
 
       await util.delay(idleTime + 500)
@@ -301,9 +303,15 @@ describe('StreamAPI', () => {
 
       const { ts: newTimestamp } = await client.query(q.Update(doc.ref, {}))
       expect(newTimestamp).toBeGreaterThan(oldTimestamp)
+      await util.delay(idleTime + 1)
+      assertActiveSessions(1)
+      expect(seen_event).toBe(true)
+      seen_event = false
+      await util.delay(idleTime + 1)
+      expect(seen_event).toBe(false)
+      assertActiveSessions(1)
 
       stream.close()
-
       await util.delay(idleTime + 1)
       assertActiveSessions(0)
     })
