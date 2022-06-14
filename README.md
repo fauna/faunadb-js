@@ -155,7 +155,9 @@ time, and transaction retires consumed by your query:
   } // usage data
 }
 ```
+
 Metrics returned in the response will be of `number` data type.
+
 #### Pagination Helpers
 
 This driver contains helpers to provide a simpler API for consuming paged
@@ -280,14 +282,17 @@ have been resolved, the client will keep the session open for a period of time
 (500ms by default) to be reused for any new requests.
 
 The `http2SessionIdleTime` parameter may be used to control how long the HTTP/2
-session remains open while the connection is idle. To save on the overhead of
-closing and re-opening the session, set `http2SessionIdleTime` to a longer time
---- or even `Infinity`, to keep the session alive indefinitely.
+session remains open while the query connection is idle. To save on the overhead of
+closing and re-opening the session, set `http2SessionIdleTime` to a longer time.
+The default value is 500ms and the maximum value is 5000ms.
 
-While an HTTP/2 session is alive, the client will hold the Node.js event loop
+Note that `http2SessionIdleTime` has no effect on a stream connection: a stream
+is a long-lived connection that is intended to be held open indefinitely.
+
+While an HTTP/2 session is alive, the client holds the Node.js event loop
 open; this prevents the process from terminating. Call `Client#close` to manually
 close the session and allow the process to terminate. This is particularly
-important if `http2SessionIdleTime` is long or `Infinity`:
+important if `http2SessionIdleTime` is long:
 
 ```javascript
 // sample.js (run it with "node sample.js" command)
@@ -296,20 +301,17 @@ const { Client, query: Q } = require('faunadb')
 async function main() {
   const client = new Client({
     secret: 'YOUR_FAUNADB_SECRET',
-    http2SessionIdleTime: Infinity,
-    //                    ^^^ Infinity or non-negative integer
+    http2SessionIdleTime: 1000, // Must be a non-negative integer
   })
   const output = await client.query(Q.Add(1, 1))
 
   console.log(output)
 
   client.close()
-  //     ^^^ If it's not called then the process won't terminate
 }
 
 main().catch(console.error)
 ```
-
 
 ## Known issues
 

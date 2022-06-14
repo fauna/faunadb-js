@@ -273,6 +273,48 @@ describe('StreamAPI', () => {
         })
         .start()
     })
+
+    test.each([50, 500, 5000])('stays open beyond the value set for http2SessionIdleTime', async (idleTime) => {
+      const padding = 100
+      let seen_event = false
+      const client = util.getClient({
+        secret: key.secret,
+        http2SessionIdleTime: idleTime,
+      })
+      const oldTimestamp = doc.ts
+
+      const getNumberOfSessions = () => Object.keys(client._http._adapter._sessionMap).length
+
+      stream = client.stream
+      .document(doc.ref)
+      .on('version', (event) => {
+        seen_event = true
+        expect(event.action).toEqual("update")
+        expect(event.document.ts).toBeGreaterThan(oldTimestamp)
+      })
+
+      stream.start()
+
+      await util.delay(idleTime + padding)
+      expect(getNumberOfSessions()).toBe(1)
+
+      // this will create a new session as it is not a stream
+      const { ts: newTimestamp } = await client.query(q.Update(doc.ref, {}))
+      expect(newTimestamp).toBeGreaterThan(oldTimestamp)
+
+      await util.delay(idleTime + padding)
+      expect(getNumberOfSessions()).toBeGreaterThanOrEqual(1)
+      expect(seen_event).toBe(true)
+
+      seen_event = false
+      await util.delay(idleTime + padding)
+      expect(getNumberOfSessions()).toBeGreaterThanOrEqual(1)
+      expect(seen_event).toBe(false)
+
+      stream.close()
+      await util.delay(idleTime + padding)
+      expect(getNumberOfSessions()).toBe(0)
+    }, 30000);
   })
 
   describe('document', () => {
