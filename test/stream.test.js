@@ -283,10 +283,7 @@ describe('StreamAPI', () => {
       })
       const oldTimestamp = doc.ts
 
-      const assertActiveSessions = length =>
-        expect(Object.keys(client._http._adapter._sessionMap).length).toBe(
-          length
-        )
+      const getNumberOfSessions = () => Object.keys(client._http._adapter._sessionMap).length
 
       stream = client.stream
       .document(doc.ref)
@@ -299,23 +296,24 @@ describe('StreamAPI', () => {
       stream.start()
 
       await util.delay(idleTime + padding)
-      assertActiveSessions(1)
+      expect(getNumberOfSessions()).toBe(1)
 
+      // this will create a new session as it is not a stream
       const { ts: newTimestamp } = await client.query(q.Update(doc.ref, {}))
       expect(newTimestamp).toBeGreaterThan(oldTimestamp)
 
       await util.delay(idleTime + padding)
-      assertActiveSessions(1)
+      expect(getNumberOfSessions()).toBeGreaterThanOrEqual(1)
       expect(seen_event).toBe(true)
 
       seen_event = false
       await util.delay(idleTime + padding)
-      assertActiveSessions(1)
+      expect(getNumberOfSessions()).toBeGreaterThanOrEqual(1)
       expect(seen_event).toBe(false)
 
       stream.close()
       await util.delay(idleTime + padding)
-      assertActiveSessions(0)
+      expect(getNumberOfSessions()).toBe(0)
     }, 30000);
   })
 
