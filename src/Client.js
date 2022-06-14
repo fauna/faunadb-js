@@ -394,13 +394,13 @@ function getHttp2SessionIdleTime(configuredIdleTime) {
   // attemp to set the idle time to the env value and then the configured value
   const values = [envIdleTime, configuredIdleTime]
   for (const rawValue of values) {
-    const parsedValue = parseInt(rawValue, 10)
+    const parsedValue = rawValue === 'Infinity'
+      ? Number.MAX_SAFE_INTEGER
+      : parseInt(rawValue, 10)
     const isNegative = parsedValue < 0
-    const isInfinity = rawValue === 'Infinity'
-    const isGreaterThanMax = parsedValue > maxIdleTime || isInfinity
+    const isGreaterThanMax = parsedValue > maxIdleTime
     // if we didn't get infinity or a positive integer move to the next value
-    if (isNegative) continue
-    if (!isInfinity && !parsedValue) continue
+    if (isNegative || !parsedValue) continue
     // if we did get something valid constrain it to the ceiling
     value = parsedValue
     if (isGreaterThanMax) value = maxIdleTime
