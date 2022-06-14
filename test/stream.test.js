@@ -274,9 +274,9 @@ describe('StreamAPI', () => {
         .start()
     })
 
-    test('stays open beyond the value set for http2SessionIdleTime', async () => {
+    test.each([50, 500, 5000])('stays open beyond the value set for http2SessionIdleTime', async (idleTime) => {
+      const padding = 100
       let seen_event = false
-      const idleTime = 1000
       const client = util.getClient({
         secret: key.secret,
         http2SessionIdleTime: idleTime,
@@ -298,23 +298,25 @@ describe('StreamAPI', () => {
 
       stream.start()
 
-      await util.delay(idleTime + 500)
+      await util.delay(idleTime + padding)
       assertActiveSessions(1)
 
       const { ts: newTimestamp } = await client.query(q.Update(doc.ref, {}))
       expect(newTimestamp).toBeGreaterThan(oldTimestamp)
-      await util.delay(idleTime + 1)
+
+      await util.delay(idleTime + padding)
       assertActiveSessions(1)
       expect(seen_event).toBe(true)
+
       seen_event = false
-      await util.delay(idleTime + 1)
-      expect(seen_event).toBe(false)
+      await util.delay(idleTime + padding)
       assertActiveSessions(1)
+      expect(seen_event).toBe(false)
 
       stream.close()
-      await util.delay(idleTime + 1)
+      await util.delay(idleTime + padding)
       assertActiveSessions(0)
-    })
+    }, 30000);
   })
 
   describe('document', () => {
