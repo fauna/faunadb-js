@@ -197,7 +197,11 @@ export function Tokens(scope?: ExprArg): Expr
 export function Credentials(scope?: ExprArg): Expr
 export function Equals(...args: ExprArg[]): Expr
 export function Contains(path: ExprArg, _in: ExprArg): Expr
-export function Select(path: ExprArg, from: ExprArg, _default?: ExprArg): Expr
+export function Select(
+  path: ExprArg,
+  from: ExprArg,
+  _default?: ExprArg | null
+): Expr
 export function SelectAll(path: ExprArg, from: ExprArg): Expr
 export function Abs(expr: ExprArg): Expr
 export function Add(...args: ExprArg[]): Expr
