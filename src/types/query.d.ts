@@ -31,10 +31,7 @@ export function Foreach(
   collection: ExprArg,
   lambda_expr: ExprArg | Lambda
 ): Expr
-export function Filter(
-  collection: ExprArg,
-  lambda_expr: ExprArg | Lambda
-): Expr
+export function Filter(collection: ExprArg, lambda_expr: ExprArg | Lambda): Expr
 export function Take(number: ExprArg, collection: ExprArg): Expr
 export function Drop(number: ExprArg, collection: ExprArg): Expr
 export function Prepend(elements: ExprArg, collection: ExprArg): Expr
@@ -134,11 +131,7 @@ export function LowerCase(expr: ExprArg): Expr
 export function LTrim(expr: ExprArg): Expr
 export function NGram(terms: ExprArg, min?: ExprArg, max?: ExprArg): Expr
 export function Repeat(expr: ExprArg, number?: ExprArg): Expr
-export function ReplaceStr(
-  expr: ExprArg,
-  find: ExprArg,
-  replace: ExprArg
-): Expr
+export function ReplaceStr(expr: ExprArg, find: ExprArg, replace: ExprArg): Expr
 export function ReplaceStrRegex(
   expr: ExprArg,
   find: ExprArg,
