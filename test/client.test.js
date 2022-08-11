@@ -54,7 +54,9 @@ describe('Client', () => {
   })
 
   test('the client does not support a metrics flag', async () => {
-    expect(() => util.getClient({ metrics: true })).toThrow(new Error('No such option metrics'))
+    expect(() => util.getClient({ metrics: true })).toThrow(
+      new Error('No such option metrics')
+    )
   })
 
   test('query does not support a metrics flag', async () => {
@@ -74,8 +76,7 @@ describe('Client', () => {
 
   test('queryWithMetrics returns the metrics', async () => {
     const response = await client.queryWithMetrics(query.Add(1, 1))
-    expect(Object.keys(response).sort()).
-      toEqual(['metrics', 'value'])
+    expect(Object.keys(response).sort()).toEqual(['metrics', 'value'])
   })
 
   test('paginates', () => {
@@ -461,7 +462,7 @@ describe('Client', () => {
 
     process.env.FAUNADB_HTTP2_SESSION_IDLE_TIME = 'Cat'
     client = util.getClient({
-      http2SessionIdleTime: "Cat",
+      http2SessionIdleTime: 'Cat',
     })
     internalIdleTime = client._http._adapter._http2SessionIdleTime
     expect(internalIdleTime).toBe(defaultIdleTime)
@@ -482,7 +483,7 @@ describe('Client', () => {
 
     process.env.FAUNADB_HTTP2_SESSION_IDLE_TIME = '-999'
     client = util.getClient({
-      http2SessionIdleTime: "Infinity",
+      http2SessionIdleTime: 'Infinity',
     })
     internalIdleTime = client._http._adapter._http2SessionIdleTime
     expect(internalIdleTime).toBe(maxIdleTime)
