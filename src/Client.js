@@ -138,9 +138,9 @@ var values = require('./values')
  * @constructor
  * @param {?Object} options
  *   Object that configures this FaunaDB client.
+ * @param {?string} options.endpoint
+ *   Full URL for the FaunaDB server.
  * @param {?string} options.domain
- *   Base URL for the FaunaDB server.
- * @param {?{ string: string }} options.headers
  *   Base URL for the FaunaDB server.
  * @param {?('http'|'https')} options.scheme
  *   HTTP scheme to use.
@@ -152,6 +152,8 @@ var values = require('./values')
  *   Callback that will be called after every completed request.
  * @param {?boolean} options.keepAlive
  *   Configures http/https keepAlive option (ignored in browser environments)
+ * @param {?{ string: string }} options.headers
+ *   Optional headers to send with requests
  * @param {?fetch} options.fetch
  *   a fetch compatible [API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) for making a request
  * @param {?number} options.queryTimeout
