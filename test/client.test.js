@@ -37,6 +37,13 @@ describe('Client', () => {
     })
   })
 
+  test('ping with client configured with "endpoint"', () => {
+    var client = util.getClientFromEndpoint()
+    return client.ping('node').then(function(res) {
+      expect(res).toEqual('Scope node is OK')
+    })
+  })
+
   test("omits the port value if it's falsy", () => {
     const client = new Client({
       secret: 'FAKED',

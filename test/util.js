@@ -48,6 +48,24 @@ function getClient(opts) {
   return new Client(objectAssign({ secret: clientSecret }, getCfg(), opts))
 }
 
+function getClientFromEndpoint(opts) {
+  var config = getCfg()
+  var endpoint = config.scheme + '://' + config.domain + ':' + config.port
+
+  return new Client(
+    objectAssign(
+      {
+        secret: clientSecret,
+        endpoint: endpoint,
+        scheme: 'bad scheme',
+        domain: 'bad domain',
+        port: 'bad port',
+      },
+      opts
+    )
+  )
+}
+
 function assertRejected(promise, errorType) {
   var succeeded = false
 
@@ -154,6 +172,7 @@ module.exports = {
   testConfig: testConfig,
   getCfg: getCfg,
   getClient: getClient,
+  getClientFromEndpoint: getClientFromEndpoint,
   assertRejected: assertRejected,
   client: client,
   clientSecret: clientSecret,
