@@ -177,6 +177,7 @@ function Client(options) {
   if (options) options.http2SessionIdleTime = http2SessionIdleTime
 
   options = util.applyDefaults(options, {
+    endpoint: null,
     domain: 'db.fauna.com',
     scheme: 'https',
     port: null,
