@@ -138,9 +138,9 @@ var values = require('./values')
  * @constructor
  * @param {?Object} options
  *   Object that configures this FaunaDB client.
+ * @param {?string} options.endpoint
+ *   Full URL for the FaunaDB server.
  * @param {?string} options.domain
- *   Base URL for the FaunaDB server.
- * @param {?{ string: string }} options.headers
  *   Base URL for the FaunaDB server.
  * @param {?('http'|'https')} options.scheme
  *   HTTP scheme to use.
@@ -152,6 +152,8 @@ var values = require('./values')
  *   Callback that will be called after every completed request.
  * @param {?boolean} options.keepAlive
  *   Configures http/https keepAlive option (ignored in browser environments)
+ * @param {?{ string: string }} options.headers
+ *   Optional headers to send with requests
  * @param {?fetch} options.fetch
  *   a fetch compatible [API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) for making a request
  * @param {?number} options.queryTimeout
@@ -159,7 +161,7 @@ var values = require('./values')
  * @param {?number} options.http2SessionIdleTime
  *   Sets the maximum amount of time (in milliseconds) an HTTP2 session may live
  *   when there's no activity. Must be a non-negative integer, with a maximum value of 5000.
- *   If an invalid value is passed a default of 500 ms is applied. If a value 
+ *   If an invalid value is passed a default of 500 ms is applied. If a value
  *   exceeding 5000 ms is passed (e.g. Infinity) the maximum of 5000 ms is applied.
  *   Only applicable for NodeJS environment (when http2 module is used).
  *   can also be configured via the FAUNADB_HTTP2_SESSION_IDLE_TIME environment variable
@@ -177,6 +179,7 @@ function Client(options) {
   if (options) options.http2SessionIdleTime = http2SessionIdleTime
 
   options = util.applyDefaults(options, {
+    endpoint: null,
     domain: 'db.fauna.com',
     scheme: 'https',
     port: null,
@@ -300,7 +303,14 @@ Client.prototype.queryWithMetrics = function(expression, options) {
   return this._execute('POST', '', query.wrap(expression), null, options, true)
 }
 
-Client.prototype._execute = function(method, path, data, query, options, returnMetrics = false) {
+Client.prototype._execute = function(
+  method,
+  path,
+  data,
+  query,
+  options,
+  returnMetrics = false
+) {
   query = util.defaults(query, null)
 
   if (
@@ -357,10 +367,12 @@ Client.prototype._execute = function(method, path, data, query, options, returnM
       if (returnMetrics) {
         return {
           value: responseObject['resource'],
-          metrics: Object.fromEntries(Array.from(Object.entries(response.headers)).
-            filter( ([k,v]) => metricsHeaders.includes(k) ).
-            map(([ k,v ]) => [k, parseInt(v)])
-          )}
+          metrics: Object.fromEntries(
+            Array.from(Object.entries(response.headers))
+              .filter(([k, v]) => metricsHeaders.includes(k))
+              .map(([k, v]) => [k, parseInt(v)])
+          ),
+        }
       } else {
         return responseObject['resource']
       }
@@ -394,9 +406,8 @@ function getHttp2SessionIdleTime(configuredIdleTime) {
   // attemp to set the idle time to the env value and then the configured value
   const values = [envIdleTime, configuredIdleTime]
   for (const rawValue of values) {
-    const parsedValue = rawValue === 'Infinity'
-      ? Number.MAX_SAFE_INTEGER
-      : parseInt(rawValue, 10)
+    const parsedValue =
+      rawValue === 'Infinity' ? Number.MAX_SAFE_INTEGER : parseInt(rawValue, 10)
     const isNegative = parsedValue < 0
     const isGreaterThanMax = parsedValue > maxIdleTime
     // if we didn't get infinity or a positive integer move to the next value

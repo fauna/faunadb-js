@@ -10,6 +10,7 @@ type StreamEventFields = 'action' | 'document' | 'diff' | 'prev' | 'index'
 
 export interface ClientConfig {
   secret: string
+  endpoint?: string
   domain?: string
   scheme?: 'http' | 'https'
   port?: number

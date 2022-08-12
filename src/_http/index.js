@@ -32,7 +32,13 @@ function HttpClient(options) {
         fetch: options.fetch,
         keepAlive: options.keepAlive,
       })
-  this._baseUrl = options.scheme + '://' + options.domain + ':' + options.port
+
+  if (options.endpoint === null) {
+    this._baseUrl = options.scheme + '://' + options.domain + ':' + options.port
+  } else {
+    this._baseUrl = options.endpoint
+  }
+
   this._secret = options.secret
   this._headers = Object.assign({}, options.headers, getDefaultHeaders())
   this._queryTimeout = options.queryTimeout
