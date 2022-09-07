@@ -4,6 +4,7 @@ export type FaunaHttpErrorResponseContent = {
   errors: {
     code: string,
     description: string
+    cause: any;
   }[]
 }
 export module errors {
