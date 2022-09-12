@@ -103,47 +103,43 @@ HttpClient.prototype.close = function(opts) {
 HttpClient.prototype.execute = function(options) {
   options = options || {}
 
-  try {
-    var invalidStreamConsumer =
-      options.streamConsumer &&
-      (typeof options.streamConsumer.onData !== 'function' ||
-        typeof options.streamConsumer.onError !== 'function')
+  var invalidStreamConsumer =
+    options.streamConsumer &&
+    (typeof options.streamConsumer.onData !== 'function' ||
+      typeof options.streamConsumer.onError !== 'function')
 
-    if (invalidStreamConsumer) {
-      return Promise.reject(new TypeError('Invalid "streamConsumer" provided'))
-    }
-
-    var secret = options.secret || this._secret
-    var queryTimeout = options.queryTimeout || this._queryTimeout
-    var headers = this._headers
-    // We perform basic validation on the traceparent format and pass along as-is.
-    // In the event the traceparent is invalid, we silently drop it here, generate
-    // a new one server-side, and return it via the traceresponse header.
-    // See https://w3c.github.io/trace-context/#a-traceparent-is-received
-    var traceparent = isValidTraceparentHeader(options.traceparent)
-      ? options.traceparent
-      : null
-
-    headers['Authorization'] = secret && secretHeader(secret)
-    headers['X-Last-Seen-Txn'] = this._lastSeen
-    headers['X-Query-Timeout'] = queryTimeout
-    headers['traceparent'] = traceparent
-    headers['x-fauna-tags'] = parseTags(options.tags)
-
-    return this._adapter.execute({
-      origin: this._baseUrl,
-      path: options.path || '/',
-      query: options.query,
-      method: options.method || 'GET',
-      headers: util.removeNullAndUndefinedValues(headers),
-      body: options.body,
-      signal: options.signal,
-      timeout: this._timeout,
-      streamConsumer: options.streamConsumer,
-    })
-  } catch (err) {
-    console.log(err)
+  if (invalidStreamConsumer) {
+    return Promise.reject(new TypeError('Invalid "streamConsumer" provided'))
   }
+
+  var secret = options.secret || this._secret
+  var queryTimeout = options.queryTimeout || this._queryTimeout
+  var headers = this._headers
+  // We perform basic validation on the traceparent format and pass along as-is.
+  // In the event the traceparent is invalid, we silently drop it here, generate
+  // a new one server-side, and return it via the traceresponse header.
+  // See https://w3c.github.io/trace-context/#a-traceparent-is-received
+  var traceparent = isValidTraceparentHeader(options.traceparent)
+    ? options.traceparent
+    : null
+
+  headers['Authorization'] = secret && secretHeader(secret)
+  headers['X-Last-Seen-Txn'] = this._lastSeen
+  headers['X-Query-Timeout'] = queryTimeout
+  headers['traceparent'] = traceparent
+  headers['x-fauna-tags'] = parseTags(options.tags)
+
+  return this._adapter.execute({
+    origin: this._baseUrl,
+    path: options.path || '/',
+    query: options.query,
+    method: options.method || 'GET',
+    headers: util.removeNullAndUndefinedValues(headers),
+    body: options.body,
+    signal: options.signal,
+    timeout: this._timeout,
+    streamConsumer: options.streamConsumer,
+  })
 }
 
 function isValidTraceparentHeader(traceparentHeader) {
@@ -165,7 +161,6 @@ function parseTags(tags) {
   entries.forEach(([key, value]) => {
     result += key + '=' + value
     if (index++ < entriesLength) result += ','
->>>>>>> Stashed changes
   })
   return result
 }
