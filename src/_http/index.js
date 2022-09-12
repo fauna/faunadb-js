@@ -96,39 +96,78 @@ HttpClient.prototype.close = function(opts) {
  * @param {?object} options.fetch Fetch API compatible function.
  * @param {?object} options.secret FaunaDB secret.
  * @param {?object} options.queryTimeout FaunaDB query timeout.
+ * @param {?string} options.traceparent Unique identifier for the query.
+ * @param { {[key: string]: string|number } } options.tags Keyword-value pairs which can be associated with a query.
  * @returns {Promise} The response promise.
  */
 HttpClient.prototype.execute = function(options) {
   options = options || {}
 
-  var invalidStreamConsumer =
-    options.streamConsumer &&
-    (typeof options.streamConsumer.onData !== 'function' ||
-      typeof options.streamConsumer.onError !== 'function')
+  try {
+    var invalidStreamConsumer =
+      options.streamConsumer &&
+      (typeof options.streamConsumer.onData !== 'function' ||
+        typeof options.streamConsumer.onError !== 'function')
 
-  if (invalidStreamConsumer) {
-    return Promise.reject(new TypeError('Invalid "streamConsumer" provided'))
+    if (invalidStreamConsumer) {
+      return Promise.reject(new TypeError('Invalid "streamConsumer" provided'))
+    }
+
+    var secret = options.secret || this._secret
+    var queryTimeout = options.queryTimeout || this._queryTimeout
+    var headers = this._headers
+    // We perform basic validation on the traceparent format and pass along as-is.
+    // In the event the traceparent is invalid, we silently drop it here, generate
+    // a new one server-side, and return it via the traceresponse header.
+    // See https://w3c.github.io/trace-context/#a-traceparent-is-received
+    var traceparent = isValidTraceparentHeader(options.traceparent)
+      ? options.traceparent
+      : null
+
+    headers['Authorization'] = secret && secretHeader(secret)
+    headers['X-Last-Seen-Txn'] = this._lastSeen
+    headers['X-Query-Timeout'] = queryTimeout
+    headers['traceparent'] = traceparent
+    headers['x-fauna-tags'] = parseTags(options.tags)
+
+    return this._adapter.execute({
+      origin: this._baseUrl,
+      path: options.path || '/',
+      query: options.query,
+      method: options.method || 'GET',
+      headers: util.removeNullAndUndefinedValues(headers),
+      body: options.body,
+      signal: options.signal,
+      timeout: this._timeout,
+      streamConsumer: options.streamConsumer,
+    })
+  } catch (err) {
+    console.log(err)
   }
+}
 
-  var secret = options.secret || this._secret
-  var queryTimeout = options.queryTimeout || this._queryTimeout
-  var headers = this._headers
+function isValidTraceparentHeader(traceparentHeader) {
+  // Shamelessly copied from shorturl.at/osvwz
+  return /^[\da-f]{2}-[\da-f]{32}-[\da-f]{16}-[\da-f]{2}$/.test(
+    traceparentHeader
+  )
+}
 
-  headers['Authorization'] = secret && secretHeader(secret)
-  headers['X-Last-Seen-Txn'] = this._lastSeen
-  headers['X-Query-Timeout'] = queryTimeout
-
-  return this._adapter.execute({
-    origin: this._baseUrl,
-    path: options.path || '/',
-    query: options.query,
-    method: options.method || 'GET',
-    headers: util.removeNullAndUndefinedValues(headers),
-    body: options.body,
-    signal: options.signal,
-    timeout: this._timeout,
-    streamConsumer: options.streamConsumer,
+function parseTags(tags) {
+  if (tags === undefined || tags == null || tags == '') return null
+  if (typeof tags != 'object') {
+    throw new Error('Tags must be provided as an object!')
+  }
+  var result = ''
+  const entries = Object.entries(tags)
+  const entriesLength = entries.length
+  var index = 1
+  entries.forEach(([key, value]) => {
+    result += key + '=' + value
+    if (index++ < entriesLength) result += ','
+>>>>>>> Stashed changes
   })
+  return result
 }
 
 function secretHeader(secret) {

@@ -3052,6 +3052,25 @@ describe('query', () => {
     )
     return Promise.all([p1, p2])
   })
+
+  test('traceparent should be returned', async () => {
+    try {
+      assertQuery(query.Equals(query.Now(), query.Time('now')), true)
+
+      const traceparent =
+        '00-750efa5fb6a131eb2cf4db39f28366cb-5669e71839eca76b-00'
+      var assertResults = function(result) {
+        expect(result.responseHeaders['traceparent']).not.toBeNull()
+      }
+      await adminClient.query(query.Now(), {
+        traceparent: traceparent,
+        observer: assertResults,
+      })
+    } catch (err) {
+      console.log(err)
+      expect(err).toBeInstanceOf(errors.BadRequest)
+    }
+  })
 }, 10000)
 
 function withNewDatabase() {
