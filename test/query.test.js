@@ -3054,21 +3054,70 @@ describe('query', () => {
   })
 
   test('traceparent should be returned', async () => {
-    try {
-      assertQuery(query.Equals(query.Now(), query.Time('now')), true)
+    var assertResults = function(result) {
+      expect(result.responseHeaders['traceparent']).not.toBeNull()
+    }
+    await adminClient.query(query.Now(), {
+      traceparent: '00-750efa5fb6a131eb2cf4db39f28366cb-5669e71839eca76b-00',
+      observer: assertResults,
+    })
+  })
 
-      const traceparent =
-        '00-750efa5fb6a131eb2cf4db39f28366cb-5669e71839eca76b-00'
-      var assertResults = function(result) {
-        expect(result.responseHeaders['traceparent']).not.toBeNull()
-      }
+  test('invalid traceparent should be discarded', async () => {
+    const invalidTraceparent = 'invalidTraceparent'
+    var assertResults = function(result) {
+      expect(result.responseHeaders['traceparent']).not.toBeNull()
+      expect(result.responseHeaders['traceparent']).not.toEqual(
+        invalidTraceparent
+      )
+    }
+    await adminClient.query(query.Now(), {
+      traceparent: invalidTraceparent,
+      observer: assertResults,
+    })
+  })
+
+  test('traceparent should be returned when not provided', async () => {
+    var assertResults = function(result) {
+      expect(result.responseHeaders['traceparent']).not.toBeNull()
+    }
+    await adminClient.query(query.Now(), {
+      observer: assertResults,
+    })
+  })
+
+  test('provided tags should be returned', async () => {
+    const tags = { foo: 'Foo1', bar: 'Bar2' }
+    var assertResults = function(result) {
+      expect(result.responseHeaders['x-fauna-tags']).not.toBeNull()
+      expect(result.responseHeaders['x-fauna-tags']).toEqual(
+        'bar=Bar2,foo=Foo1'
+      )
+    }
+    await adminClient.query(query.Now(), {
+      tags: tags,
+      observer: assertResults,
+    })
+  })
+
+  test('tags should be null if not provided', async () => {
+    var assertResults = function(result) {
+      console.log(result.responseHeaders)
+      expect(result.responseHeaders['x-fauna-tags']).toBeNull()
+    }
+    await adminClient.query(query.Now(), {
+      observer: assertResults,
+    })
+  })
+
+  test('malformed tags should throw an error', async () => {
+    const tags = 'invalidTagFormat'
+    try {
       await adminClient.query(query.Now(), {
-        traceparent: traceparent,
-        observer: assertResults,
+        tags: tags,
       })
     } catch (err) {
-      console.log(err)
-      expect(err).toBeInstanceOf(errors.BadRequest)
+      expect(err).toBeInstanceOf(Error)
     }
   })
 }, 10000)
