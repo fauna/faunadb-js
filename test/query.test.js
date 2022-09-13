@@ -3053,12 +3053,17 @@ describe('query', () => {
     return Promise.all([p1, p2])
   })
 
-  test('traceparent should be returned', async () => {
+  test('valid traceparent should return the same traceId', async () => {
+    // format: {version}-{traceId}-{parentId}-{flags}
+    const traceparent =
+      '00-750efa5fb6a131eb2cf4db39f28366cb-5669e71839eca76b-00'
     var assertResults = function(result) {
-      expect(result.responseHeaders['traceparent']).not.toBeNull()
+      const traceresponse = result.responseHeaders['traceparent']
+      expect(traceresponse).not.toBeNull()
+      expect(traceresponse.split('-')[1]).toEqual(traceparent.split('-')[1])
     }
     await adminClient.query(query.Now(), {
-      traceparent: '00-750efa5fb6a131eb2cf4db39f28366cb-5669e71839eca76b-00',
+      traceparent: traceparent,
       observer: assertResults,
     })
   })
@@ -3102,7 +3107,6 @@ describe('query', () => {
 
   test('tags should be null if not provided', async () => {
     var assertResults = function(result) {
-      console.log(result.responseHeaders)
       expect(result.responseHeaders['x-fauna-tags']).toBeNull()
     }
     await adminClient.query(query.Now(), {

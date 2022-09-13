@@ -154,15 +154,9 @@ function parseTags(tags) {
   if (typeof tags != 'object') {
     throw new Error('Tags must be provided as an object!')
   }
-  var result = ''
-  const entries = Object.entries(tags)
-  const entriesLength = entries.length
-  var index = 1
-  entries.forEach(([key, value]) => {
-    result += key + '=' + value
-    if (index++ < entriesLength) result += ','
-  })
-  return result
+  return Object.entries(tags)
+    .map(e => e.join('='))
+    .join(',')
 }
 
 function secretHeader(secret) {

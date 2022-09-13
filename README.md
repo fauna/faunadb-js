@@ -268,7 +268,8 @@ var data = client.query(q.Paginate(q.Collections()), {
 
 ##### traceparent
 A [W3C-compliant](https://w3c.github.io/trace-context) identifier for enabling distributed tracing across different
-vendors. If not provided, one is automatically generated server-side and attached to the query. See
+vendors. If not provided, one is automatically generated server-side and attached to the query. Customer's should
+inspect the returned traceresponse to determine if a new traceparent has been created, and use that instead. See
 [Trace Context](https://w3c.github.io/trace-context) spec for more details.
 ```javascript
 var data = client.query(q.Paginate(q.Collections()), {
