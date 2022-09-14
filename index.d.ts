@@ -9,6 +9,7 @@ export * from './src/types/query';
 export * as query from './src/types/query';
 export * from './src/types/RequestResult';
 export { default as RequestResult } from './src/types/RequestResult';
+export * from './src/types/Stream';
 export * from './src/types/values';
 
 
