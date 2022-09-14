@@ -1,5 +1,6 @@
 ## 4.7.0
 - Support nullable arguments for applicable FQL functions [#651](https://github.com/fauna/faunadb-js/pull/651)
+  and [#36](https://github.com/fauna/faunadb-js/pull/636)
 - Add optional endpoint parameter as an alternative to setting scheme, domain and port individually. The new parameter
   will override scheme, domain and port if set. [#652](https://github.com/fauna/faunadb-js/pull/652)
 - Expose Stream types [#622](https://github.com/fauna/faunadb-js/pull/622)
