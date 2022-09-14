@@ -1,3 +1,9 @@
+## 4.7.0
+- Support nullable arguments for applicable FQL functions [#651](https://github.com/fauna/faunadb-js/pull/651)
+- Add optional endpoint parameter as an alternative to setting scheme, domain and port individually. The new parameter
+  will override scheme, domain and port if set. [#652](https://github.com/fauna/faunadb-js/pull/652)
+- Expose Stream types [#622](https://github.com/fauna/faunadb-js/pull/622)
+
 ## 4.6.0
 - Enforce a maximum value of 5000 ms for the `http2SessionIdleTime` option [#642](https://github.com/fauna/faunadb-js/pull/642)
 - Add checks to `http2SessionIdleTime` so that sane defaults are used in case an invalid value is configured
@@ -60,7 +66,7 @@
 ## 4.2.0
 
 - Improve HTTP2 session timeout handling
-- Add the `FAUNADB_HTTP2_SESSION_IDLE_TIME` environment variable  
+- Add the `FAUNADB_HTTP2_SESSION_IDLE_TIME` environment variable
   to specify the default HTTP2 session timeout period
 - Implement a fix for the lack of a `navigator` object in Cloudflare Workers
 
