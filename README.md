@@ -284,6 +284,8 @@ var data = client.query(q.Paginate(q.Collections()), {
   tags: { key1: "value1", key2: "value2" },
 })
 ```
+Both tags and their associated values, must be strings. The only allowable characters are alphanumeric values as well
+as an underscope (_). Max length for keys is 40 characters. Max length for values is 60 characters.
 
 #### Custom Fetch
 

@@ -3105,15 +3105,6 @@ describe('query', () => {
     })
   })
 
-  test('tags should be null if not provided', async () => {
-    var assertResults = function(result) {
-      expect(result.responseHeaders['x-fauna-tags']).toBeNull()
-    }
-    await adminClient.query(query.Now(), {
-      observer: assertResults,
-    })
-  })
-
   test('malformed tags should throw an error', async () => {
     const tags = 'invalidTagFormat'
     try {
@@ -3122,7 +3113,126 @@ describe('query', () => {
       })
     } catch (err) {
       expect(err).toBeInstanceOf(Error)
+      expect(err.message).toEqual('Tags must be provided as an object!')
     }
+  })
+
+  test('Error thrown when tag pairs exceed limit', async () => {
+    var tags = {}
+    for (let index = 0; index < 26; index++) {
+      tags[index] = String(Math.random())
+    }
+    try {
+      await adminClient.query(query.Now(), {
+        tags: tags,
+      })
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error)
+    }
+  })
+
+  test('tag keys must be strings', async () => {
+    const tags = {
+      55: 'Foo1',
+      bar: 'Bar2',
+    }
+    try {
+      await adminClient.query(query.Now(), {
+        tags: tags,
+      })
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error)
+      expect(err.message).toEqual('Provided key, 55, must be a string')
+    }
+  })
+
+  test('invalid characters in tag key should throw error', async () => {
+    const tags = { foo: 'Foo1', 'v@@!ar': 'Bar2' }
+    try {
+      await adminClient.query(query.Now(), {
+        tags: tags,
+      })
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error)
+      expect(err.message).toEqual(
+        'Provided key, v@@!ar, contains invalid characters'
+      )
+    }
+  })
+
+  test('tag key with length over allowed limit should throw error', async () => {
+    const tags = {
+      aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd1: 'Foo1',
+      bar: 'Bar2',
+    }
+    try {
+      await adminClient.query(query.Now(), {
+        tags: tags,
+      })
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error)
+      expect(err.message).toEqual(
+        'Provided key, aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd1, must not exceed maximum ' +
+          'length of 40 characters'
+      )
+    }
+  })
+
+  test('invalid characters in tag value should throw error', async () => {
+    const tags = { foo: 'inva@l!d value', bar: 'Bar2' }
+    try {
+      await adminClient.query(query.Now(), {
+        tags: tags,
+      })
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error)
+      expect(err.message).toEqual(
+        'Provided value, inva@l!d value, contains invalid characters'
+      )
+    }
+  })
+
+  test('tag value with length over allowed limit should throw error', async () => {
+    const tags = {
+      foo: 'a'.repeat(81),
+      bar: 'Bar2',
+    }
+    try {
+      await adminClient.query(query.Now(), {
+        tags: tags,
+      })
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error)
+      expect(err.message).toEqual(
+        `Provided value, ${'a'.repeat(
+          81
+        )}, must not exceed maximum length of 80 characters`
+      )
+    }
+  })
+
+  test('tag values must be strings', async () => {
+    const tags = {
+      foo: false,
+      bar: 'Bar2',
+    }
+    try {
+      await adminClient.query(query.Now(), {
+        tags: tags,
+      })
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error)
+      expect(err.message).toEqual('Provided value, false, must be a string')
+    }
+  })
+
+  test('tags should be undefined if not provided in request', async () => {
+    var assertResults = function(result) {
+      expect(result.responseHeaders['x-fauna-tags']).toBeUndefined()
+    }
+    await adminClient.query(query.Now(), {
+      observer: assertResults,
+    })
   })
 }, 10000)
 
