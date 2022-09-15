@@ -48,9 +48,13 @@ function getClient(opts) {
   return new Client(objectAssign({ secret: clientSecret }, getCfg(), opts))
 }
 
-function getClientFromEndpoint(opts) {
+function getFaunaEndpoint() {
   var config = getCfg()
-  var endpoint = config.scheme + '://' + config.domain + ':' + config.port
+  return config.scheme + '://' + config.domain + ':' + config.port
+}
+
+function getClientFromEndpoint(opts) {
+  var endpoint = getFaunaEndpoint()
 
   return new Client(
     objectAssign(
@@ -172,6 +176,7 @@ module.exports = {
   testConfig: testConfig,
   getCfg: getCfg,
   getClient: getClient,
+  getFaunaEndpoint: getFaunaEndpoint,
   getClientFromEndpoint: getClientFromEndpoint,
   assertRejected: assertRejected,
   client: client,
