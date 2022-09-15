@@ -44,6 +44,23 @@ describe('Client', () => {
     })
   })
 
+  test('endpoint normalization', async () => {
+    const endpoint = util.getFaunaEndpoint()
+    const endpoints = [
+      endpoint,
+      endpoint + '/',
+      endpoint + '//',
+      endpoint + '\\',
+      endpoint + '\\\\',
+    ]
+    for (const e of endpoints) {
+      var client = new Client({ secret: util.clientSecret, endpoint: e })
+
+      const res = await client.ping('node')
+      expect(res).toEqual('Scope node is OK')
+    }
+  })
+
   test("omits the port value if it's falsy", () => {
     const client = new Client({
       secret: 'FAKED',
