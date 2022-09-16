@@ -150,7 +150,7 @@ it will be returned as <code>new Ref(&quot;collections/frogs/123&quot;)</code>.)
 
         <tr>
             
-                <td class="name"><code>domain</code></td>
+                <td class="name"><code>endpoint</code></td>
             
 
             <td class="type">
@@ -176,20 +176,20 @@ it will be returned as <code>new Ref(&quot;collections/frogs/123&quot;)</code>.)
 
             
 
-            <td class="description last"><p>Base URL for the FaunaDB server.</p></td>
+            <td class="description last"><p>Full URL for the FaunaDB server.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>headers</code></td>
+                <td class="name"><code>domain</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Object</span>
+<span class="param-type">string</span>
 
 
             
@@ -417,6 +417,39 @@ it will be returned as <code>new Ref(&quot;collections/frogs/123&quot;)</code>.)
 
         <tr>
             
+                <td class="name"><code>headers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                    &lt;nullable><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Optional headers to send with requests</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>fetch</code></td>
             
 
@@ -629,7 +662,7 @@ which has the highest priority and overrides the option passed into the Client c
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line172">line 172</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line174">line 174</a>
     </li></ul></dd>
     
 
@@ -733,7 +766,7 @@ which has the highest priority and overrides the option passed into the Client c
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line204">line 204</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line207">line 207</a>
     </li></ul></dd>
     
 
@@ -942,7 +975,7 @@ This may result in an ERR_HTTP2_STREAM_CANCEL error for NodeJS.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line284">line 284</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line287">line 287</a>
     </li></ul></dd>
     
 
@@ -1048,7 +1081,7 @@ This may result in an ERR_HTTP2_STREAM_CANCEL error for NodeJS.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line253">line 253</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line256">line 256</a>
     </li></ul></dd>
     
 
@@ -1343,7 +1376,7 @@ This provides a helpful API for paginating over FaunaDB responses.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line234">line 234</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line237">line 237</a>
     </li></ul></dd>
     
 
@@ -1453,7 +1486,7 @@ This provides a helpful API for paginating over FaunaDB responses.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line245">line 245</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line248">line 248</a>
     </li></ul></dd>
     
 
@@ -1718,7 +1751,7 @@ and the query functions in this documentation.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line217">line 217</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line220">line 220</a>
     </li></ul></dd>
     
 
@@ -1983,7 +2016,7 @@ and the query functions in this documentation.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line299">line 299</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line302">line 302</a>
     </li></ul></dd>
     
 
@@ -2474,7 +2507,7 @@ the future will cause transactions to stall.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line266">line 266</a>
+        <a href="Client.js.html">Client.js</a>, <a href="Client.js.html#line269">line 269</a>
     </li></ul></dd>
     
 
@@ -2667,7 +2700,7 @@ the future will cause transactions to stall.</p>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Tue Jun 14 2022 20:44:44 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.10</a> on Fri Sep 16 2022 00:04:29 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>
