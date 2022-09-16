@@ -169,6 +169,8 @@ function validateTags(tags) {
   validateTagValues(Object.values(tags))
 }
 
+const AlphaNumPattern = new RegExp(/^\w+$/)
+
 function validateTagKeys(keys) {
   const maxKeyLength = 40
   keys.forEach(key => {
@@ -178,7 +180,7 @@ function validateTagKeys(keys) {
       throw new Error(
         `Provided key, ${key}, must not exceed maximum length of ${maxKeyLength} characters`
       )
-    } else if (!/^\w+$/.test(key)) {
+    } else if (!AlphaNumPattern.test(key)) {
       throw new Error(`Provided key, ${key}, contains invalid characters`)
     }
   })
@@ -193,7 +195,7 @@ function validateTagValues(values) {
       throw new Error(
         `Provided value, ${value}, must not exceed maximum length of ${maxValueLength} characters`
       )
-    } else if (!/^\w+$/.test(value)) {
+    } else if (!AlphaNumPattern.test(value)) {
       throw new Error(`Provided value, ${value}, contains invalid characters`)
     }
   })
