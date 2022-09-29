@@ -90,5 +90,8 @@
     "util": false,
     "boxen": false,
     "chalk": false
+  },
+  "publishConfig": {
+    "tag": "logbeta"
   }
 }
