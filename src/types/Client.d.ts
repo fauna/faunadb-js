@@ -37,7 +37,7 @@ export interface QueryOptions
   > {
   signal?: AbortSignal
   traceparent?: string
-  tags?: { string: string }
+  tags?: { [key: string]: string }
 }
 
 type StreamFn<T> = (
