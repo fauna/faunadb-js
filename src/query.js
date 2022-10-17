@@ -3041,9 +3041,14 @@ function argsToArray(args) {
  * @private
  */
 function wrap(obj) {
-  arity.exact(1, arguments, wrap.name)
-  if (obj === null) {
-    return null
+  // the arity functions throw when provided undefined arguments
+  // but wrap can accept undefined values. It still should be given
+  // exactly one argument, even if it is undefined.
+  if (arguments.length !== 1) {
+    throw new errors.InvalidArity(1, 1, arguments.length, wrap.name)
+  }
+  if (obj === undefined || obj === null) {
+    return obj
   } else if (
     obj instanceof Expr ||
     util.checkInstanceHasProperty(obj, '_isFaunaExpr')
