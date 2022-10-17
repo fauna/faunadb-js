@@ -2969,6 +2969,16 @@ function arity(min, max, args, callerFunc) {
   ) {
     throw new errors.InvalidArity(min, max, args.length, callerFunc)
   }
+
+  if (min !== null) {
+    for (let i = 0; i < min; i++) {
+      if (args[i] === undefined) {
+        throw new errors.InvalidValue(
+          `Expected value, but found 'undefined'. Argument ${i} for ${callerFunc} is required.`
+        )
+      }
+    }
+  }
 }
 
 arity.exact = function(n, args, callerFunc) {
