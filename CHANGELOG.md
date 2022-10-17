@@ -1,3 +1,6 @@
+## 4.7.1
+- disallow undefined required args [#663](https://github.com/fauna/faunadb-js/pull/663)
+
 ## 4.7.0
 - Support nullable arguments for applicable FQL functions [#651](https://github.com/fauna/faunadb-js/pull/651)
   and [#36](https://github.com/fauna/faunadb-js/pull/636)
