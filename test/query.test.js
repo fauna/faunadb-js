@@ -3040,6 +3040,22 @@ describe('query', () => {
     }
   })
 
+  test('undfined not allowed as mandatory argument', () => {
+    expect(function() {
+      query.Collection(undefined)
+    }).toThrow()
+  })
+
+  test('optional args can be undefined', () => {
+    expect(function() {
+      query.Select('a', { a: true }, undefined)
+    }).not.toThrow()
+  })
+
+  test('can wrap undefined', () => {
+    expect(query.wrap(undefined)).not.toBeDefined()
+  })
+
   // Helpers
 
   test('varargs', () => {

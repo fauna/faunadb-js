@@ -2969,6 +2969,16 @@ function arity(min, max, args, callerFunc) {
   ) {
     throw new errors.InvalidArity(min, max, args.length, callerFunc)
   }
+
+  if (min !== null) {
+    for (let i = 0; i < min; i++) {
+      if (args[i] === undefined) {
+        throw new errors.InvalidValue(
+          `Expected value, but found 'undefined'. Argument ${i} for ${callerFunc} is required.`
+        )
+      }
+    }
+  }
 }
 
 arity.exact = function(n, args, callerFunc) {
@@ -3031,9 +3041,14 @@ function argsToArray(args) {
  * @private
  */
 function wrap(obj) {
-  arity.exact(1, arguments, wrap.name)
-  if (obj === null) {
-    return null
+  // the arity functions throw when provided undefined arguments
+  // but wrap can accept undefined values. It still should be given
+  // exactly one argument, even if it is undefined.
+  if (arguments.length !== 1) {
+    throw new errors.InvalidArity(1, 1, arguments.length, wrap.name)
+  }
+  if (obj === undefined || obj === null) {
+    return obj
   } else if (
     obj instanceof Expr ||
     util.checkInstanceHasProperty(obj, '_isFaunaExpr')
@@ -3304,5 +3319,6 @@ module.exports = {
   Documents: Documents,
   Reverse: Reverse,
   AccessProvider: AccessProvider,
+  arity: arity,
   wrap: wrap,
 }
