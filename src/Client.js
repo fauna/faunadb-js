@@ -218,6 +218,7 @@ Client.apiVersion = packageJson.apiVersion
  * @return {external:Promise<Object>} FaunaDB response object.
  */
 Client.prototype.query = function(expression, options) {
+  query.arity.between(1, 2, arguments, 'Client.prototype.query')
   options = Object.assign({}, this._globalQueryOptions, options)
   return this._execute('POST', '', query.wrap(expression), null, options)
 }
@@ -300,6 +301,7 @@ Client.prototype.close = function(opts) {
  * @return {external:Promise<Object>} {value, metrics} An object containing the FaunaDB response object and the list of query metrics incurred by the request.
  */
 Client.prototype.queryWithMetrics = function(expression, options) {
+  query.arity.between(1, 2, arguments, 'Client.prototype.query')
   return this._execute('POST', '', query.wrap(expression), null, options, true)
 }
 

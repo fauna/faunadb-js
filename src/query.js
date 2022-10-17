@@ -3319,5 +3319,6 @@ module.exports = {
   Documents: Documents,
   Reverse: Reverse,
   AccessProvider: AccessProvider,
+  arity: arity,
   wrap: wrap,
 }
