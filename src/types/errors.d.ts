@@ -2,9 +2,10 @@ import RequestResult from './RequestResult'
 
 export type FaunaHttpErrorResponseContent = {
   errors: {
+    position: (string | number)[] 
     code: string,
     description: string
-    cause: any;
+    cause?: FaunaHttpErrorResponseContent[];
   }[]
 }
 export module errors {
