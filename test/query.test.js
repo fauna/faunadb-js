@@ -3056,8 +3056,6 @@ describe('query', () => {
     expect(query.wrap(undefined)).not.toBeDefined()
   })
 
-  // Helpers
-
   test('varargs', () => {
     // Works for lists too
     var p1 = assertQuery(query.Add([2, 3, 5]), 10)
@@ -3076,6 +3074,8 @@ describe('query', () => {
     ).toThrow()
   })
 }, 10000)
+
+// Helpers
 
 function withNewDatabase() {
   return util.rootClient
