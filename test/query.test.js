@@ -3068,6 +3068,13 @@ describe('query', () => {
     )
     return Promise.all([p1, p2])
   })
+
+  test('single arg to Ref must be a string', () => {
+    expect(() => query.Ref('collections/widgets/123')).not.toThrow()
+    expect(() =>
+      query.Ref(query.Concat(['collections', 'widgets', '123'], '/'))
+    ).toThrow()
+  })
 }, 10000)
 
 function withNewDatabase() {
