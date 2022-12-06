@@ -3056,8 +3056,6 @@ describe('query', () => {
     expect(query.wrap(undefined)).not.toBeDefined()
   })
 
-  // Helpers
-
   test('varargs', () => {
     // Works for lists too
     var p1 = assertQuery(query.Add([2, 3, 5]), 10)
@@ -3068,7 +3066,16 @@ describe('query', () => {
     )
     return Promise.all([p1, p2])
   })
+
+  test('single arg to Ref must be a string', () => {
+    expect(() => query.Ref('collections/widgets/123')).not.toThrow()
+    expect(() =>
+      query.Ref(query.Concat(['collections', 'widgets', '123'], '/'))
+    ).toThrow()
+  })
 }, 10000)
+
+// Helpers
 
 function withNewDatabase() {
   return util.rootClient

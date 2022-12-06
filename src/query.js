@@ -43,6 +43,15 @@ function Ref() {
   arity.between(1, 2, arguments, Ref.name)
   switch (arguments.length) {
     case 1:
+      if (
+        !(typeof arguments[0] === 'string' || arguments[0] instanceof String)
+      ) {
+        throw new errors.InvalidValue(
+          `Expected string, but found ${
+            arguments[0]
+          }. A single argument for Ref must be a string of format \`collections/\${collection_name}/\${id}`
+        )
+      }
       return new Expr({ '@ref': wrap(arguments[0]) })
     case 2:
       return new Expr({ ref: wrap(arguments[0]), id: wrap(arguments[1]) })
