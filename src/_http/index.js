@@ -158,45 +158,9 @@ function parseTags(tags) {
 }
 
 function validateTags(tags) {
-  const maxTagEntries = 25
   if (typeof tags != 'object') {
     throw new Error('Tags must be provided as an object!')
   }
-  if (Object.entries(tags).length > maxTagEntries) {
-    throw new Error('Tags are limited to 25 entries')
-  }
-  validateTagKeys(Object.keys(tags))
-  validateTagValues(Object.values(tags))
-}
-
-function validateTagKeys(keys) {
-  const maxKeyLength = 40
-  keys.forEach(key => {
-    if (typeof key != 'string') {
-      throw new Error(`Provided key, ${key}, must be a string`)
-    } else if (key.length > maxKeyLength) {
-      throw new Error(
-        `Provided key, ${key}, must not exceed maximum length of ${maxKeyLength} characters`
-      )
-    } else if (!/^\w+$/.test(key)) {
-      throw new Error(`Provided key, ${key}, contains invalid characters`)
-    }
-  })
-}
-
-function validateTagValues(values) {
-  const maxValueLength = 80
-  values.forEach(value => {
-    if (typeof value != 'string') {
-      throw new Error(`Provided value, ${value}, must be a string`)
-    } else if (value.length > maxValueLength) {
-      throw new Error(
-        `Provided value, ${value}, must not exceed maximum length of ${maxValueLength} characters`
-      )
-    } else if (!/^\w+$/.test(value)) {
-      throw new Error(`Provided value, ${value}, contains invalid characters`)
-    }
-  })
 }
 
 function secretHeader(secret) {

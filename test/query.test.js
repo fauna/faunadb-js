@@ -3143,22 +3143,7 @@ describe('query', () => {
         tags: tags,
       })
     } catch (err) {
-      expect(err).toBeInstanceOf(Error)
-    }
-  })
-
-  test('tag keys must be strings', async () => {
-    const tags = {
-      55: 'Foo1',
-      bar: 'Bar2',
-    }
-    try {
-      await adminClient.query(query.Now(), {
-        tags: tags,
-      })
-    } catch (err) {
-      expect(err).toBeInstanceOf(Error)
-      expect(err.message).toEqual('Provided key, 55, must be a string')
+      expect(err).toBeInstanceOf(errors.BadRequest)
     }
   })
 
@@ -3169,10 +3154,9 @@ describe('query', () => {
         tags: tags,
       })
     } catch (err) {
-      expect(err).toBeInstanceOf(Error)
-      expect(err.message).toEqual(
-        'Provided key, v@@!ar, contains invalid characters'
-      )
+      console.log(err)
+      expect(err).toBeInstanceOf(errors.BadRequest)
+      expect(err.description).toMatch(/.*invalid tags.*/)
     }
   })
 
@@ -3186,11 +3170,8 @@ describe('query', () => {
         tags: tags,
       })
     } catch (err) {
-      expect(err).toBeInstanceOf(Error)
-      expect(err.message).toEqual(
-        'Provided key, aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd1, must not exceed maximum ' +
-          'length of 40 characters'
-      )
+      expect(err).toBeInstanceOf(errors.BadRequest)
+      expect(err.description).toMatch(/.*invalid key.*/)
     }
   })
 
@@ -3201,10 +3182,8 @@ describe('query', () => {
         tags: tags,
       })
     } catch (err) {
-      expect(err).toBeInstanceOf(Error)
-      expect(err.message).toEqual(
-        'Provided value, inva@l!d value, contains invalid characters'
-      )
+      expect(err).toBeInstanceOf(errors.BadRequest)
+      expect(err.description).toMatch(/.*invalid tags.*/)
     }
   })
 
@@ -3218,12 +3197,8 @@ describe('query', () => {
         tags: tags,
       })
     } catch (err) {
-      expect(err).toBeInstanceOf(Error)
-      expect(err.message).toEqual(
-        `Provided value, ${'a'.repeat(
-          81
-        )}, must not exceed maximum length of 80 characters`
-      )
+      expect(err).toBeInstanceOf(errors.BadRequest)
+      expect(err.description).toMatch(/.*invalid value.*/)
     }
   })
 
