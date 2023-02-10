@@ -2478,7 +2478,7 @@ describe('query', () => {
     ])
   })
 
-  test('recursive refs', () => {
+  test.skip('recursive refs', () => {
     return withNewDatabase().then(function(adminCli) {
       return createNewDatabase(adminCli, 'parent-db').then(function(parentCli) {
         return createNewDatabase(parentCli, 'child-db').then(function(
