@@ -1,3 +1,6 @@
+## 4.8.0
+- Add `tags` and `traceheader` support in `client.query` [#672](https://github.com/fauna/faunadb-js/pull/672)
+
 ## 4.7.1
 - disallow undefined required args [#663](https://github.com/fauna/faunadb-js/pull/663)
 

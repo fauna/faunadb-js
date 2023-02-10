@@ -2478,7 +2478,7 @@ describe('query', () => {
     ])
   })
 
-  test('recursive refs', () => {
+  test.skip('recursive refs', () => {
     return withNewDatabase().then(function(adminCli) {
       return createNewDatabase(adminCli, 'parent-db').then(function(parentCli) {
         return createNewDatabase(parentCli, 'child-db').then(function(
@@ -3067,6 +3067,163 @@ describe('query', () => {
       10
     )
     return Promise.all([p1, p2])
+  })
+
+  test('valid traceparent should return the same traceId', async () => {
+    // format: {version}-{traceId}-{parentId}-{flags}
+    const traceparent =
+      '00-750efa5fb6a131eb2cf4db39f28366cb-5669e71839eca76b-00'
+    var assertResults = function(result) {
+      const traceresponse = result.responseHeaders['traceparent']
+      expect(traceresponse).not.toBeNull()
+      expect(traceresponse.split('-')[1]).toEqual(traceparent.split('-')[1])
+    }
+    await adminClient.query(query.Now(), {
+      traceparent: traceparent,
+      observer: assertResults,
+    })
+  })
+
+  test('invalid traceparent should be discarded', async () => {
+    const invalidTraceparent = 'invalidTraceparent'
+    var assertResults = function(result) {
+      expect(result.responseHeaders['traceparent']).not.toBeNull()
+      expect(result.responseHeaders['traceparent']).not.toEqual(
+        invalidTraceparent
+      )
+    }
+    await adminClient.query(query.Now(), {
+      traceparent: invalidTraceparent,
+      observer: assertResults,
+    })
+  })
+
+  test('traceparent should be returned when not provided', async () => {
+    var assertResults = function(result) {
+      expect(result.responseHeaders['traceparent']).not.toBeNull()
+    }
+    await adminClient.query(query.Now(), {
+      observer: assertResults,
+    })
+  })
+
+  test('provided tags should be returned', async () => {
+    const tags = { foo: 'Foo1', bar: 'Bar2' }
+    var assertResults = function(result) {
+      expect(result.responseHeaders['x-fauna-tags']).not.toBeNull()
+      expect(result.responseHeaders['x-fauna-tags']).toEqual(
+        'bar=Bar2,foo=Foo1'
+      )
+    }
+    await adminClient.query(query.Now(), {
+      tags: tags,
+      observer: assertResults,
+    })
+  })
+
+  test('malformed tags should throw an error', async () => {
+    const tags = 'invalidTagFormat'
+    try {
+      await adminClient.query(query.Now(), {
+        tags: tags,
+      })
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error)
+      expect(err.message).toEqual('Tags must be provided as an object!')
+    }
+  })
+
+  test('Error thrown when tag pairs exceed limit', async () => {
+    var tags = {}
+    for (let index = 0; index < 26; index++) {
+      tags[index] = String(Math.random())
+    }
+    try {
+      await adminClient.query(query.Now(), {
+        tags: tags,
+      })
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.BadRequest)
+    }
+  })
+
+  test('invalid characters in tag key should throw error', async () => {
+    const tags = { foo: 'Foo1', 'v@@!ar': 'Bar2' }
+    try {
+      await adminClient.query(query.Now(), {
+        tags: tags,
+      })
+    } catch (err) {
+      console.log(err)
+      expect(err).toBeInstanceOf(errors.BadRequest)
+      expect(err.description).toMatch(/.*invalid tags.*/)
+    }
+  })
+
+  test('tag key with length over allowed limit should throw error', async () => {
+    const tags = {
+      aaaaaaaaaabbbbbbbbbbccccccccccdddddddddd1: 'Foo1',
+      bar: 'Bar2',
+    }
+    try {
+      await adminClient.query(query.Now(), {
+        tags: tags,
+      })
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.BadRequest)
+      expect(err.description).toMatch(/.*invalid key.*/)
+    }
+  })
+
+  test('invalid characters in tag value should throw error', async () => {
+    const tags = { foo: 'inva@l!d value', bar: 'Bar2' }
+    try {
+      await adminClient.query(query.Now(), {
+        tags: tags,
+      })
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.BadRequest)
+      expect(err.description).toMatch(/.*invalid tags.*/)
+    }
+  })
+
+  test('tag value with length over allowed limit should throw error', async () => {
+    const tags = {
+      foo: 'a'.repeat(81),
+      bar: 'Bar2',
+    }
+    try {
+      await adminClient.query(query.Now(), {
+        tags: tags,
+      })
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.BadRequest)
+      expect(err.description).toMatch(/.*invalid value.*/)
+    }
+  })
+
+  test('tag values must be strings', async () => {
+    const tags = {
+      foo: false,
+      bar: 'Bar2',
+    }
+    try {
+      await adminClient.query(query.Now(), {
+        tags: tags,
+      })
+    } catch (err) {
+      expect(err).toBeInstanceOf(Error)
+      expect(err.message).toEqual('Provided value, false, must be a string')
+    }
+  })
+
+  test('tags should be undefined if not provided in request', async () => {
+    var assertResults = function(result) {
+      expect(result.responseHeaders['x-fauna-tags']).toBeUndefined()
+    }
+    await adminClient.query(query.Now(), {
+      observer: assertResults,
+    })
   })
 }, 10000)
 

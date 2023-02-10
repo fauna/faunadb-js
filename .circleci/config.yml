@@ -128,21 +128,13 @@ workflows:
           context: faunadb-drivers
       - core-stable-16:
           context: faunadb-drivers
-          requires:
-            - core-stable-14
       - core-stable-18:
           context: faunadb-drivers
-          requires:
-            - core-stable-16
 
       # Nightly path
       - core-nightly-14:
           context: faunadb-drivers
       - core-nightly-16:
           context: faunadb-drivers
-          requires:
-            - core-nightly-14
       - core-nightly-18:
           context: faunadb-drivers
-          requires:
-            - core-nightly-16

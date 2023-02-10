@@ -237,8 +237,9 @@ var data = client.query(q.Paginate(q.Collections()), {
 
 #### Per-query options
 
-Some options (currently only `secret` and `queryTimout`) can be overriden on a per-query basis:
+Some options can be provided on a per-query basis:
 
+##### secret
 ```javascript
 var createP = client.query(
   q.Create(q.Collection('test'), { data: { testField: 'testValue' } }),
@@ -256,11 +257,33 @@ var helper = client.paginate(
 )
 ```
 
+##### queryTimeout
 ```javascript
 var data = client.query(q.Paginate(q.Collections()), {
   queryTimeout: 100,
 })
 ```
+
+##### traceparent
+A [W3C-compliant](https://w3c.github.io/trace-context) identifier for enabling distributed tracing across different
+vendors. If not provided, one is automatically generated server-side and attached to the query. Customer's should
+inspect the returned traceresponse to determine if a new traceparent has been created, and use that instead. See
+[Trace Context](https://w3c.github.io/trace-context) spec for more details.
+```javascript
+var data = client.query(q.Paginate(q.Collections()), {
+  traceparent: "00-c91308c112be8448dd34dc6191567fa0-b7ad6b7169203331-01",
+})
+```
+
+##### tags
+Allows for associating user-provided tags with a query.
+```javascript
+var data = client.query(q.Paginate(q.Collections()), {
+  tags: { key1: "value1", key2: "value2" },
+})
+```
+Both tags and their associated values, must be strings. The only allowable characters are alphanumeric values as well
+as an underscope (_). Max length for keys is 40 characters. Max length for values is 60 characters.
 
 #### Custom Fetch
 
