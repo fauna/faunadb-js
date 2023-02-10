@@ -8,8 +8,6 @@
 
 A JavaScript driver for [FaunaDB](https://fauna.com).
 
-[NOTE Traceparent/Tags are beta features]
-
 [View reference JSDocs here](https://fauna.github.io/faunadb-js).
 
 See the [FaunaDB Documentation](https://docs.fauna.com/) and
