@@ -3,5 +3,6 @@ export default class Expr {
 
   readonly _isFaunaExpr?: boolean
   toFQL(): string
+  toJSON(): string
   static toString(expr: Expr): string
 }
