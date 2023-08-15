@@ -8,7 +8,7 @@
 
 A JavaScript driver for [FaunaDB](https://fauna.com). 
 
-Note: This driver supports an older version of th Fauna API. The latest version of the official Fauna Javascript Driver is located [here](https://www.npmjs.com/package/fauna/v/latest).
+Note: This driver supports an older version of the Fauna API. The latest version of the official Fauna Javascript Driver is located [here](https://www.npmjs.com/package/fauna/v/latest).
 
 [View reference JSDocs here](https://fauna.github.io/faunadb-js).
 
