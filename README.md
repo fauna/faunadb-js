@@ -1,4 +1,4 @@
-# FaunaDB JavaScript Driver
+# The Official JavaScript driver for v4 API of Fauna
 
 [![CircleCI](https://circleci.com/gh/fauna/faunadb-js.svg?style=svg)](https://circleci.com/gh/fauna/faunadb-js)
 [![Npm Version](https://img.shields.io/npm/v/faunadb.svg?maxAge=21600)](https://www.npmjs.com/package/faunadb)
@@ -6,14 +6,16 @@
 
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
-A JavaScript driver for [FaunaDB](https://fauna.com).
+A JavaScript driver for [FaunaDB](https://fauna.com). 
+
+Note: This driver supports an older version of th Fauna API. The latest version of the official Fauna Javascript Driver is located [here](https://www.npmjs.com/package/fauna/v/latest).
 
 [View reference JSDocs here](https://fauna.github.io/faunadb-js).
 
-See the [FaunaDB Documentation](https://docs.fauna.com/) and
-[Tutorials](https://docs.fauna.com/fauna/current/tutorials/crud) for
+See the [FaunaDB Documentation](https://docs.fauna.com/fauna/v4) and
+[Tutorials](https://docs.fauna.com/fauna/v4/learn/tutorials/fql/crud?lang=javascript) for
 guides and a complete database [API
-reference](https://docs.fauna.com/fauna/current/api/fql/).
+reference](https://docs.fauna.com/fauna/v4/api/fql/).
 
 ## Supported Runtimes
 
@@ -56,12 +58,12 @@ The minified version of the driver can also be used via CDN:
 
 ### Use
 
-The [tutorials](https://docs.fauna.com/fauna/current/tutorials/crud) in
+The [tutorials](https://docs.fauna.com/fauna/current/learn/tutorials/fql/crud?lang=javascript) in
 the FaunaDB documentation contain other driver-specific examples.
 
 #### Connecting from the browser
 
-To get up and running quickly, below is a full example for connecting from the browser. Replace <your_key_here> with a database secret. You can get that by visiting your [FaunaDB Dashboard](https://dashboard.fauna.com/), creating a new database, clicking on "Security" in the sidebar on the left, and then clicking "New Key". To learn more about keys, see [FaunaDB Key System](https://docs.fauna.com/fauna/current/security/keys.html).
+To get up and running quickly, below is a full example for connecting from the browser. Replace <your_key_here> with a database secret. You can get that by visiting your [FaunaDB Dashboard](https://v4.dashboard.fauna.com/), creating a new database, clicking on "Security" in the sidebar on the left, and then clicking "New Key". To learn more about keys, see [FaunaDB Key System](https://docs.fauna.com/fauna/v4/security/keys.html).
 
 ```javascript
 <html>
@@ -162,7 +164,7 @@ Metrics returned in the response will be of `number` data type.
 
 This driver contains helpers to provide a simpler API for consuming paged
 responses from FaunaDB. See the [Paginate function
-reference](https://docs.fauna.com/fauna/current/api/fql/functions/paginate)
+reference](https://docs.fauna.com/fauna/v4/api/fql/functions/paginate)
 for a description of paged responses.
 
 Using the helper to page over sets lets the driver handle cursoring and
@@ -399,8 +401,8 @@ Therefore it is recommended to use a FaunaDB key scoped to an empty parent
 database created for this purpose, rather than your account's root key. This
 will make cleanup of test databases as easy as removing the parent database.
 
-See the [FaunaDB Multitenancy
-Tutorial](https://docs.fauna.com/fauna/current/tutorials/multitenant)
+See the [FaunaDB Multi-tenancy
+Tutorial](https://docs.fauna.com/fauna/v4/learn/tutorials/fql/multitenant)
 for more information about nested databases.
 
 Alternatively, tests can be run via a Docker container with
@@ -462,7 +464,7 @@ npm install /path/to/tarball
 
 ## License
 
-Copyright 2021 [Fauna, Inc.](https://fauna.com/)
+Copyright 2023 [Fauna, Inc.](https://fauna.com/)
 
 Licensed under the Mozilla Public License, Version 2.0 (the "License"); you may
 not use this software except in compliance with the License. You may obtain a
