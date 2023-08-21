@@ -31,6 +31,10 @@ commands:
     steps:
       - checkout
 
+      - setup_remote_docker:
+          version: 24.0
+          docker_layer_caching: true
+
       - restore_cache:
           keys:
             - v1-deps-<<parameters.node_version>>-{{ checksum "package-lock.json" }}
