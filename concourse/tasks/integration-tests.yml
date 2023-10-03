@@ -3,7 +3,10 @@ platform: linux
 image_resource:
   type: registry-image
   source:
-    repository: karlkfi/concourse-dcind
+    repository: shared-concourse-dind
+    aws_access_key_id: ((prod-images-aws-access-key-id))
+    aws_secret_access_key: ((prod-images-aws-secret-key))
+    aws_region: us-east-2
 
 params:
   FAUNA_ROOT_KEY:
