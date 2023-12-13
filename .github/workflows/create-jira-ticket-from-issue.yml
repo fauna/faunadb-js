@@ -24,7 +24,7 @@ jobs:
           issuetype: Bug
           summary: Issue ${{ github.event.issue.number }} ${{ github.event.issue.title }}
           description: ${{ github.event.issue.html_url }}
-          fields: '{"labels": ["github", "issue", "dx-ops"], "components": [{ "name": "Fauna Shell" }]}'
+          fields: '{"labels": ["github", "issue", "dx-ops"], "components": [{ "name": "JavaScript Driver" }]}'
 
       - name: Comment
         uses: peter-evans/create-or-update-comment@v1
