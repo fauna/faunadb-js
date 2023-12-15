@@ -17,11 +17,12 @@ jobs:
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
 
       - name: Find comment with ticket number
-        uses: peter-evans/find-comment@v1
+        uses: peter-evans/find-comment@v2
         id: comment
         with:
           issue-number: ${{ github.event.issue.number }}
           body-includes: Internal ticket number is FE-
+          nth: 0
 
       - name: Get ticket number
         id: ticket
