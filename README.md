@@ -1,14 +1,17 @@
-# The Official JavaScript driver for v4 API of Fauna
+# Official JavaScript driver for Fauna v4
 
 [![CircleCI](https://circleci.com/gh/fauna/faunadb-js.svg?style=svg)](https://circleci.com/gh/fauna/faunadb-js)
 [![Npm Version](https://img.shields.io/npm/v/faunadb.svg?maxAge=21600)](https://www.npmjs.com/package/faunadb)
 [![License](https://img.shields.io/badge/license-MPL_2.0-blue.svg?maxAge=2592000)](https://raw.githubusercontent.com/fauna/faunadb-js/main/LICENSE)
-
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
-A JavaScript driver for [FaunaDB](https://fauna.com). 
+> [!CAUTION]
+> This driver is not compatible with Fauna v10, the latest version.
+>
+> For new development, use the official Fauna v10 driver:
+> [https://github.com/fauna/fauna-js](https://github.com/fauna/fauna-js).
 
-Note: This driver supports an older version of the Fauna API. The latest version of the official Fauna Javascript Driver is located [here](https://www.npmjs.com/package/fauna/v/latest) (we encourage all new development to use this new version where possible).
+The official JavaScript driver for [Fauna v4](https://docs.fauna.com/fauna/v4/).
 
 [View reference JSDocs here](https://fauna.github.io/faunadb-js).
 
@@ -24,7 +27,7 @@ This Driver supports and is tested on:
 - Node.js [*Current*, *Active LTS*, and *Maintenance LTS* releases](https://nodejs.org/en/about/releases/)
   - *Current* - v17
   - *Active LTS* - currently v16
-  - *Maintenance LTS* - v12 and v14 
+  - *Maintenance LTS* - v12 and v14
 - Chrome
 - Firefox
 - Safari
@@ -129,13 +132,13 @@ createP.then(function(response) {
 `response` is a JSON object containing the FaunaDB response. See the JSDocs for
 `faunadb.Client`.
 
-The `metrics` option is used during instantiation to create a client that also 
+The `metrics` option is used during instantiation to create a client that also
 returns usage information about the queries issued to FaunaDB.
 
 ```javascript
-let client = new faunadb.Client({ 
+let client = new faunadb.Client({
   secret: 'YOUR_FAUNADB_SECRET',
-  metrics: true 
+  metrics: true
 })
 ```
 
