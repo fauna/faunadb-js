@@ -5,10 +5,13 @@
 [![License](https://img.shields.io/badge/license-MPL_2.0-blue.svg?maxAge=2592000)](https://raw.githubusercontent.com/fauna/faunadb-js/main/LICENSE)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
-> [!CAUTION]
-> This driver is not compatible with Fauna v10, the latest version.
+> [!WARNING]
+>  Fauna is decomissioning FQL v4. See the [v4 end of life (EOL)
+> announcement](https://docs.fauna.com/fauna/v4/#fql-v4-end-of-life) and
+> [related FAQ](https://docs.fauna.com/fauna/v4/migration/faq).
 >
-> For new development, use the official Fauna v10 driver:
+> This driver is not compatible with FQL v10, the latest version. Ensure you
+> migrate existing projects to the official v10 driver by the v4 EOL date:
 > [https://github.com/fauna/fauna-js](https://github.com/fauna/fauna-js).
 
 The official JavaScript driver for [Fauna v4](https://docs.fauna.com/fauna/v4/).
