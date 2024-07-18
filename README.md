@@ -1,4 +1,4 @@
-# JavaScript driver for Fauna v4 (Deprecated)
+# JavaScript driver for Fauna v4 (deprecated)
 
 [![CircleCI](https://circleci.com/gh/fauna/faunadb-js.svg?style=svg)](https://circleci.com/gh/fauna/faunadb-js)
 [![Npm Version](https://img.shields.io/npm/v/faunadb.svg?maxAge=21600)](https://www.npmjs.com/package/faunadb)
