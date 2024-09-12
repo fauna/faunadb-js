@@ -1,3 +1,6 @@
+## 4.8.1
+- Bump patch version to publish latest README that includes FQL v4 deprecation notice. No functional changes included.
+
 ## 4.8.0
 - Add `tags` and `traceheader` support in `client.query` [#672](https://github.com/fauna/faunadb-js/pull/672)
 
