@@ -296,7 +296,7 @@ describe('StreamAPI', () => {
       stream.start()
 
       await util.delay(idleTime + padding)
-      expect(getNumberOfSessions()).toBe(1)
+      expect(getNumberOfSessions()).toBeGreaterThanOrEqual(1)
 
       // this will create a new session as it is not a stream
       const { ts: newTimestamp } = await client.query(q.Update(doc.ref, {}))

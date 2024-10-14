@@ -2918,7 +2918,7 @@ describe('query', () => {
   })
 
   test('current_token fails when unauthenticated', async () => {
-    const newClient = new Client()
+    const newClient = new Client({ secret: 'badsecret' })
 
     try {
       const currentToken = await newClient.query(query.CurrentToken())

@@ -135,8 +135,8 @@ describe('Client', () => {
 
   test('extract response headers from observer', () => {
     var assertResults = function(result) {
-      assertObserverStats(result.responseHeaders, 'x-read-ops')
-      assertObserverStats(result.responseHeaders, 'x-write-ops')
+      assertObserverStats(result.responseHeaders, 'x-byte-read-ops')
+      assertObserverStats(result.responseHeaders, 'x-byte-write-ops')
       assertObserverStats(result.responseHeaders, 'x-storage-bytes-read')
       assertObserverStats(result.responseHeaders, 'x-storage-bytes-write')
       assertObserverStats(result.responseHeaders, 'x-query-bytes-in')
