@@ -46,6 +46,11 @@ function FaunaError(name, message, description) {
 
 util.inherits(FaunaError, Error)
 
+function ProtocolError(message) {
+  FaunaError.call(this, 'ProtocolError', message)
+}
+
+util.inherits(ProtocolError, FaunaError)
 /**
  * Exception thrown by this client library when an invalid
  * value is provided as a function argument.
@@ -341,6 +346,7 @@ util.inherits(ClientClosed, FaunaError)
 
 module.exports = {
   FaunaError: FaunaError,
+  ProtocolError: ProtocolError,
   ClientClosed: ClientClosed,
   FaunaHTTPError: FaunaHTTPError,
   InvalidValue: InvalidValue,

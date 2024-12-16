@@ -6,6 +6,7 @@ var query = require('../src/query')
 var util = require('./util')
 var Client = require('../src/Client')
 var json = require('../src/_json')
+const { Headers } = require('cross-fetch')
 var client
 
 describe('Client', () => {
@@ -417,6 +418,23 @@ describe('Client', () => {
     expect(response.description).toEqual(errors[0].description)
   })
 
+  test('throws protocol error when empty 200 response is received', async () => {
+    const headers = new Headers()
+    headers.append('content-length', '0')
+    const mockedFetch = mockFetch('', false, headers)
+    const clientWithDefaultTimeout = new Client({
+      fetch: mockedFetch,
+    })
+    try {
+      await clientWithDefaultTimeout.query(query.Divide(null, 2))
+    } catch (err) {
+      expect(err).toBeInstanceOf(errors.ProtocolError)
+      expect(err.message).toEqual(
+        'There was an issue communicating with Fauna. Response is empty. Please try again.'
+      )
+    }
+  })
+
   test('default headers has been applied', async () => {
     const mockedFetch = mockFetch()
     const clientWithDefaultTimeout = new Client({
@@ -567,13 +585,14 @@ function createDocument() {
   return client.query(query.Create(query.Collection('my_collection'), {}))
 }
 
-function mockFetch(content = {}, simulateTimeout) {
+function mockFetch(content = {}, simulateTimeout, headers = new Headers()) {
   return jest.fn().mockImplementation((_, opts) => {
     return new Promise((resolve, reject) => {
       if (!simulateTimeout) {
         return resolve({
-          headers: new Set(),
-          text: () => Promise.resolve(JSON.stringify(content)),
+          headers: headers,
+          text: () => Promise.resolve(content ? JSON.stringify(content) : ''),
+          status: 200,
         })
       }
 

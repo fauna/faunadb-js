@@ -341,6 +341,16 @@ Client.prototype._execute = function(
       })
     )
     .then(function(response) {
+      // Receiving a 200 with no body/content indicates an issue with core router
+      if (
+        response.status === 200 &&
+        response.body.length === 0 &&
+        response.headers['content-length'] === '0'
+      ) {
+        throw new errors.ProtocolError(
+          'There was an issue communicating with Fauna. Response is empty. Please try again.'
+        )
+      }
       var endTime = Date.now()
       var responseObject = json.parseJSON(response.body)
       var result = new RequestResult(
