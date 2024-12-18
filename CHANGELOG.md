@@ -1,3 +1,6 @@
+## 4.8.2
+- Handle empty network responses from query api [#694](https://github.com/fauna/faunadb-js/pull/694)
+
 ## 4.8.1
 - Bump patch version to publish latest README that includes FQL v4 deprecation notice. No functional changes included.
 
